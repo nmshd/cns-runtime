@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  mongo:
+    container_name: runtime-mongo
+    hostname: mongo
+    image: mongo
+    ports:
+      - "27021:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

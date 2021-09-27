@@ -1,0 +1,23 @@
+{
+    "ignorePatterns": ["/*", "!/src", "!/test"],
+    "extends": ["@js-soft/ts", "@js-soft/ts/jest"],
+    "parserOptions": {
+        "project": ["./tsconfig.json", "./test/tsconfig.json"]
+    },
+    "rules": {
+        "jest/expect-expect": [
+            "error",
+            {
+                "assertFunctionNames": ["expect", "*.executeTests", "expectSuccess", "expectError"]
+            }
+        ]
+    },
+    "overrides": [
+        {
+            "files": ["./test/**"],
+            "rules": {
+                "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }]
+            }
+        }
+    ]
+}
