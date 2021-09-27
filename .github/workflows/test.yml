@@ -1,0 +1,19 @@
+name: Test
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - run: bash .ci/build.sh
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.6.0
+      - run: bash .ci/test.sh

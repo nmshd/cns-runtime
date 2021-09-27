@@ -1,0 +1,23 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - run: bash .ci/build.sh
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.6.0
+      - run: bash .ci/test.sh
+      - run: bash .ci/publish.sh
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
