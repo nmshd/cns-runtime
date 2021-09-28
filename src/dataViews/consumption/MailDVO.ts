@@ -1,5 +1,5 @@
 import { Mail } from "@nmshd/content";
-import { MessageDVO } from "../core/MessageDVO";
+import { MessageDVO } from "../transport/MessageDVO";
 
 export interface MailDVOProperties extends Mail {}
 

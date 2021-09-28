@@ -13,7 +13,7 @@ export interface ILibraryBuildInformation {
 
 export interface IRuntimeVersionInfo {
     runtime: ILibraryBuildInformation;
-    core: ILibraryBuildInformation;
+    transport: ILibraryBuildInformation;
     crypto: ILibraryBuildInformation;
     serval: ILibraryBuildInformation;
     consumption: ILibraryBuildInformation;
@@ -27,7 +27,7 @@ export class RuntimeBuildInformation {
     public readonly commit: string = "{{commit}}";
     public readonly dependencies: object;
 
-    public readonly core = TransportBuildInformation.info;
+    public readonly transport = TransportBuildInformation.info;
     public readonly crypto = CryptoBuildInformation.info;
     public readonly serval = ServalBuildInformation.info;
     public readonly consumption = ConsumptionBuildInformation.info;
@@ -45,7 +45,7 @@ export class RuntimeBuildInformation {
     public toJson(): IRuntimeVersionInfo {
         return {
             runtime: this.buildInformationToJson(this),
-            core: this.buildInformationToJson(this.core),
+            transport: this.buildInformationToJson(this.transport),
             crypto: this.buildInformationToJson(this.crypto),
             serval: this.buildInformationToJson(this.serval),
             consumption: this.buildInformationToJson(this.consumption),

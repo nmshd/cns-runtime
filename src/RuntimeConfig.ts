@@ -6,7 +6,7 @@ export interface RuntimeConfig {
 
     realm: Realm;
 
-    coreLibrary: IConfigOverwrite;
+    transportLibrary: IConfigOverwrite;
 
     consumptionLibrary: {};
 

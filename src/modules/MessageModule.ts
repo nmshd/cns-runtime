@@ -54,7 +54,7 @@ export default class MessageModule extends RuntimeModule<MessageModuleConfigurat
                 return;
         }
 
-        const result = await this.runtime.coreServices.relationships.getRelationshipByAddress({ address: message.createdBy });
+        const result = await this.runtime.transportServices.relationships.getRelationshipByAddress({ address: message.createdBy });
         if (!result.isSuccess) {
             this.logger.error(`Could not find relationship for address '${message.createdBy}'.`, result.error);
             return;

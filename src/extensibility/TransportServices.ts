@@ -1,7 +1,7 @@
 import { Inject } from "typescript-ioc";
-import { AccountFacade, DevicesFacade, FilesFacade, MessagesFacade, RelationshipsFacade, RelationshipTemplatesFacade, TokensFacade } from "./facades/core";
+import { AccountFacade, DevicesFacade, FilesFacade, MessagesFacade, RelationshipsFacade, RelationshipTemplatesFacade, TokensFacade } from "./facades/transport";
 
-export class CoreServices {
+export class TransportServices {
     public constructor(
         @Inject public readonly files: FilesFacade,
         @Inject public readonly messages: MessagesFacade,

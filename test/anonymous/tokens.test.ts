@@ -1,30 +1,30 @@
-import { CoreServices, TokenDTO } from "../../src";
+import { TokenDTO, TransportServices } from "../../src";
 import { RuntimeServiceProvider } from "../lib/RuntimeServiceProvider";
 import { NoLoginTestRuntime, TestRuntime } from "../lib/TestRuntime";
 import { uploadOwnToken } from "../lib/testUtils";
 import { expectSuccess } from "../lib/validation";
 
-const coreServiceProvider = new RuntimeServiceProvider();
-let coreServices: CoreServices;
+const serviceProvider = new RuntimeServiceProvider();
+let transportServices: TransportServices;
 let noLoginRuntime: TestRuntime;
 
 beforeAll(async () => {
-    const runtimeServices = await coreServiceProvider.launch(1);
-    coreServices = runtimeServices[0].core;
+    const runtimeServices = await serviceProvider.launch(1);
+    transportServices = runtimeServices[0].transport;
 
     noLoginRuntime = new NoLoginTestRuntime(RuntimeServiceProvider.runtimeConfig);
     await noLoginRuntime.init();
     await noLoginRuntime.start();
 }, 30000);
 afterAll(async () => {
-    await coreServiceProvider.stop();
+    await serviceProvider.stop();
     await noLoginRuntime.stop();
 });
 
 describe("Anonymous tokens", () => {
     let uploadedToken: TokenDTO;
     beforeAll(async () => {
-        uploadedToken = await uploadOwnToken(coreServices);
+        uploadedToken = await uploadOwnToken(transportServices);
     });
 
     test("should get the token anonymous by truncated reference", async () => {

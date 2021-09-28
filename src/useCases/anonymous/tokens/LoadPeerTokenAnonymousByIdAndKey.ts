@@ -4,7 +4,7 @@ import { AnonymousTokenController, BackboneIds, CoreId } from "@nmshd/transport"
 import { Inject } from "typescript-ioc";
 import { TokenDTO } from "../../../types";
 import { IdValidator, RuntimeValidator, UseCase } from "../../common";
-import { TokenMapper } from "../../core/tokens/TokenMapper";
+import { TokenMapper } from "../../transport/tokens/TokenMapper";
 
 export interface LoadPeerTokenAnonymousByIdAndKeyRequest {
     id: string;

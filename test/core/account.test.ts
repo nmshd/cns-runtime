@@ -1,26 +1,26 @@
 import { DateTime } from "luxon";
-import { CoreServices } from "../../src";
+import { TransportServices } from "../../src";
 import { expectSuccess, RuntimeServiceProvider, uploadFile } from "../lib";
 
-const coreServiceProvider = new RuntimeServiceProvider();
-let coreServices: CoreServices;
+const serviceProvider = new RuntimeServiceProvider();
+let transportServices: TransportServices;
 
 beforeAll(async () => {
-    const runtimeServices = await coreServiceProvider.launch(1, { enableDatawallet: true });
-    coreServices = runtimeServices[0].core;
+    const runtimeServices = await serviceProvider.launch(1, { enableDatawallet: true });
+    transportServices = runtimeServices[0].transport;
 }, 30000);
-afterAll(async () => await coreServiceProvider.stop());
+afterAll(async () => await serviceProvider.stop());
 
 describe("Sync", () => {
     test("should return the same promise when calling syncEverything twice without awaiting", async () => {
-        const [syncResult1, syncResult2] = await Promise.all([coreServices.account.syncEverything(), coreServices.account.syncEverything()]);
+        const [syncResult1, syncResult2] = await Promise.all([transportServices.account.syncEverything(), transportServices.account.syncEverything()]);
 
         // The sync results should have the same reference (CAUTION: expect(...).toStrictEqual(...) is not sufficient)
         expect(syncResult1).toBe(syncResult2);
     });
 
     test("should query the syncRun", async () => {
-        const syncRunResponse = await coreServices.account.getSyncInfo();
+        const syncRunResponse = await transportServices.account.getSyncInfo();
         expectSuccess(syncRunResponse);
 
         const syncRun = syncRunResponse.value;
@@ -31,32 +31,32 @@ describe("Sync", () => {
 
 describe("Automatic Datawallet Sync", () => {
     async function getSyncInfo() {
-        const sync = await coreServices.account.getSyncInfo();
+        const sync = await transportServices.account.getSyncInfo();
         expectSuccess(sync);
         return sync.value;
     }
 
     test("should run an automatic datawallet sync", async () => {
-        await coreServices.account.syncDatawallet();
+        await transportServices.account.syncDatawallet();
         const oldSyncTime = await getSyncInfo();
 
-        await uploadFile(coreServices);
+        await uploadFile(transportServices);
         const newSyncTime = await getSyncInfo();
 
         expect(oldSyncTime).not.toStrictEqual(newSyncTime);
     });
 
     test("should not run an automatic datawallet sync", async () => {
-        const disableResult = await coreServices.account.disableAutoSync();
+        const disableResult = await transportServices.account.disableAutoSync();
         expectSuccess(disableResult);
 
-        await coreServices.account.syncDatawallet();
+        await transportServices.account.syncDatawallet();
         const oldSyncTime = await getSyncInfo();
 
-        await uploadFile(coreServices);
+        await uploadFile(transportServices);
         expect(await getSyncInfo()).toStrictEqual(oldSyncTime);
 
-        const enableResult = await coreServices.account.enableAutoSync();
+        const enableResult = await transportServices.account.enableAutoSync();
         expectSuccess(enableResult);
 
         expect(await getSyncInfo()).not.toStrictEqual(oldSyncTime);
@@ -65,7 +65,7 @@ describe("Automatic Datawallet Sync", () => {
 
 describe("IdentityInfo", () => {
     test("should get the IndentityInformation", async () => {
-        const identityInfoResult = await coreServices.account.getIdentityInfo();
+        const identityInfoResult = await transportServices.account.getIdentityInfo();
         expectSuccess(identityInfoResult);
 
         const identityInfo = identityInfoResult.value;

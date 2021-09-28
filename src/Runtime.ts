@@ -28,15 +28,15 @@ import { DataViewExpander } from "./dataViews";
 import { EventBus } from "./eventBus";
 import { EventEmitter2EventBus } from "./eventBus/eventEmitter2/EventEmitter2EventBus";
 import {
-    CoreLibraryInitializedEvent,
-    CoreLibraryInitializingEvent,
     ModulesInitializedEvent,
     ModulesLoadedEvent,
     ModulesStartedEvent,
     RuntimeInitializedEvent,
-    RuntimeInitializingEvent
+    RuntimeInitializingEvent,
+    TransportLibraryInitializedEvent,
+    TransportLibraryInitializingEvent
 } from "./events";
-import { AnonymousServices, ConsumptionServices, CoreServices, ModuleConfiguration, RuntimeModule, RuntimeModuleCollection } from "./extensibility";
+import { AnonymousServices, ConsumptionServices, ModuleConfiguration, RuntimeModule, RuntimeModuleCollection, TransportServices } from "./extensibility";
 import { RuntimeConfig } from "./RuntimeConfig";
 import { RuntimeLoggerFactory } from "./RuntimeLoggerFactory";
 import { RuntimeHealth } from "./types";
@@ -73,7 +73,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
     protected login(accountController: AccountController, consumptionController: ConsumptionController): this {
         this._accountController = accountController;
-        this._coreServices = Container.get<CoreServices>(CoreServices);
+        this._transportServices = Container.get<TransportServices>(TransportServices);
 
         this._consumptionController = consumptionController;
         this._consumptionServices = Container.get<ConsumptionServices>(ConsumptionServices);
@@ -88,9 +88,9 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         return this._modules;
     }
 
-    private _coreServices: CoreServices;
-    public get coreServices(): CoreServices {
-        return this._coreServices;
+    private _transportServices: TransportServices;
+    public get transportServices(): TransportServices {
+        return this._transportServices;
     }
 
     private _consumptionServices: ConsumptionServices;
@@ -130,7 +130,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         this.initDIContainer();
 
-        await this.initCoreLibrary();
+        await this.initTransportLibrary();
         await this.initAccount();
         await this.loadModules();
 
@@ -158,22 +158,22 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         };
     }
 
-    private async initCoreLibrary() {
-        this.eventBus.publish(new CoreLibraryInitializingEvent());
+    private async initTransportLibrary() {
+        this.eventBus.publish(new TransportLibraryInitializingEvent());
         this.logger.debug("Initializing Database connection... ");
 
         const databaseConnection = await this.createDatabaseConnection();
 
-        this.transport = new Transport(databaseConnection, this.runtimeConfig.coreLibrary, this.loggerFactory);
+        this.transport = new Transport(databaseConnection, this.runtimeConfig.transportLibrary, this.loggerFactory);
 
-        this.logger.debug("Initializing Core Library...");
-        this.logger.debug("Core Library configuration: ", this.runtimeConfig.coreLibrary);
+        this.logger.debug("Initializing Transport Library...");
+        this.logger.debug("Transport Library configuration: ", this.runtimeConfig.transportLibrary);
         await this.transport.init();
-        this.logger.debug("Finished initialization of Core Library.");
+        this.logger.debug("Finished initialization of Transport Library.");
 
         this._anonymousServices = Container.get<AnonymousServices>(AnonymousServices);
 
-        this.eventBus.publish(new CoreLibraryInitializedEvent());
+        this.eventBus.publish(new TransportLibraryInitializedEvent());
     }
 
     private initDIContainer() {

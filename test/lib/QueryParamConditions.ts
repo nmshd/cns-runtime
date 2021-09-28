@@ -1,7 +1,7 @@
 /* eslint-disable jest/no-standalone-expect */
 import { Result } from "@js-soft/ts-utils";
 import { DateTime } from "luxon";
-import { CoreServices } from "../../src";
+import { TransportServices } from "../../src";
 
 export interface ICondition {
     key: string;
@@ -9,10 +9,10 @@ export interface ICondition {
     expectedResult: boolean;
 }
 
-export class QueryParamConditions<T = CoreServices> {
+export class QueryParamConditions<T = TransportServices> {
     private readonly _conditions: ICondition[];
 
-    public constructor(private readonly object: any, private readonly coreServices: T) {
+    public constructor(private readonly object: any, private readonly transportServices: T) {
         this._conditions = [];
     }
 
@@ -169,7 +169,7 @@ export class QueryParamConditions<T = CoreServices> {
         }
 
         for (const condition of this._conditions) {
-            const response: Result<any> = await queryFunction(this.coreServices, { [condition.key]: condition.value });
+            const response: Result<any> = await queryFunction(this.transportServices, { [condition.key]: condition.value });
 
             expect(response.isSuccess).toBeTruthy();
 

@@ -1,7 +1,3 @@
-export * from "./core/CoreLibraryInitializedEvent";
-export * from "./core/CoreLibraryInitializingEvent";
-export * from "./core/MessageReceivedEvent";
-export * from "./core/RelationshipChangedEvent";
 export * from "./DataEvent";
 export * from "./Event";
 export * from "./runtime/ModulesInitializedEvent";
@@ -9,3 +5,7 @@ export * from "./runtime/ModulesLoadedEvent";
 export * from "./runtime/ModulesStartedEvent";
 export * from "./runtime/RuntimeInitializedEvent";
 export * from "./runtime/RuntimeInitializingEvent";
+export * from "./transport/MessageReceivedEvent";
+export * from "./transport/RelationshipChangedEvent";
+export * from "./transport/TransportLibraryInitializedEvent";
+export * from "./transport/TransportLibraryInitializingEvent";

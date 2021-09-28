@@ -1,24 +1,24 @@
 import { DateTime } from "luxon";
-import { CoreServices, OwnerRestriction, RelationshipTemplateDTO } from "../../src";
+import { OwnerRestriction, RelationshipTemplateDTO, TransportServices } from "../../src";
 import { createTemplate, exchangeTemplate, expectError, expectSuccess, QueryParamConditions, RuntimeServiceProvider } from "../lib";
 
-const coreServiceProvider = new RuntimeServiceProvider();
-let coreServices1: CoreServices;
-let coreServices2: CoreServices;
+const serviceProvider = new RuntimeServiceProvider();
+let transportServices1: TransportServices;
+let transportServices2: TransportServices;
 
 beforeAll(async () => {
-    const runtimeServices = await coreServiceProvider.launch(2);
-    coreServices1 = runtimeServices[0].core;
-    coreServices2 = runtimeServices[1].core;
+    const runtimeServices = await serviceProvider.launch(2);
+    transportServices1 = runtimeServices[0].transport;
+    transportServices2 = runtimeServices[1].transport;
 }, 30000);
-afterAll(() => coreServiceProvider.stop());
+afterAll(() => serviceProvider.stop());
 
 describe("Template Tests", () => {
     let template: RelationshipTemplateDTO;
     let templateWithUndefinedMaxNumberOfRelationships: RelationshipTemplateDTO;
 
     test("create a template", async () => {
-        const response = await coreServices1.relationshipTemplates.createOwnRelationshipTemplate({
+        const response = await transportServices1.relationshipTemplates.createOwnRelationshipTemplate({
             maxNumberOfRelationships: 1,
             expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
             content: { a: "b" }
@@ -30,7 +30,7 @@ describe("Template Tests", () => {
     });
 
     test("create a template with undefined maxNumberOfRelationships", async () => {
-        const response = await coreServices1.relationshipTemplates.createOwnRelationshipTemplate({
+        const response = await transportServices1.relationshipTemplates.createOwnRelationshipTemplate({
             content: { a: "A" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
@@ -42,7 +42,7 @@ describe("Template Tests", () => {
     });
 
     test("read a template with undefined maxNumberOfRelationships", async () => {
-        const response = await coreServices1.relationshipTemplates.getRelationshipTemplate({
+        const response = await transportServices1.relationshipTemplates.getRelationshipTemplate({
             id: templateWithUndefinedMaxNumberOfRelationships.id
         });
 
@@ -53,7 +53,7 @@ describe("Template Tests", () => {
     test("see If template exists in /RelationshipTemplates/Own", async () => {
         expect(template).toBeDefined();
 
-        const response = await coreServices1.relationshipTemplates.getRelationshipTemplates({
+        const response = await transportServices1.relationshipTemplates.getRelationshipTemplates({
             ownerRestriction: OwnerRestriction.Own
         });
         expectSuccess(response);
@@ -63,12 +63,12 @@ describe("Template Tests", () => {
     test("see If template exists in /RelationshipTemplates/{id}", async () => {
         expect(template).toBeDefined();
 
-        const response = await coreServices1.relationshipTemplates.getRelationshipTemplate({ id: template.id });
+        const response = await transportServices1.relationshipTemplates.getRelationshipTemplate({ id: template.id });
         expectSuccess(response);
     });
 
     test("expect a validation error for sending maxNumberOfRelationships 0", async () => {
-        const response = await coreServices1.relationshipTemplates.createOwnRelationshipTemplate({
+        const response = await transportServices1.relationshipTemplates.createOwnRelationshipTemplate({
             content: { a: "A" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString(),
             maxNumberOfRelationships: 0
@@ -81,7 +81,7 @@ describe("Template Tests", () => {
 
 describe("Serialization Errors", () => {
     test("create a template with wrong content : missing values", async () => {
-        const response = await coreServices1.relationshipTemplates.createOwnRelationshipTemplate({
+        const response = await transportServices1.relationshipTemplates.createOwnRelationshipTemplate({
             content: { a: "A", "@type": "Message" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
@@ -89,7 +89,7 @@ describe("Serialization Errors", () => {
     });
 
     test("create a template with wrong content : not existent type", async () => {
-        const response = await coreServices1.relationshipTemplates.createOwnRelationshipTemplate({
+        const response = await transportServices1.relationshipTemplates.createOwnRelationshipTemplate({
             content: { a: "A", "@type": "someNoneExistingType" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
@@ -99,8 +99,8 @@ describe("Serialization Errors", () => {
 
 describe("RelationshipTemplates query", () => {
     test("query all relationshipTemplates", async () => {
-        const template = await createTemplate(coreServices1);
-        const conditions = new QueryParamConditions(template, coreServices1)
+        const template = await createTemplate(transportServices1);
+        const conditions = new QueryParamConditions(template, transportServices1)
             .addBooleanSet("isOwn")
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
@@ -112,8 +112,8 @@ describe("RelationshipTemplates query", () => {
     });
 
     test("query own relationshipTemplates", async () => {
-        const template = await createTemplate(coreServices1);
-        const conditions = new QueryParamConditions(template, coreServices1)
+        const template = await createTemplate(transportServices1);
+        const conditions = new QueryParamConditions(template, transportServices1)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
@@ -123,8 +123,8 @@ describe("RelationshipTemplates query", () => {
     });
 
     test("query peerRelationshipTemplates", async () => {
-        const template = await exchangeTemplate(coreServices1, coreServices2);
-        const conditions = new QueryParamConditions(template, coreServices2)
+        const template = await exchangeTemplate(transportServices1, transportServices2);
+        const conditions = new QueryParamConditions(template, transportServices2)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")

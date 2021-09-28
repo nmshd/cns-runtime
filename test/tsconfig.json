@@ -23,7 +23,8 @@
         "baseUrl": "../",
         "paths": {
             "chaimodule": ["test/types/globalsals"]
-        }
+        },
+        "noEmit": true
     },
     "include": ["**/*.ts"],
     "exclude": []

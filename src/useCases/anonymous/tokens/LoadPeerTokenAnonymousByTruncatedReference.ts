@@ -3,7 +3,7 @@ import { AnonymousTokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { TokenDTO } from "../../../types";
 import { RuntimeValidator, UseCase } from "../../common";
-import { TokenMapper } from "../../core/tokens/TokenMapper";
+import { TokenMapper } from "../../transport/tokens/TokenMapper";
 
 export interface LoadPeerTokenAnonymousByTruncatedReferenceRequest {
     reference: string;

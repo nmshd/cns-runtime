@@ -1,9 +1,9 @@
 import { Realm } from "@nmshd/transport";
-import { AnonymousServices, ConsumptionServices, CoreServices, RuntimeConfig } from "../../src";
+import { AnonymousServices, ConsumptionServices, RuntimeConfig, TransportServices } from "../../src";
 import { TestRuntime } from "./TestRuntime";
 
 export interface RuntimeServices {
-    core: CoreServices;
+    transport: TransportServices;
     consumption: ConsumptionServices;
     anonymous: AnonymousServices;
 }
@@ -18,7 +18,7 @@ export class RuntimeServiceProvider {
     private static readonly _runtimeConfig: RuntimeConfig = {
         debug: false,
         realm: Realm.Prod,
-        coreLibrary: {
+        transportLibrary: {
             baseUrl: "https://stage.enmeshed.eu",
             platformClientId: "test",
             platformClientSecret: "a6owPRo8c98Ue8Z6mHoNgg5viF5teD",
@@ -41,7 +41,7 @@ export class RuntimeServiceProvider {
             const config = RuntimeServiceProvider.runtimeConfig;
 
             if (launchConfiguration.enableDatawallet) {
-                config.coreLibrary.datawalletEnabled = true;
+                config.transportLibrary.datawalletEnabled = true;
             }
 
             const runtime = new TestRuntime(config);
@@ -51,7 +51,7 @@ export class RuntimeServiceProvider {
             await runtime.start();
 
             runtimeServices.push({
-                core: runtime.coreServices,
+                transport: runtime.transportServices,
                 consumption: runtime.consumptionServices,
                 anonymous: runtime.anonymousServices
             });

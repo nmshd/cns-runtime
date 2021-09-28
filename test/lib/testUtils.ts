@@ -1,17 +1,17 @@
 import { sleep } from "@js-soft/ts-utils";
 import fs from "fs";
 import { DateTime } from "luxon";
-import { CoreServices, FileDTO, MessageDTO, RelationshipDTO, RelationshipTemplateDTO, SyncEverythingResponse, TokenDTO, UploadOwnFileRequest } from "../../src";
+import { FileDTO, MessageDTO, RelationshipDTO, RelationshipTemplateDTO, SyncEverythingResponse, TokenDTO, TransportServices, UploadOwnFileRequest } from "../../src";
 import { expectSuccess } from "./validation";
 
-export async function syncUntil(coreServices: CoreServices, until: (syncResult: SyncEverythingResponse) => boolean): Promise<SyncEverythingResponse> {
-    const { messages, relationships } = (await coreServices.account.syncEverything()).value;
+export async function syncUntil(transportServices: TransportServices, until: (syncResult: SyncEverythingResponse) => boolean): Promise<SyncEverythingResponse> {
+    const { messages, relationships } = (await transportServices.account.syncEverything()).value;
     const syncResult: SyncEverythingResponse = { messages: [...messages], relationships: [...relationships] };
 
     let iterationNumber = 0;
     while (!until(syncResult) && iterationNumber < 10) {
         await sleep(20);
-        const newSyncResult = (await coreServices.account.syncEverything()).value;
+        const newSyncResult = (await transportServices.account.syncEverything()).value;
         syncResult.messages.push(...newSyncResult.messages);
         syncResult.relationships.push(...newSyncResult.relationships);
         iterationNumber++;
@@ -19,18 +19,18 @@ export async function syncUntil(coreServices: CoreServices, until: (syncResult: 
     return syncResult;
 }
 
-export async function syncUntilHasRelationships(coreServices: CoreServices, expectedNumberOfRelationships = 1): Promise<RelationshipDTO[]> {
-    const syncResult = await syncUntil(coreServices, (syncResult) => syncResult.relationships.length >= expectedNumberOfRelationships);
+export async function syncUntilHasRelationships(transportServices: TransportServices, expectedNumberOfRelationships = 1): Promise<RelationshipDTO[]> {
+    const syncResult = await syncUntil(transportServices, (syncResult) => syncResult.relationships.length >= expectedNumberOfRelationships);
     return syncResult.relationships;
 }
 
-export async function syncUntilHasMessages(coreServices: CoreServices, expectedNumberOfMessages = 1): Promise<MessageDTO[]> {
-    const syncResult = await syncUntil(coreServices, (syncResult) => syncResult.messages.length >= expectedNumberOfMessages);
+export async function syncUntilHasMessages(transportServices: TransportServices, expectedNumberOfMessages = 1): Promise<MessageDTO[]> {
+    const syncResult = await syncUntil(transportServices, (syncResult) => syncResult.messages.length >= expectedNumberOfMessages);
     return syncResult.messages;
 }
 
-export async function uploadOwnToken(coreServices: CoreServices): Promise<TokenDTO> {
-    const response = await coreServices.tokens.createOwnToken({
+export async function uploadOwnToken(transportServices: TransportServices): Promise<TokenDTO> {
+    const response = await transportServices.tokens.createOwnToken({
         content: {
             content: "Hello"
         },
@@ -43,8 +43,8 @@ export async function uploadOwnToken(coreServices: CoreServices): Promise<TokenD
     return response.value;
 }
 
-export async function uploadFile(coreServices: CoreServices): Promise<FileDTO> {
-    const response = await coreServices.files.uploadOwnFile(await makeUploadRequest());
+export async function uploadFile(transportServices: TransportServices): Promise<FileDTO> {
+    const response = await transportServices.files.uploadOwnFile(await makeUploadRequest());
 
     expectSuccess(response);
 
@@ -64,8 +64,8 @@ export async function makeUploadRequest(values: object = {}): Promise<UploadOwnF
     };
 }
 
-export async function createTemplate(coreServices: CoreServices): Promise<RelationshipTemplateDTO> {
-    const response = await coreServices.relationshipTemplates.createOwnRelationshipTemplate({
+export async function createTemplate(transportServices: TransportServices): Promise<RelationshipTemplateDTO> {
+    const response = await transportServices.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfRelationships: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
         content: { a: "b" }
@@ -76,28 +76,28 @@ export async function createTemplate(coreServices: CoreServices): Promise<Relati
     return response.value;
 }
 
-export async function getTemplateToken(coreServices: CoreServices): Promise<TokenDTO> {
-    const template = await createTemplate(coreServices);
+export async function getTemplateToken(transportServices: TransportServices): Promise<TokenDTO> {
+    const template = await createTemplate(transportServices);
 
-    const response = await coreServices.relationshipTemplates.createTokenForOwnTemplate({ templateId: template.id });
+    const response = await transportServices.relationshipTemplates.createTokenForOwnTemplate({ templateId: template.id });
     expectSuccess(response);
 
     return response.value;
 }
 
-export async function getFileToken(coreServices: CoreServices): Promise<TokenDTO> {
-    const file = await uploadFile(coreServices);
+export async function getFileToken(transportServices: TransportServices): Promise<TokenDTO> {
+    const file = await uploadFile(transportServices);
 
-    const response = await coreServices.files.createTokenForFile({ fileId: file.id });
+    const response = await transportServices.files.createTokenForFile({ fileId: file.id });
     expectSuccess(response);
 
     return response.value;
 }
 
-export async function exchangeTemplate(coreServicesCreator: CoreServices, coreServicesRecpipient: CoreServices): Promise<RelationshipTemplateDTO> {
-    const templateToken = await getTemplateToken(coreServicesCreator);
+export async function exchangeTemplate(transportServicesCreator: TransportServices, transportServicesRecipient: TransportServices): Promise<RelationshipTemplateDTO> {
+    const templateToken = await getTemplateToken(transportServicesCreator);
 
-    const response = await coreServicesRecpipient.relationshipTemplates.loadPeerRelationshipTemplate({
+    const response = await transportServicesRecipient.relationshipTemplates.loadPeerRelationshipTemplate({
         reference: templateToken.truncatedReference
     });
     expectSuccess(response);
@@ -105,19 +105,19 @@ export async function exchangeTemplate(coreServicesCreator: CoreServices, coreSe
     return response.value;
 }
 
-export async function exchangeFile(coreServicesCreator: CoreServices, coreServicesRecpipient: CoreServices): Promise<FileDTO> {
-    const fileToken = await getFileToken(coreServicesCreator);
+export async function exchangeFile(transportServicesCreator: TransportServices, transportServicesRecipient: TransportServices): Promise<FileDTO> {
+    const fileToken = await getFileToken(transportServicesCreator);
 
-    const response = await coreServicesRecpipient.files.loadPeerFile({ reference: fileToken.truncatedReference });
+    const response = await transportServicesRecipient.files.loadPeerFile({ reference: fileToken.truncatedReference });
     expectSuccess(response);
 
     return response.value;
 }
 
-export async function exchangeToken(coreServicesCreator: CoreServices, coreServicesRecpipient: CoreServices): Promise<TokenDTO> {
-    const token = await uploadOwnToken(coreServicesCreator);
+export async function exchangeToken(transportServicesCreator: TransportServices, transportServicesRecipient: TransportServices): Promise<TokenDTO> {
+    const token = await uploadOwnToken(transportServicesCreator);
 
-    const response = await coreServicesRecpipient.tokens.loadPeerToken({
+    const response = await transportServicesRecipient.tokens.loadPeerToken({
         reference: token.truncatedReference,
         ephemeral: false
     });
@@ -126,8 +126,8 @@ export async function exchangeToken(coreServicesCreator: CoreServices, coreServi
     return response.value;
 }
 
-export async function sendMessage(coreServices: CoreServices, recipient: string): Promise<MessageDTO> {
-    const response = await coreServices.messages.sendMessage({
+export async function sendMessage(transportServices: TransportServices, recipient: string): Promise<MessageDTO> {
+    const response = await transportServices.messages.sendMessage({
         recipients: [recipient],
         content: {
             "@type": "Mail",
@@ -142,10 +142,10 @@ export async function sendMessage(coreServices: CoreServices, recipient: string)
     return response.value;
 }
 
-export async function exchangeMessage(coreServices1: CoreServices, coreServices2: CoreServices): Promise<MessageDTO> {
-    const coreService2Address = (await getRelationship(coreServices1)).peer;
-    const messageId = (await sendMessage(coreServices1, coreService2Address)).id;
-    const messages = await syncUntilHasMessages(coreServices2);
+export async function exchangeMessage(transportServicesCreator: TransportServices, transportServicesRecipient: TransportServices): Promise<MessageDTO> {
+    const recipientAddress = (await getRelationship(transportServicesCreator)).peer;
+    const messageId = (await sendMessage(transportServicesCreator, recipientAddress)).id;
+    const messages = await syncUntilHasMessages(transportServicesRecipient);
     expect(messages).toHaveLength(1);
 
     const message = messages[0];
@@ -154,8 +154,8 @@ export async function exchangeMessage(coreServices1: CoreServices, coreServices2
     return message;
 }
 
-export async function getRelationship(coreServices: CoreServices): Promise<RelationshipDTO> {
-    const response = await coreServices.relationships.getRelationships({});
+export async function getRelationship(transportServices: TransportServices): Promise<RelationshipDTO> {
+    const response = await transportServices.relationships.getRelationships({});
 
     expectSuccess(response);
     expect(response.value).toHaveLength(1);
@@ -163,26 +163,26 @@ export async function getRelationship(coreServices: CoreServices): Promise<Relat
     return response.value[0];
 }
 
-export async function establishRelationship(coreServices1: CoreServices, coreServices2: CoreServices): Promise<void> {
-    const template = await exchangeTemplate(coreServices1, coreServices2);
+export async function establishRelationship(transportServices1: TransportServices, transportServices2: TransportServices): Promise<void> {
+    const template = await exchangeTemplate(transportServices1, transportServices2);
 
-    const createRelationshipResponse = await coreServices2.relationships.createRelationship({
+    const createRelationshipResponse = await transportServices2.relationships.createRelationship({
         templateId: template.id,
         content: { a: "b" }
     });
     expectSuccess(createRelationshipResponse);
 
-    const relationships = await syncUntilHasRelationships(coreServices1);
+    const relationships = await syncUntilHasRelationships(transportServices1);
     expect(relationships).toHaveLength(1);
 
-    const acceptResponse = await coreServices1.relationships.acceptRelationshipChange({
+    const acceptResponse = await transportServices1.relationships.acceptRelationshipChange({
         relationshipId: relationships[0].id,
         changeId: relationships[0].changes[0].id,
         content: { a: "b" }
     });
     expectSuccess(acceptResponse);
 
-    const relationships2 = await syncUntilHasRelationships(coreServices2);
+    const relationships2 = await syncUntilHasRelationships(transportServices2);
     expect(relationships2).toHaveLength(1);
 }
 

@@ -1,4 +1,4 @@
-import { CoreServices } from "../../src";
+import { TransportServices } from "../../src";
 import {
     establishRelationship,
     exchangeMessage,
@@ -11,44 +11,44 @@ import {
     uploadFile
 } from "../lib";
 
-const coreServiceProvider = new RuntimeServiceProvider();
-let coreServices1: CoreServices;
-let coreServices2: CoreServices;
+const serviceProvider = new RuntimeServiceProvider();
+let transportServices1: TransportServices;
+let transportServices2: TransportServices;
 
 beforeAll(async () => {
-    const runtimeServices = await coreServiceProvider.launch(2);
-    coreServices1 = runtimeServices[0].core;
-    coreServices2 = runtimeServices[1].core;
-    await establishRelationship(coreServices1, coreServices2);
+    const runtimeServices = await serviceProvider.launch(2);
+    transportServices1 = runtimeServices[0].transport;
+    transportServices2 = runtimeServices[1].transport;
+    await establishRelationship(transportServices1, transportServices2);
 }, 30000);
 
-afterAll(() => coreServiceProvider.stop());
+afterAll(() => serviceProvider.stop());
 
 describe("Messaging", () => {
-    let coreService2Address: string;
+    let transportService2Address: string;
     let fileId: string;
     let messageId: string;
 
     beforeAll(async () => {
-        const file = await uploadFile(coreServices1);
+        const file = await uploadFile(transportServices1);
         fileId = file.id;
 
-        const relationship = await getRelationship(coreServices1);
-        coreService2Address = relationship.peer;
+        const relationship = await getRelationship(transportServices1);
+        transportService2Address = relationship.peer;
     });
 
-    test("send a Message from CoreService1 to CoreService2", async () => {
-        expect(coreService2Address).toBeDefined();
+    test("send a Message from TransportService1 to TransportService2", async () => {
+        expect(transportService2Address).toBeDefined();
         expect(fileId).toBeDefined();
 
-        const response = await coreServices1.messages.sendMessage({
-            recipients: [coreService2Address],
+        const response = await transportServices1.messages.sendMessage({
+            recipients: [transportService2Address],
             content: {
                 "@type": "Mail",
                 body: "b",
                 cc: [],
                 subject: "a",
-                to: [coreService2Address]
+                to: [transportService2Address]
             },
             attachments: [fileId]
         });
@@ -60,7 +60,7 @@ describe("Messaging", () => {
     test("receive the message in a sync run", async () => {
         expect(messageId).toBeDefined();
 
-        const messages = await syncUntilHasMessages(coreServices2);
+        const messages = await syncUntilHasMessages(transportServices2);
         expect(messages).toHaveLength(1);
 
         const message = messages[0];
@@ -70,14 +70,14 @@ describe("Messaging", () => {
             body: "b",
             cc: [],
             subject: "a",
-            to: [coreService2Address]
+            to: [transportService2Address]
         });
     });
 
-    test("receive the message on CoreService2 in /Messages", async () => {
+    test("receive the message on TransportService2 in /Messages", async () => {
         expect(messageId).toBeDefined();
 
-        const response = await coreServices2.messages.getMessages({});
+        const response = await transportServices2.messages.getMessages({});
         expectSuccess(response);
         expect(response.value).toHaveLength(1);
 
@@ -88,14 +88,14 @@ describe("Messaging", () => {
             body: "b",
             cc: [],
             subject: "a",
-            to: [coreService2Address]
+            to: [transportService2Address]
         });
     });
 
-    test("receive the message on CoreService2 in /Messages/{id}", async () => {
+    test("receive the message on TransportService2 in /Messages/{id}", async () => {
         expect(messageId).toBeDefined();
 
-        const response = await coreServices2.messages.getMessage({ id: messageId });
+        const response = await transportServices2.messages.getMessage({ id: messageId });
         expectSuccess(response);
     });
 });
@@ -103,7 +103,7 @@ describe("Messaging", () => {
 describe("Message errors", () => {
     const fakeAddress = "id1PNvUP4jHD74qo6usnWNoaFGFf33MXZi6c";
     test("should throw correct error for empty 'to' in the Message", async () => {
-        const result = await coreServices1.messages.sendMessage({
+        const result = await transportServices1.messages.sendMessage({
             recipients: [fakeAddress],
             content: {
                 "@type": "Mail",
@@ -116,7 +116,7 @@ describe("Message errors", () => {
     });
 
     test("should throw correct error for missing 'to' in the Message", async () => {
-        const result = await coreServices1.messages.sendMessage({
+        const result = await transportServices1.messages.sendMessage({
             recipients: [fakeAddress],
             content: {
                 "@type": "Mail",
@@ -130,8 +130,8 @@ describe("Message errors", () => {
 
 describe("Message query", () => {
     test("query messages", async () => {
-        const message = await exchangeMessage(coreServices1, coreServices2);
-        const conditions = new QueryParamConditions(message, coreServices1)
+        const message = await exchangeMessage(transportServices1, transportServices2);
+        const conditions = new QueryParamConditions(message, transportServices1)
             .addDateSet("createdAt")
             .addDateSet("lastMessageSentAt")
             .addStringSet("createdBy")

@@ -1,7 +1,7 @@
 import { AttributeJSON, AttributesChangeRequestJSON, AttributesShareRequestJSON, RequestJSON } from "@nmshd/content";
 import { CoreAddress, IdentityController, RelationshipStatus } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { CoreServices } from "../extensibility";
+import { TransportServices } from "../extensibility";
 import { ConsumptionServices } from "../extensibility/ConsumptionServices";
 import { ConsumptionAttributeDTO, FileDTO, MessageDTO, RecipientDTO, RelationshipDTO } from "../types";
 import { RuntimeErrors } from "../useCases";
@@ -11,15 +11,15 @@ import { AttributeDVO } from "./consumption/AttributeDVO";
 import { AttributesChangeRequestDVO } from "./consumption/AttributesChangeRequestDVO";
 import { AttributesShareRequestDVO } from "./consumption/AttributesShareRequestDVO";
 import { RequestDVO } from "./consumption/RequestDVO";
-import { FileDVO } from "./core/FileDVO";
-import { IdentityDVO, OrganizationProperties, PersonProperties, SelfDVO } from "./core/IdentityDVO";
-import { MessageDVO, MessageStatus } from "./core/MessageDVO";
 import { DataViewObject } from "./DataViewObject";
 import { DataViewTranslateable } from "./DataViewTranslateable";
+import { FileDVO } from "./transport/FileDVO";
+import { IdentityDVO, OrganizationProperties, PersonProperties, SelfDVO } from "./transport/IdentityDVO";
+import { MessageDVO, MessageStatus } from "./transport/MessageDVO";
 
 export class DataViewExpander {
     public constructor(
-        @Inject private readonly core: CoreServices,
+        @Inject private readonly tranport: TransportServices,
         @Inject private readonly consumption: ConsumptionServices,
         @Inject private readonly identityController: IdentityController
     ) {}
@@ -144,7 +144,7 @@ export class DataViewExpander {
 
         return {
             id: message.id,
-            name: DataViewTranslateable.core.messageName,
+            name: DataViewTranslateable.transport.messageName,
             date: message.createdAt,
             type: "MessageDVO",
             message: {
@@ -193,7 +193,7 @@ export class DataViewExpander {
                 continue;
             }
 
-            const result = await this.core.relationships.getRelationshipByAddress({
+            const result = await this.tranport.relationships.getRelationshipByAddress({
                 address: recipient.toString()
             });
             if (result.isSuccess) {
@@ -323,7 +323,7 @@ export class DataViewExpander {
         let applyToObject;
         if (attributesChangeRequest.applyTo) {
             if (!this.identityController.isMe(CoreAddress.from(attributesChangeRequest.applyTo))) {
-                const result = await this.core.relationships.getRelationshipByAddress({
+                const result = await this.tranport.relationships.getRelationshipByAddress({
                     address: attributesChangeRequest.applyTo
                 });
                 if (result.isSuccess) {
@@ -407,7 +407,7 @@ export class DataViewExpander {
             return this.expandSelf();
         }
 
-        const result = await this.core.relationships.getRelationshipByAddress({ address: address });
+        const result = await this.tranport.relationships.getRelationshipByAddress({ address: address });
         if (result.isError) {
             throw result.error;
         }
@@ -430,15 +430,15 @@ export class DataViewExpander {
 
         let statusText = "";
         if (relationship.status === RelationshipStatus.Pending && this.identityController.isMe(CoreAddress.from(relationship.changes[0].request.createdBy))) {
-            statusText = DataViewTranslateable.core.relationshipOutgoing;
+            statusText = DataViewTranslateable.transport.relationshipOutgoing;
         } else if (relationship.status === RelationshipStatus.Pending) {
-            statusText = DataViewTranslateable.core.relationshipIncoming;
+            statusText = DataViewTranslateable.transport.relationshipIncoming;
         } else if (relationship.status === RelationshipStatus.Rejected) {
-            statusText = DataViewTranslateable.core.relationshipRejected;
+            statusText = DataViewTranslateable.transport.relationshipRejected;
         } else if (relationship.status === RelationshipStatus.Revoked) {
-            statusText = DataViewTranslateable.core.relationshipRevoked;
+            statusText = DataViewTranslateable.transport.relationshipRevoked;
         } else if (relationship.status === RelationshipStatus.Active) {
-            statusText = DataViewTranslateable.core.relationshipActive;
+            statusText = DataViewTranslateable.transport.relationshipActive;
         }
 
         const initials = (name.match(/\b\w/g) ?? []).join("");
@@ -472,7 +472,7 @@ export class DataViewExpander {
     }
 
     public async expandFileId(id: string): Promise<FileDVO> {
-        const result = await this.core.files.getFile({ id: id });
+        const result = await this.tranport.files.getFile({ id: id });
         if (result.isError) {
             throw result.error;
         }
