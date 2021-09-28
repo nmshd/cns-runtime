@@ -14,6 +14,9 @@ jobs:
         with:
           node-version: 14
       - run: bash .ci/build.sh
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          COMMIT_HASH: ${{ github.sha }}
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.6.0
       - run: bash .ci/test.sh
