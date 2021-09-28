@@ -1,0 +1,9 @@
+---
+specVersion: "2.0"
+type: module
+resources:
+  configuration:
+    paths:
+      /resources/nmshd.runtime: ./lib-web
+metadata:
+  name: nmshd.runtime
