@@ -1,66 +1,20 @@
-import { ServalBuildInformation } from "@js-soft/ts-serval";
-import { ConsumptionBuildInformation } from "@nmshd/consumption";
-import { ContentBuildInformation } from "@nmshd/content";
-import { CryptoBuildInformation } from "@nmshd/crypto";
-import { TransportBuildInformation } from "@nmshd/transport";
+import { buildInformation as servalBuildInformation } from "@js-soft/ts-serval";
+import { buildInformation as consumptionBuildInformation } from "@nmshd/consumption";
+import { buildInformation as contentBuildInformation } from "@nmshd/content";
+import { buildInformation as cryptoBuildInformation } from "@nmshd/crypto";
+import { buildInformation as transportBuildInformation } from "@nmshd/transport";
 
-export interface ILibraryBuildInformation {
-    version: string;
-    build: string;
-    date: string;
-    commit: string;
-}
-
-export interface IRuntimeVersionInfo {
-    runtime: ILibraryBuildInformation;
-    transport: ILibraryBuildInformation;
-    crypto: ILibraryBuildInformation;
-    serval: ILibraryBuildInformation;
-    consumption: ILibraryBuildInformation;
-    content: ILibraryBuildInformation;
-}
-
-export class RuntimeBuildInformation {
-    public readonly version: string = "{{version}}";
-    public readonly build: string = "{{build}}";
-    public readonly date: string = "{{date}}";
-    public readonly commit: string = "{{commit}}";
-    public readonly dependencies: object;
-
-    public readonly transport = TransportBuildInformation.info;
-    public readonly crypto = CryptoBuildInformation.info;
-    public readonly serval = ServalBuildInformation.info;
-    public readonly consumption = ConsumptionBuildInformation.info;
-    public readonly content = ContentBuildInformation.info;
-
-    private constructor() {
-        try {
-            // eslint-disable-next-line @typescript-eslint/quotes
-            this.dependencies = JSON.parse(`{{dependencies}}`);
-        } catch (e) {
-            this.dependencies = {};
-        }
+export const buildInformation = {
+    version: "{{version}}",
+    build: "{{build}}",
+    date: "{{date}}",
+    commit: "{{commit}}",
+    dependencies: "{{dependencies}}",
+    libraries: {
+        serval: servalBuildInformation,
+        consumption: consumptionBuildInformation,
+        content: contentBuildInformation,
+        crypto: cryptoBuildInformation,
+        transport: transportBuildInformation
     }
-
-    public toJson(): IRuntimeVersionInfo {
-        return {
-            runtime: this.buildInformationToJson(this),
-            transport: this.buildInformationToJson(this.transport),
-            crypto: this.buildInformationToJson(this.crypto),
-            serval: this.buildInformationToJson(this.serval),
-            consumption: this.buildInformationToJson(this.consumption),
-            content: this.buildInformationToJson(this.content)
-        };
-    }
-
-    private buildInformationToJson(buildInformation: ILibraryBuildInformation): ILibraryBuildInformation {
-        return {
-            version: buildInformation.version,
-            build: buildInformation.build,
-            date: buildInformation.date,
-            commit: buildInformation.commit
-        };
-    }
-
-    public static readonly info: RuntimeBuildInformation = new RuntimeBuildInformation();
-}
+};
