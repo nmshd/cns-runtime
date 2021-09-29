@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/runtime",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "The Enmeshed client runtime.",
     "homepage": "https://enmeshed.eu",
     "license": "UNLICENSED",
@@ -45,12 +45,12 @@
     "dependencies": {
         "@js-soft/docdb-querytranslator": "1.0.1",
         "@js-soft/logging-abstractions": "1.0.0",
-        "@js-soft/ts-serval": "1.0.0",
+        "@js-soft/ts-serval": "1.0.2",
         "@js-soft/ts-utils": "1.0.1",
-        "@nmshd/consumption": "1.0.0",
-        "@nmshd/content": "1.0.0",
-        "@nmshd/crypto": "1.0.0",
-        "@nmshd/transport": "1.0.0",
+        "@nmshd/consumption": "1.0.1",
+        "@nmshd/content": "1.0.1",
+        "@nmshd/crypto": "1.0.1",
+        "@nmshd/transport": "1.0.1",
         "fluent-ts-validator": "3.0.2",
         "luxon": "^2.0.2",
         "qrcode": "1.4.4",
@@ -80,7 +80,7 @@
         "ts-node": "^10.2.1",
         "tsconfig-paths": "^3.11.0",
         "typescript": "^4.4.3",
-        "webpack": "^5.54.0",
+        "webpack": "^5.55.0",
         "webpack-cli": "^4.8.0"
     },
     "publishConfig": {
