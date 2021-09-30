@@ -31,7 +31,7 @@ fi
 
 DATE=$(date -u --iso-8601=seconds)
 
-TARGET_FILE="./dist/BuildInformation.js"
+TARGET_FILE="./dist/buildInformation.js"
 
 echo "Writing the following properties into $TARGET_FILE"
 echo "  - DEPENDENCIES: $DEPENDENCIES"

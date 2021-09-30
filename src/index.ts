@@ -1,4 +1,4 @@
-export * from "./BuildInformation";
+export * from "./buildInformation";
 export * from "./dataViews";
 export * from "./eventBus";
 export * from "./events";
