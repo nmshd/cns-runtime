@@ -3,7 +3,7 @@
     "version": "1.0.1",
     "description": "The Enmeshed client runtime.",
     "homepage": "https://enmeshed.eu",
-    "license": "UNLICENSED",
+    "license": "MIT",
     "author": "j&s-soft GmbH",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
