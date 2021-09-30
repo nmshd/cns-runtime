@@ -47,7 +47,7 @@
         "@js-soft/logging-abstractions": "1.0.0",
         "@js-soft/ts-serval": "1.0.2",
         "@js-soft/ts-utils": "1.0.1",
-        "@nmshd/consumption": "1.0.2",
+        "@nmshd/consumption": "1.0.3",
         "@nmshd/content": "1.0.2",
         "@nmshd/crypto": "1.0.2",
         "@nmshd/transport": "1.0.2",
