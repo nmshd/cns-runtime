@@ -13,6 +13,12 @@ Both the Enmeshed Connector and the official Enmeshed Apps implement this runtim
 
 The documentation for this project is currently under construction.
 
+## Feedback
+
+Please file any bugs or feature requests by creating an [issue](https://github.com/nmshd/feedback/issues).
+
+Share your feedback with the Enmeshed team by contributing to the [discussions](https://github.com/nmshd/feedback/discussions).
+
 ## Contribute
 
 Currently contribution to this project is not possible. This will change soon.
