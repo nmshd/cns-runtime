@@ -1,19 +1,15 @@
 import { Result } from "@js-soft/ts-utils";
-import { BackboneIds, CoreId, File, FileController } from "@nmshd/transport";
+import { CoreId, File, FileController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { RuntimeErrors, UseCase } from "../../common";
+import { SchemaRepository } from "../../common/SchemaRepository";
+import { SchemaValidator } from "../../common/SchemaValidator";
 import { FileMapper } from "./FileMapper";
 import { DownloadFileRequest } from "./requests/DownloadFileRequest";
 
 export { DownloadFileRequest };
 
-class DownloadFileRequestValidator extends RuntimeValidator<DownloadFileRequest> {
-    public constructor() {
-        super();
-
-        this.validateIf((x) => x.id).fulfills(IdValidator.required(BackboneIds.file));
-    }
-}
+// this.validateIf((x) => x.id).fulfills(IdValidator.required(BackboneIds.file));
 
 export interface DownloadFileResponse {
     content: Uint8Array;
@@ -22,8 +18,8 @@ export interface DownloadFileResponse {
 }
 
 export class DownloadFileUseCase extends UseCase<DownloadFileRequest, DownloadFileResponse> {
-    public constructor(@Inject private readonly fileController: FileController, @Inject validator: DownloadFileRequestValidator) {
-        super(validator);
+    public constructor(@Inject private readonly fileController: FileController, @Inject schemas: SchemaRepository) {
+        super(new SchemaValidator(schemas, "DownloadFileRequest"));
     }
 
     protected async executeInternal(request: DownloadFileRequest): Promise<Result<DownloadFileResponse>> {
