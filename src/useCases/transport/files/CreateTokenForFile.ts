@@ -10,22 +10,17 @@ import { CreateTokenForFileRequest } from "./requests/CreateTokenForFileRequest"
 
 export { CreateTokenForFileRequest };
 
-class CreateTokenForFileRequestValidator extends SchemaValidator<CreateTokenForFileRequest> {
-    constructor(@Inject schemas: SchemaRepository) {
-        super(schemas, "CreateTokenForFileRequest");
-        // this.validateIfString((x) => x.fileId).fulfills(IdValidator.required(BackboneIds.file));
-        // this.validateIfString((x) => x.expiresAt).fulfills(DateValidator.optional());
-    }
-}
+// this.validateIfString((x) => x.fileId).fulfills(IdValidator.required(BackboneIds.file));
+// this.validateIfString((x) => x.expiresAt).fulfills(DateValidator.optional());
 
 export class CreateTokenForFileUseCase extends UseCase<CreateTokenForFileRequest, TokenDTO> {
     public constructor(
         @Inject private readonly fileController: FileController,
         @Inject private readonly tokenController: TokenController,
         @Inject private readonly accountController: AccountController,
-        @Inject validator: CreateTokenForFileRequestValidator
+        @Inject schemas: SchemaRepository
     ) {
-        super(validator);
+        super(new SchemaValidator(schemas, "CreateTokenForFileRequest"));
     }
 
     protected async executeInternal(request: CreateTokenForFileRequest): Promise<Result<TokenDTO>> {
