@@ -12,10 +12,7 @@ export { CreateTokenForFileRequest };
 
 class CreateTokenForFileRequestValidator extends SchemaValidator<CreateTokenForFileRequest> {
     constructor(@Inject schemas: SchemaRepository) {
-        let schema = schemas.getSchema("CreateTokenForFileRequest");
-        let validateFunction = schemas.getValidationFunction("CreateTokenForFileRequest");
-
-        super(schema, validateFunction);
+        super(schemas, "CreateTokenForFileRequest");
         // this.validateIfString((x) => x.fileId).fulfills(IdValidator.required(BackboneIds.file));
         // this.validateIfString((x) => x.expiresAt).fulfills(DateValidator.optional());
     }

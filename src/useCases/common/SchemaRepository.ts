@@ -24,7 +24,7 @@ export class SchemaRepository {
         return this.generator.createSchema(type);
     }
 
-    public getValidationFunction(type: string): ValidateFunction {
-        return this.compiler.compile(this.generator.createSchema(type));
+    public getValidationFunction(schema: Definition): ValidateFunction {
+        return this.compiler.compile(schema);
     }
 }
