@@ -41,6 +41,7 @@ import { RuntimeConfig } from "./RuntimeConfig";
 import { RuntimeLoggerFactory } from "./RuntimeLoggerFactory";
 import { RuntimeHealth } from "./types";
 import { RuntimeErrors } from "./useCases";
+import { SchemaRepository } from "./useCases/common/SchemaRepository";
 
 export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
     protected logger: ILogger;
@@ -255,6 +256,10 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         Container.bind(AnonymousTokenController)
             .factory(() => new AnonymousTokenController(this.transport.config))
+            .scope(Scope.Singleton);
+
+        Container.bind(SchemaRepository)
+            .factory(() => new SchemaRepository())
             .scope(Scope.Singleton);
     }
 

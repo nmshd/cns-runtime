@@ -1,19 +1,23 @@
 import { Result } from "@js-soft/ts-utils";
-import { AccountController, BackboneIds, CoreDate, CoreId, File, FileController, TokenContentFile, TokenController } from "@nmshd/transport";
+import { AccountController, CoreDate, CoreId, File, FileController, TokenContentFile, TokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { TokenDTO } from "../../../types";
-import { DateValidator, IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { RuntimeErrors, UseCase } from "../../common";
+import { SchemaRepository } from "../../common/SchemaRepository";
+import { SchemaValidator } from "../../common/SchemaValidator";
 import { TokenMapper } from "../tokens/TokenMapper";
 import { CreateTokenForFileRequest } from "./requests/CreateTokenForFileRequest";
 
 export { CreateTokenForFileRequest };
 
-class CreateTokenForFileRequestValidator extends RuntimeValidator<CreateTokenForFileRequest> {
-    public constructor() {
-        super();
+class CreateTokenForFileRequestValidator extends SchemaValidator<CreateTokenForFileRequest> {
+    constructor(@Inject schemas: SchemaRepository) {
+        let schema = schemas.getSchema("CreateTokenForFileRequest");
+        let validateFunction = schemas.getValidationFunction("CreateTokenForFileRequest");
 
-        this.validateIfString((x) => x.fileId).fulfills(IdValidator.required(BackboneIds.file));
-        this.validateIfString((x) => x.expiresAt).fulfills(DateValidator.optional());
+        super(schema, validateFunction);
+        // this.validateIfString((x) => x.fileId).fulfills(IdValidator.required(BackboneIds.file));
+        // this.validateIfString((x) => x.expiresAt).fulfills(DateValidator.optional());
     }
 }
 
