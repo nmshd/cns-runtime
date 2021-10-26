@@ -86,24 +86,6 @@ describe("File Upload", () => {
         const response = await transportServices1.files.uploadOwnFile(await makeUploadRequest({ expiresAt: "" }));
         expectError(response, "'expiresAt' must be in the future.", "error.runtime.validation.invalidPropertyValue");
     });
-
-    test("Can generate token for uploaded file", async () => {
-        const response = await transportServices1.files.createTokenForFile({ fileId: file.id });
-        expectSuccess(response);
-    });
-
-    test("Can generate token for uploaded file with explicit expiration date", async () => {
-        const expiresAt = DateTime.now().plus({ minutes: 5 }).toString();
-        const response = await transportServices1.files.createTokenForFile({ fileId: file.id, expiresAt });
-
-        expectSuccess(response);
-    });
-
-    test("Cannot generate token for uploaded file with wrong expiration date", async () => {
-        const response = await transportServices1.files.createTokenForFile({ fileId: file.id, expiresAt: "invalid date" });
-
-        expectError(response, "expiresAt must match format date-time", "error.runtime.validation.invalidPropertyValue");
-    });
 });
 
 describe("Get file", () => {
@@ -188,6 +170,58 @@ describe("Files query", () => {
             .addStringSet("title");
 
         await conditions.executeTests((c, q) => c.files.getFiles({ query: q, ownerRestriction: OwnerRestriction.Peer }));
+    });
+});
+
+describe("Can create token for file", () => {
+    let file: FileDTO;
+
+    beforeAll(async () => {
+        file = await uploadFile(transportServices1);
+    });
+
+    test("Can generate token for uploaded file", async () => {
+        const response = await transportServices1.files.createTokenForFile({ fileId: file.id });
+        expectSuccess(response);
+    });
+
+    test("Can generate token for uploaded file with explicit expiration date", async () => {
+        const expiresAt = DateTime.now().plus({ minutes: 5 }).toString();
+        const response = await transportServices1.files.createTokenForFile({ fileId: file.id, expiresAt });
+
+        expectSuccess(response);
+    });
+
+    test("Cannot generate token for uploaded file with wrong expiration date", async () => {
+        const response = await transportServices1.files.createTokenForFile({ fileId: file.id, expiresAt: "invalid date" });
+
+        expectError(response, "expiresAt must match format date-time", "error.runtime.validation.invalidPropertyValue");
+    });
+});
+
+describe("Can create token QR code for file", () => {
+    let file: FileDTO;
+
+    beforeAll(async () => {
+        file = await uploadFile(transportServices1);
+    });
+
+    test("Can generate token for uploaded file", async () => {
+        const response = await transportServices1.files.createTokenQrCodeForFile({ fileId: file.id });
+        expectSuccess(response);
+    });
+
+    test("Can generate token for uploaded file with explicit expiration date", async () => {
+        const expiresAt = DateTime.now().plus({ minutes: 5 }).toString();
+        const response = await transportServices1.files.createTokenQrCodeForFile({ fileId: file.id, expiresAt });
+
+        expectSuccess(response);
+    });
+
+    test("Cannot generate token for uploaded file with wrong expiration date", async () => {
+        const response = await transportServices1.files.createTokenQrCodeForFile({ fileId: file.id, expiresAt: "invalid date" });
+
+        expectError(response, "expiresAt must match format date-time", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
