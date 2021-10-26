@@ -102,7 +102,7 @@ describe("File Upload", () => {
     test("Cannot generate token for uploaded file with wrong expiration date", async () => {
         const response = await transportServices1.files.createTokenForFile({ fileId: file.id, expiresAt: "invalid date" });
 
-        expectError(response, "expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "expiresAt must match format date-time", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
