@@ -5,12 +5,9 @@ import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
 import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
+import { LoadPeerFileRequest } from "./requests/LoadPeerFileRequest";
 
-export interface LoadPeerFileRequest {
-    id?: string;
-    secretKey?: string;
-    reference?: string;
-}
+export { LoadPeerFileRequest };
 
 class LoadPeerFileRequestValidator extends RuntimeValidator<LoadPeerFileRequest> {
     public constructor() {

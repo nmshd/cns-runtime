@@ -4,10 +4,9 @@ import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
 import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
+import { GetFileRequest } from "./requests/GetFileRequest";
 
-export interface GetFileRequest {
-    id: string;
-}
+export { GetFileRequest };
 
 class GetFileRequestValidator extends RuntimeValidator<GetFileRequest> {
     public constructor() {

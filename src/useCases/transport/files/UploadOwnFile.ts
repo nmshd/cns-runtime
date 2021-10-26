@@ -6,15 +6,9 @@ import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
 import { RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
+import { UploadOwnFileRequest } from "./requests/UploadOwnFileRequest";
 
-export interface UploadOwnFileRequest {
-    content: Uint8Array;
-    filename: string;
-    mimetype: string;
-    expiresAt: string;
-    title: string;
-    description?: string;
-}
+export { UploadOwnFileRequest };
 
 class UploadOwnFileRequestValidator extends RuntimeValidator<UploadOwnFileRequest> {
     private _maxFileSize: number;

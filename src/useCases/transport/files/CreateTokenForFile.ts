@@ -4,12 +4,9 @@ import { Inject } from "typescript-ioc";
 import { TokenDTO } from "../../../types";
 import { DateValidator, IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { TokenMapper } from "../tokens/TokenMapper";
+import { CreateTokenForFileRequest } from "./requests/CreateTokenForFileRequest";
 
-export interface CreateTokenForFileRequest {
-    fileId: string;
-    expiresAt?: string;
-    ephemeral?: boolean;
-}
+export { CreateTokenForFileRequest };
 
 class CreateTokenForFileRequestValidator extends RuntimeValidator<CreateTokenForFileRequest> {
     public constructor() {

@@ -6,11 +6,9 @@ import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
 import { OwnerRestriction, RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
+import { GetFilesRequest } from "./requests/GetFilesRequest";
 
-export interface GetFilesRequest {
-    query?: any;
-    ownerRestriction?: OwnerRestriction;
-}
+export { GetFilesRequest };
 
 export class GetFilesUseCase extends UseCase<GetFilesRequest, FileDTO[]> {
     private static readonly queryTranslator = new QueryTranslator({

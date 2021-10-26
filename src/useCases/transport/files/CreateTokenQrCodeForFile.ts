@@ -2,11 +2,9 @@ import { Result } from "@js-soft/ts-utils";
 import { BackboneIds, CoreDate, CoreId, File, FileController, TokenContentFile, TokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { DateValidator, IdValidator, QRCode, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { CreateTokenQrCodeForFileRequest } from "./requests/CreateTokenQrCodeForFileRequest";
 
-export interface CreateTokenQrCodeForFileRequest {
-    fileId: string;
-    expiresAt?: string;
-}
+export { CreateTokenQrCodeForFileRequest };
 
 class CreateTokenQrCodeForFileRequestValidator extends RuntimeValidator<CreateTokenQrCodeForFileRequest> {
     public constructor() {

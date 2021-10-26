@@ -3,10 +3,9 @@ import { BackboneIds, CoreId, File, FileController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
+import { DownloadFileRequest } from "./requests/DownloadFileRequest";
 
-export interface DownloadFileRequest {
-    id: string;
-}
+export { DownloadFileRequest };
 
 class DownloadFileRequestValidator extends RuntimeValidator<DownloadFileRequest> {
     public constructor() {
