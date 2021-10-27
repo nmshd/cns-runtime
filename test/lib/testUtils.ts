@@ -1,7 +1,18 @@
 import { sleep } from "@js-soft/ts-utils";
 import fs from "fs";
 import { DateTime } from "luxon";
-import { FileDTO, MessageDTO, RelationshipDTO, RelationshipTemplateDTO, SyncEverythingResponse, TokenDTO, TransportServices, UploadOwnFileRequest } from "../../src";
+import {
+    CreateTokenForFileRequest,
+    CreateTokenQrCodeForFileRequest,
+    FileDTO,
+    MessageDTO,
+    RelationshipDTO,
+    RelationshipTemplateDTO,
+    SyncEverythingResponse,
+    TokenDTO,
+    TransportServices,
+    UploadOwnFileRequest
+} from "../../src";
 import { expectSuccess } from "./validation";
 
 export async function syncUntil(transportServices: TransportServices, until: (syncResult: SyncEverythingResponse) => boolean): Promise<SyncEverythingResponse> {
@@ -49,6 +60,19 @@ export async function uploadFile(transportServices: TransportServices): Promise<
     expectSuccess(response);
 
     return response.value;
+}
+
+export function createToken(
+    transportServices: TransportServices,
+    request: CreateTokenForFileRequest | CreateTokenQrCodeForFileRequest,
+    tokenType: "file" | "qrcode"
+): Promise<any> {
+    switch (tokenType) {
+        case "file":
+            return transportServices.files.createTokenForFile(request as CreateTokenForFileRequest);
+        case "qrcode":
+            return transportServices.files.createTokenQrCodeForFile(request as CreateTokenQrCodeForFileRequest);
+    }
 }
 
 // Override the default upload request with values
