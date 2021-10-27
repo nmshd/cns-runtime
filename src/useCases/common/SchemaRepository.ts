@@ -1,3 +1,4 @@
+import { BackboneIds } from "@nmshd/transport";
 import Ajv, { ValidateFunction } from "ajv";
 import addFormats from "ajv-formats";
 import { join as joinPath } from "path";
@@ -9,18 +10,37 @@ const config = {
     type: "*"
 };
 
+const customFormats: Array<Array<string>> = [
+    ["bkb-file", "FIL[A-Za-z0-9]{17}"],
+    ["bkb-relationship", "REL[A-Za-z0-9]{17}"],
+    ["bkb-relationshipRequest", "RRQ[A-Za-z0-9]{17}"],
+    ["bkb-message", "MSG[A-Za-z0-9]{17}"],
+    ["bkb-relationshipTemplate", "RLT[A-Za-z0-9]{17}"],
+    ["bkb-token", "TOK[A-Za-z0-9]{17}"],
+    ["bkb-relationshipChange", "RCH[A-Za-z0-9]{17}"],
+    ["bkb-device", "DVC[A-Za-z0-9]{17}"]
+];
+
 export class SchemaRepository {
     private generator: SchemaGenerator;
     private compiler: Ajv;
 
     constructor() {
-        console.log(config.path, config.tsconfig);
         this.generator = createGenerator(config);
         this.compiler = new Ajv();
         addFormats(this.compiler);
+
+        this.addCustomFormats();
+    }
+
+    private addCustomFormats() {
+        customFormats.forEach(([name, format]) => {
+            this.compiler.addFormat(name, format);
+        });
     }
 
     public getSchema(type: string): Definition {
+        BackboneIds;
         return this.generator.createSchema(type);
     }
 

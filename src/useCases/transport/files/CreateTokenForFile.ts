@@ -11,7 +11,6 @@ import { CreateTokenForFileRequest } from "./requests/CreateTokenForFileRequest"
 export { CreateTokenForFileRequest };
 
 // this.validateIfString((x) => x.fileId).fulfills(IdValidator.required(BackboneIds.file));
-// this.validateIfString((x) => x.expiresAt).fulfills(DateValidator.optional());
 
 export class CreateTokenForFileUseCase extends UseCase<CreateTokenForFileRequest, TokenDTO> {
     public constructor(

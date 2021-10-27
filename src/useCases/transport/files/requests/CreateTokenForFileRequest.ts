@@ -1,4 +1,7 @@
 export interface CreateTokenForFileRequest {
+    /**
+     * @format bkb-file
+     */
     fileId: string;
     /**
      * @format date-time
