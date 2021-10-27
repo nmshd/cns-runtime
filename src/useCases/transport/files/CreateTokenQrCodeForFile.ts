@@ -8,9 +8,6 @@ import { CreateTokenQrCodeForFileRequest } from "./requests/CreateTokenQrCodeFor
 
 export { CreateTokenQrCodeForFileRequest };
 
-// this.validateIfString((x) => x.fileId).fulfills(IdValidator.required(BackboneIds.file));
-// this.validateIfString((x) => x.expiresAt).fulfills(DateValidator.optional());
-
 export interface CreateTokenQrCodeForFileResponse {
     qrCodeBytes: string;
 }
