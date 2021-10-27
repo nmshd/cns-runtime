@@ -9,8 +9,6 @@ import { DownloadFileRequest } from "./requests/DownloadFileRequest";
 
 export { DownloadFileRequest };
 
-// this.validateIf((x) => x.id).fulfills(IdValidator.required(BackboneIds.file));
-
 export interface DownloadFileResponse {
     content: Uint8Array;
     filename: string;

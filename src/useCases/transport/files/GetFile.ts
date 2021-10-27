@@ -10,8 +10,6 @@ import { GetFileRequest } from "./requests/GetFileRequest";
 
 export { GetFileRequest };
 
-// this.validateIf((x) => x.id).fulfills(IdValidator.required(BackboneIds.file));
-
 export class GetFileUseCase extends UseCase<GetFileRequest, FileDTO> {
     public constructor(@Inject private readonly fileController: FileController, @Inject schemas: SchemaRepository) {
         super(new SchemaValidator(schemas, "GetFileRequest"));

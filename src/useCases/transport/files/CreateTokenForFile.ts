@@ -10,8 +10,6 @@ import { CreateTokenForFileRequest } from "./requests/CreateTokenForFileRequest"
 
 export { CreateTokenForFileRequest };
 
-// this.validateIfString((x) => x.fileId).fulfills(IdValidator.required(BackboneIds.file));
-
 export class CreateTokenForFileUseCase extends UseCase<CreateTokenForFileRequest, TokenDTO> {
     public constructor(
         @Inject private readonly fileController: FileController,
