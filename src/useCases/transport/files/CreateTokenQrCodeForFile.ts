@@ -14,7 +14,7 @@ export interface CreateTokenQrCodeForFileResponse {
 
 export class CreateTokenQrCodeForFileUseCase extends UseCase<CreateTokenQrCodeForFileRequest, CreateTokenQrCodeForFileResponse> {
     public constructor(@Inject private readonly fileController: FileController, @Inject private readonly tokenController: TokenController, @Inject schemas: SchemaRepository) {
-        super(new SchemaValidator(schemas, "CreateTokenQrCodeForFileRequest"));
+        super(new SchemaValidator(schemas.getValidationFunction("CreateTokenQrCodeForFileRequest")));
     }
 
     protected async executeInternal(request: CreateTokenQrCodeForFileRequest): Promise<Result<CreateTokenQrCodeForFileResponse>> {

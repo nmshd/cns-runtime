@@ -17,7 +17,7 @@ export class CreateTokenForFileUseCase extends UseCase<CreateTokenForFileRequest
         @Inject private readonly accountController: AccountController,
         @Inject schemas: SchemaRepository
     ) {
-        super(new SchemaValidator(schemas, "CreateTokenForFileRequest"));
+        super(new SchemaValidator(schemas.getValidationFunction("CreateTokenForFileRequest")));
     }
 
     protected async executeInternal(request: CreateTokenForFileRequest): Promise<Result<TokenDTO>> {

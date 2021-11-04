@@ -17,7 +17,7 @@ export interface DownloadFileResponse {
 
 export class DownloadFileUseCase extends UseCase<DownloadFileRequest, DownloadFileResponse> {
     public constructor(@Inject private readonly fileController: FileController, @Inject schemas: SchemaRepository) {
-        super(new SchemaValidator(schemas, "DownloadFileRequest"));
+        super(new SchemaValidator(schemas.getValidationFunction("DownloadFileRequest")));
     }
 
     protected async executeInternal(request: DownloadFileRequest): Promise<Result<DownloadFileResponse>> {

@@ -12,7 +12,7 @@ export { GetFileRequest };
 
 export class GetFileUseCase extends UseCase<GetFileRequest, FileDTO> {
     public constructor(@Inject private readonly fileController: FileController, @Inject schemas: SchemaRepository) {
-        super(new SchemaValidator(schemas, "GetFileRequest"));
+        super(new SchemaValidator(schemas.getValidationFunction("GetFileRequest")));
     }
 
     protected async executeInternal(request: GetFileRequest): Promise<Result<FileDTO>> {

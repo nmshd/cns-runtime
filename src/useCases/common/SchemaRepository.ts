@@ -1,4 +1,3 @@
-import { BackboneIds } from "@nmshd/transport";
 import Ajv, { ValidateFunction } from "ajv";
 import addFormats from "ajv-formats";
 import { join as joinPath } from "path";
@@ -40,11 +39,18 @@ export class SchemaRepository {
     }
 
     public getSchema(type: string): Definition {
-        BackboneIds;
         return this.generator.createSchema(type);
     }
 
-    public getValidationFunction(schema: Definition): ValidateFunction {
+    public getValidationFunction(schemaOrString: Definition | string): ValidateFunction {
+        let schema: Definition;
+
+        if (typeof schemaOrString === "string") {
+            schema = this.getSchema(schemaOrString);
+        } else {
+            schema = schemaOrString;
+        }
+
         return this.compiler.compile(schema);
     }
 }
