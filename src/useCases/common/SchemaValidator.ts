@@ -1,16 +1,14 @@
 import { ErrorObject, ValidateFunction } from "ajv";
 import { AbstractValidator, ValidationFailure, ValidationResult } from "fluent-ts-validator";
-import { Definition } from "ts-json-schema-generator";
 import { SchemaRepository } from "./SchemaRepository";
 
 export class SchemaValidator<T> extends AbstractValidator<T> {
-    private schema: Definition;
     private validateSchema: ValidateFunction;
 
     constructor(schemas: SchemaRepository, type: string) {
         super();
-        this.schema = schemas.getSchema(type);
-        this.validateSchema = schemas.getValidationFunction(this.schema);
+        let schema = schemas.getSchema(type);
+        this.validateSchema = schemas.getValidationFunction(schema);
     }
 
     /**
