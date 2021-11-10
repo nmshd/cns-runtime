@@ -57,7 +57,7 @@ describe("File upload", () => {
 
         const response = await transportServices1.files.downloadFile({ id: file.id });
         expect(response.isSuccess).toBeTruthy();
-        expect(response.value.content.byteLength).toStrictEqual(4);
+        expect(response.value.content.byteLength).toBe(4);
     });
 
     test("cannot upload an empty file", async () => {

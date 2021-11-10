@@ -88,7 +88,7 @@ describe("Create Relationship", () => {
 
         const response = await transportServices1.relationships.getRelationship({ id: relationshipId });
         expectSuccess(response);
-        expect(response.value.status).toStrictEqual("Active");
+        expect(response.value.status).toBe("Active");
     });
 
     test("should get created Relationship on TransportService2", async () => {
@@ -96,7 +96,7 @@ describe("Create Relationship", () => {
 
         const response = await transportServices2.relationships.getRelationship({ id: relationshipId });
         expectSuccess(response);
-        expect(response.value.status).toStrictEqual("Active");
+        expect(response.value.status).toBe("Active");
     });
 });
 

@@ -1,14 +1,7 @@
 import Ajv, { ValidateFunction } from "ajv";
 import addFormats from "ajv-formats";
-import { join as joinPath } from "path";
 import { Definition } from "ts-json-schema-generator";
 import * as schemas from "./Schemas";
-
-const config = {
-    path: joinPath(__dirname, "../../types/transport/requests/files/*.ts"),
-    type: "*",
-    skipTypeCheck: true
-};
 
 const customFormats: Record<string, string> = {
     "bkb-file": "FIL[A-Za-z0-9]{17}",
@@ -38,6 +31,7 @@ export class SchemaRepository {
     }
 
     public getSchema(type: string): Definition {
+        // eslint-disable-next-line
         // @ts-ignore
         return schemas[type];
     }
