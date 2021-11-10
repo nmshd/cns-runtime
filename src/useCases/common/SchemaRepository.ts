@@ -4,11 +4,8 @@ import { join as joinPath } from "path";
 import { createGenerator, Definition, SchemaGenerator } from "ts-json-schema-generator";
 
 const config = {
-    // The path seems to get ignored by ts-json-schema-generator (although it shouldn't be according to the documentation)
-    // it instead parses the entire project (from tsconfig) which is a bit slow at startup.
-    // Even without glob pattern it is ignored.
-    path: joinPath(__dirname, "../../types/transport/requests/files/GetFile.ts"),
-    tsconfig: joinPath(__dirname, "../../../tsconfig.json"),
+    path: joinPath(__dirname, "../../types/transport/requests/files/*.ts"),
+    //tsconfig: joinPath(__dirname, "../../../tsconfig.json"),
     type: "*"
 };
 
