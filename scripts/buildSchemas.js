@@ -12,7 +12,6 @@ const requestTypes = glob
     .sync(path.join(__dirname, "../src/types/transport/requests/**/*.ts"))
     .map(path.parse)
     .map((p) => p.name);
-console.log(requestTypes);
 
 const schemas = tsj.createGenerator(config);
 
@@ -22,8 +21,6 @@ const schemaDeclarations = requestTypes
         return `export const ${type} = ${JSON.stringify(schema, undefined, 4)}`;
     })
     .join("\n");
-
-console.log(schemaDeclarations);
 
 const output_path = path.join(__dirname, "../src/useCases/common/Schemas.ts");
 
