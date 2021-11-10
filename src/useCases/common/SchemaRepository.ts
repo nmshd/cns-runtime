@@ -12,7 +12,7 @@ const config = {
     type: "*"
 };
 
-const customFormats: Array<Array<string>> = [
+const customFormats: string[][] = [
     ["bkb-file", "FIL[A-Za-z0-9]{17}"],
     ["bkb-relationship", "REL[A-Za-z0-9]{17}"],
     ["bkb-relationshipRequest", "RRQ[A-Za-z0-9]{17}"],
@@ -24,10 +24,10 @@ const customFormats: Array<Array<string>> = [
 ];
 
 export class SchemaRepository {
-    private generator: SchemaGenerator;
-    private compiler: Ajv;
+    private readonly generator: SchemaGenerator;
+    private readonly compiler: Ajv;
 
-    constructor() {
+    public constructor() {
         this.generator = createGenerator(config);
         this.compiler = new Ajv();
         addFormats(this.compiler);

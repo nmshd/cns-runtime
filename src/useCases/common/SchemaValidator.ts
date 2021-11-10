@@ -1,13 +1,10 @@
 import { ErrorObject, ValidateFunction } from "ajv";
 import { AbstractValidator, ValidationFailure, ValidationResult } from "fluent-ts-validator";
-import { Definition } from "ts-json-schema-generator";
-import { Inject } from "typescript-ioc";
-import { SchemaRepository } from "./SchemaRepository";
 
 export class SchemaValidator<T> extends AbstractValidator<T> {
-    private validateSchema: ValidateFunction;
+    private readonly validateSchema: ValidateFunction;
 
-    constructor(validateSchema: ValidateFunction) {
+    public constructor(validateSchema: ValidateFunction) {
         super();
         this.validateSchema = validateSchema;
     }
@@ -15,15 +12,15 @@ export class SchemaValidator<T> extends AbstractValidator<T> {
     /**
      * converts an error from ajv to an error for fluent-ts-validator
      */
-    schemaErrorToValidationFailure<T>(err: ErrorObject, target: T): ValidationFailure {
+    private schemaErrorToValidationFailure<T>(err: ErrorObject, target: T): ValidationFailure {
         const errorMessage = `${err.instancePath} ${err.message}`.replace(/^\//, "").replace(/"/g, "");
 
         return new ValidationFailure(target, err.instancePath, undefined, undefined, errorMessage);
     }
 
-    validate(input: T): ValidationResult {
+    public validate(input: T): ValidationResult {
         const valid = this.validateSchema(input);
-        let result = new ValidationResult();
+        const result = new ValidationResult();
 
         if (valid) {
             return result;
