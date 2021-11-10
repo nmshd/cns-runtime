@@ -4,9 +4,9 @@ import { CachedFile, File, FileController } from "@nmshd/transport";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
+import { GetFilesRequest } from "../../../types/transport/requests/files/GetFilesRequest";
 import { OwnerRestriction, RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
-import { GetFilesRequest } from "./requests/GetFilesRequest";
 
 export { GetFilesRequest };
 

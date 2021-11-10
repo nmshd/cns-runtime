@@ -1,11 +1,11 @@
 import { Result } from "@js-soft/ts-utils";
 import { CoreId, File, FileController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
+import { DownloadFileRequest } from "../../../types/transport/requests/files/DownloadFileRequest";
 import { RuntimeErrors, UseCase } from "../../common";
 import { SchemaRepository } from "../../common/SchemaRepository";
 import { SchemaValidator } from "../../common/SchemaValidator";
 import { FileMapper } from "./FileMapper";
-import { DownloadFileRequest } from "./requests/DownloadFileRequest";
 
 export { DownloadFileRequest };
 

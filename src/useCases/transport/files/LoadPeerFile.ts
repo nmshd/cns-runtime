@@ -3,9 +3,9 @@ import { CryptoSecretKey } from "@nmshd/crypto";
 import { AccountController, BackboneIds, CoreId, FileController, Token, TokenContentFile, TokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
+import { LoadPeerFileRequest } from "../../../types/transport/requests/files/LoadPeerFileRequest";
 import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
-import { LoadPeerFileRequest } from "./requests/LoadPeerFileRequest";
 
 export { LoadPeerFileRequest };
 

@@ -4,9 +4,9 @@ import { AccountController, CoreDate, FileController } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
+import { UploadOwnFileRequest } from "../../../types/transport/requests/files/UploadOwnFileRequest";
 import { RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
-import { UploadOwnFileRequest } from "./requests/UploadOwnFileRequest";
 
 export { UploadOwnFileRequest };
 

@@ -2,11 +2,11 @@ import { Result } from "@js-soft/ts-utils";
 import { AccountController, CoreDate, CoreId, File, FileController, TokenContentFile, TokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { TokenDTO } from "../../../types";
+import { CreateTokenForFileRequest } from "../../../types/transport/requests/files/CreateTokenForFileRequest";
 import { RuntimeErrors, UseCase } from "../../common";
 import { SchemaRepository } from "../../common/SchemaRepository";
 import { SchemaValidator } from "../../common/SchemaValidator";
 import { TokenMapper } from "../tokens/TokenMapper";
-import { CreateTokenForFileRequest } from "./requests/CreateTokenForFileRequest";
 
 export { CreateTokenForFileRequest };
 

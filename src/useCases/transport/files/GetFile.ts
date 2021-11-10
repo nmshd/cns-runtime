@@ -2,11 +2,11 @@ import { Result } from "@js-soft/ts-utils";
 import { CoreId, File, FileController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
+import { GetFileRequest } from "../../../types/transport/requests/files/GetFileRequest";
 import { RuntimeErrors, UseCase } from "../../common";
 import { SchemaRepository } from "../../common/SchemaRepository";
 import { SchemaValidator } from "../../common/SchemaValidator";
 import { FileMapper } from "./FileMapper";
-import { GetFileRequest } from "./requests/GetFileRequest";
 
 export { GetFileRequest };
 
