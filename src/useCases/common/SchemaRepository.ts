@@ -8,16 +8,16 @@ const config = {
     type: "*"
 };
 
-const customFormats: string[][] = [
-    ["bkb-file", "FIL[A-Za-z0-9]{17}"],
-    ["bkb-relationship", "REL[A-Za-z0-9]{17}"],
-    ["bkb-relationshipRequest", "RRQ[A-Za-z0-9]{17}"],
-    ["bkb-message", "MSG[A-Za-z0-9]{17}"],
-    ["bkb-relationshipTemplate", "RLT[A-Za-z0-9]{17}"],
-    ["bkb-token", "TOK[A-Za-z0-9]{17}"],
-    ["bkb-relationshipChange", "RCH[A-Za-z0-9]{17}"],
-    ["bkb-device", "DVC[A-Za-z0-9]{17}"]
-];
+const customFormats: Record<string, string> = {
+    "bkb-file": "FIL[A-Za-z0-9]{17}",
+    "bkb-relationship": "REL[A-Za-z0-9]{17}",
+    "bkb-relationshipRequest": "RRQ[A-Za-z0-9]{17}",
+    "bkb-message": "MSG[A-Za-z0-9]{17}",
+    "bkb-relationshipTemplate": "RLT[A-Za-z0-9]{17}",
+    "bkb-token": "TOK[A-Za-z0-9]{17}",
+    "bkb-relationshipChange": "RCH[A-Za-z0-9]{17}",
+    "bkb-device": "DVC[A-Za-z0-9]{17}"
+};
 
 export class SchemaRepository {
     private readonly generator: SchemaGenerator;
@@ -32,7 +32,7 @@ export class SchemaRepository {
     }
 
     private addCustomFormats() {
-        customFormats.forEach(([name, format]) => {
+        Object.entries(customFormats).forEach(([name, format]) => {
             this.compiler.addFormat(name, format);
         });
     }
