@@ -5,7 +5,6 @@ import { createGenerator, Definition, SchemaGenerator } from "ts-json-schema-gen
 
 const config = {
     path: joinPath(__dirname, "../../types/transport/requests/files/*.ts"),
-    //tsconfig: joinPath(__dirname, "../../../tsconfig.json"),
     type: "*"
 };
 
