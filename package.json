@@ -23,6 +23,7 @@
         "build": "npm run build:node && npm run bundle",
         "build:ci": "npm run build:node && .ci/writeBuildInformation.sh && npm run bundle",
         "build:node": "tsc -p tsconfig.json",
+        "build:schemas": "node scripts/buildSchemas.js",
         "bundle": "npm run bundle:lib && npm run bundle:min",
         "bundle:lib": "webpack --stats-all --config webpack.config.js",
         "bundle:min": "webpack --stats-all --config webpack.min.config.js",

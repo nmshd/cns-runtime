@@ -1,11 +1,13 @@
 import Ajv, { ValidateFunction } from "ajv";
 import addFormats from "ajv-formats";
 import { join as joinPath } from "path";
-import { createGenerator, Definition, SchemaGenerator } from "ts-json-schema-generator";
+import { Definition } from "ts-json-schema-generator";
+import * as schemas from "./Schemas";
 
 const config = {
     path: joinPath(__dirname, "../../types/transport/requests/files/*.ts"),
-    type: "*"
+    type: "*",
+    skipTypeCheck: true
 };
 
 const customFormats: Record<string, string> = {
@@ -20,11 +22,9 @@ const customFormats: Record<string, string> = {
 };
 
 export class SchemaRepository {
-    private readonly generator: SchemaGenerator;
     private readonly compiler: Ajv;
 
     public constructor() {
-        this.generator = createGenerator(config);
         this.compiler = new Ajv();
         addFormats(this.compiler);
 
@@ -38,7 +38,8 @@ export class SchemaRepository {
     }
 
     public getSchema(type: string): Definition {
-        return this.generator.createSchema(type);
+        // @ts-ignore
+        return schemas[type];
     }
 
     public getValidationFunction(schemaOrString: Definition | string): ValidateFunction {
