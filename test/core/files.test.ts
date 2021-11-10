@@ -177,9 +177,9 @@ describe("Files query", () => {
 });
 
 describe.each([
-    ["Can create token for file", "file"],
-    ["Can create token QR code for file", "qrcode"]
-])("%s", (description: string, tokenType: string) => {
+    ["create token for file", "file"],
+    ["create token QR code for file", "qrcode"]
+])("Can %s", (description: string, tokenType: string) => {
     let file: FileDTO;
 
     beforeAll(async () => {
