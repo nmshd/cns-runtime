@@ -1,7 +1,6 @@
 import Ajv, { ValidateFunction } from "ajv";
 import addFormats from "ajv-formats";
 import { Definition } from "ts-json-schema-generator";
-import * as schemas from "./Schemas";
 
 const customFormats: Record<string, string> = {
     "bkb-file": "FIL[A-Za-z0-9]{17}",
@@ -16,6 +15,8 @@ const customFormats: Record<string, string> = {
 
 export class SchemaRepository {
     private readonly compiler: Ajv;
+    private schemaDefinitions: Record<string, Definition>;
+    private jsonSchemas = new Map<string, JsonSchema>();
 
     public constructor() {
         this.compiler = new Ajv();
@@ -30,20 +31,35 @@ export class SchemaRepository {
         });
     }
 
-    public getSchema(type: string): Definition {
-        // @ts-expect-error
-        return schemas[type];
+    public async loadSchemas(): Promise<void> {
+        this.schemaDefinitions = (await import("./Schemas")) as Record<string, Definition>;
     }
 
-    public getValidationFunction(schemaOrString: Definition | string): ValidateFunction {
-        let schema: Definition;
-
-        if (typeof schemaOrString === "string") {
-            schema = this.getSchema(schemaOrString);
-        } else {
-            schema = schemaOrString;
+    public getJsonSchema(schemaName: string): JsonSchema {
+        if (!this.jsonSchemas.has(schemaName)) {
+            this.jsonSchemas.set(schemaName, new JsonSchema(this.getValidationFunction(schemaName)));
         }
 
-        return this.compiler.compile(schema);
+        return this.jsonSchemas.get(schemaName)!;
+    }
+
+    private getValidationFunction(schemaName: string): ValidateFunction {
+        return this.compiler.compile(this.getSchemaDefinition(schemaName));
+    }
+
+    private getSchemaDefinition(type: string): Definition {
+        const def = this.schemaDefinitions[type];
+
+        if (!def) throw new Error(`Schema ${type} not found`);
+
+        return def;
+    }
+}
+
+export class JsonSchema {
+    public constructor(private validateSchema: ValidateFunction) {}
+
+    public validate(obj: any) {
+        return { isValid: this.validateSchema(obj), errors: this.validateSchema.errors };
     }
 }

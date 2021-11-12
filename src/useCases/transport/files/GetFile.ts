@@ -10,9 +10,15 @@ import { FileMapper } from "./FileMapper";
 
 export { GetFileRequest };
 
+export class GetFileRequestValidator extends SchemaValidator<GetFileRequest> {
+    constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getJsonSchema("GetFileRequest"));
+    }
+}
+
 export class GetFileUseCase extends UseCase<GetFileRequest, FileDTO> {
-    public constructor(@Inject private readonly fileController: FileController, @Inject schemas: SchemaRepository) {
-        super(new SchemaValidator(schemas.getValidationFunction("GetFileRequest")));
+    public constructor(@Inject private readonly fileController: FileController, @Inject validator: GetFileRequestValidator) {
+        super(validator);
     }
 
     protected async executeInternal(request: GetFileRequest): Promise<Result<FileDTO>> {

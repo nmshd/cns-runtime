@@ -15,9 +15,15 @@ export interface DownloadFileResponse {
     mimetype: string;
 }
 
+export class DownloadFileRequestValidator extends SchemaValidator<DownloadFileRequest> {
+    constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getJsonSchema("DownloadFileRequest"));
+    }
+}
+
 export class DownloadFileUseCase extends UseCase<DownloadFileRequest, DownloadFileResponse> {
-    public constructor(@Inject private readonly fileController: FileController, @Inject schemas: SchemaRepository) {
-        super(new SchemaValidator(schemas.getValidationFunction("DownloadFileRequest")));
+    public constructor(@Inject private readonly fileController: FileController, @Inject validator: DownloadFileRequestValidator) {
+        super(validator);
     }
 
     protected async executeInternal(request: DownloadFileRequest): Promise<Result<DownloadFileResponse>> {

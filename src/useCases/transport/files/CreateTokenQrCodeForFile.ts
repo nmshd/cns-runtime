@@ -12,9 +12,19 @@ export interface CreateTokenQrCodeForFileResponse {
     qrCodeBytes: string;
 }
 
+export class CreateTokenQrCodeForFileRequestValidator extends SchemaValidator<CreateTokenQrCodeForFileRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getJsonSchema("CreateTokenQrCodeForFileRequest"));
+    }
+}
+
 export class CreateTokenQrCodeForFileUseCase extends UseCase<CreateTokenQrCodeForFileRequest, CreateTokenQrCodeForFileResponse> {
-    public constructor(@Inject private readonly fileController: FileController, @Inject private readonly tokenController: TokenController, @Inject schemas: SchemaRepository) {
-        super(new SchemaValidator(schemas.getValidationFunction("CreateTokenQrCodeForFileRequest")));
+    public constructor(
+        @Inject private readonly fileController: FileController,
+        @Inject private readonly tokenController: TokenController,
+        @Inject validator: CreateTokenQrCodeForFileRequestValidator
+    ) {
+        super(validator);
     }
 
     protected async executeInternal(request: CreateTokenQrCodeForFileRequest): Promise<Result<CreateTokenQrCodeForFileResponse>> {

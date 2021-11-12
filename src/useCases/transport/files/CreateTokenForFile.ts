@@ -10,14 +10,20 @@ import { TokenMapper } from "../tokens/TokenMapper";
 
 export { CreateTokenForFileRequest };
 
+export class CreateTokenForFileRequestValidator extends SchemaValidator<CreateTokenForFileRequest> {
+    constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getJsonSchema("CreateTokenForFileRequest"));
+    }
+}
+
 export class CreateTokenForFileUseCase extends UseCase<CreateTokenForFileRequest, TokenDTO> {
     public constructor(
         @Inject private readonly fileController: FileController,
         @Inject private readonly tokenController: TokenController,
         @Inject private readonly accountController: AccountController,
-        @Inject schemas: SchemaRepository
+        @Inject validator: CreateTokenForFileRequestValidator
     ) {
-        super(new SchemaValidator(schemas.getValidationFunction("CreateTokenForFileRequest")));
+        super(validator);
     }
 
     protected async executeInternal(request: CreateTokenForFileRequest): Promise<Result<TokenDTO>> {
