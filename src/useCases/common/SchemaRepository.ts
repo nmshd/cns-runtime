@@ -31,8 +31,7 @@ export class SchemaRepository {
     }
 
     public getSchema(type: string): Definition {
-        // eslint-disable-next-line
-        // @ts-ignore
+        // @ts-expect-error
         return schemas[type];
     }
 
