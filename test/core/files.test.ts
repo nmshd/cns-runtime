@@ -207,7 +207,7 @@ describe.each([
     test("cannot generate token with wrong type of id", async () => {
         const response = await createToken(transportServices1, { fileId: UNKOWN_TOKEN_ID }, tokenType as any);
 
-        expectError(response, "fileId must match format bkb-file", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "fileId must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot generate token for non-existant file", async () => {
@@ -219,7 +219,7 @@ describe.each([
     test("cannot generate token for invalid file id", async () => {
         const response = await createToken(transportServices1, { fileId: "INVALID FILE ID" }, tokenType as any);
 
-        expectError(response, "fileId must match format bkb-file", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "fileId must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });
 });
 

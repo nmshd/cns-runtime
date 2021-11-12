@@ -4,11 +4,17 @@ import { AccountController, CoreDate, FileController } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
-import { UploadOwnFileRequest } from "../../../types/transport/requests/files/UploadOwnFileRequest";
 import { RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
 
-export { UploadOwnFileRequest };
+export interface UploadOwnFileRequest {
+    content: Uint8Array;
+    filename: string;
+    mimetype: string;
+    expiresAt: string;
+    title: string;
+    description?: string;
+}
 
 class UploadOwnFileRequestValidator extends RuntimeValidator<UploadOwnFileRequest> {
     private _maxFileSize: number;

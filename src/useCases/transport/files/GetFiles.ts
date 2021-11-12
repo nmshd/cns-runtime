@@ -4,11 +4,13 @@ import { CachedFile, File, FileController } from "@nmshd/transport";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
-import { GetFilesRequest } from "../../../types/transport/requests/files/GetFilesRequest";
 import { OwnerRestriction, RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
 
-export { GetFilesRequest };
+export interface GetFilesRequest {
+    query?: any;
+    ownerRestriction?: OwnerRestriction;
+}
 
 export class GetFilesUseCase extends UseCase<GetFilesRequest, FileDTO[]> {
     private static readonly queryTranslator = new QueryTranslator({

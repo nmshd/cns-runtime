@@ -1,13 +1,17 @@
 import { Result } from "@js-soft/ts-utils";
 import { CoreId, File, FileController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { DownloadFileRequest } from "../../../types/transport/requests/files/DownloadFileRequest";
 import { RuntimeErrors, UseCase } from "../../common";
 import { SchemaRepository } from "../../common/SchemaRepository";
 import { SchemaValidator } from "../../common/SchemaValidator";
 import { FileMapper } from "./FileMapper";
 
-export { DownloadFileRequest };
+export interface DownloadFileRequest {
+    /**
+     * @format fileId
+     */
+    id: string;
+}
 
 export interface DownloadFileResponse {
     content: Uint8Array;
@@ -15,14 +19,14 @@ export interface DownloadFileResponse {
     mimetype: string;
 }
 
-export class DownloadFileRequestValidator extends SchemaValidator<DownloadFileRequest> {
+class Validator extends SchemaValidator<DownloadFileRequest> {
     constructor(@Inject schemaRepository: SchemaRepository) {
-        super(schemaRepository.getJsonSchema("DownloadFileRequest"));
+        super(schemaRepository.getSchema("DownloadFileRequest"));
     }
 }
 
 export class DownloadFileUseCase extends UseCase<DownloadFileRequest, DownloadFileResponse> {
-    public constructor(@Inject private readonly fileController: FileController, @Inject validator: DownloadFileRequestValidator) {
+    public constructor(@Inject private readonly fileController: FileController, @Inject validator: Validator) {
         super(validator);
     }
 

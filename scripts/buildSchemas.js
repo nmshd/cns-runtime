@@ -9,18 +9,24 @@ const config = {
 };
 
 const requestTypes = glob
-    .sync(path.join(__dirname, "../src/types/transport/requests/**/*.ts"))
+    .sync(path.join(__dirname, "../src/useCases/**/*.ts"))
     .map(path.parse)
-    .map((p) => p.name);
+    .map((p) => p.name)
+    .map((name) => `${name}Request`);
 
-const schemas = tsj.createGenerator(config);
+const schemaGenerator = tsj.createGenerator(config);
 
 const schemaDeclarations = requestTypes
     .map((type) => {
-        const schema = schemas.createSchema(type);
-        return `export const ${type} = ${JSON.stringify(schema, undefined, 4)}`;
+        try {
+            const schema = schemaGenerator.createSchema(type);
+            return `export const ${type} = ${JSON.stringify(schema, undefined, 4)}`;
+        } catch (e) {
+            if (!(e instanceof tsj.NoRootTypeError)) throw e;
+        }
     })
-    .join("\n");
+    .filter((s) => s)
+    .join("\n\n");
 
 const output_path = path.join(__dirname, "../src/useCases/common/Schemas.ts");
 

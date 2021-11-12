@@ -2,17 +2,26 @@ import { Result } from "@js-soft/ts-utils";
 import { AccountController, CoreDate, CoreId, File, FileController, TokenContentFile, TokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { TokenDTO } from "../../../types";
-import { CreateTokenForFileRequest } from "../../../types/transport/requests/files/CreateTokenForFileRequest";
 import { RuntimeErrors, UseCase } from "../../common";
 import { SchemaRepository } from "../../common/SchemaRepository";
 import { SchemaValidator } from "../../common/SchemaValidator";
 import { TokenMapper } from "../tokens/TokenMapper";
 
-export { CreateTokenForFileRequest };
+export interface CreateTokenForFileRequest {
+    /**
+     * @format fileId
+     */
+    fileId: string;
+    /**
+     * @format date-time
+     */
+    expiresAt?: string;
+    ephemeral?: boolean;
+}
 
-export class CreateTokenForFileRequestValidator extends SchemaValidator<CreateTokenForFileRequest> {
+class Validator extends SchemaValidator<CreateTokenForFileRequest> {
     constructor(@Inject schemaRepository: SchemaRepository) {
-        super(schemaRepository.getJsonSchema("CreateTokenForFileRequest"));
+        super(schemaRepository.getSchema("CreateTokenForFileRequest"));
     }
 }
 
@@ -21,7 +30,7 @@ export class CreateTokenForFileUseCase extends UseCase<CreateTokenForFileRequest
         @Inject private readonly fileController: FileController,
         @Inject private readonly tokenController: TokenController,
         @Inject private readonly accountController: AccountController,
-        @Inject validator: CreateTokenForFileRequestValidator
+        @Inject validator: Validator
     ) {
         super(validator);
     }

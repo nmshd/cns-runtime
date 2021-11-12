@@ -1,29 +1,33 @@
 import { Result } from "@js-soft/ts-utils";
 import { CoreDate, CoreId, File, FileController, TokenContentFile, TokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { CreateTokenQrCodeForFileRequest } from "../../../types/transport/requests/files/CreateTokenQrCodeForFileRequest";
 import { QRCode, RuntimeErrors, UseCase } from "../../common";
 import { SchemaRepository } from "../../common/SchemaRepository";
 import { SchemaValidator } from "../../common/SchemaValidator";
 
-export { CreateTokenQrCodeForFileRequest };
+export interface CreateTokenQrCodeForFileRequest {
+    /**
+     * @format fileId
+     */
+    fileId: string;
+    /**
+     * @format date-time
+     */
+    expiresAt?: string;
+}
 
 export interface CreateTokenQrCodeForFileResponse {
     qrCodeBytes: string;
 }
 
-export class CreateTokenQrCodeForFileRequestValidator extends SchemaValidator<CreateTokenQrCodeForFileRequest> {
+class Validator extends SchemaValidator<CreateTokenQrCodeForFileRequest> {
     public constructor(@Inject schemaRepository: SchemaRepository) {
-        super(schemaRepository.getJsonSchema("CreateTokenQrCodeForFileRequest"));
+        super(schemaRepository.getSchema("CreateTokenQrCodeForFileRequest"));
     }
 }
 
 export class CreateTokenQrCodeForFileUseCase extends UseCase<CreateTokenQrCodeForFileRequest, CreateTokenQrCodeForFileResponse> {
-    public constructor(
-        @Inject private readonly fileController: FileController,
-        @Inject private readonly tokenController: TokenController,
-        @Inject validator: CreateTokenQrCodeForFileRequestValidator
-    ) {
+    public constructor(@Inject private readonly fileController: FileController, @Inject private readonly tokenController: TokenController, @Inject validator: Validator) {
         super(validator);
     }
 

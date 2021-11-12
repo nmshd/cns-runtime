@@ -1,16 +1,15 @@
-import Ajv, { ValidateFunction } from "ajv";
+import Ajv, { ErrorObject, ValidateFunction } from "ajv";
 import addFormats from "ajv-formats";
 import { Definition } from "ts-json-schema-generator";
 
 const customFormats: Record<string, string> = {
-    "bkb-file": "FIL[A-Za-z0-9]{17}",
-    "bkb-relationship": "REL[A-Za-z0-9]{17}",
-    "bkb-relationshipRequest": "RRQ[A-Za-z0-9]{17}",
-    "bkb-message": "MSG[A-Za-z0-9]{17}",
-    "bkb-relationshipTemplate": "RLT[A-Za-z0-9]{17}",
-    "bkb-token": "TOK[A-Za-z0-9]{17}",
-    "bkb-relationshipChange": "RCH[A-Za-z0-9]{17}",
-    "bkb-device": "DVC[A-Za-z0-9]{17}"
+    fileId: "FIL[A-Za-z0-9]{17}",
+    relationshipId: "REL[A-Za-z0-9]{17}",
+    messageId: "MSG[A-Za-z0-9]{17}",
+    relationshipTemplateId: "RLT[A-Za-z0-9]{17}",
+    tokenId: "TOK[A-Za-z0-9]{17}",
+    relationshipChangeId: "RCH[A-Za-z0-9]{17}",
+    deviceId: "DVC[A-Za-z0-9]{17}"
 };
 
 export class SchemaRepository {
@@ -35,7 +34,7 @@ export class SchemaRepository {
         this.schemaDefinitions = (await import("./Schemas")) as Record<string, Definition>;
     }
 
-    public getJsonSchema(schemaName: string): JsonSchema {
+    public getSchema(schemaName: string): JsonSchema {
         if (!this.jsonSchemas.has(schemaName)) {
             this.jsonSchemas.set(schemaName, new JsonSchema(this.getValidationFunction(schemaName)));
         }
@@ -59,7 +58,7 @@ export class SchemaRepository {
 export class JsonSchema {
     public constructor(private validateSchema: ValidateFunction) {}
 
-    public validate(obj: any) {
+    public validate(obj: any): { isValid: boolean; errors: null | ErrorObject[] | undefined } {
         return { isValid: this.validateSchema(obj), errors: this.validateSchema.errors };
     }
 }

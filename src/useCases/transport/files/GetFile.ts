@@ -2,22 +2,26 @@ import { Result } from "@js-soft/ts-utils";
 import { CoreId, File, FileController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
-import { GetFileRequest } from "../../../types/transport/requests/files/GetFileRequest";
 import { RuntimeErrors, UseCase } from "../../common";
 import { SchemaRepository } from "../../common/SchemaRepository";
 import { SchemaValidator } from "../../common/SchemaValidator";
 import { FileMapper } from "./FileMapper";
 
-export { GetFileRequest };
+export interface GetFileRequest {
+    /**
+     * @format fileId
+     */
+    id: string;
+}
 
-export class GetFileRequestValidator extends SchemaValidator<GetFileRequest> {
+class Validator extends SchemaValidator<GetFileRequest> {
     constructor(@Inject schemaRepository: SchemaRepository) {
-        super(schemaRepository.getJsonSchema("GetFileRequest"));
+        super(schemaRepository.getSchema("GetFileRequest"));
     }
 }
 
 export class GetFileUseCase extends UseCase<GetFileRequest, FileDTO> {
-    public constructor(@Inject private readonly fileController: FileController, @Inject validator: GetFileRequestValidator) {
+    public constructor(@Inject private readonly fileController: FileController, @Inject validator: Validator) {
         super(validator);
     }
 
