@@ -1,11 +1,10 @@
 import { ErrorObject } from "ajv";
-import { AbstractValidator, ValidationFailure, ValidationResult } from "fluent-ts-validator";
+import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
+import { IValidator } from ".";
 import { JsonSchema } from "./SchemaRepository";
 
-export class SchemaValidator<T> extends AbstractValidator<T> {
-    public constructor(private readonly schema: JsonSchema) {
-        super();
-    }
+export class SchemaValidator<T> implements IValidator<T> {
+    public constructor(private readonly schema: JsonSchema) {}
 
     public validate(input: T): ValidationResult {
         const validationResult = this.schema.validate(input);

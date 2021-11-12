@@ -1,12 +1,16 @@
 import { ParsingError, ServalError, ValidationError } from "@js-soft/ts-serval";
 import { ApplicationError, Result } from "@js-soft/ts-utils";
 import { RequestError } from "@nmshd/transport";
-import { AbstractValidator, ValidationResult } from "fluent-ts-validator";
+import { ValidationResult } from "fluent-ts-validator";
 import { PlatformErrorCodes } from "./PlatformErrorCodes";
 import { RuntimeErrors } from "./RuntimeErrors";
 
+export interface IValidator<T> {
+    validate(value: T): ValidationResult;
+}
+
 export abstract class UseCase<IRequest, IResponse> {
-    public constructor(private readonly requestValidator?: AbstractValidator<IRequest>) {}
+    public constructor(private readonly requestValidator?: IValidator<IRequest>) {}
 
     public async execute(request: IRequest): Promise<Result<IResponse>> {
         if (this.requestValidator) {
