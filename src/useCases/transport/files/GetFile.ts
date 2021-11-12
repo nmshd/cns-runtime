@@ -1,24 +1,27 @@
 import { Result } from "@js-soft/ts-utils";
-import { BackboneIds, CoreId, File, FileController } from "@nmshd/transport";
+import { CoreId, File, FileController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
-import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { RuntimeErrors, UseCase } from "../../common";
+import { SchemaRepository } from "../../common/SchemaRepository";
+import { SchemaValidator } from "../../common/SchemaValidator";
 import { FileMapper } from "./FileMapper";
 
 export interface GetFileRequest {
+    /**
+     * @format fileId
+     */
     id: string;
 }
 
-class GetFileRequestValidator extends RuntimeValidator<GetFileRequest> {
-    public constructor() {
-        super();
-
-        this.validateIf((x) => x.id).fulfills(IdValidator.required(BackboneIds.file));
+class Validator extends SchemaValidator<GetFileRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("GetFileRequest"));
     }
 }
 
 export class GetFileUseCase extends UseCase<GetFileRequest, FileDTO> {
-    public constructor(@Inject private readonly fileController: FileController, @Inject validator: GetFileRequestValidator) {
+    public constructor(@Inject private readonly fileController: FileController, @Inject validator: Validator) {
         super(validator);
     }
 

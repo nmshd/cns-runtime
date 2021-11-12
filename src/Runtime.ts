@@ -41,6 +41,7 @@ import { RuntimeConfig } from "./RuntimeConfig";
 import { RuntimeLoggerFactory } from "./RuntimeLoggerFactory";
 import { RuntimeHealth } from "./types";
 import { RuntimeErrors } from "./useCases";
+import { SchemaRepository } from "./useCases/common/SchemaRepository";
 
 export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
     protected logger: ILogger;
@@ -128,7 +129,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         this.loggerFactory = await this.createLoggerFactory();
 
-        this.initDIContainer();
+        await this.initDIContainer();
 
         await this.initTransportLibrary();
         await this.initAccount();
@@ -176,7 +177,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         this.eventBus.publish(new TransportLibraryInitializedEvent());
     }
 
-    private initDIContainer() {
+    private async initDIContainer() {
         Container.bind(EventBus)
             .factory(() => this.eventBus)
             .scope(Scope.Singleton);
@@ -255,6 +256,12 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         Container.bind(AnonymousTokenController)
             .factory(() => new AnonymousTokenController(this.transport.config))
+            .scope(Scope.Singleton);
+
+        const schemaRepository = new SchemaRepository();
+        await schemaRepository.loadSchemas();
+        Container.bind(SchemaRepository)
+            .factory(() => schemaRepository)
             .scope(Scope.Singleton);
     }
 

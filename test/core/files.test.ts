@@ -1,6 +1,7 @@
 import fs from "fs";
+import { DateTime } from "luxon";
 import { FileDTO, OwnerRestriction, TransportServices } from "../../src";
-import { combinations, exchangeFile, expectError, expectSuccess, makeUploadRequest, QueryParamConditions, RuntimeServiceProvider, uploadFile } from "../lib";
+import { combinations, createToken, exchangeFile, expectError, expectSuccess, makeUploadRequest, QueryParamConditions, RuntimeServiceProvider, uploadFile } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -18,7 +19,7 @@ beforeAll(async () => {
 }, 30000);
 afterAll(async () => await serviceProvider.stop());
 
-describe("File Upload", () => {
+describe("File upload", () => {
     let file: FileDTO;
 
     test("can upload file", async () => {
@@ -39,10 +40,7 @@ describe("File Upload", () => {
     test("uploaded files can be accessed under /Files/Own", async () => {
         expect(file).toBeDefined();
 
-        const response = await transportServices1.files.getFiles({
-            query: { createdAt: file.createdAt },
-            ownerRestriction: OwnerRestriction.Own
-        });
+        const response = await transportServices1.files.getFiles({ query: { createdAt: file.createdAt }, ownerRestriction: OwnerRestriction.Own });
         expectSuccess(response);
         expect(response.value).toContainEqual(file);
     });
@@ -59,7 +57,7 @@ describe("File Upload", () => {
 
         const response = await transportServices1.files.downloadFile({ id: file.id });
         expect(response.isSuccess).toBeTruthy();
-        expect(response.value.content.byteLength).toStrictEqual(4);
+        expect(response.value.content.byteLength).toBe(4);
     });
 
     test("cannot upload an empty file", async () => {
@@ -68,15 +66,13 @@ describe("File Upload", () => {
     });
 
     test("cannot upload a file that is null", async () => {
-        // Cannot use client1.files.uploadOwn because it cannot deal with null values
+        // cannot use client1.files.uploadOwn because it cannot deal with null values
         const response = await transportServices1.files.uploadOwnFile(await makeUploadRequest({ content: null }));
 
         expectError(response, "file content is empty", "error.runtime.validation.invalidPropertyValue");
     });
     test("can upload same file twice", async () => {
-        const request = await makeUploadRequest({
-            file: await fs.promises.readFile(`${__dirname}/../__assets__/test.txt`)
-        });
+        const request = await makeUploadRequest({ file: await fs.promises.readFile(`${__dirname}/../__assets__/test.txt`) });
 
         const response1 = await transportServices1.files.uploadOwnFile(request);
         const response2 = await transportServices1.files.uploadOwnFile(request);
@@ -177,6 +173,53 @@ describe("Files query", () => {
             .addStringSet("title");
 
         await conditions.executeTests((c, q) => c.files.getFiles({ query: q, ownerRestriction: OwnerRestriction.Peer }));
+    });
+});
+
+describe.each([
+    ["create token for file", "file"],
+    ["create token QR code for file", "qrcode"]
+])("Can %s", (description: string, tokenType: string) => {
+    let file: FileDTO;
+
+    beforeAll(async () => {
+        file = await uploadFile(transportServices1);
+    });
+
+    test("can generate token for uploaded file", async () => {
+        const response = await createToken(transportServices1, { fileId: file.id }, tokenType as any);
+        expectSuccess(response);
+    });
+
+    test("can generate token for uploaded file with explicit expiration date", async () => {
+        const expiresAt = DateTime.now().plus({ minutes: 5 }).toString();
+        const response = await createToken(transportServices1, { fileId: file.id, expiresAt }, tokenType as any);
+
+        expectSuccess(response);
+    });
+
+    test("cannot generate token for uploaded file with wrong expiration date", async () => {
+        const response = await createToken(transportServices1, { fileId: file.id, expiresAt: "invalid date" }, tokenType as any);
+
+        expectError(response, "expiresAt must match format date-time", "error.runtime.validation.invalidPropertyValue");
+    });
+
+    test("cannot generate token with wrong type of id", async () => {
+        const response = await createToken(transportServices1, { fileId: UNKOWN_TOKEN_ID }, tokenType as any);
+
+        expectError(response, "fileId must match format fileId", "error.runtime.validation.invalidPropertyValue");
+    });
+
+    test("cannot generate token for non-existant file", async () => {
+        const response = await createToken(transportServices1, { fileId: UNKOWN_FILE_ID }, tokenType as any);
+
+        expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+    });
+
+    test("cannot generate token for invalid file id", async () => {
+        const response = await createToken(transportServices1, { fileId: "INVALID FILE ID" }, tokenType as any);
+
+        expectError(response, "fileId must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });
 });
 

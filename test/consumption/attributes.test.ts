@@ -154,7 +154,7 @@ describe("Attributes", () => {
         expectSuccess(response);
         const attribute = response.value;
         expect(attribute.content).toBeDefined();
-        expect(attribute.content.value).toStrictEqual("new-Value");
+        expect(attribute.content.value).toBe("new-Value");
         expect(attribute.createdAt).toStrictEqual(attributeWithoutDateCreatedAt);
     });
 

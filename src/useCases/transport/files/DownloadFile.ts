@@ -1,18 +1,21 @@
 import { Result } from "@js-soft/ts-utils";
-import { BackboneIds, CoreId, File, FileController } from "@nmshd/transport";
+import { CoreId, File, FileController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { RuntimeErrors, UseCase } from "../../common";
+import { SchemaRepository } from "../../common/SchemaRepository";
+import { SchemaValidator } from "../../common/SchemaValidator";
 import { FileMapper } from "./FileMapper";
 
 export interface DownloadFileRequest {
+    /**
+     * @format fileId
+     */
     id: string;
 }
 
-class DownloadFileRequestValidator extends RuntimeValidator<DownloadFileRequest> {
-    public constructor() {
-        super();
-
-        this.validateIf((x) => x.id).fulfills(IdValidator.required(BackboneIds.file));
+class Validator extends SchemaValidator<DownloadFileRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("DownloadFileRequest"));
     }
 }
 
@@ -23,7 +26,7 @@ export interface DownloadFileResponse {
 }
 
 export class DownloadFileUseCase extends UseCase<DownloadFileRequest, DownloadFileResponse> {
-    public constructor(@Inject private readonly fileController: FileController, @Inject validator: DownloadFileRequestValidator) {
+    public constructor(@Inject private readonly fileController: FileController, @Inject validator: Validator) {
         super(validator);
     }
 

@@ -1,22 +1,27 @@
 import { Result } from "@js-soft/ts-utils";
-import { AccountController, BackboneIds, CoreDate, CoreId, File, FileController, TokenContentFile, TokenController } from "@nmshd/transport";
+import { AccountController, CoreDate, CoreId, File, FileController, TokenContentFile, TokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { TokenDTO } from "../../../types";
-import { DateValidator, IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { RuntimeErrors, UseCase } from "../../common";
+import { SchemaRepository } from "../../common/SchemaRepository";
+import { SchemaValidator } from "../../common/SchemaValidator";
 import { TokenMapper } from "../tokens/TokenMapper";
 
 export interface CreateTokenForFileRequest {
+    /**
+     * @format fileId
+     */
     fileId: string;
+    /**
+     * @format date-time
+     */
     expiresAt?: string;
     ephemeral?: boolean;
 }
 
-class CreateTokenForFileRequestValidator extends RuntimeValidator<CreateTokenForFileRequest> {
-    public constructor() {
-        super();
-
-        this.validateIfString((x) => x.fileId).fulfills(IdValidator.required(BackboneIds.file));
-        this.validateIfString((x) => x.expiresAt).fulfills(DateValidator.optional());
+class Validator extends SchemaValidator<CreateTokenForFileRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("CreateTokenForFileRequest"));
     }
 }
 
@@ -25,7 +30,7 @@ export class CreateTokenForFileUseCase extends UseCase<CreateTokenForFileRequest
         @Inject private readonly fileController: FileController,
         @Inject private readonly tokenController: TokenController,
         @Inject private readonly accountController: AccountController,
-        @Inject validator: CreateTokenForFileRequestValidator
+        @Inject validator: Validator
     ) {
         super(validator);
     }

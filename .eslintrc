@@ -1,5 +1,5 @@
 {
-    "ignorePatterns": ["/*", "!/src", "!/test"],
+    "ignorePatterns": ["/*", "!/src", "!/test", "/src/useCases/common/Schemas.ts"],
     "extends": ["@js-soft/ts", "@js-soft/ts/jest"],
     "parserOptions": {
         "project": ["./tsconfig.json", "./test/tsconfig.json"]

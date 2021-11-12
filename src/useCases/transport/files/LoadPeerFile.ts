@@ -7,6 +7,9 @@ import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../com
 import { FileMapper } from "./FileMapper";
 
 export interface LoadPeerFileRequest {
+    /**
+     * @format fileId
+     */
     id?: string;
     secretKey?: string;
     reference?: string;

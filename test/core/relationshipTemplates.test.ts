@@ -75,7 +75,7 @@ describe("Template Tests", () => {
         });
 
         expect(response.isError).toBeTruthy();
-        expect(response.error.code).toStrictEqual("error.runtime.validation.invalidPropertyValue");
+        expect(response.error.code).toBe("error.runtime.validation.invalidPropertyValue");
     });
 });
 
