@@ -15,7 +15,7 @@ export interface GetFileRequest {
 }
 
 class Validator extends SchemaValidator<GetFileRequest> {
-    constructor(@Inject schemaRepository: SchemaRepository) {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
         super(schemaRepository.getSchema("GetFileRequest"));
     }
 }

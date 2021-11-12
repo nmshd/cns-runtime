@@ -14,8 +14,8 @@ const customFormats: Record<string, string> = {
 
 export class SchemaRepository {
     private readonly compiler: Ajv;
-    private schemaDefinitions: Record<string, Definition>;
-    private jsonSchemas = new Map<string, JsonSchema>();
+    private schemaDefinitions: Record<string, Definition | undefined>;
+    private readonly jsonSchemas = new Map<string, JsonSchema>();
 
     public constructor() {
         this.compiler = new Ajv();
@@ -56,7 +56,7 @@ export class SchemaRepository {
 }
 
 export class JsonSchema {
-    public constructor(private validateSchema: ValidateFunction) {}
+    public constructor(private readonly validateSchema: ValidateFunction) {}
 
     public validate(obj: any): { isValid: boolean; errors: null | ErrorObject[] | undefined } {
         return { isValid: this.validateSchema(obj), errors: this.validateSchema.errors };

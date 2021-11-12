@@ -20,7 +20,7 @@ export interface CreateTokenForFileRequest {
 }
 
 class Validator extends SchemaValidator<CreateTokenForFileRequest> {
-    constructor(@Inject schemaRepository: SchemaRepository) {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
         super(schemaRepository.getSchema("CreateTokenForFileRequest"));
     }
 }

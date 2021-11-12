@@ -13,16 +13,16 @@ export interface DownloadFileRequest {
     id: string;
 }
 
+class Validator extends SchemaValidator<DownloadFileRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("DownloadFileRequest"));
+    }
+}
+
 export interface DownloadFileResponse {
     content: Uint8Array;
     filename: string;
     mimetype: string;
-}
-
-class Validator extends SchemaValidator<DownloadFileRequest> {
-    constructor(@Inject schemaRepository: SchemaRepository) {
-        super(schemaRepository.getSchema("DownloadFileRequest"));
-    }
 }
 
 export class DownloadFileUseCase extends UseCase<DownloadFileRequest, DownloadFileResponse> {
