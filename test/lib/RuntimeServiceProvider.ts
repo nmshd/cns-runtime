@@ -1,4 +1,3 @@
-import { Realm } from "@nmshd/transport";
 import { AnonymousServices, ConsumptionServices, RuntimeConfig, TransportServices } from "../../src";
 import { TestRuntime } from "./TestRuntime";
 
@@ -16,16 +15,12 @@ export class RuntimeServiceProvider {
     private readonly runtimes: TestRuntime[] = [];
 
     private static readonly _runtimeConfig: RuntimeConfig = {
-        debug: false,
-        realm: Realm.Prod,
         transportLibrary: {
             baseUrl: "https://stage.enmeshed.eu",
             platformClientId: "test",
             platformClientSecret: "a6owPRo8c98Ue8Z6mHoNgg5viF5teD",
             debug: true
         },
-        consumptionLibrary: {},
-        eventBus: {},
         modules: {}
     };
 
