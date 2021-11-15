@@ -55,7 +55,7 @@ export class TestRuntime extends Runtime {
         const randomAccountName = Math.random().toString(36).substring(7);
         const db = await this.transport.createDatabase(`acc-${randomAccountName}`);
 
-        const accountController = await new AccountController(this.transport, this.runtimeConfig.realm, db, this.transport.config).init();
+        const accountController = await new AccountController(this.transport, db, this.transport.config).init();
         const consumptionController = await new ConsumptionController(this.transport, accountController).init();
 
         this.login(accountController, consumptionController);
