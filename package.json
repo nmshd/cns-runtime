@@ -47,12 +47,12 @@
         "@js-soft/docdb-querytranslator": "1.0.1",
         "@js-soft/logging-abstractions": "1.0.0",
         "@js-soft/ts-serval": "1.0.2",
-        "@js-soft/ts-utils": "1.0.1",
+        "@js-soft/ts-utils": "1.1.1",
         "@nmshd/consumption": "1.0.5",
         "@nmshd/content": "1.0.4",
         "@nmshd/crypto": "1.0.4",
         "@nmshd/transport": "1.0.8",
-        "ajv": "^8.7.1",
+        "ajv": "^8.8.0",
         "ajv-formats": "^2.1.1",
         "fluent-ts-validator": "3.0.2",
         "luxon": "^2.1.1",
@@ -84,7 +84,7 @@
         "ts-json-schema-generator": "^0.97.0",
         "tsconfig-paths": "^3.11.0",
         "typescript": "^4.4.4",
-        "webpack": "^5.64.0",
+        "webpack": "^5.64.1",
         "webpack-cli": "^4.9.1"
     },
     "publishConfig": {
