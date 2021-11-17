@@ -36,7 +36,7 @@ import {
     TransportLibraryInitializedEvent,
     TransportLibraryInitializingEvent
 } from "./events";
-import { AnonymousServices, ConsumptionServices, ModuleConfiguration, RuntimeModule, RuntimeModuleCollection, TransportServices } from "./extensibility";
+import { AnonymousServices, ConsumptionServices, ModuleConfiguration, RuntimeModule, RuntimeModuleRegistry, TransportServices } from "./extensibility";
 import { RuntimeConfig } from "./RuntimeConfig";
 import { RuntimeLoggerFactory } from "./RuntimeLoggerFactory";
 import { RuntimeHealth } from "./types";
@@ -84,8 +84,8 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         return this;
     }
 
-    private _modules: RuntimeModuleCollection;
-    public get modules(): RuntimeModuleCollection {
+    private _modules: RuntimeModuleRegistry;
+    public get modules(): RuntimeModuleRegistry {
         return this._modules;
     }
 
@@ -133,7 +133,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         await this.initTransportLibrary();
         await this.initAccount();
 
-        this._modules = new RuntimeModuleCollection();
+        this._modules = new RuntimeModuleRegistry();
         await this.loadModules();
         await this.initInfrastructure();
         await this.initModules();

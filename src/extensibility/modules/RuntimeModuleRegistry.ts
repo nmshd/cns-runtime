@@ -1,6 +1,6 @@
 import { RuntimeModule } from "./RuntimeModule";
 
-export class RuntimeModuleCollection implements Iterable<RuntimeModule> {
+export class RuntimeModuleRegistry implements Iterable<RuntimeModule> {
     private readonly modules: RuntimeModule[] = [];
 
     public getByName<T extends RuntimeModule>(name: string): T {
