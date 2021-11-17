@@ -36,7 +36,7 @@ import {
     TransportLibraryInitializedEvent,
     TransportLibraryInitializingEvent
 } from "./events";
-import { AnonymousServices, ConsumptionServices, ModuleConfiguration, RuntimeModule, RuntimeModuleCollection, TransportServices } from "./extensibility";
+import { AnonymousServices, ConsumptionServices, ModuleConfiguration, RuntimeModule, RuntimeModuleRegistry, TransportServices } from "./extensibility";
 import { RuntimeConfig } from "./RuntimeConfig";
 import { RuntimeLoggerFactory } from "./RuntimeLoggerFactory";
 import { RuntimeHealth } from "./types";
@@ -84,8 +84,8 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         return this;
     }
 
-    private _modules: RuntimeModuleCollection;
-    public get modules(): RuntimeModuleCollection {
+    private _modules: RuntimeModuleRegistry;
+    public get modules(): RuntimeModuleRegistry {
         return this._modules;
     }
 
@@ -124,7 +124,6 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
             throw RuntimeErrors.general.alreadyInitialized();
         }
 
-        this._modules = new RuntimeModuleCollection();
         this.eventBus.publish(new RuntimeInitializingEvent());
 
         this.loggerFactory = await this.createLoggerFactory();
@@ -133,12 +132,18 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         await this.initTransportLibrary();
         await this.initAccount();
-        await this.loadModules();
 
+        this._modules = new RuntimeModuleRegistry();
+        await this.loadModules();
+        await this.initInfrastructure();
         await this.initModules();
 
         this._isInitialized = true;
         this.eventBus.publish(new RuntimeInitializedEvent());
+    }
+
+    protected initInfrastructure(): void | Promise<void> {
+        return;
     }
 
     protected abstract createLoggerFactory(): Promise<ILoggerFactory> | ILoggerFactory;
@@ -319,8 +324,14 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
             throw RuntimeErrors.general.alreadyStarted();
         }
 
+        await this.startInfrastructure();
         await this.startModules();
+
         this._isStarted = true;
+    }
+
+    protected startInfrastructure(): void | Promise<void> {
+        return;
     }
 
     protected async stop(): Promise<void> {
@@ -333,6 +344,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         }
 
         await this.stopModules();
+        await this.stopInfrastructure();
 
         this.logger.info("Closing AccountController...");
         await this._accountController?.close();
@@ -341,6 +353,10 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         this._isInitialized = false;
         this._isStarted = false;
+    }
+
+    protected stopInfrastructure(): void | Promise<void> {
+        return;
     }
 
     private async stopModules() {
