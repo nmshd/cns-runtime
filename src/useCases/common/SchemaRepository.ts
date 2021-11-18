@@ -55,10 +55,12 @@ export class SchemaRepository {
     }
 }
 
+export type JsonSchemaValidationResult = { isValid: boolean; errors: null | ErrorObject[] | undefined };
+
 export class JsonSchema {
     public constructor(private readonly validateSchema: ValidateFunction) {}
 
-    public validate(obj: any): { isValid: boolean; errors: null | ErrorObject[] | undefined } {
+    public validate(obj: any): JsonSchemaValidationResult {
         return { isValid: this.validateSchema(obj), errors: this.validateSchema.errors };
     }
 }
