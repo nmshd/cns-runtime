@@ -278,9 +278,13 @@ describe("Load peer file with token reference", () => {
         expectError(response, "reference is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.each(illegalParameters)("passing %p as truncated token reference causes an error", async (tokenReference) => {
+    test.each([
+        [null, "reference must be string"],
+        [undefined, "reference must be string"],
+        ["", ""]
+    ])("passing %p as truncated token reference causes an error", async (tokenReference, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ reference: tokenReference! });
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
 });
 
@@ -336,24 +340,26 @@ describe("Load peer file with file id and secret", () => {
 
         const response = await transportServices2.files.loadPeerFile({ id: UNKOWN_TOKEN_ID, secretKey: file.secretKey });
 
-        expectError(response, "id is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "id must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.each(illegalParameters)("passing valid file id and %p as secret key", async (secretKey) => {
+    test.each([
+        [null, "secretKey must be string"],
+        [undefined, "secretKey must be a string"],
+        ["", "id must match format fileId"]
+    ])("cannot pass %p as secret key", async (secretKey, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ id: file.id, secretKey: secretKey! });
 
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.each(illegalParameters)("passing %p as file id and valid secret key", async (fileId) => {
+    test.each([
+        [null, "id must be string"],
+        [undefined, " must have required property 'id'"],
+        ["", "id must match format fileId"]
+    ])("cannot pass %p as file id", async (fileId, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ id: fileId!, secretKey: file.secretKey });
 
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
-    });
-
-    test.each(combinations(illegalParameters, illegalParameters))("passing %p as file id and %p as secret key", async (fileId, secretKey) => {
-        const response = await transportServices2.files.loadPeerFile({ id: fileId!, secretKey: secretKey! });
-
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
 });

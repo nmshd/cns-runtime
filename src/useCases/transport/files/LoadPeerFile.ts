@@ -4,15 +4,36 @@ import { AccountController, BackboneIds, CoreId, FileController, Token, TokenCon
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
 import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { SchemaRepository } from "../../common/SchemaRepository";
+import { SchemaValidator } from "../../common/SchemaValidator";
 import { FileMapper } from "./FileMapper";
 
-export interface LoadPeerFileRequest {
+interface LoadPeerFileViaSecret {
     /**
      * @format fileId
      */
-    id?: string;
-    secretKey?: string;
-    reference?: string;
+    id: string;
+    secretKey: string;
+}
+
+interface LoadPeerFileViaReference {
+    reference: string;
+}
+
+export type LoadPeerFileRequest = LoadPeerFileViaSecret | LoadPeerFileViaReference;
+
+function isLoadPeerFileViaSecret(request: LoadPeerFileRequest): request is LoadPeerFileViaSecret {
+    return "id" in request && "secretKey" in request;
+}
+
+function isLoadPeerFileViaReference(request: LoadPeerFileRequest): request is LoadPeerFileViaSecret {
+    return "reference" in request;
+}
+
+class Validator extends SchemaValidator<LoadPeerFileRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("LoadPeerFileRequest"));
+    }
 }
 
 class LoadPeerFileRequestValidator extends RuntimeValidator<LoadPeerFileRequest> {
@@ -20,7 +41,7 @@ class LoadPeerFileRequestValidator extends RuntimeValidator<LoadPeerFileRequest>
         super();
 
         this.validateIf((x) => x)
-            .fulfills((x) => this.isCreatePeerFileFromIdAndKeyRequest(x) || this.isCreatePeerFileFromTokenReferenceRequest(x))
+            .fulfills((x) => isLoadPeerFileViaSecret(x) || isLoadPeerFileViaReference(x))
             .withFailureCode(RuntimeErrors.general.invalidPayload().code)
             .withFailureMessage(RuntimeErrors.general.invalidPayload().message);
 
@@ -29,34 +50,29 @@ class LoadPeerFileRequestValidator extends RuntimeValidator<LoadPeerFileRequest>
     }
 
     private setupRulesForCreateFileFromIdAndKeyRequest() {
+        // @ts-ignore
         this.validateIfString((x) => x.id)
             .fulfills(IdValidator.required(BackboneIds.file))
-            .when(this.isCreatePeerFileFromIdAndKeyRequest);
+            .when(isLoadPeerFileViaSecret);
 
+        // @ts-ignore
         this.validateIfString((x) => x.secretKey)
             .isNotNull()
-            .when(this.isCreatePeerFileFromIdAndKeyRequest);
+            .when(isLoadPeerFileViaSecret);
     }
 
     private setupRulesForCreateFileFromTokenReferenceRequest() {
+        // @ts-ignore
         this.validateIfString((x) => x.reference)
             .isNotNull()
             .fulfills(this.isTokenReference)
-            .when(this.isCreatePeerFileFromTokenReferenceRequest);
+            .when(isLoadPeerFileViaReference);
     }
 
     private isTokenReference(tokenReference: string) {
         // "TOK" as Base64
         const tokInBase64 = "VE9L";
         return tokenReference.startsWith(tokInBase64);
-    }
-
-    private isCreatePeerFileFromIdAndKeyRequest(x: LoadPeerFileRequest): boolean {
-        return !!x.id && !!x.secretKey;
-    }
-
-    private isCreatePeerFileFromTokenReferenceRequest(x: LoadPeerFileRequest): boolean {
-        return !!x.reference;
     }
 }
 
@@ -65,7 +81,7 @@ export class LoadPeerFileUseCase extends UseCase<LoadPeerFileRequest, FileDTO> {
         @Inject private readonly fileController: FileController,
         @Inject private readonly tokenController: TokenController,
         @Inject private readonly accountController: AccountController,
-        @Inject validator: LoadPeerFileRequestValidator
+        @Inject validator: Validator
     ) {
         super(validator);
     }
@@ -73,10 +89,10 @@ export class LoadPeerFileUseCase extends UseCase<LoadPeerFileRequest, FileDTO> {
     protected async executeInternal(request: LoadPeerFileRequest): Promise<Result<FileDTO>> {
         let createdFile: Result<FileDTO>;
 
-        if (request.id && request.secretKey) {
+        if (isLoadPeerFileViaSecret(request)) {
             const key = await CryptoSecretKey.fromBase64(request.secretKey);
             createdFile = await this.loadFile(CoreId.from(request.id), key);
-        } else if (request.reference) {
+        } else if (isLoadPeerFileViaReference(request)) {
             createdFile = await this.createFileFromTokenReferenceRequest(request.reference);
         } else {
             throw new Error("Invalid request format.");
