@@ -13,6 +13,9 @@ interface LoadPeerFileViaSecret {
      * @format fileId
      */
     id: string;
+    /**
+     * @minLength 100
+     */
     secretKey: string;
 }
 

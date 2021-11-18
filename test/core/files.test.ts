@@ -345,9 +345,10 @@ describe("Load peer file with file id and secret", () => {
 
     test.each([
         [null, "secretKey must be string"],
-        [undefined, "secretKey must be a string"],
-        ["", "id must match format fileId"]
+        [undefined, " must have required property 'secretKey'"],
+        ["", "secretKey must NOT have fewer than 100 characters"]
     ])("cannot pass %p as secret key", async (secretKey, expectedMessage) => {
+        console.log("HERE", file.secretKey);
         const response = await transportServices2.files.loadPeerFile({ id: file.id, secretKey: secretKey! });
 
         expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");

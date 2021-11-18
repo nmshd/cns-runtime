@@ -1279,7 +1279,7 @@ export const LoadPeerFileRequest: Definition = {
                         },
                         "secretKey": {
                             "type": "string",
-                            "minLength": 17
+                            "minLength": 100
                         }
                     },
                     "required": [
