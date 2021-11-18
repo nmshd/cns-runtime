@@ -43,6 +43,17 @@ export const LoadPeerTokenAnonymousByTruncatedReferenceRequest: Definition = {
     }
 }
 
+export const GetAttributesByNameRequest: Definition = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/GetAttributesByNameRequest",
+    "definitions": {
+        "GetAttributesByNameRequest": {
+            "type": "object",
+            "additionalProperties": false
+        }
+    }
+}
+
 export const CreateAttributeRequest: Definition = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateAttributeRequest",
@@ -175,17 +186,6 @@ export const GetAttributesRequest: Definition = {
     "$ref": "#/definitions/GetAttributesRequest",
     "definitions": {
         "GetAttributesRequest": {
-            "type": "object",
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetAttributesByNameRequest: Definition = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetAttributesByNameRequest",
-    "definitions": {
-        "GetAttributesByNameRequest": {
             "type": "object",
             "additionalProperties": false
         }
@@ -1023,6 +1023,49 @@ export const UpdateSharedItemRequest: Definition = {
     }
 }
 
+export const DownloadFileRequest: Definition = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/DownloadFileRequest",
+    "definitions": {
+        "DownloadFileRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "fileId"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const DownloadAttachmentRequest: Definition = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/DownloadAttachmentRequest",
+    "definitions": {
+        "DownloadAttachmentRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "attachmentId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "attachmentId"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const CreateDeviceRequest: Definition = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateDeviceRequest",
@@ -1200,26 +1243,6 @@ export const CreateTokenQrCodeForFileRequest: Definition = {
     }
 }
 
-export const DownloadFileRequest: Definition = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/DownloadFileRequest",
-    "definitions": {
-        "DownloadFileRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "format": "fileId"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
 export const GetFileRequest: Definition = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetFileRequest",
@@ -1264,6 +1287,50 @@ export const GetFilesRequest: Definition = {
     }
 }
 
+export const LoadPeerFileViaSecretRequest: Definition = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/LoadPeerFileViaSecretRequest",
+    "definitions": {
+        "LoadPeerFileViaSecretRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "fileId"
+                },
+                "secretKey": {
+                    "type": "string",
+                    "minLength": 100
+                }
+            },
+            "required": [
+                "id",
+                "secretKey"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const LoadPeerFileViaReferenceRequest: Definition = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/LoadPeerFileViaReferenceRequest",
+    "definitions": {
+        "LoadPeerFileViaReferenceRequest": {
+            "type": "object",
+            "properties": {
+                "reference": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "reference"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const LoadPeerFileRequest: Definition = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerFileRequest",
@@ -1271,36 +1338,42 @@ export const LoadPeerFileRequest: Definition = {
         "LoadPeerFileRequest": {
             "anyOf": [
                 {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "string",
-                            "format": "fileId"
-                        },
-                        "secretKey": {
-                            "type": "string",
-                            "minLength": 100
-                        }
-                    },
-                    "required": [
-                        "id",
-                        "secretKey"
-                    ],
-                    "additionalProperties": false
+                    "$ref": "#/definitions/LoadPeerFileViaSecretRequest"
                 },
                 {
-                    "type": "object",
-                    "properties": {
-                        "reference": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "reference"
-                    ],
-                    "additionalProperties": false
+                    "$ref": "#/definitions/LoadPeerFileViaReferenceRequest"
                 }
             ]
+        },
+        "LoadPeerFileViaSecretRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "fileId"
+                },
+                "secretKey": {
+                    "type": "string",
+                    "minLength": 100
+                }
+            },
+            "required": [
+                "id",
+                "secretKey"
+            ],
+            "additionalProperties": false
+        },
+        "LoadPeerFileViaReferenceRequest": {
+            "type": "object",
+            "properties": {
+                "reference": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "reference"
+            ],
+            "additionalProperties": false
         }
     }
 }
@@ -1392,29 +1465,6 @@ export const CheckIdentityRequest: Definition = {
             },
             "required": [
                 "address"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const DownloadAttachmentRequest: Definition = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/DownloadAttachmentRequest",
-    "definitions": {
-        "DownloadAttachmentRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "attachmentId": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id",
-                "attachmentId"
             ],
             "additionalProperties": false
         }
@@ -1693,6 +1743,53 @@ export const CreateOwnRelationshipTemplateRequest: Definition = {
             "required": [
                 "expiresAt",
                 "content"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const CreateTokenForOwnTemplateRequest: Definition = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateTokenForOwnTemplateRequest",
+    "definitions": {
+        "CreateTokenForOwnTemplateRequest": {
+            "type": "object",
+            "properties": {
+                "templateId": {
+                    "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string"
+                },
+                "ephemeral": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "templateId"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const CreateTokenQrCodeForOwnTemplateRequest: Definition = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateTokenQrCodeForOwnTemplateRequest",
+    "definitions": {
+        "CreateTokenQrCodeForOwnTemplateRequest": {
+            "type": "object",
+            "properties": {
+                "templateId": {
+                    "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "templateId"
             ],
             "additionalProperties": false
         }
