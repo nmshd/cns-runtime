@@ -278,9 +278,9 @@ describe("Load peer file with token reference", () => {
         expectError(response, "reference is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.each([
+    test.only.each([
         [null, "reference must be string"],
-        [undefined, "reference must be string"],
+        [undefined, " must have required property 'reference'"],
         ["", ""]
     ])("passing %p as truncated token reference causes an error", async (tokenReference, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ reference: tokenReference! });
