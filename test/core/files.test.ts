@@ -1,7 +1,7 @@
 import fs from "fs";
 import { DateTime } from "luxon";
 import { FileDTO, OwnerRestriction, TransportServices } from "../../src";
-import { combinations, createToken, exchangeFile, expectError, expectSuccess, makeUploadRequest, QueryParamConditions, RuntimeServiceProvider, uploadFile } from "../lib";
+import { createToken, exchangeFile, expectError, expectSuccess, makeUploadRequest, QueryParamConditions, RuntimeServiceProvider, uploadFile } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -281,7 +281,7 @@ describe("Load peer file with token reference", () => {
     test.only.each([
         [null, "reference must be string"],
         [undefined, " must have required property 'reference'"],
-        ["", ""]
+        ["", "reference must match pattern VE9L.{84}. The base64 encoded string must start with TOK"]
     ])("passing %p as truncated token reference causes an error", async (tokenReference, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ reference: tokenReference! });
         expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");

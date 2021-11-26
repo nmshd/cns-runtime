@@ -1,11 +1,10 @@
 import { Result } from "@js-soft/ts-utils";
 import { CryptoSecretKey } from "@nmshd/crypto";
-import { AccountController, BackboneIds, CoreId, FileController, Token, TokenContentFile, TokenController } from "@nmshd/transport";
+import { AccountController, CoreId, FileController, Token, TokenContentFile, TokenController } from "@nmshd/transport";
 import { ValidationResult } from "fluent-ts-validator";
-import { Definition } from "ts-json-schema-generator";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
-import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { RuntimeErrors, UseCase } from "../../common";
 import { JsonSchema, SchemaRepository } from "../../common/SchemaRepository";
 import { SchemaValidator } from "../../common/SchemaValidator";
 import { FileMapper } from "./FileMapper";
@@ -23,8 +22,7 @@ export interface LoadPeerFileViaSecretRequest {
 
 export interface LoadPeerFileViaReferenceRequest {
     /**
-     *  @pattern "VE9L.{84}"
-     *  VE9L is TOK in Base64
+     *  @pattern "VE9L.{84}". The base64 encoded string must start with TOK
      */
     reference: string;
 }

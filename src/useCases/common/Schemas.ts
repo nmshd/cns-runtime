@@ -1321,7 +1321,7 @@ export const LoadPeerFileViaReferenceRequest: Definition = {
             "properties": {
                 "reference": {
                     "type": "string",
-                    "pattern": "\"VE9L.{84}\"\nVE9L is TOK in Base64"
+                    "pattern": "\"VE9L.{84}\". The base64 encoded string must start with TOK"
                 }
             },
             "required": [
@@ -1369,7 +1369,7 @@ export const LoadPeerFileRequest: Definition = {
             "properties": {
                 "reference": {
                     "type": "string",
-                    "pattern": "\"VE9L.{84}\"\nVE9L is TOK in Base64"
+                    "pattern": "\"VE9L.{84}\". The base64 encoded string must start with TOK"
                 }
             },
             "required": [
