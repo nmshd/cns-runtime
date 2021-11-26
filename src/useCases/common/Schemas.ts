@@ -1320,7 +1320,8 @@ export const LoadPeerFileViaReferenceRequest: Definition = {
             "type": "object",
             "properties": {
                 "reference": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "\"VE9L.{84}\"\nVE9L is TOK in Base64"
                 }
             },
             "required": [
@@ -1367,7 +1368,8 @@ export const LoadPeerFileRequest: Definition = {
             "type": "object",
             "properties": {
                 "reference": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "\"VE9L.{84}\"\nVE9L is TOK in Base64"
                 }
             },
             "required": [

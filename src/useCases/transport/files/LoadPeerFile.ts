@@ -22,6 +22,10 @@ export interface LoadPeerFileViaSecretRequest {
 }
 
 export interface LoadPeerFileViaReferenceRequest {
+    /**
+     *  @pattern "VE9L.{84}"
+     *  VE9L is TOK in Base64
+     */
     reference: string;
 }
 
@@ -64,18 +68,6 @@ class Validator extends SchemaValidator<LoadPeerFileRequest> {
         }
 
         return this.convertValidationResult(validationResult);
-    }
-}
-
-class LoadPeerFileRequestValidator extends RuntimeValidator<LoadPeerFileRequest> {
-    public constructor() {
-        super();
-    }
-
-    private isTokenReference(tokenReference: string) {
-        // "TOK" as Base64
-        const tokInBase64 = "VE9L";
-        return tokenReference.startsWith(tokInBase64);
     }
 }
 
