@@ -1,8 +1,7 @@
 import { ILogger } from "@js-soft/logging-abstractions";
-import { Result } from "@js-soft/ts-utils";
+import { EventBus, Result } from "@js-soft/ts-utils";
 import { AccountController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { EventBus } from "../../../eventBus/EventBus";
 import { MessageReceivedEvent, RelationshipChangedEvent } from "../../../events";
 import { RuntimeLoggerFactory } from "../../../RuntimeLoggerFactory";
 import { MessageDTO } from "../../../types/transport/MessageDTO";

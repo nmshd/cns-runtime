@@ -6,6 +6,7 @@ export * from "./runtime/ModulesStartedEvent";
 export * from "./runtime/RuntimeInitializedEvent";
 export * from "./runtime/RuntimeInitializingEvent";
 export * from "./transport/MessageReceivedEvent";
+export * from "./transport/MessageSentEvent";
 export * from "./transport/RelationshipChangedEvent";
 export * from "./transport/TransportLibraryInitializedEvent";
 export * from "./transport/TransportLibraryInitializingEvent";

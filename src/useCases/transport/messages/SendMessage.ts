@@ -1,6 +1,7 @@
-import { Result } from "@js-soft/ts-utils";
+import { EventBus, Result } from "@js-soft/ts-utils";
 import { AccountController, BackboneIds, CoreAddress, CoreId, File, FileController, MessageController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
+import { MessageSentEvent } from "../../../events";
 import { MessageDTO } from "../../../types";
 import { AddressValidator, IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { MessageMapper } from "./MessageMapper";
@@ -30,6 +31,7 @@ export class SendMessageUseCase extends UseCase<SendMessageRequest, MessageDTO> 
         @Inject private readonly messageController: MessageController,
         @Inject private readonly fileController: FileController,
         @Inject private readonly accountController: AccountController,
+        @Inject private readonly eventBus: EventBus,
         @Inject validator: SendMessageRequestValidator
     ) {
         super(validator);
@@ -46,7 +48,9 @@ export class SendMessageUseCase extends UseCase<SendMessageRequest, MessageDTO> 
             content: request.content,
             attachments: transformAttachmentsResult.value
         });
+        const messageDTO = MessageMapper.toMessageDTO(result);
 
+        this.eventBus.publish(new MessageSentEvent(messageDTO));
         await this.accountController.syncDatawallet();
 
         return Result.ok(MessageMapper.toMessageDTO(result));

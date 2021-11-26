@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/runtime",
-    "version": "1.0.8",
+    "version": "1.1.0",
     "description": "The Enmeshed client runtime.",
     "homepage": "https://enmeshed.eu",
     "license": "MIT",
@@ -78,13 +78,13 @@
         "jest": "^27.3.1",
         "madge": "^5.0.1",
         "nodemon": "^2.0.15",
-        "prettier": "^2.4.1",
+        "prettier": "^2.5.0",
         "ts-jest": "^27.0.7",
         "ts-node": "^10.4.0",
         "ts-json-schema-generator": "^0.97.0",
         "tsconfig-paths": "^3.12.0",
         "typescript": "^4.5.2",
-        "webpack": "^5.64.2",
+        "webpack": "^5.64.4",
         "webpack-cli": "^4.9.1"
     },
     "publishConfig": {
