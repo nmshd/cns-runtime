@@ -1,6 +1,5 @@
 export * from "./buildInformation";
 export * from "./dataViews";
-export * from "./eventBus";
 export * from "./events";
 export * from "./extensibility";
 export * from "./modules";

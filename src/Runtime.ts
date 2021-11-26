@@ -1,5 +1,6 @@
 import { IDatabaseConnection } from "@js-soft/docdb-access-abstractions";
 import { ILogger, ILoggerFactory } from "@js-soft/logging-abstractions";
+import { EventBus, EventEmitter2EventBus } from "@js-soft/ts-utils";
 import {
     ConsumptionAttributesController,
     ConsumptionController,
@@ -25,8 +26,6 @@ import {
 } from "@nmshd/transport";
 import { Container, Scope } from "typescript-ioc";
 import { DataViewExpander } from "./dataViews";
-import { EventBus } from "./eventBus";
-import { EventEmitter2EventBus } from "./eventBus/eventEmitter2/EventEmitter2EventBus";
 import {
     ModulesInitializedEvent,
     ModulesLoadedEvent,
