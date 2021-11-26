@@ -22,7 +22,7 @@ export interface LoadPeerFileViaSecretRequest {
 
 export interface LoadPeerFileViaReferenceRequest {
     /**
-     *  @pattern "VE9L.{84}". The base64 encoded string must start with TOK
+     *  @pattern "VE9L.{84}". Must be a token reference
      */
     reference: string;
 }

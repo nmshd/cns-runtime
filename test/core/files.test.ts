@@ -263,25 +263,25 @@ describe("Load peer file with token reference", () => {
         expect(response.value).toContainEqual({ ...file, isOwn: false });
     });
 
-    test("passing token id as truncated token reference causes an error", async () => {
+    test("cannot pass token id as truncated token reference", async () => {
         const file = await uploadFile(transportServices1);
         const token = (await transportServices1.files.createTokenForFile({ fileId: file.id })).value;
 
         const response = await transportServices2.files.loadPeerFile({ reference: token.id });
-        expectError(response, "reference is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "reference must match pattern VE9L.{84}. Must be a token reference", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("passing file id as truncated token reference causes an error", async () => {
         const file = await uploadFile(transportServices1);
 
         const response = await transportServices2.files.loadPeerFile({ reference: file.id });
-        expectError(response, "reference is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "reference must match pattern VE9L.{84}. Must be a token reference", "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.only.each([
+    test.each([
         [null, "reference must be string"],
         [undefined, " must have required property 'reference'"],
-        ["", "reference must match pattern VE9L.{84}. The base64 encoded string must start with TOK"]
+        ["", "reference must match pattern VE9L.{84}. Must be a token reference"]
     ])("passing %p as truncated token reference causes an error", async (tokenReference, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ reference: tokenReference! });
         expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
@@ -327,7 +327,7 @@ describe("Load peer file with file id and secret", () => {
         expect(response.value).toContainEqual({ ...file, isOwn: false });
     });
 
-    test("passing an unkown file id causes an error", async () => {
+    test("cannot pass an unkown file id", async () => {
         expect(file).toBeDefined();
 
         const response = await transportServices2.files.loadPeerFile({ id: UNKOWN_FILE_ID, secretKey: file.secretKey });
@@ -335,7 +335,7 @@ describe("Load peer file with file id and secret", () => {
         expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
-    test("passing an unkown token id as file id causes an error", async () => {
+    test("cannot pass an unkown token id as file id", async () => {
         expect(file).toBeDefined();
 
         const response = await transportServices2.files.loadPeerFile({ id: UNKOWN_TOKEN_ID, secretKey: file.secretKey });
