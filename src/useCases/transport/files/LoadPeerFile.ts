@@ -20,9 +20,12 @@ export interface LoadPeerFileViaSecretRequest {
     secretKey: string;
 }
 
+/**
+ * @errorMessage token reference invalid
+ */
 export interface LoadPeerFileViaReferenceRequest {
     /**
-     *  @pattern VE9L.{84}
+     * @pattern VE9L.{84}
      */
     reference: string;
 }

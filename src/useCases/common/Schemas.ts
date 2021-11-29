@@ -1312,7 +1312,7 @@ export const LoadPeerFileViaSecretRequest: Definition = {
     }
 }
 
-export const LoadPeerFileViaReferenceRequest: Definition = {
+export const LoadPeerFileViaReferenceRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerFileViaReferenceRequest",
     "definitions": {
@@ -1327,12 +1327,13 @@ export const LoadPeerFileViaReferenceRequest: Definition = {
             "required": [
                 "reference"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "errorMessage": "token reference invalid"
         }
     }
 }
 
-export const LoadPeerFileRequest: Definition = {
+export const LoadPeerFileRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerFileRequest",
     "definitions": {
@@ -1375,7 +1376,8 @@ export const LoadPeerFileRequest: Definition = {
             "required": [
                 "reference"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "errorMessage": "token reference invalid"
         }
     }
 }
