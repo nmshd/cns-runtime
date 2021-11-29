@@ -20,6 +20,7 @@ export const LoadPeerTokenAnonymousByIdAndKeyRequest = {
         }
     }
 }
+
 export const LoadPeerTokenAnonymousByTruncatedReferenceRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerTokenAnonymousByTruncatedReferenceRequest",
@@ -38,6 +39,7 @@ export const LoadPeerTokenAnonymousByTruncatedReferenceRequest = {
         }
     }
 }
+
 export const CreateAttributeRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateAttributeRequest",
@@ -88,6 +90,7 @@ export const CreateAttributeRequest = {
         }
     }
 }
+
 export const DeleteAttributeRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteAttributeRequest",
@@ -106,6 +109,7 @@ export const DeleteAttributeRequest = {
         }
     }
 }
+
 export const DeleteAttributeByNameRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteAttributeByNameRequest",
@@ -124,6 +128,7 @@ export const DeleteAttributeByNameRequest = {
         }
     }
 }
+
 export const GetAttributeRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributeRequest",
@@ -142,6 +147,7 @@ export const GetAttributeRequest = {
         }
     }
 }
+
 export const GetAttributeByNameRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributeByNameRequest",
@@ -160,6 +166,7 @@ export const GetAttributeByNameRequest = {
         }
     }
 }
+
 export const GetAttributesRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributesRequest",
@@ -170,6 +177,7 @@ export const GetAttributesRequest = {
         }
     }
 }
+
 export const GetAttributesByNameRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributesByNameRequest",
@@ -180,6 +188,7 @@ export const GetAttributesByNameRequest = {
         }
     }
 }
+
 export const GetHistoryByNameRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetHistoryByNameRequest",
@@ -198,6 +207,7 @@ export const GetHistoryByNameRequest = {
         }
     }
 }
+
 export const SucceedAttributeRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/SucceedAttributeRequest",
@@ -251,6 +261,7 @@ export const SucceedAttributeRequest = {
         }
     }
 }
+
 export const UpdateAttributeRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateAttributeRequest",
@@ -305,6 +316,7 @@ export const UpdateAttributeRequest = {
         }
     }
 }
+
 export const CreateDraftRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateDraftRequest",
@@ -324,6 +336,7 @@ export const CreateDraftRequest = {
         }
     }
 }
+
 export const DeleteDraftRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteDraftRequest",
@@ -342,6 +355,7 @@ export const DeleteDraftRequest = {
         }
     }
 }
+
 export const GetDraftRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetDraftRequest",
@@ -360,6 +374,7 @@ export const GetDraftRequest = {
         }
     }
 }
+
 export const GetDraftsRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetDraftsRequest",
@@ -373,6 +388,7 @@ export const GetDraftsRequest = {
         }
     }
 }
+
 export const UpdateDraftRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateDraftRequest",
@@ -393,6 +409,7 @@ export const UpdateDraftRequest = {
         }
     }
 }
+
 export const CreateRelationshipInfoRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateRelationshipInfoRequest",
@@ -509,6 +526,7 @@ export const CreateRelationshipInfoRequest = {
         }
     }
 }
+
 export const DeleteRelationshipInfoRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteRelationshipInfoRequest",
@@ -527,6 +545,7 @@ export const DeleteRelationshipInfoRequest = {
         }
     }
 }
+
 export const DeleteRelationshipInfoByRelationshipRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteRelationshipInfoByRelationshipRequest",
@@ -545,6 +564,7 @@ export const DeleteRelationshipInfoByRelationshipRequest = {
         }
     }
 }
+
 export const GetRelationshipInfoRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipInfoRequest",
@@ -563,6 +583,7 @@ export const GetRelationshipInfoRequest = {
         }
     }
 }
+
 export const GetRelationshipInfoByRelationshipRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipInfoByRelationshipRequest",
@@ -581,6 +602,7 @@ export const GetRelationshipInfoByRelationshipRequest = {
         }
     }
 }
+
 export const UpdateRelationshipInfoRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateRelationshipInfoRequest",
@@ -695,6 +717,7 @@ export const UpdateRelationshipInfoRequest = {
         }
     }
 }
+
 export const CreateSettingRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateSettingRequest",
@@ -727,6 +750,7 @@ export const CreateSettingRequest = {
         }
     }
 }
+
 export const DeleteSettingRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteSettingRequest",
@@ -745,6 +769,7 @@ export const DeleteSettingRequest = {
         }
     }
 }
+
 export const GetSettingRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSettingRequest",
@@ -763,6 +788,7 @@ export const GetSettingRequest = {
         }
     }
 }
+
 export const GetSettingsRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSettingsRequest",
@@ -776,6 +802,7 @@ export const GetSettingsRequest = {
         }
     }
 }
+
 export const UpdateSettingRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateSettingRequest",
@@ -796,6 +823,7 @@ export const UpdateSettingRequest = {
         }
     }
 }
+
 export const CreateSharedItemRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateSharedItemRequest",
@@ -842,6 +870,7 @@ export const CreateSharedItemRequest = {
         }
     }
 }
+
 export const DeleteSharedItemRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteSharedItemRequest",
@@ -860,6 +889,7 @@ export const DeleteSharedItemRequest = {
         }
     }
 }
+
 export const GetSharedItemRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemRequest",
@@ -878,6 +908,7 @@ export const GetSharedItemRequest = {
         }
     }
 }
+
 export const GetSharedItemsRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemsRequest",
@@ -891,6 +922,7 @@ export const GetSharedItemsRequest = {
         }
     }
 }
+
 export const GetSharedItemsByAddressRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemsByAddressRequest",
@@ -909,6 +941,7 @@ export const GetSharedItemsByAddressRequest = {
         }
     }
 }
+
 export const GetSharedItemsByReferenceRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemsByReferenceRequest",
@@ -927,6 +960,7 @@ export const GetSharedItemsByReferenceRequest = {
         }
     }
 }
+
 export const GetSharedItemsSharedByAddressRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemsSharedByAddressRequest",
@@ -945,6 +979,7 @@ export const GetSharedItemsSharedByAddressRequest = {
         }
     }
 }
+
 export const GetSharedItemsSharedWithAddressRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemsSharedWithAddressRequest",
@@ -963,6 +998,7 @@ export const GetSharedItemsSharedWithAddressRequest = {
         }
     }
 }
+
 export const UpdateSharedItemRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateSharedItemRequest",
@@ -983,6 +1019,34 @@ export const UpdateSharedItemRequest = {
         }
     }
 }
+
+export const RegisterPushNotificationTokenRequest = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/RegisterPushNotificationTokenRequest",
+    "definitions": {
+        "RegisterPushNotificationTokenRequest": {
+            "type": "object",
+            "properties": {
+                "handle": {
+                    "type": "string"
+                },
+                "installationId": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "handle",
+                "installationId",
+                "platform"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const CreateDeviceRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateDeviceRequest",
@@ -1004,6 +1068,7 @@ export const CreateDeviceRequest = {
         }
     }
 }
+
 export const CreateDeviceOnboardingTokenRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateDeviceOnboardingTokenRequest",
@@ -1025,6 +1090,7 @@ export const CreateDeviceOnboardingTokenRequest = {
         }
     }
 }
+
 export const DeleteDeviceRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteDeviceRequest",
@@ -1043,6 +1109,7 @@ export const DeleteDeviceRequest = {
         }
     }
 }
+
 export const GetDeviceRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetDeviceRequest",
@@ -1061,6 +1128,7 @@ export const GetDeviceRequest = {
         }
     }
 }
+
 export const GetDeviceOnboardingInfoRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetDeviceOnboardingInfoRequest",
@@ -1079,6 +1147,7 @@ export const GetDeviceOnboardingInfoRequest = {
         }
     }
 }
+
 export const UpdateDeviceRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateDeviceRequest",
@@ -1103,6 +1172,7 @@ export const UpdateDeviceRequest = {
         }
     }
 }
+
 export const CreateTokenForFileRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateTokenForFileRequest",
@@ -1129,6 +1199,7 @@ export const CreateTokenForFileRequest = {
         }
     }
 }
+
 export const CreateTokenQrCodeForFileRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateTokenQrCodeForFileRequest",
@@ -1152,6 +1223,7 @@ export const CreateTokenQrCodeForFileRequest = {
         }
     }
 }
+
 export const DownloadFileRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DownloadFileRequest",
@@ -1171,6 +1243,7 @@ export const DownloadFileRequest = {
         }
     }
 }
+
 export const GetFileRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetFileRequest",
@@ -1190,6 +1263,7 @@ export const GetFileRequest = {
         }
     }
 }
+
 export const GetFilesRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetFilesRequest",
@@ -1213,6 +1287,7 @@ export const GetFilesRequest = {
         }
     }
 }
+
 export const LoadPeerFileRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerFileRequest",
@@ -1235,6 +1310,7 @@ export const LoadPeerFileRequest = {
         }
     }
 }
+
 export const UploadOwnFileRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UploadOwnFileRequest",
@@ -1308,6 +1384,7 @@ export const UploadOwnFileRequest = {
         }
     }
 }
+
 export const CheckIdentityRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CheckIdentityRequest",
@@ -1326,6 +1403,7 @@ export const CheckIdentityRequest = {
         }
     }
 }
+
 export const DownloadAttachmentRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DownloadAttachmentRequest",
@@ -1348,6 +1426,7 @@ export const DownloadAttachmentRequest = {
         }
     }
 }
+
 export const GetAttachmentMetadataRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttachmentMetadataRequest",
@@ -1370,6 +1449,7 @@ export const GetAttachmentMetadataRequest = {
         }
     }
 }
+
 export const GetMessageRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetMessageRequest",
@@ -1388,6 +1468,7 @@ export const GetMessageRequest = {
         }
     }
 }
+
 export const GetMessagesRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetMessagesRequest",
@@ -1401,6 +1482,7 @@ export const GetMessagesRequest = {
         }
     }
 }
+
 export const SendMessageRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/SendMessageRequest",
@@ -1430,6 +1512,7 @@ export const SendMessageRequest = {
         }
     }
 }
+
 export const AcceptRelationshipChangeRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/AcceptRelationshipChangeRequest",
@@ -1454,6 +1537,7 @@ export const AcceptRelationshipChangeRequest = {
         }
     }
 }
+
 export const CreateRelationshipRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateRelationshipRequest",
@@ -1474,6 +1558,7 @@ export const CreateRelationshipRequest = {
         }
     }
 }
+
 export const CreateRelationshipChangeRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateRelationshipChangeRequest",
@@ -1493,6 +1578,7 @@ export const CreateRelationshipChangeRequest = {
         }
     }
 }
+
 export const GetRelationshipRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipRequest",
@@ -1511,6 +1597,7 @@ export const GetRelationshipRequest = {
         }
     }
 }
+
 export const GetRelationshipByAddressRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipByAddressRequest",
@@ -1529,6 +1616,7 @@ export const GetRelationshipByAddressRequest = {
         }
     }
 }
+
 export const GetRelationshipsRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipsRequest",
@@ -1542,6 +1630,7 @@ export const GetRelationshipsRequest = {
         }
     }
 }
+
 export const RejectRelationshipChangeRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/RejectRelationshipChangeRequest",
@@ -1566,6 +1655,7 @@ export const RejectRelationshipChangeRequest = {
         }
     }
 }
+
 export const RevokeRelationshipChangeRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/RevokeRelationshipChangeRequest",
@@ -1590,6 +1680,7 @@ export const RevokeRelationshipChangeRequest = {
         }
     }
 }
+
 export const CreateOwnRelationshipTemplateRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateOwnRelationshipTemplateRequest",
@@ -1613,6 +1704,7 @@ export const CreateOwnRelationshipTemplateRequest = {
         }
     }
 }
+
 export const GetRelationshipTemplateRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipTemplateRequest",
@@ -1631,6 +1723,7 @@ export const GetRelationshipTemplateRequest = {
         }
     }
 }
+
 export const GetRelationshipTemplatesRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipTemplatesRequest",
@@ -1654,6 +1747,7 @@ export const GetRelationshipTemplatesRequest = {
         }
     }
 }
+
 export const LoadPeerRelationshipTemplateRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerRelationshipTemplateRequest",
@@ -1675,6 +1769,7 @@ export const LoadPeerRelationshipTemplateRequest = {
         }
     }
 }
+
 export const CreateOwnTokenRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateOwnTokenRequest",
@@ -1699,6 +1794,7 @@ export const CreateOwnTokenRequest = {
         }
     }
 }
+
 export const GetQRCodeForTokenRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetQRCodeForTokenRequest",
@@ -1717,6 +1813,7 @@ export const GetQRCodeForTokenRequest = {
         }
     }
 }
+
 export const GetTokenRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetTokenRequest",
@@ -1735,6 +1832,7 @@ export const GetTokenRequest = {
         }
     }
 }
+
 export const GetTokensRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetTokensRequest",
@@ -1758,6 +1856,7 @@ export const GetTokensRequest = {
         }
     }
 }
+
 export const LoadPeerTokenRequest = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerTokenRequest",
