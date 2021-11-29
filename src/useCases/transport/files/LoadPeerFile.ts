@@ -22,7 +22,7 @@ export interface LoadPeerFileViaSecretRequest {
 
 export interface LoadPeerFileViaReferenceRequest {
     /**
-     *  @pattern "VE9L.{84}". Must be a token reference
+     *  @pattern VE9L.{84}
      */
     reference: string;
 }
