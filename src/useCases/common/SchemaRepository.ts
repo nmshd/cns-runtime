@@ -1,4 +1,5 @@
 import Ajv, { ErrorObject, ValidateFunction } from "ajv";
+import addErrors from "ajv-errors";
 import addFormats from "ajv-formats";
 import { Definition } from "ts-json-schema-generator";
 
@@ -18,8 +19,9 @@ export class SchemaRepository {
     private readonly jsonSchemas = new Map<string, JsonSchema>();
 
     public constructor() {
-        this.compiler = new Ajv();
+        this.compiler = new Ajv({allErrors: true});
         addFormats(this.compiler);
+        addErrors(this.compiler)
 
         this.addCustomFormats();
     }

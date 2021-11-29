@@ -4,7 +4,8 @@ const path = require("path");
 
 const config = {
     tsconfig: path.join(__dirname, "../tsconfig.json"),
-    type: "*"
+    type: "*",
+    extraTags: ["errorMessage"]
 };
 
 const schemaGenerator = tsj.createGenerator(config);
