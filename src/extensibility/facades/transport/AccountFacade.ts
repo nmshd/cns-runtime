@@ -8,6 +8,8 @@ import {
     GetIdentityInfoResponse,
     GetIdentityInfoUseCase,
     GetSyncInfoUseCase,
+    RegisterPushNotificationTokenRequest,
+    RegisterPushNotificationTokenUseCase,
     RuntimeErrors,
     SyncDatawalletUseCase,
     SyncEverythingResponse,
@@ -19,6 +21,7 @@ export class AccountFacade {
     public constructor(
         @Inject private readonly getIdentityInfoUseCase: GetIdentityInfoUseCase,
         @Inject private readonly getDeviceInfoUseCase: GetDeviceInfoUseCase,
+        @Inject private readonly registerPushNotificationTokenUseCase: RegisterPushNotificationTokenUseCase,
         @Inject private readonly syncDatawalletUseCase: SyncDatawalletUseCase,
         @Inject private readonly syncEverythingUseCase: SyncEverythingUseCase,
         @Inject private readonly getSyncInfoUseCase: GetSyncInfoUseCase,
@@ -40,6 +43,10 @@ export class AccountFacade {
 
     public recoverDevice(): void {
         throw RuntimeErrors.general.notImplemented();
+    }
+
+    public async registerPushNotificationToken(request: RegisterPushNotificationTokenRequest): Promise<Result<void, ApplicationError>> {
+        return await this.registerPushNotificationTokenUseCase.execute(request);
     }
 
     public async syncDatawallet(): Promise<Result<void, ApplicationError>> {
