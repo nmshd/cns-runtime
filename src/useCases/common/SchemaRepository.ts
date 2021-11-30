@@ -4,13 +4,13 @@ import addFormats from "ajv-formats";
 import { Definition } from "ts-json-schema-generator";
 
 const customFormats: Record<string, string> = {
-    fileId: "FIL[A-Za-z0-9]{17}",
-    relationshipId: "REL[A-Za-z0-9]{17}",
-    messageId: "MSG[A-Za-z0-9]{17}",
-    relationshipTemplateId: "RLT[A-Za-z0-9]{17}",
-    tokenId: "TOK[A-Za-z0-9]{17}",
-    relationshipChangeId: "RCH[A-Za-z0-9]{17}",
-    deviceId: "DVC[A-Za-z0-9]{17}"
+    fileId: "FIL[A-z0-9]{17}",
+    relationshipId: "REL[A-z0-9]{17}",
+    messageId: "MSG[A-z0-9]{17}",
+    relationshipTemplateId: "RLT[A-z0-9]{17}",
+    tokenId: "TOK[A-z0-9]{17}",
+    relationshipChangeId: "RCH[A-z0-9]{17}",
+    deviceId: "DVC[A-z0-9]{17}"
 };
 
 export class SchemaRepository {
@@ -63,6 +63,6 @@ export class JsonSchema {
     public constructor(private readonly validateSchema: ValidateFunction) {}
 
     public validate(obj: any): JsonSchemaValidationResult {
-        return { isValid: this.validateSchema(obj), errors: this.validateSchema.errors };
+        return { isValid: this.validateSchema(obj), errors: this.validateSchema.errors ? [...this.validateSchema.errors] : undefined };
     }
 }
