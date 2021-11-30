@@ -99,8 +99,7 @@ describe("Get file", () => {
     });
 
     test("accessing not existing file id causes an error", async () => {
-        const notPresentFileId = "FILXXXXXXXXXXXXXXXXX";
-        const response = await transportServices1.files.getFile({ id: notPresentFileId });
+        const response = await transportServices1.files.getFile({ id: UNKOWN_FILE_ID });
         expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 });
