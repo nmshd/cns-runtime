@@ -41,8 +41,8 @@ function isLoadPeerFileViaReference(request: LoadPeerFileRequest): request is Lo
 }
 
 class Validator extends SchemaValidator<LoadPeerFileRequest> {
-    private loadViaSecretSchema: JsonSchema;
-    private loadViaReferenceSchema: JsonSchema;
+    private readonly loadViaSecretSchema: JsonSchema;
+    private readonly loadViaReferenceSchema: JsonSchema;
 
     public constructor(@Inject schemaRepository: SchemaRepository) {
         super(schemaRepository.getSchema("LoadPeerFileRequest"));

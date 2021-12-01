@@ -19,9 +19,9 @@ export class SchemaRepository {
     private readonly jsonSchemas = new Map<string, JsonSchema>();
 
     public constructor() {
-        this.compiler = new Ajv({allErrors: true});
+        this.compiler = new Ajv({ allErrors: true });
         addFormats(this.compiler);
-        addErrors(this.compiler)
+        addErrors(this.compiler);
 
         this.addCustomFormats();
     }
@@ -57,7 +57,10 @@ export class SchemaRepository {
     }
 }
 
-export type JsonSchemaValidationResult = { isValid: boolean; errors: null | ErrorObject[] | undefined };
+export interface JsonSchemaValidationResult {
+    isValid: boolean;
+    errors: null | ErrorObject[] | undefined;
+}
 
 export class JsonSchema {
     public constructor(private readonly validateSchema: ValidateFunction) {}
