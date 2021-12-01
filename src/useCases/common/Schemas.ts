@@ -1,7 +1,4 @@
-
-import {Definition} from "ts-json-schema-generator";
-
-export const LoadPeerTokenAnonymousByIdAndKeyRequest: Definition = {
+export const LoadPeerTokenAnonymousByIdAndKeyRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerTokenAnonymousByIdAndKeyRequest",
     "definitions": {
@@ -24,7 +21,7 @@ export const LoadPeerTokenAnonymousByIdAndKeyRequest: Definition = {
     }
 }
 
-export const LoadPeerTokenAnonymousByTruncatedReferenceRequest: Definition = {
+export const LoadPeerTokenAnonymousByTruncatedReferenceRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerTokenAnonymousByTruncatedReferenceRequest",
     "definitions": {
@@ -43,7 +40,7 @@ export const LoadPeerTokenAnonymousByTruncatedReferenceRequest: Definition = {
     }
 }
 
-export const GetAttributesByNameRequest: Definition = {
+export const GetAttributesByNameRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributesByNameRequest",
     "definitions": {
@@ -54,7 +51,7 @@ export const GetAttributesByNameRequest: Definition = {
     }
 }
 
-export const CreateAttributeRequest: Definition = {
+export const CreateAttributeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateAttributeRequest",
     "definitions": {
@@ -105,7 +102,7 @@ export const CreateAttributeRequest: Definition = {
     }
 }
 
-export const DeleteAttributeRequest: Definition = {
+export const DeleteAttributeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteAttributeRequest",
     "definitions": {
@@ -124,7 +121,7 @@ export const DeleteAttributeRequest: Definition = {
     }
 }
 
-export const DeleteAttributeByNameRequest: Definition = {
+export const DeleteAttributeByNameRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteAttributeByNameRequest",
     "definitions": {
@@ -143,7 +140,7 @@ export const DeleteAttributeByNameRequest: Definition = {
     }
 }
 
-export const GetAttributeRequest: Definition = {
+export const GetAttributeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributeRequest",
     "definitions": {
@@ -162,7 +159,7 @@ export const GetAttributeRequest: Definition = {
     }
 }
 
-export const GetAttributeByNameRequest: Definition = {
+export const GetAttributeByNameRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributeByNameRequest",
     "definitions": {
@@ -181,7 +178,7 @@ export const GetAttributeByNameRequest: Definition = {
     }
 }
 
-export const GetAttributesRequest: Definition = {
+export const GetAttributesRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributesRequest",
     "definitions": {
@@ -192,7 +189,7 @@ export const GetAttributesRequest: Definition = {
     }
 }
 
-export const GetHistoryByNameRequest: Definition = {
+export const GetHistoryByNameRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetHistoryByNameRequest",
     "definitions": {
@@ -211,7 +208,7 @@ export const GetHistoryByNameRequest: Definition = {
     }
 }
 
-export const SucceedAttributeRequest: Definition = {
+export const SucceedAttributeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/SucceedAttributeRequest",
     "definitions": {
@@ -265,7 +262,7 @@ export const SucceedAttributeRequest: Definition = {
     }
 }
 
-export const UpdateAttributeRequest: Definition = {
+export const UpdateAttributeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateAttributeRequest",
     "definitions": {
@@ -320,7 +317,7 @@ export const UpdateAttributeRequest: Definition = {
     }
 }
 
-export const CreateDraftRequest: Definition = {
+export const CreateDraftRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateDraftRequest",
     "definitions": {
@@ -340,7 +337,7 @@ export const CreateDraftRequest: Definition = {
     }
 }
 
-export const DeleteDraftRequest: Definition = {
+export const DeleteDraftRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteDraftRequest",
     "definitions": {
@@ -359,7 +356,7 @@ export const DeleteDraftRequest: Definition = {
     }
 }
 
-export const GetDraftRequest: Definition = {
+export const GetDraftRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetDraftRequest",
     "definitions": {
@@ -378,7 +375,7 @@ export const GetDraftRequest: Definition = {
     }
 }
 
-export const GetDraftsRequest: Definition = {
+export const GetDraftsRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetDraftsRequest",
     "definitions": {
@@ -392,7 +389,7 @@ export const GetDraftsRequest: Definition = {
     }
 }
 
-export const UpdateDraftRequest: Definition = {
+export const UpdateDraftRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateDraftRequest",
     "definitions": {
@@ -413,7 +410,7 @@ export const UpdateDraftRequest: Definition = {
     }
 }
 
-export const CreateRelationshipInfoRequest: Definition = {
+export const CreateRelationshipInfoRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateRelationshipInfoRequest",
     "definitions": {
@@ -530,7 +527,7 @@ export const CreateRelationshipInfoRequest: Definition = {
     }
 }
 
-export const DeleteRelationshipInfoRequest: Definition = {
+export const DeleteRelationshipInfoRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteRelationshipInfoRequest",
     "definitions": {
@@ -549,7 +546,7 @@ export const DeleteRelationshipInfoRequest: Definition = {
     }
 }
 
-export const DeleteRelationshipInfoByRelationshipRequest: Definition = {
+export const DeleteRelationshipInfoByRelationshipRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteRelationshipInfoByRelationshipRequest",
     "definitions": {
@@ -568,7 +565,7 @@ export const DeleteRelationshipInfoByRelationshipRequest: Definition = {
     }
 }
 
-export const GetRelationshipInfoRequest: Definition = {
+export const GetRelationshipInfoRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipInfoRequest",
     "definitions": {
@@ -587,7 +584,7 @@ export const GetRelationshipInfoRequest: Definition = {
     }
 }
 
-export const GetRelationshipInfoByRelationshipRequest: Definition = {
+export const GetRelationshipInfoByRelationshipRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipInfoByRelationshipRequest",
     "definitions": {
@@ -606,7 +603,7 @@ export const GetRelationshipInfoByRelationshipRequest: Definition = {
     }
 }
 
-export const UpdateRelationshipInfoRequest: Definition = {
+export const UpdateRelationshipInfoRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateRelationshipInfoRequest",
     "definitions": {
@@ -721,7 +718,7 @@ export const UpdateRelationshipInfoRequest: Definition = {
     }
 }
 
-export const CreateSettingRequest: Definition = {
+export const CreateSettingRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateSettingRequest",
     "definitions": {
@@ -754,7 +751,7 @@ export const CreateSettingRequest: Definition = {
     }
 }
 
-export const DeleteSettingRequest: Definition = {
+export const DeleteSettingRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteSettingRequest",
     "definitions": {
@@ -773,7 +770,7 @@ export const DeleteSettingRequest: Definition = {
     }
 }
 
-export const GetSettingRequest: Definition = {
+export const GetSettingRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSettingRequest",
     "definitions": {
@@ -792,7 +789,7 @@ export const GetSettingRequest: Definition = {
     }
 }
 
-export const GetSettingsRequest: Definition = {
+export const GetSettingsRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSettingsRequest",
     "definitions": {
@@ -806,7 +803,7 @@ export const GetSettingsRequest: Definition = {
     }
 }
 
-export const UpdateSettingRequest: Definition = {
+export const UpdateSettingRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateSettingRequest",
     "definitions": {
@@ -827,7 +824,7 @@ export const UpdateSettingRequest: Definition = {
     }
 }
 
-export const CreateSharedItemRequest: Definition = {
+export const CreateSharedItemRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateSharedItemRequest",
     "definitions": {
@@ -874,7 +871,7 @@ export const CreateSharedItemRequest: Definition = {
     }
 }
 
-export const DeleteSharedItemRequest: Definition = {
+export const DeleteSharedItemRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteSharedItemRequest",
     "definitions": {
@@ -893,7 +890,7 @@ export const DeleteSharedItemRequest: Definition = {
     }
 }
 
-export const GetSharedItemRequest: Definition = {
+export const GetSharedItemRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemRequest",
     "definitions": {
@@ -912,7 +909,7 @@ export const GetSharedItemRequest: Definition = {
     }
 }
 
-export const GetSharedItemsRequest: Definition = {
+export const GetSharedItemsRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemsRequest",
     "definitions": {
@@ -926,7 +923,7 @@ export const GetSharedItemsRequest: Definition = {
     }
 }
 
-export const GetSharedItemsByAddressRequest: Definition = {
+export const GetSharedItemsByAddressRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemsByAddressRequest",
     "definitions": {
@@ -945,7 +942,7 @@ export const GetSharedItemsByAddressRequest: Definition = {
     }
 }
 
-export const GetSharedItemsByReferenceRequest: Definition = {
+export const GetSharedItemsByReferenceRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemsByReferenceRequest",
     "definitions": {
@@ -964,7 +961,7 @@ export const GetSharedItemsByReferenceRequest: Definition = {
     }
 }
 
-export const GetSharedItemsSharedByAddressRequest: Definition = {
+export const GetSharedItemsSharedByAddressRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemsSharedByAddressRequest",
     "definitions": {
@@ -983,7 +980,7 @@ export const GetSharedItemsSharedByAddressRequest: Definition = {
     }
 }
 
-export const GetSharedItemsSharedWithAddressRequest: Definition = {
+export const GetSharedItemsSharedWithAddressRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetSharedItemsSharedWithAddressRequest",
     "definitions": {
@@ -1002,7 +999,7 @@ export const GetSharedItemsSharedWithAddressRequest: Definition = {
     }
 }
 
-export const UpdateSharedItemRequest: Definition = {
+export const UpdateSharedItemRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateSharedItemRequest",
     "definitions": {
@@ -1023,7 +1020,34 @@ export const UpdateSharedItemRequest: Definition = {
     }
 }
 
-export const DownloadFileRequest: Definition = {
+export const RegisterPushNotificationTokenRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/RegisterPushNotificationTokenRequest",
+    "definitions": {
+        "RegisterPushNotificationTokenRequest": {
+            "type": "object",
+            "properties": {
+                "handle": {
+                    "type": "string"
+                },
+                "installationId": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "handle",
+                "installationId",
+                "platform"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const DownloadFileRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DownloadFileRequest",
     "definitions": {
@@ -1043,7 +1067,7 @@ export const DownloadFileRequest: Definition = {
     }
 }
 
-export const DownloadAttachmentRequest: Definition = {
+export const DownloadAttachmentRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DownloadAttachmentRequest",
     "definitions": {
@@ -1066,7 +1090,7 @@ export const DownloadAttachmentRequest: Definition = {
     }
 }
 
-export const CreateDeviceRequest: Definition = {
+export const CreateDeviceRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateDeviceRequest",
     "definitions": {
@@ -1088,7 +1112,7 @@ export const CreateDeviceRequest: Definition = {
     }
 }
 
-export const CreateDeviceOnboardingTokenRequest: Definition = {
+export const CreateDeviceOnboardingTokenRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateDeviceOnboardingTokenRequest",
     "definitions": {
@@ -1110,7 +1134,7 @@ export const CreateDeviceOnboardingTokenRequest: Definition = {
     }
 }
 
-export const DeleteDeviceRequest: Definition = {
+export const DeleteDeviceRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DeleteDeviceRequest",
     "definitions": {
@@ -1129,7 +1153,7 @@ export const DeleteDeviceRequest: Definition = {
     }
 }
 
-export const GetDeviceRequest: Definition = {
+export const GetDeviceRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetDeviceRequest",
     "definitions": {
@@ -1148,7 +1172,7 @@ export const GetDeviceRequest: Definition = {
     }
 }
 
-export const GetDeviceOnboardingInfoRequest: Definition = {
+export const GetDeviceOnboardingInfoRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetDeviceOnboardingInfoRequest",
     "definitions": {
@@ -1167,7 +1191,7 @@ export const GetDeviceOnboardingInfoRequest: Definition = {
     }
 }
 
-export const UpdateDeviceRequest: Definition = {
+export const UpdateDeviceRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UpdateDeviceRequest",
     "definitions": {
@@ -1192,7 +1216,7 @@ export const UpdateDeviceRequest: Definition = {
     }
 }
 
-export const CreateTokenForFileRequest: Definition = {
+export const CreateTokenForFileRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateTokenForFileRequest",
     "definitions": {
@@ -1219,7 +1243,7 @@ export const CreateTokenForFileRequest: Definition = {
     }
 }
 
-export const CreateTokenQrCodeForFileRequest: Definition = {
+export const CreateTokenQrCodeForFileRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateTokenQrCodeForFileRequest",
     "definitions": {
@@ -1243,7 +1267,7 @@ export const CreateTokenQrCodeForFileRequest: Definition = {
     }
 }
 
-export const GetFileRequest: Definition = {
+export const GetFileRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetFileRequest",
     "definitions": {
@@ -1263,7 +1287,7 @@ export const GetFileRequest: Definition = {
     }
 }
 
-export const GetFilesRequest: Definition = {
+export const GetFilesRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetFilesRequest",
     "definitions": {
@@ -1287,7 +1311,7 @@ export const GetFilesRequest: Definition = {
     }
 }
 
-export const LoadPeerFileViaSecretRequest: Definition = {
+export const LoadPeerFileViaSecretRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerFileViaSecretRequest",
     "definitions": {
@@ -1382,7 +1406,7 @@ export const LoadPeerFileRequest: any = {
     }
 }
 
-export const UploadOwnFileRequest: Definition = {
+export const UploadOwnFileRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/UploadOwnFileRequest",
     "definitions": {
@@ -1456,7 +1480,7 @@ export const UploadOwnFileRequest: Definition = {
     }
 }
 
-export const CheckIdentityRequest: Definition = {
+export const CheckIdentityRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CheckIdentityRequest",
     "definitions": {
@@ -1475,7 +1499,7 @@ export const CheckIdentityRequest: Definition = {
     }
 }
 
-export const GetAttachmentMetadataRequest: Definition = {
+export const GetAttachmentMetadataRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttachmentMetadataRequest",
     "definitions": {
@@ -1498,7 +1522,7 @@ export const GetAttachmentMetadataRequest: Definition = {
     }
 }
 
-export const GetMessageRequest: Definition = {
+export const GetMessageRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetMessageRequest",
     "definitions": {
@@ -1517,7 +1541,7 @@ export const GetMessageRequest: Definition = {
     }
 }
 
-export const GetMessagesRequest: Definition = {
+export const GetMessagesRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetMessagesRequest",
     "definitions": {
@@ -1531,7 +1555,7 @@ export const GetMessagesRequest: Definition = {
     }
 }
 
-export const SendMessageRequest: Definition = {
+export const SendMessageRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/SendMessageRequest",
     "definitions": {
@@ -1561,7 +1585,7 @@ export const SendMessageRequest: Definition = {
     }
 }
 
-export const AcceptRelationshipChangeRequest: Definition = {
+export const AcceptRelationshipChangeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/AcceptRelationshipChangeRequest",
     "definitions": {
@@ -1586,7 +1610,7 @@ export const AcceptRelationshipChangeRequest: Definition = {
     }
 }
 
-export const CreateRelationshipRequest: Definition = {
+export const CreateRelationshipRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateRelationshipRequest",
     "definitions": {
@@ -1607,7 +1631,7 @@ export const CreateRelationshipRequest: Definition = {
     }
 }
 
-export const CreateRelationshipChangeRequest: Definition = {
+export const CreateRelationshipChangeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateRelationshipChangeRequest",
     "definitions": {
@@ -1627,7 +1651,7 @@ export const CreateRelationshipChangeRequest: Definition = {
     }
 }
 
-export const GetRelationshipRequest: Definition = {
+export const GetRelationshipRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipRequest",
     "definitions": {
@@ -1646,7 +1670,7 @@ export const GetRelationshipRequest: Definition = {
     }
 }
 
-export const GetRelationshipByAddressRequest: Definition = {
+export const GetRelationshipByAddressRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipByAddressRequest",
     "definitions": {
@@ -1665,7 +1689,7 @@ export const GetRelationshipByAddressRequest: Definition = {
     }
 }
 
-export const GetRelationshipsRequest: Definition = {
+export const GetRelationshipsRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipsRequest",
     "definitions": {
@@ -1679,7 +1703,7 @@ export const GetRelationshipsRequest: Definition = {
     }
 }
 
-export const RejectRelationshipChangeRequest: Definition = {
+export const RejectRelationshipChangeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/RejectRelationshipChangeRequest",
     "definitions": {
@@ -1704,7 +1728,7 @@ export const RejectRelationshipChangeRequest: Definition = {
     }
 }
 
-export const RevokeRelationshipChangeRequest: Definition = {
+export const RevokeRelationshipChangeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/RevokeRelationshipChangeRequest",
     "definitions": {
@@ -1729,7 +1753,7 @@ export const RevokeRelationshipChangeRequest: Definition = {
     }
 }
 
-export const CreateOwnRelationshipTemplateRequest: Definition = {
+export const CreateOwnRelationshipTemplateRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateOwnRelationshipTemplateRequest",
     "definitions": {
@@ -1753,7 +1777,7 @@ export const CreateOwnRelationshipTemplateRequest: Definition = {
     }
 }
 
-export const CreateTokenForOwnTemplateRequest: Definition = {
+export const CreateTokenForOwnTemplateRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateTokenForOwnTemplateRequest",
     "definitions": {
@@ -1778,7 +1802,7 @@ export const CreateTokenForOwnTemplateRequest: Definition = {
     }
 }
 
-export const CreateTokenQrCodeForOwnTemplateRequest: Definition = {
+export const CreateTokenQrCodeForOwnTemplateRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateTokenQrCodeForOwnTemplateRequest",
     "definitions": {
@@ -1800,7 +1824,7 @@ export const CreateTokenQrCodeForOwnTemplateRequest: Definition = {
     }
 }
 
-export const GetRelationshipTemplateRequest: Definition = {
+export const GetRelationshipTemplateRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipTemplateRequest",
     "definitions": {
@@ -1819,7 +1843,7 @@ export const GetRelationshipTemplateRequest: Definition = {
     }
 }
 
-export const GetRelationshipTemplatesRequest: Definition = {
+export const GetRelationshipTemplatesRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipTemplatesRequest",
     "definitions": {
@@ -1843,7 +1867,7 @@ export const GetRelationshipTemplatesRequest: Definition = {
     }
 }
 
-export const LoadPeerRelationshipTemplateRequest: Definition = {
+export const LoadPeerRelationshipTemplateRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerRelationshipTemplateRequest",
     "definitions": {
@@ -1865,7 +1889,7 @@ export const LoadPeerRelationshipTemplateRequest: Definition = {
     }
 }
 
-export const CreateOwnTokenRequest: Definition = {
+export const CreateOwnTokenRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateOwnTokenRequest",
     "definitions": {
@@ -1890,7 +1914,7 @@ export const CreateOwnTokenRequest: Definition = {
     }
 }
 
-export const GetQRCodeForTokenRequest: Definition = {
+export const GetQRCodeForTokenRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetQRCodeForTokenRequest",
     "definitions": {
@@ -1909,7 +1933,7 @@ export const GetQRCodeForTokenRequest: Definition = {
     }
 }
 
-export const GetTokenRequest: Definition = {
+export const GetTokenRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetTokenRequest",
     "definitions": {
@@ -1928,7 +1952,7 @@ export const GetTokenRequest: Definition = {
     }
 }
 
-export const GetTokensRequest: Definition = {
+export const GetTokensRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetTokensRequest",
     "definitions": {
@@ -1952,7 +1976,7 @@ export const GetTokensRequest: Definition = {
     }
 }
 
-export const LoadPeerTokenRequest: Definition = {
+export const LoadPeerTokenRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerTokenRequest",
     "definitions": {

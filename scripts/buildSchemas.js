@@ -19,19 +19,13 @@ let schemaDeclarations = requestTypes
     .map((type) => {
         try {
             const schema = schemaGenerator.createSchema(type);
-            return `export const ${type}: Definition = ${JSON.stringify(schema, undefined, 4)}`;
+            return `export const ${type}: any = ${JSON.stringify(schema, undefined, 4)}`;
         } catch (e) {
             if (!(e instanceof tsj.NoRootTypeError)) throw e;
         }
     })
     .filter((s) => s)
     .join("\n\n");
-
-schemaDeclarations = `
-import { Definition } from "ts-json-schema-generator";
-
-${schemaDeclarations}
-`;
 
 const output_path = path.join(__dirname, "../src/useCases/common/Schemas.ts");
 
