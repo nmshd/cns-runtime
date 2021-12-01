@@ -1,5 +1,5 @@
 
-import { Definition } from "ts-json-schema-generator";
+import {Definition} from "ts-json-schema-generator";
 
 export const LoadPeerTokenAnonymousByIdAndKeyRequest: Definition = {
     "$schema": "http://json-schema.org/draft-07/schema#",

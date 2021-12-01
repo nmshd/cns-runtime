@@ -1,10 +1,19 @@
 import { RelationshipChangeDTO } from "./RelationshipChangeDTO";
 import { RelationshipTemplateDTO } from "./RelationshipTemplateDTO";
 
+export enum RelationshipStatus {
+    Pending = "Pending",
+    Active = "Active",
+    Rejected = "Rejected",
+    Revoked = "Revoked",
+    Terminating = "Terminating",
+    Terminated = "Terminated"
+}
+
 export interface RelationshipDTO {
     id: string;
     template: RelationshipTemplateDTO;
-    status: string;
+    status: RelationshipStatus;
     peer: string;
     changes: RelationshipChangeDTO[];
     lastMessageSentAt?: string;

@@ -1,6 +1,7 @@
-import { Result } from "@js-soft/ts-utils";
+import { EventBus, Result } from "@js-soft/ts-utils";
 import { AccountController, BackboneIds, CoreId, Relationship, RelationshipChange, RelationshipsController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
+import { RelationshipChangedEvent } from "../../../events";
 import { RelationshipDTO } from "../../../types";
 import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { RelationshipMapper } from "./RelationshipMapper";
@@ -24,6 +25,7 @@ export class AcceptRelationshipChangeUseCase extends UseCase<AcceptRelationshipC
     public constructor(
         @Inject private readonly relationshipsController: RelationshipsController,
         @Inject private readonly accountController: AccountController,
+        @Inject private readonly eventBus: EventBus,
         @Inject validator: AcceptRelationshipChangeRequestValidator
     ) {
         super(validator);
@@ -44,10 +46,12 @@ export class AcceptRelationshipChangeUseCase extends UseCase<AcceptRelationshipC
             return Result.fail(RuntimeErrors.general.recordNotFound(RelationshipChange));
         }
 
-        const res = await this.relationshipsController.acceptChange(change, request.content);
+        const updatedRelationship = await this.relationshipsController.acceptChange(change, request.content);
+        const relationshipDTO = RelationshipMapper.toRelationshipDTO(updatedRelationship);
 
+        this.eventBus.publish(new RelationshipChangedEvent(relationshipDTO));
         await this.accountController.syncDatawallet();
 
-        return Result.ok(RelationshipMapper.toRelationshipDTO(res));
+        return Result.ok(relationshipDTO);
     }
 }
