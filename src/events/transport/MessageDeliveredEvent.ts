@@ -4,7 +4,7 @@ import { DataEvent } from "../DataEvent";
 export class MessageDeliveredEvent extends DataEvent<MessageDTO> {
     public static readonly namespace = "transport.messageDelivered";
 
-    public constructor(address: string, data: MessageDTO) {
-        super(MessageDeliveredEvent.namespace, address, data);
+    public constructor(eventTargetAddress: string, data: MessageDTO) {
+        super(MessageDeliveredEvent.namespace, eventTargetAddress, data);
     }
 }

@@ -29,20 +29,20 @@ export default class MessageModule extends RuntimeModule<MessageModuleConfigurat
         switch (type) {
             case "Mail":
                 const mail = await Mail.from(message.content);
-                event = new MailReceivedEvent(messageReceivedEvent.address, mail, message);
+                event = new MailReceivedEvent(messageReceivedEvent.eventTargetAddress, mail, message);
                 this.runtime.eventBus.publish(event);
                 this.logger.trace(`Published MailReceivedEvent for ${message.id}`);
                 break;
 
             case "RequestMail":
                 const requestMail = await RequestMail.from(message.content);
-                event = new RequestMailReceivedEvent(messageReceivedEvent.address, requestMail, message);
+                event = new RequestMailReceivedEvent(messageReceivedEvent.eventTargetAddress, requestMail, message);
                 this.runtime.eventBus.publish(event);
                 this.logger.trace(`Published RequestMailReceivedEvent for ${message.id}`);
 
                 let i = 0;
                 for (const request of requestMail.requests) {
-                    this.runtime.eventBus.publish(new RequestReceivedEvent(messageReceivedEvent.address, request, message));
+                    this.runtime.eventBus.publish(new RequestReceivedEvent(messageReceivedEvent.eventTargetAddress, request, message));
                     this.logger.trace(`Published RequestReceivedEvent request #${i} of RequestMail ${message.id}`);
                     i++;
                 }
@@ -61,7 +61,7 @@ export default class MessageModule extends RuntimeModule<MessageModuleConfigurat
         }
         const relationship = result.value;
 
-        this.runtime.eventBus.publish(new RelationshipEvent(messageReceivedEvent.address, event, relationship));
+        this.runtime.eventBus.publish(new RelationshipEvent(messageReceivedEvent.eventTargetAddress, event, relationship));
         this.logger.trace(`Published RelationshipEvent for ${message.id} to ${relationship.id}`);
     }
 

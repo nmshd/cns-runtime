@@ -4,7 +4,7 @@ import { DataEvent } from "../DataEvent";
 export class RelationshipChangeReceivedEvent extends DataEvent<RelationshipDTO> {
     public static readonly namespace = "transport.relationshipChangeReceived";
 
-    public constructor(address: string, data: RelationshipDTO) {
-        super(RelationshipChangeReceivedEvent.namespace, address, data);
+    public constructor(eventTargetAddress: string, data: RelationshipDTO) {
+        super(RelationshipChangeReceivedEvent.namespace, eventTargetAddress, data);
     }
 }

@@ -1,7 +1,7 @@
 import { Event } from "./Event";
 
 export class DataEvent<T> extends Event {
-    public constructor(namespace: string, public readonly address: string, public readonly data: T) {
+    public constructor(namespace: string, public readonly eventTargetAddress: string, public readonly data: T) {
         super(namespace);
     }
 }
