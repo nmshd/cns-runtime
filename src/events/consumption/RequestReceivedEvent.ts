@@ -5,7 +5,7 @@ import { DataEvent } from "../DataEvent";
 export class RequestReceivedEvent extends DataEvent<MessageDTO> {
     public static readonly namespace = "consumption.requestReceived";
 
-    public constructor(public readonly request: Request, data: MessageDTO) {
-        super(RequestReceivedEvent.namespace, data);
+    public constructor(address: string, public readonly request: Request, data: MessageDTO) {
+        super(RequestReceivedEvent.namespace, address, data);
     }
 }
