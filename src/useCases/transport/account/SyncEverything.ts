@@ -1,6 +1,6 @@
 import { ILogger } from "@js-soft/logging-abstractions";
 import { EventBus, Result } from "@js-soft/ts-utils";
-import { AccountController } from "@nmshd/transport";
+import { AccountController, IdentityController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { MessageReceivedEvent, RelationshipChangedEvent } from "../../../events";
 import { RuntimeLoggerFactory } from "../../../RuntimeLoggerFactory";
@@ -17,7 +17,12 @@ export interface SyncEverythingResponse {
 
 export class SyncEverythingUseCase extends UseCase<void, SyncEverythingResponse> {
     private readonly logger: ILogger;
-    public constructor(@Inject private readonly accountController: AccountController, @Inject private readonly eventBus: EventBus, @Inject loggerFactory: RuntimeLoggerFactory) {
+    public constructor(
+        @Inject private readonly accountController: AccountController,
+        @Inject private readonly identityController: IdentityController,
+        @Inject private readonly eventBus: EventBus,
+        @Inject loggerFactory: RuntimeLoggerFactory
+    ) {
         super();
 
         this.logger = loggerFactory.getLogger(SyncEverythingUseCase);
@@ -62,7 +67,7 @@ export class SyncEverythingUseCase extends UseCase<void, SyncEverythingResponse>
         this.logger.debug(`Found ${relationships.length} relationship(s) with changes. Start publishing on event bus...`);
 
         for (const relationship of relationships) {
-            this.eventBus.publish(new RelationshipChangedEvent(relationship));
+            this.eventBus.publish(new RelationshipChangedEvent(this.identityController.identity.address.toString(), relationship));
         }
 
         this.logger.debug("Finished publishing relationship changes on event bus.");

@@ -1,5 +1,5 @@
 import { EventBus, Result } from "@js-soft/ts-utils";
-import { AccountController, BackboneIds, CoreId, RelationshipsController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
+import { AccountController, BackboneIds, CoreId, IdentityController, RelationshipsController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { RelationshipChangedEvent } from "../../../events";
 import { RelationshipDTO } from "../../../types";
@@ -25,6 +25,8 @@ export class CreateRelationshipUseCase extends UseCase<CreateRelationshipRequest
         @Inject private readonly relationshipsController: RelationshipsController,
         @Inject private readonly relationshipTemplateController: RelationshipTemplateController,
         @Inject private readonly accountController: AccountController,
+
+        @Inject private readonly identityController: IdentityController,
         @Inject private readonly eventBus: EventBus,
         @Inject validator: CreateRelationshipRequestValidator
     ) {
@@ -43,7 +45,7 @@ export class CreateRelationshipUseCase extends UseCase<CreateRelationshipRequest
         });
         const relationshipDTO = RelationshipMapper.toRelationshipDTO(relationship);
 
-        this.eventBus.publish(new RelationshipChangedEvent(relationshipDTO));
+        this.eventBus.publish(new RelationshipChangedEvent(this.identityController.identity.address.toString(), relationshipDTO));
         await this.accountController.syncDatawallet();
 
         return Result.ok(relationshipDTO);
