@@ -4,10 +4,7 @@ import { RequestError } from "@nmshd/transport";
 import { ValidationResult } from "fluent-ts-validator";
 import { PlatformErrorCodes } from "./PlatformErrorCodes";
 import { RuntimeErrors } from "./RuntimeErrors";
-
-export interface IValidator<T> {
-    validate(value: T): ValidationResult;
-}
+import { IValidator } from "./validation/IValidator";
 
 export abstract class UseCase<IRequest, IResponse> {
     public constructor(private readonly requestValidator?: IValidator<IRequest>) {}
