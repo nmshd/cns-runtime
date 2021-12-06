@@ -1,7 +1,7 @@
 import { ErrorObject } from "ajv";
 import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
-import { IValidator } from ".";
-import { JsonSchema, JsonSchemaValidationResult } from "./SchemaRepository";
+import { IValidator } from "..";
+import { JsonSchema, JsonSchemaValidationResult } from "../SchemaRepository";
 
 export class SchemaValidator<T> implements IValidator<T> {
     public constructor(protected readonly schema: JsonSchema) {}

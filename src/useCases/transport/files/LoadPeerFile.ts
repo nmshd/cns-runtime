@@ -4,9 +4,7 @@ import { AccountController, CoreId, FileController, Token, TokenContentFile, Tok
 import { ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
-import { RuntimeErrors, UseCase } from "../../common";
-import { JsonSchema, SchemaRepository } from "../../common/SchemaRepository";
-import { SchemaValidator } from "../../common/SchemaValidator";
+import { JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
 
 export interface LoadPeerFileViaSecretRequest {
