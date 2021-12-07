@@ -102,6 +102,12 @@ describe("Get file", () => {
         const response = await transportServices1.files.getFile({ id: UNKNOWN_FILE_ID });
         expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
+
+    test("accessing invalid file id causes an error", async () => {
+        const invalidFileId = "NOT_A_FILE_IDXXXXXXX";
+        const response = await transportServices1.files.getFile({ id: invalidFileId });
+        expectError(response, "id must match format fileId", "error.runtime.validation.invalidPropertyValue");
+    });
 });
 
 describe("Upload big files", () => {
