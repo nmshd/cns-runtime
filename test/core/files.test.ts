@@ -7,8 +7,8 @@ const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
 let transportServices2: TransportServices;
 
-const UNKOWN_FILE_ID = "FILXXXXXXXXXXXXXXXXX";
-const UNKOWN_TOKEN_ID = "TOKXXXXXXXXXXXXXXXXX";
+const UNKNOWN_FILE_ID = "FILXXXXXXXXXXXXXXXXX";
+const UNKNOWN_TOKEN_ID = "TOKXXXXXXXXXXXXXXXXX";
 
 beforeAll(async () => {
     const runtimeServices = await serviceProvider.launch(2);
@@ -99,7 +99,7 @@ describe("Get file", () => {
     });
 
     test("accessing not existing file id causes an error", async () => {
-        const response = await transportServices1.files.getFile({ id: UNKOWN_FILE_ID });
+        const response = await transportServices1.files.getFile({ id: UNKNOWN_FILE_ID });
         expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 });
@@ -202,13 +202,13 @@ describe.each([
     });
 
     test("cannot generate token with wrong type of id", async () => {
-        const response = await createToken(transportServices1, { fileId: UNKOWN_TOKEN_ID }, tokenType as any);
+        const response = await createToken(transportServices1, { fileId: UNKNOWN_TOKEN_ID }, tokenType as any);
 
         expectError(response, "fileId must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot generate token for non-existant file", async () => {
-        const response = await createToken(transportServices1, { fileId: UNKOWN_FILE_ID }, tokenType as any);
+        const response = await createToken(transportServices1, { fileId: UNKNOWN_FILE_ID }, tokenType as any);
 
         expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
@@ -327,7 +327,7 @@ describe("Load peer file with file id and secret", () => {
     test("cannot pass an unkown file id", async () => {
         expect(file).toBeDefined();
 
-        const response = await transportServices2.files.loadPeerFile({ id: UNKOWN_FILE_ID, secretKey: file.secretKey });
+        const response = await transportServices2.files.loadPeerFile({ id: UNKNOWN_FILE_ID, secretKey: file.secretKey });
 
         expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
@@ -335,7 +335,7 @@ describe("Load peer file with file id and secret", () => {
     test("cannot pass an unkown token id as file id", async () => {
         expect(file).toBeDefined();
 
-        const response = await transportServices2.files.loadPeerFile({ id: UNKOWN_TOKEN_ID, secretKey: file.secretKey });
+        const response = await transportServices2.files.loadPeerFile({ id: UNKNOWN_TOKEN_ID, secretKey: file.secretKey });
 
         expectError(response, "id must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });

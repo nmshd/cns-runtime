@@ -15,7 +15,7 @@ const requestTypes = schemaGenerator
     .map((x) => x.symbol.escapedName)
     .filter((x) => x.endsWith("Request"));
 
-let schemaDeclarations = requestTypes
+const schemaDeclarations = requestTypes
     .map((type) => {
         try {
             const schema = schemaGenerator.createSchema(type);
