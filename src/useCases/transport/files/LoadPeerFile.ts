@@ -1,62 +1,72 @@
 import { Result } from "@js-soft/ts-utils";
 import { CryptoSecretKey } from "@nmshd/crypto";
-import { AccountController, BackboneIds, CoreId, FileController, Token, TokenContentFile, TokenController } from "@nmshd/transport";
+import { AccountController, CoreId, FileController, Token, TokenContentFile, TokenController } from "@nmshd/transport";
+import { ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
-import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
 
-export interface LoadPeerFileRequest {
+export interface LoadPeerFileViaSecretRequest {
     /**
      * @format fileId
      */
-    id?: string;
-    secretKey?: string;
-    reference?: string;
+    id: string;
+    /**
+     * @minLength 100
+     */
+    secretKey: string;
 }
 
-class LoadPeerFileRequestValidator extends RuntimeValidator<LoadPeerFileRequest> {
-    public constructor() {
-        super();
+/**
+ * @errorMessage token reference invalid
+ */
+export interface LoadPeerFileViaReferenceRequest {
+    /**
+     * @pattern VE9L.{84}
+     */
+    reference: string;
+}
 
-        this.validateIf((x) => x)
-            .fulfills((x) => this.isCreatePeerFileFromIdAndKeyRequest(x) || this.isCreatePeerFileFromTokenReferenceRequest(x))
-            .withFailureCode(RuntimeErrors.general.invalidPayload().code)
-            .withFailureMessage(RuntimeErrors.general.invalidPayload().message);
+export type LoadPeerFileRequest = LoadPeerFileViaSecretRequest | LoadPeerFileViaReferenceRequest;
 
-        this.setupRulesForCreateFileFromIdAndKeyRequest();
-        this.setupRulesForCreateFileFromTokenReferenceRequest();
+function isLoadPeerFileViaSecret(request: LoadPeerFileRequest): request is LoadPeerFileViaSecretRequest {
+    return "id" in request && "secretKey" in request;
+}
+
+function isLoadPeerFileViaReference(request: LoadPeerFileRequest): request is LoadPeerFileViaSecretRequest {
+    return "reference" in request;
+}
+
+class Validator extends SchemaValidator<LoadPeerFileRequest> {
+    private readonly loadViaSecretSchema: JsonSchema;
+    private readonly loadViaReferenceSchema: JsonSchema;
+
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("LoadPeerFileRequest"));
+        this.loadViaSecretSchema = schemaRepository.getSchema("LoadPeerFileViaSecretRequest");
+        this.loadViaReferenceSchema = schemaRepository.getSchema("LoadPeerFileViaReferenceRequest");
     }
 
-    private setupRulesForCreateFileFromIdAndKeyRequest() {
-        this.validateIfString((x) => x.id)
-            .fulfills(IdValidator.required(BackboneIds.file))
-            .when(this.isCreatePeerFileFromIdAndKeyRequest);
+    public validate(input: LoadPeerFileRequest): ValidationResult {
+        let validationResult = this.schema.validate(input);
 
-        this.validateIfString((x) => x.secretKey)
-            .isNotNull()
-            .when(this.isCreatePeerFileFromIdAndKeyRequest);
-    }
+        if (validationResult.isValid) {
+            return new ValidationResult();
+        }
 
-    private setupRulesForCreateFileFromTokenReferenceRequest() {
-        this.validateIfString((x) => x.reference)
-            .isNotNull()
-            .fulfills(this.isTokenReference)
-            .when(this.isCreatePeerFileFromTokenReferenceRequest);
-    }
+        // any-of in combination with missing properties is a bit weird
+        // when { reference: null | undefined } is passed, it ignores reference
+        // and treats it like a LoadPeerFileViaSecret.
+        // That's why we validate with the specific schema afterwards
 
-    private isTokenReference(tokenReference: string) {
-        // "TOK" as Base64
-        const tokInBase64 = "VE9L";
-        return tokenReference.startsWith(tokInBase64);
-    }
+        if (isLoadPeerFileViaReference(input)) {
+            validationResult = this.loadViaReferenceSchema.validate(input);
+        } else if (isLoadPeerFileViaSecret(input)) {
+            validationResult = this.loadViaSecretSchema.validate(input);
+        }
 
-    private isCreatePeerFileFromIdAndKeyRequest(x: LoadPeerFileRequest): boolean {
-        return !!x.id && !!x.secretKey;
-    }
-
-    private isCreatePeerFileFromTokenReferenceRequest(x: LoadPeerFileRequest): boolean {
-        return !!x.reference;
+        return this.convertValidationResult(validationResult);
     }
 }
 
@@ -65,7 +75,7 @@ export class LoadPeerFileUseCase extends UseCase<LoadPeerFileRequest, FileDTO> {
         @Inject private readonly fileController: FileController,
         @Inject private readonly tokenController: TokenController,
         @Inject private readonly accountController: AccountController,
-        @Inject validator: LoadPeerFileRequestValidator
+        @Inject validator: Validator
     ) {
         super(validator);
     }
@@ -73,10 +83,10 @@ export class LoadPeerFileUseCase extends UseCase<LoadPeerFileRequest, FileDTO> {
     protected async executeInternal(request: LoadPeerFileRequest): Promise<Result<FileDTO>> {
         let createdFile: Result<FileDTO>;
 
-        if (request.id && request.secretKey) {
+        if (isLoadPeerFileViaSecret(request)) {
             const key = await CryptoSecretKey.fromBase64(request.secretKey);
             createdFile = await this.loadFile(CoreId.from(request.id), key);
-        } else if (request.reference) {
+        } else if (isLoadPeerFileViaReference(request)) {
             createdFile = await this.createFileFromTokenReferenceRequest(request.reference);
         } else {
             throw new Error("Invalid request format.");

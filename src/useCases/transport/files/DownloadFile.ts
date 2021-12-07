@@ -1,9 +1,7 @@
 import { Result } from "@js-soft/ts-utils";
 import { CoreId, File, FileController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { RuntimeErrors, UseCase } from "../../common";
-import { SchemaRepository } from "../../common/SchemaRepository";
-import { SchemaValidator } from "../../common/SchemaValidator";
+import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
 
 export interface DownloadFileRequest {

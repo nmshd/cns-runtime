@@ -1,9 +1,7 @@
 import { Result } from "@js-soft/ts-utils";
 import { CoreDate, CoreId, File, FileController, TokenContentFile, TokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { QRCode, RuntimeErrors, UseCase } from "../../common";
-import { SchemaRepository } from "../../common/SchemaRepository";
-import { SchemaValidator } from "../../common/SchemaValidator";
+import { QRCode, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 
 export interface CreateTokenQrCodeForFileRequest {
     /**

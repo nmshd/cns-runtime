@@ -1,16 +1,14 @@
 import fs from "fs";
 import { DateTime } from "luxon";
 import { FileDTO, OwnerRestriction, TransportServices } from "../../src";
-import { combinations, createToken, exchangeFile, expectError, expectSuccess, makeUploadRequest, QueryParamConditions, RuntimeServiceProvider, uploadFile } from "../lib";
+import { createToken, exchangeFile, expectError, expectSuccess, makeUploadRequest, QueryParamConditions, RuntimeServiceProvider, uploadFile } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
 let transportServices2: TransportServices;
 
-const UNKOWN_FILE_ID = "FILXXXXXXXXXXXXXXXXX";
-const UNKOWN_TOKEN_ID = "TOKXXXXXXXXXXXXXXXXX";
-
-const illegalParameters = [null, undefined, ""];
+const UNKNOWN_FILE_ID = "FILXXXXXXXXXXXXXXXXX";
+const UNKNOWN_TOKEN_ID = "TOKXXXXXXXXXXXXXXXXX";
 
 beforeAll(async () => {
     const runtimeServices = await serviceProvider.launch(2);
@@ -101,9 +99,14 @@ describe("Get file", () => {
     });
 
     test("accessing not existing file id causes an error", async () => {
-        const notPresentFileId = "FILXXXXXXXXXXXXXXXXX";
-        const response = await transportServices1.files.getFile({ id: notPresentFileId });
+        const response = await transportServices1.files.getFile({ id: UNKNOWN_FILE_ID });
         expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+    });
+
+    test("accessing invalid file id causes an error", async () => {
+        const invalidFileId = "NOT_A_FILE_IDXXXXXXX";
+        const response = await transportServices1.files.getFile({ id: invalidFileId });
+        expectError(response, "id must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
@@ -205,13 +208,13 @@ describe.each([
     });
 
     test("cannot generate token with wrong type of id", async () => {
-        const response = await createToken(transportServices1, { fileId: UNKOWN_TOKEN_ID }, tokenType as any);
+        const response = await createToken(transportServices1, { fileId: UNKNOWN_TOKEN_ID }, tokenType as any);
 
         expectError(response, "fileId must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot generate token for non-existant file", async () => {
-        const response = await createToken(transportServices1, { fileId: UNKOWN_FILE_ID }, tokenType as any);
+        const response = await createToken(transportServices1, { fileId: UNKNOWN_FILE_ID }, tokenType as any);
 
         expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
@@ -263,24 +266,28 @@ describe("Load peer file with token reference", () => {
         expect(response.value).toContainEqual({ ...file, isOwn: false });
     });
 
-    test("passing token id as truncated token reference causes an error", async () => {
+    test("cannot pass token id as truncated token reference", async () => {
         const file = await uploadFile(transportServices1);
         const token = (await transportServices1.files.createTokenForFile({ fileId: file.id })).value;
 
         const response = await transportServices2.files.loadPeerFile({ reference: token.id });
-        expectError(response, "reference is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, " token reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("passing file id as truncated token reference causes an error", async () => {
         const file = await uploadFile(transportServices1);
 
         const response = await transportServices2.files.loadPeerFile({ reference: file.id });
-        expectError(response, "reference is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, " token reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.each(illegalParameters)("passing %p as truncated token reference causes an error", async (tokenReference) => {
+    test.each([
+        [null, " token reference invalid"],
+        [undefined, " token reference invalid"],
+        ["", " token reference invalid"]
+    ])("passing %p as truncated token reference causes an error", async (tokenReference, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ reference: tokenReference! });
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
 });
 
@@ -323,37 +330,39 @@ describe("Load peer file with file id and secret", () => {
         expect(response.value).toContainEqual({ ...file, isOwn: false });
     });
 
-    test("passing an unkown file id causes an error", async () => {
+    test("cannot pass an unkown file id", async () => {
         expect(file).toBeDefined();
 
-        const response = await transportServices2.files.loadPeerFile({ id: UNKOWN_FILE_ID, secretKey: file.secretKey });
+        const response = await transportServices2.files.loadPeerFile({ id: UNKNOWN_FILE_ID, secretKey: file.secretKey });
 
         expectError(response, "File not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
-    test("passing an unkown token id as file id causes an error", async () => {
+    test("cannot pass an unkown token id as file id", async () => {
         expect(file).toBeDefined();
 
-        const response = await transportServices2.files.loadPeerFile({ id: UNKOWN_TOKEN_ID, secretKey: file.secretKey });
+        const response = await transportServices2.files.loadPeerFile({ id: UNKNOWN_TOKEN_ID, secretKey: file.secretKey });
 
-        expectError(response, "id is invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "id must match format fileId", "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.each(illegalParameters)("passing valid file id and %p as secret key", async (secretKey) => {
+    test.each([
+        [null, "secretKey must be string"],
+        [undefined, " must have required property 'secretKey'"],
+        ["", "secretKey must NOT have fewer than 100 characters"]
+    ])("cannot pass %p as secret key", async (secretKey, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ id: file.id, secretKey: secretKey! });
 
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
 
-    test.each(illegalParameters)("passing %p as file id and valid secret key", async (fileId) => {
+    test.each([
+        [null, "id must be string"],
+        [undefined, " must have required property 'id'"],
+        ["", "id must match format fileId"]
+    ])("cannot pass %p as file id", async (fileId, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ id: fileId!, secretKey: file.secretKey });
 
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
-    });
-
-    test.each(combinations(illegalParameters, illegalParameters))("passing %p as file id and %p as secret key", async (fileId, secretKey) => {
-        const response = await transportServices2.files.loadPeerFile({ id: fileId!, secretKey: secretKey! });
-
-        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+        expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
 });
