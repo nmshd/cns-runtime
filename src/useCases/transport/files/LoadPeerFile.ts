@@ -1,7 +1,7 @@
 import { Result } from "@js-soft/ts-utils";
 import { CryptoSecretKey } from "@nmshd/crypto";
 import { AccountController, CoreId, FileController, Token, TokenContentFile, TokenController } from "@nmshd/transport";
-import { ValidationResult } from "fluent-ts-validator";
+import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
 import { JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
@@ -64,6 +64,10 @@ class Validator extends SchemaValidator<LoadPeerFileRequest> {
             validationResult = this.loadViaReferenceSchema.validate(input);
         } else if (isLoadPeerFileViaSecret(input)) {
             validationResult = this.loadViaSecretSchema.validate(input);
+        } else {
+            const result = new ValidationResult();
+            result.addFailures([new ValidationFailure(undefined, "", undefined, RuntimeErrors.general.invalidPayload().code, RuntimeErrors.general.invalidPayload().message)]);
+            return result;
         }
 
         return this.convertValidationResult(validationResult);
