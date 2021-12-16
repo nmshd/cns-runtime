@@ -348,7 +348,7 @@ describe("Load peer file with file id and secret", () => {
 
     test.each([
         [null, "secretKey must be string"],
-        [undefined, " must have required property 'secretKey'"],
+        [undefined, "must have required property 'secretKey'"],
         ["", "secretKey must NOT have fewer than 100 characters"]
     ])("cannot pass %p as secret key", async (secretKey, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ id: file.id, secretKey: secretKey! });
@@ -358,7 +358,7 @@ describe("Load peer file with file id and secret", () => {
 
     test.each([
         [null, "id must be string"],
-        [undefined, " must have required property 'id'"],
+        [undefined, "must have required property 'id'"],
         ["", "id must match format fileId"]
     ])("cannot pass %p as file id", async (fileId, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ id: fileId!, secretKey: file.secretKey });
