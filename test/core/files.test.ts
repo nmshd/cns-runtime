@@ -271,20 +271,20 @@ describe("Load peer file with token reference", () => {
         const token = (await transportServices1.files.createTokenForFile({ fileId: file.id })).value;
 
         const response = await transportServices2.files.loadPeerFile({ reference: token.id });
-        expectError(response, " token reference invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "token reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("passing file id as truncated token reference causes an error", async () => {
         const file = await uploadFile(transportServices1);
 
         const response = await transportServices2.files.loadPeerFile({ reference: file.id });
-        expectError(response, " token reference invalid", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "token reference invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test.each([
-        [null, " token reference invalid"],
-        [undefined, " token reference invalid"],
-        ["", " token reference invalid"]
+        [null, "token reference invalid"],
+        [undefined, "token reference invalid"],
+        ["", "token reference invalid"]
     ])("passing %p as truncated token reference causes an error", async (tokenReference, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ reference: tokenReference! });
         expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
@@ -348,7 +348,7 @@ describe("Load peer file with file id and secret", () => {
 
     test.each([
         [null, "secretKey must be string"],
-        [undefined, " must have required property 'secretKey'"],
+        [undefined, "must have required property 'secretKey'"],
         ["", "secretKey must NOT have fewer than 100 characters"]
     ])("cannot pass %p as secret key", async (secretKey, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ id: file.id, secretKey: secretKey! });
@@ -358,7 +358,7 @@ describe("Load peer file with file id and secret", () => {
 
     test.each([
         [null, "id must be string"],
-        [undefined, " must have required property 'id'"],
+        [undefined, "must have required property 'id'"],
         ["", "id must match format fileId"]
     ])("cannot pass %p as file id", async (fileId, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ id: fileId!, secretKey: file.secretKey });
