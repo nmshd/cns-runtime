@@ -1,7 +1,7 @@
 import { Result } from "@js-soft/ts-utils";
 import { CryptoSecretKey } from "@nmshd/crypto";
 import { AccountController, CoreId, FileController, Token, TokenContentFile, TokenController } from "@nmshd/transport";
-import { ValidationResult } from "fluent-ts-validator";
+import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
 import { JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
@@ -49,24 +49,21 @@ class Validator extends SchemaValidator<LoadPeerFileRequest> {
     }
 
     public validate(input: LoadPeerFileRequest): ValidationResult {
-        let validationResult = this.schema.validate(input);
-
-        if (validationResult.isValid) {
-            return new ValidationResult();
-        }
+        if (this.schema.validate(input).isValid) return new ValidationResult();
 
         // any-of in combination with missing properties is a bit weird
         // when { reference: null | undefined } is passed, it ignores reference
         // and treats it like a LoadPeerFileViaSecret.
         // That's why we validate with the specific schema afterwards
-
         if (isLoadPeerFileViaReference(input)) {
-            validationResult = this.loadViaReferenceSchema.validate(input);
+            return this.convertValidationResult(this.loadViaReferenceSchema.validate(input));
         } else if (isLoadPeerFileViaSecret(input)) {
-            validationResult = this.loadViaSecretSchema.validate(input);
+            return this.convertValidationResult(this.loadViaSecretSchema.validate(input));
         }
 
-        return this.convertValidationResult(validationResult);
+        const result = new ValidationResult();
+        result.addFailures([new ValidationFailure(undefined, "", undefined, RuntimeErrors.general.invalidPayload().code, RuntimeErrors.general.invalidPayload().message)]);
+        return result;
     }
 }
 

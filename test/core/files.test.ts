@@ -289,6 +289,11 @@ describe("Load peer file with token reference", () => {
         const response = await transportServices2.files.loadPeerFile({ reference: tokenReference! });
         expectError(response, expectedMessage, "error.runtime.validation.invalidPropertyValue");
     });
+
+    test("passing empty object causes an error", async () => {
+        const response = await transportServices2.files.loadPeerFile({} as any);
+        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+    });
 });
 
 describe("Load peer file with file id and secret", () => {
