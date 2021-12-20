@@ -1,4 +1,5 @@
 import { sleep } from "@js-soft/ts-utils";
+import { RelationshipCreationChangeRequestBodyJSON, RelationshipTemplateBodyJSON } from "@nmshd/content";
 import fs from "fs";
 import { DateTime } from "luxon";
 import {
@@ -88,11 +89,14 @@ export async function makeUploadRequest(values: object = {}): Promise<UploadOwnF
     };
 }
 
-export async function createTemplate(transportServices: TransportServices): Promise<RelationshipTemplateDTO> {
+export async function createTemplate(
+    transportServices: TransportServices,
+    body: RelationshipTemplateBodyJSON = { "@type": "RelationshipTemplateBody" }
+): Promise<RelationshipTemplateDTO> {
     const response = await transportServices.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfRelationships: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
-        content: { a: "b" }
+        content: body
     });
 
     expectSuccess(response);
@@ -100,8 +104,8 @@ export async function createTemplate(transportServices: TransportServices): Prom
     return response.value;
 }
 
-export async function getTemplateToken(transportServices: TransportServices): Promise<TokenDTO> {
-    const template = await createTemplate(transportServices);
+export async function getTemplateToken(transportServices: TransportServices, body: RelationshipTemplateBodyJSON = { "@type": "RelationshipTemplateBody" }): Promise<TokenDTO> {
+    const template = await createTemplate(transportServices, body);
 
     const response = await transportServices.relationshipTemplates.createTokenForOwnTemplate({ templateId: template.id });
     expectSuccess(response);
@@ -118,8 +122,12 @@ export async function getFileToken(transportServices: TransportServices): Promis
     return response.value;
 }
 
-export async function exchangeTemplate(transportServicesCreator: TransportServices, transportServicesRecipient: TransportServices): Promise<RelationshipTemplateDTO> {
-    const templateToken = await getTemplateToken(transportServicesCreator);
+export async function exchangeTemplate(
+    transportServicesCreator: TransportServices,
+    transportServicesRecipient: TransportServices,
+    body: RelationshipTemplateBodyJSON = { "@type": "RelationshipTemplateBody" }
+): Promise<RelationshipTemplateDTO> {
+    const templateToken = await getTemplateToken(transportServicesCreator, body);
 
     const response = await transportServicesRecipient.relationshipTemplates.loadPeerRelationshipTemplate({
         reference: templateToken.truncatedReference
@@ -193,6 +201,34 @@ export async function establishRelationship(transportServices1: TransportService
     const createRelationshipResponse = await transportServices2.relationships.createRelationship({
         templateId: template.id,
         content: { a: "b" }
+    });
+    expectSuccess(createRelationshipResponse);
+
+    const relationships = await syncUntilHasRelationships(transportServices1);
+    expect(relationships).toHaveLength(1);
+
+    const acceptResponse = await transportServices1.relationships.acceptRelationshipChange({
+        relationshipId: relationships[0].id,
+        changeId: relationships[0].changes[0].id,
+        content: { a: "b" }
+    });
+    expectSuccess(acceptResponse);
+
+    const relationships2 = await syncUntilHasRelationships(transportServices2);
+    expect(relationships2).toHaveLength(1);
+}
+
+export async function establishRelationshipWithBodys(
+    transportServices1: TransportServices,
+    transportServices2: TransportServices,
+    templateBody: RelationshipTemplateBodyJSON,
+    requestBody: RelationshipCreationChangeRequestBodyJSON
+): Promise<void> {
+    const template = await exchangeTemplate(transportServices1, transportServices2, templateBody);
+
+    const createRelationshipResponse = await transportServices2.relationships.createRelationship({
+        templateId: template.id,
+        content: requestBody
     });
     expectSuccess(createRelationshipResponse);
 
