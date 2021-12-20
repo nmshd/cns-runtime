@@ -1,10 +1,11 @@
-import { AnonymousServices, ConsumptionServices, RuntimeConfig, TransportServices } from "../../src";
+import { AnonymousServices, ConsumptionServices, DataViewExpander, RuntimeConfig, TransportServices } from "../../src";
 import { TestRuntime } from "./TestRuntime";
 
 export interface RuntimeServices {
     transport: TransportServices;
     consumption: ConsumptionServices;
     anonymous: AnonymousServices;
+    expander: DataViewExpander;
 }
 
 export interface LaunchConfiguration {
@@ -48,7 +49,8 @@ export class RuntimeServiceProvider {
             runtimeServices.push({
                 transport: runtime.transportServices,
                 consumption: runtime.consumptionServices,
-                anonymous: runtime.anonymousServices
+                anonymous: runtime.anonymousServices,
+                expander: runtime.dataViewExpander
             });
         }
 

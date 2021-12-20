@@ -5,7 +5,7 @@ import { ILoggerFactory } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ConsumptionController } from "@nmshd/consumption";
 import { AccountController } from "@nmshd/transport";
-import { ModuleConfiguration, Runtime, RuntimeHealth } from "../../src";
+import { DataViewExpander, ModuleConfiguration, Runtime, RuntimeHealth } from "../../src";
 
 export class TestRuntime extends Runtime {
     private dbConnection?: MongoDbConnection | LokiJsConnection;
@@ -34,6 +34,10 @@ export class TestRuntime extends Runtime {
         this.logger = loggerFactory.getLogger(Runtime);
 
         return loggerFactory;
+    }
+
+    public get dataViewExpander(): DataViewExpander {
+        return this.getDataViewExpander();
     }
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
