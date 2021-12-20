@@ -3,7 +3,7 @@ import { CoreAddress, IdentityController, RelationshipStatus } from "@nmshd/tran
 import { Inject } from "typescript-ioc";
 import { TransportServices } from "../extensibility";
 import { ConsumptionServices } from "../extensibility/ConsumptionServices";
-import { ConsumptionAttributeDTO, FileDTO, MessageDTO, RecipientDTO, RelationshipDTO } from "../types";
+import { ConsumptionAttributeDTO, FileDTO, MessageDTO, MessageWithAttachmentsDTO, RecipientDTO, RelationshipDTO } from "../types";
 import { RuntimeErrors } from "../useCases";
 import { Error } from "./common/Error";
 import { Warning } from "./common/Warning";
@@ -14,12 +14,12 @@ import { RequestDVO } from "./consumption/RequestDVO";
 import { DataViewObject } from "./DataViewObject";
 import { DataViewTranslateable } from "./DataViewTranslateable";
 import { FileDVO } from "./transport/FileDVO";
-import { IdentityDVO, OrganizationProperties, PersonProperties, SelfDVO } from "./transport/IdentityDVO";
+import { IdentityDVO, OrganizationProperties, PersonProperties } from "./transport/IdentityDVO";
 import { MessageDVO, MessageStatus } from "./transport/MessageDVO";
 
 export class DataViewExpander {
     public constructor(
-        @Inject private readonly tranport: TransportServices,
+        @Inject private readonly transport: TransportServices,
         @Inject private readonly consumption: ConsumptionServices,
         @Inject private readonly identityController: IdentityController
     ) {}
@@ -128,10 +128,21 @@ export class DataViewExpander {
         }
     }
 
-    public async expandMessageDTO(message: MessageDTO): Promise<MessageDVO> {
+    public async expandMessageDTO(message: MessageDTO | MessageWithAttachmentsDTO): Promise<MessageDVO> {
         const recipientRelationships = await this.expandRecipients(message.recipients);
         const createdByRelationship = await this.expandAddress(message.createdBy);
-        const files = await this.expandFileIds(message.attachments);
+        const fileIds = [];
+        const filePromises = [];
+        for (const attachment of message.attachments) {
+            if (typeof attachment === "string") {
+                filePromises.push(this.expandFileId(attachment));
+                fileIds.push(attachment);
+            } else {
+                filePromises.push(this.expandFileDTO(attachment));
+                fileIds.push(attachment.id);
+            }
+        }
+        const files = await Promise.all(filePromises);
 
         const isOwn = this.identityController.isMe(CoreAddress.from(message.createdBy));
 
@@ -149,6 +160,7 @@ export class DataViewExpander {
             type: "MessageDVO",
             message: {
                 ...message,
+                attachments: fileIds,
                 isOwn: isOwn,
                 attachmentCount: message.attachments.length,
                 attachmentObjects: files,
@@ -193,7 +205,7 @@ export class DataViewExpander {
                 continue;
             }
 
-            const result = await this.tranport.relationships.getRelationshipByAddress({
+            const result = await this.transport.relationships.getRelationshipByAddress({
                 address: recipient.toString()
             });
             if (result.isSuccess) {
@@ -323,7 +335,7 @@ export class DataViewExpander {
         let applyToObject;
         if (attributesChangeRequest.applyTo) {
             if (!this.identityController.isMe(CoreAddress.from(attributesChangeRequest.applyTo))) {
-                const result = await this.tranport.relationships.getRelationshipByAddress({
+                const result = await this.transport.relationships.getRelationshipByAddress({
                     address: attributesChangeRequest.applyTo
                 });
                 if (result.isSuccess) {
@@ -359,7 +371,7 @@ export class DataViewExpander {
         };
     }
 
-    public expandSelf(): SelfDVO {
+    public expandSelf(): IdentityDVO {
         let identityProperties: PersonProperties | OrganizationProperties;
         const name = "";
         const initials = (name.match(/\b\w/g) ?? []).join("");
@@ -386,7 +398,7 @@ export class DataViewExpander {
         return {
             id: this.identityController.address.toString(),
             name: DataViewTranslateable.consumption.identities.self,
-            type: "SelfDVO",
+            type: "IdentityDVO",
             identity: identityProperties,
             isSelf: true
         };
@@ -407,7 +419,7 @@ export class DataViewExpander {
             return this.expandSelf();
         }
 
-        const result = await this.tranport.relationships.getRelationshipByAddress({ address: address });
+        const result = await this.transport.relationships.getRelationshipByAddress({ address: address });
         if (result.isError) {
             throw result.error;
         }
@@ -462,7 +474,8 @@ export class DataViewExpander {
             identity: identityProperties,
             relationship: {
                 ...relationship
-            }
+            },
+            isSelf: false
         };
     }
 
@@ -472,7 +485,7 @@ export class DataViewExpander {
     }
 
     public async expandFileId(id: string): Promise<FileDVO> {
-        const result = await this.tranport.files.getFile({ id: id });
+        const result = await this.transport.files.getFile({ id: id });
         if (result.isError) {
             throw result.error;
         }

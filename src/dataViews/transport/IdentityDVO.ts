@@ -19,10 +19,7 @@ export interface PersonProperties extends IdentityDVOProperties {
 }
 
 export interface IdentityDVO extends DataViewObject {
+    isSelf: boolean;
     identity: OrganizationProperties | PersonProperties;
     relationship?: RelationshipDVOProperties;
-}
-
-export interface SelfDVO extends IdentityDVO {
-    isSelf: true;
 }
