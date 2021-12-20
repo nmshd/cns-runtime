@@ -1,5 +1,5 @@
 export class DataViewTranslateable {
-    public static readonly prefix: string = "i18n://";
+    public static readonly prefix: string = "i18n://dvo.";
     public static readonly transport = {
         messageName: `${DataViewTranslateable.prefix}message.name`,
         relationshipOutgoing: `${DataViewTranslateable.prefix}relationship.name`,
