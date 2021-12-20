@@ -1,5 +1,6 @@
-import { AttributeJSON, AttributesChangeRequestJSON, AttributesShareRequestJSON, RequestJSON } from "@nmshd/content";
-import { CoreAddress, IdentityController, RelationshipStatus } from "@nmshd/transport";
+import { SingleRelationshipController } from "@nmshd/consumption";
+import { AttributeJSON, AttributesChangeRequestJSON, AttributesShareRequestJSON, Mail, RequestJSON, RequestMail } from "@nmshd/content";
+import { CoreAddress, CoreId, IdentityController, RelationshipStatus } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { TransportServices } from "../extensibility";
 import { ConsumptionServices } from "../extensibility/ConsumptionServices";
@@ -115,7 +116,7 @@ export class DataViewExpander {
                     return await this.expandRelationshipDTOs(content as RelationshipDTO[]);
                 }
 
-                return this.expandRelationshipDTO(content as RelationshipDTO);
+                return await this.expandRelationshipDTO(content as RelationshipDTO);
 
             case "ConsumptionAttribute":
                 if (content instanceof Array) {
@@ -153,11 +154,28 @@ export class DataViewExpander {
 
         const status = MessageStatus.Delivering; // TODO: JSSNMSHDD-2462 (Map message status once receivedAt is updated)
 
+        let type = "MessageDVO";
+        let name = DataViewTranslateable.transport.messageName;
+
+        if (message.content instanceof RequestMail) {
+            name = DataViewTranslateable.consumption.mails.requestMailSubjectFallback;
+            type = "RequestMailDVO";
+            if (message.content.subject) {
+                name = message.content.subject;
+            }
+        } else if (message.content instanceof Mail) {
+            name = DataViewTranslateable.consumption.mails.mailSubjectFallback;
+            type = "MailDVO";
+            if (message.content.subject) {
+                name = message.content.subject;
+            }
+        }
+
         return {
             id: message.id,
-            name: DataViewTranslateable.transport.messageName,
+            name: name,
             date: message.createdAt,
-            type: "MessageDVO",
+            type: type,
             message: {
                 ...message,
                 attachments: fileIds,
@@ -209,7 +227,7 @@ export class DataViewExpander {
                 address: recipient.toString()
             });
             if (result.isSuccess) {
-                recipientObjects.push(this.expandRelationshipDTO(result.value));
+                recipientObjects.push(await this.expandRelationshipDTO(result.value));
                 relationshipCount++;
             }
         }
@@ -339,7 +357,7 @@ export class DataViewExpander {
                     address: attributesChangeRequest.applyTo
                 });
                 if (result.isSuccess) {
-                    applyToObject = this.expandRelationshipDTO(result.value);
+                    applyToObject = await this.expandRelationshipDTO(result.value);
                 }
             }
         }
@@ -424,7 +442,7 @@ export class DataViewExpander {
             throw result.error;
         }
 
-        return this.expandRelationshipDTO(result.value);
+        return await this.expandRelationshipDTO(result.value);
     }
 
     public async expandAddresses(addresses: string[]): Promise<IdentityDVO[]> {
@@ -437,8 +455,21 @@ export class DataViewExpander {
         return await Promise.all(relationshipPromises);
     }
 
-    public expandRelationshipDTO(relationship: RelationshipDTO): IdentityDVO {
-        const name = "";
+    public async expandRelationshipDTO(relationship: RelationshipDTO): Promise<IdentityDVO> {
+        let name = "";
+
+        // TODO: Remove this hack once we store the info correctly on onboarding
+
+        const relationshipInfoFacade = this.consumption.relationshipInfo as any;
+        const consumptionController = relationshipInfoFacade.createRelationshipInfoUseCase.relationshipInfoController._parent;
+
+        const singleRelationshipController = new SingleRelationshipController(consumptionController);
+        await singleRelationshipController.initWithRelationshipId(CoreId.from(relationship.id));
+
+        const relationshipInfoResult = await this.consumption.relationshipInfo.getRelationshipInfoByRelationship({ relationshipId: relationship.id });
+        const relationshipInfo = relationshipInfoResult.value;
+
+        name = relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title;
 
         let statusText = "";
         if (relationship.status === RelationshipStatus.Pending && this.identityController.isMe(CoreAddress.from(relationship.changes[0].request.createdBy))) {
@@ -465,7 +496,7 @@ export class DataViewExpander {
         };
 
         return {
-            id: relationship.id,
+            id: relationship.peer,
             name: name,
             description: statusText,
             date: relationship.changes[0].request.createdAt,
