@@ -24,9 +24,9 @@ export class SchemaValidator<T> implements IValidator<T> {
         return result;
     }
 
-    private schemaErrorToValidationFailure<T>(err: ErrorObject, target: T): ValidationFailure {
-        const errorMessage = `${err.instancePath} ${err.message}`.replace(/^\//, "").replace(/"/g, "");
+    private schemaErrorToValidationFailure(err: ErrorObject): ValidationFailure {
+        const errorMessage = `${err.instancePath} ${err.message}`.replace(/^\//, "").replace(/"/g, "").trim();
 
-        return new ValidationFailure(target, err.instancePath, undefined, undefined, errorMessage);
+        return new ValidationFailure(undefined, err.instancePath, undefined, undefined, errorMessage);
     }
 }
