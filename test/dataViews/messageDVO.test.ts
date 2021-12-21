@@ -1,9 +1,7 @@
-import { ConsumptionServices, DataViewExpander, TransportServices } from "../../src";
+import { DataViewExpander, TransportServices } from "../../src";
 import { establishRelationshipWithBodys, getRelationship, RuntimeServiceProvider, syncUntilHasMessages, uploadFile } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
-let consumptionServices1: ConsumptionServices;
-let consumptionServices2: ConsumptionServices;
 let transportServices1: TransportServices;
 let transportServices2: TransportServices;
 let expander1: DataViewExpander;
@@ -13,8 +11,6 @@ beforeAll(async () => {
     const runtimeServices = await serviceProvider.launch(2);
     transportServices1 = runtimeServices[0].transport;
     transportServices2 = runtimeServices[1].transport;
-    consumptionServices1 = runtimeServices[0].consumption;
-    consumptionServices2 = runtimeServices[1].consumption;
     expander1 = runtimeServices[0].expander;
     expander2 = runtimeServices[1].expander;
     await establishRelationshipWithBodys(

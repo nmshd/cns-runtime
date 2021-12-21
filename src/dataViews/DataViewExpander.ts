@@ -1,6 +1,5 @@
-import { SingleRelationshipController } from "@nmshd/consumption";
 import { AttributeJSON, AttributesChangeRequestJSON, AttributesShareRequestJSON, Mail, RequestJSON, RequestMail } from "@nmshd/content";
-import { CoreAddress, CoreId, IdentityController, RelationshipStatus } from "@nmshd/transport";
+import { CoreAddress, IdentityController, RelationshipStatus } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { TransportServices } from "../extensibility";
 import { ConsumptionServices } from "../extensibility/ConsumptionServices";
@@ -457,14 +456,6 @@ export class DataViewExpander {
 
     public async expandRelationshipDTO(relationship: RelationshipDTO): Promise<IdentityDVO> {
         let name = "";
-
-        // TODO: Remove this hack once we store the info correctly on onboarding
-
-        const relationshipInfoFacade = this.consumption.relationshipInfo as any;
-        const consumptionController = relationshipInfoFacade.createRelationshipInfoUseCase.relationshipInfoController._parent;
-
-        const singleRelationshipController = new SingleRelationshipController(consumptionController);
-        await singleRelationshipController.initWithRelationshipId(CoreId.from(relationship.id));
 
         const relationshipInfoResult = await this.consumption.relationshipInfo.getRelationshipInfoByRelationship({ relationshipId: relationship.id });
         const relationshipInfo = relationshipInfoResult.value;
