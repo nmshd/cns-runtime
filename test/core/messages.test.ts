@@ -136,6 +136,8 @@ describe("Message query", () => {
             .addDateSet("lastMessageSentAt")
             .addStringSet("createdBy")
             .addStringSet("recipients.address", message.recipients[0].address)
+            .addDateSet("recipients.receivedAt")
+            .addStringSet("recipients.receivedByDevice")
             .addStringSet("content.@type")
             .addStringSet("content.subject")
             .addStringSet("content.body")
