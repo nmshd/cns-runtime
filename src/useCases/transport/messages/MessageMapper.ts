@@ -58,7 +58,9 @@ export class MessageMapper {
 
     private static toRecipient(recipient: MessageEnvelopeRecipient): RecipientDTO {
         return {
-            address: recipient.address.toString()
+            address: recipient.address.toString(),
+            receivedAt: recipient.receivedAt?.toString(),
+            receivedByDevice: recipient.receivedByDevice?.toString()
         };
     }
 }
