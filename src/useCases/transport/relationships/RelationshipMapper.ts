@@ -14,6 +14,11 @@ export class RelationshipMapper {
             template: RelationshipTemplateMapper.toRelationshipTemplateDTO(relationship.cache.template),
             status: relationship.status,
             peer: relationship.peer.address.toString(),
+            peerIdentity: {
+                address: relationship.peer.address.toString(),
+                publicKey: relationship.peer.publicKey.toString(),
+                realm: relationship.peer.realm
+            },
             changes: relationship.cache.changes.map((c) => this.toRelationshipChangeDTO(c)),
             lastMessageSentAt: relationship.cache.lastMessageSentAt?.toString(),
             lastMessageReceivedAt: relationship.cache.lastMessageReceivedAt?.toString()

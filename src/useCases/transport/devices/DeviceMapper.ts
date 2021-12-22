@@ -33,12 +33,8 @@ export class DeviceMapper {
             identityPrivateKey: deviceSharedSecret.identityPrivateKey ? deviceSharedSecret.identityPrivateKey.toString() : undefined,
             identity: {
                 address: deviceSharedSecret.identity.address.toString(),
-                createdAt: deviceSharedSecret.identity.createdAt.toString(),
-                description: deviceSharedSecret.identity.description,
-                name: deviceSharedSecret.identity.name,
                 publicKey: deviceSharedSecret.identity.publicKey.toString(),
-                realm: deviceSharedSecret.identity.realm.toString(),
-                type: deviceSharedSecret.identity.type.toString()
+                realm: deviceSharedSecret.identity.realm.toString()
             },
             password: deviceSharedSecret.password,
             username: deviceSharedSecret.username
@@ -58,12 +54,12 @@ export class DeviceMapper {
             identityPrivateKey: deviceOnboardingDTO.identityPrivateKey ? await CryptoSignaturePrivateKey.deserialize(deviceOnboardingDTO.identityPrivateKey) : undefined,
             identity: {
                 address: CoreAddress.from(deviceOnboardingDTO.identity.address),
-                createdAt: CoreDate.from(deviceOnboardingDTO.identity.createdAt),
-                name: deviceOnboardingDTO.identity.name,
-                description: deviceOnboardingDTO.identity.description,
                 publicKey: await CryptoSignaturePublicKey.deserialize(deviceOnboardingDTO.identity.publicKey),
                 realm: deviceOnboardingDTO.identity.realm as Realm,
-                type: deviceOnboardingDTO.identity.type as IdentityType
+                name: "",
+                description: "",
+                createdAt: CoreDate.utc(),
+                type: IdentityType.UNKNOWN
             },
             password: deviceOnboardingDTO.password,
             username: deviceOnboardingDTO.username

@@ -1,3 +1,4 @@
+import { IdentityDTO } from "./IdentityDTO";
 import { RelationshipChangeDTO } from "./RelationshipChangeDTO";
 import { RelationshipTemplateDTO } from "./RelationshipTemplateDTO";
 
@@ -15,6 +16,7 @@ export interface RelationshipDTO {
     template: RelationshipTemplateDTO;
     status: RelationshipStatus;
     peer: string;
+    peerIdentity: IdentityDTO;
     changes: RelationshipChangeDTO[];
     lastMessageSentAt?: string;
     lastMessageReceivedAt?: string;
