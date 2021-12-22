@@ -12,9 +12,9 @@ import {
     GetAttributeByNameRequest,
     GetAttributeByNameUseCase,
     GetAttributeRequest,
-    GetAttributesByNameRequest,
-    GetAttributesByNameResponse,
-    GetAttributesByNameUseCase,
+    GetAttributesByNamesRequest,
+    GetAttributesByNamesResponse,
+    GetAttributesByNamesUseCase,
     GetAttributesRequest,
     GetAttributesUseCase,
     GetAttributeUseCase,
@@ -35,7 +35,7 @@ export class AttributesFacade {
         @Inject private readonly getAttributeUseCase: GetAttributeUseCase,
         @Inject private readonly getAttributeByNameUseCase: GetAttributeByNameUseCase,
         @Inject private readonly getAttributesUseCase: GetAttributesUseCase,
-        @Inject private readonly getAttributesByNameUseCase: GetAttributesByNameUseCase,
+        @Inject private readonly getAttributesByNamesUseCase: GetAttributesByNamesUseCase,
         @Inject private readonly getHistoryByNameUseCase: GetHistoryByNameUseCase,
         @Inject private readonly succeedAttributeUseCase: SucceedAttributeUseCase,
         @Inject private readonly updateAttributeUseCase: UpdateAttributeUseCase
@@ -69,8 +69,8 @@ export class AttributesFacade {
         return await this.getAttributesUseCase.execute(request);
     }
 
-    public async getAttributesByName(request: GetAttributesByNameRequest): Promise<Result<GetAttributesByNameResponse>> {
-        return await this.getAttributesByNameUseCase.execute(request);
+    public async getAttributesByNames(request: GetAttributesByNamesRequest): Promise<Result<GetAttributesByNamesResponse>> {
+        return await this.getAttributesByNamesUseCase.execute(request);
     }
 
     public async getHistoryByName(request: GetHistoryByNameRequest): Promise<Result<ConsumptionAttributeDTO[]>> {

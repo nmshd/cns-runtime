@@ -1,7 +1,7 @@
 import { ConsumptionAttribute } from "@nmshd/consumption";
 import { AttributeJSON } from "@nmshd/content";
 import { ConsumptionAttributeDTO } from "../../../types";
-import { GetAttributesByNameResponse } from "./GetAttributesByName";
+import { GetAttributesByNamesResponse } from "./GetAttributesByNames";
 
 export class AttributeMapper {
     public static toAttributeDTO(attribute: ConsumptionAttribute): ConsumptionAttributeDTO {
@@ -16,10 +16,10 @@ export class AttributeMapper {
         return attributes.map((attribute) => this.toAttributeDTO(attribute));
     }
 
-    public static toGetAttributesByNameResponse(attributesByName: Record<string, ConsumptionAttribute>): GetAttributesByNameResponse {
-        const response: GetAttributesByNameResponse = {};
-        for (const name in attributesByName) {
-            response[name] = AttributeMapper.toAttributeDTO(attributesByName[name]);
+    public static toGetAttributesByNamesResponse(attributesByNames: Record<string, ConsumptionAttribute>): GetAttributesByNamesResponse {
+        const response: GetAttributesByNamesResponse = {};
+        for (const name in attributesByNames) {
+            response[name] = AttributeMapper.toAttributeDTO(attributesByNames[name]);
         }
 
         return response;

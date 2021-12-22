@@ -6,7 +6,7 @@ export * from "./GetAllValid";
 export * from "./GetAttribute";
 export * from "./GetAttributeByName";
 export * from "./GetAttributes";
-export * from "./GetAttributesByName";
+export * from "./GetAttributesByNames";
 export * from "./GetHistoryByName";
 export * from "./SucceedAttribute";
 export * from "./UpdateAttribute";
