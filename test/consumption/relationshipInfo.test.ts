@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-disabled-tests */
 import { AttributeJSON } from "@nmshd/content";
 import { ConsumptionServices, CreateRelationshipInfoRequest } from "../../src";
 import { expectError, expectSuccess, RuntimeServiceProvider } from "../lib";
@@ -56,7 +57,7 @@ async function createComplexRelationshipInfo(relationshipId: string) {
     return await consumptionServices.relationshipInfo.createRelationshipInfo(parameters);
 }
 
-describe("RelationshipInfo", () => {
+describe.skip("RelationshipInfo", () => {
     const relationshipIdPrefix = "RELmyrelationship";
 
     /* Before each test create a unique relationshipId to not interfere with
