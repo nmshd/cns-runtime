@@ -478,21 +478,27 @@ export class DataViewExpander {
         const relationshipInfo = relationshipInfoResult.value;
 
         const name = relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title;
-        const description = relationshipInfo.userDescription ? relationshipInfo.userDescription : relationshipInfo.description;
+        let description = relationshipInfo.userDescription ? relationshipInfo.userDescription : relationshipInfo.description;
 
         const initials = (name.match(/\b\w/g) ?? []).join("");
+
+        const relationshipDVO = await this.createRelationshipDVO(relationship, relationshipInfo);
+        if (!description) {
+            description = relationshipDVO.status;
+        }
 
         return {
             type: "IdentityDVO",
             id: relationship.peer,
-            name,
-            description,
-            publicKey: "",
-            realm: "",
+            name: name,
+            date: relationshipDVO.date,
+            description: description,
+            publicKey: relationship.peerIdentity.publicKey,
+            realm: relationship.peerIdentity.realm,
             initials,
             isSelf: false,
             hasRelationship: true,
-            relationship: await this.createRelationshipDVO(relationship, relationshipInfo)
+            relationship: relationshipDVO
         };
     }
 
@@ -520,7 +526,8 @@ export class DataViewExpander {
             type: "IdentityDVO",
             name: name,
             initials: initials,
-            realm: Realm.Prod,
+            publicKey: "i18n://dvo.identity.publicKey.unknown",
+            realm: this.identityController.realm.toString(),
             description: "i18n://dvo.identity.unknown",
             isSelf: false,
             hasRelationship: false
