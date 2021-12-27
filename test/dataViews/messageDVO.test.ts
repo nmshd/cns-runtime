@@ -131,6 +131,7 @@ describe("MessageDVO", () => {
         expect(recipient.id).toStrictEqual(dto.recipients[0].address);
         expect(recipient.name).toBe("Barbara");
         expect(recipient.isSelf).toBe(false);
+        expect(dvo.status).toBe("delivering");
     });
 
     test("check the message dvo for the recipient", async () => {
@@ -155,6 +156,7 @@ describe("MessageDVO", () => {
         expect(recipient.id).toStrictEqual(dto.recipients[0].address);
         expect(recipient.name).toBe("i18n://dvo.identity.self.name");
         expect(recipient.isSelf).toBe(true);
+        expect(dvo.status).toBe("received");
     });
 
     test("check the mail dvo for the sender", async () => {
