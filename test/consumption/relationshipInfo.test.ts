@@ -1,3 +1,4 @@
+// TODO: Enable tests again once relationship info is updated with actions
 /* eslint-disable jest/no-disabled-tests */
 import { AttributeJSON } from "@nmshd/content";
 import { ConsumptionServices, CreateRelationshipInfoRequest } from "../../src";
