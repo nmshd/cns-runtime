@@ -1,4 +1,4 @@
-import { AttributeJSON, AttributesChangeRequestJSON, AttributesShareRequestJSON, Mail, RequestJSON, RequestMail } from "@nmshd/content";
+import { AttributeJSON, AttributesChangeRequestJSON, AttributesRequestJSON, AttributesShareRequestJSON, MailJSON, RequestJSON, RequestMailJSON } from "@nmshd/content";
 import { CoreAddress, IdentityController, Realm, Relationship, RelationshipStatus } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { FileDVO, IdentityDVO } from "..";
@@ -12,7 +12,7 @@ import { MatchedAttributesDVO } from "./consumption/MatchedAttributesDVO";
 import { StoredAttributeDVO } from "./consumption/StoredAttributeDVO";
 import { AttributeDVO } from "./content/AttributeDVO";
 import { MailDVO, RequestMailDVO } from "./content/MailDVOs";
-import { AttributesChangeRequestDVO, AttributesShareRequestDVO, RequestDVO } from "./content/RequestDVOs";
+import { AttributesChangeRequestDVO, AttributesRequestDVO, AttributesShareRequestDVO, RequestDVO } from "./content/RequestDVOs";
 import { DataViewObject } from "./DataViewObject";
 import { DataViewTranslateable } from "./DataViewTranslateable";
 import { MessageDVO, MessageStatus } from "./transport/MessageDVO";
@@ -50,10 +50,10 @@ export class DataViewExpander {
 
             case "Request":
                 if (content instanceof Array) {
-                    return await this.expandRequests(content as RequestJSON[]);
+                    return await this.expandUnknownRequests(content as RequestJSON[]);
                 }
 
-                return this.expandRequest(content as RequestJSON);
+                return await this.expandUnknownRequest(content as RequestJSON);
 
             case "AttributesShareRequest":
                 if (content instanceof Array) {
@@ -168,27 +168,34 @@ export class DataViewExpander {
             image: ""
         };
 
-        if (message.content instanceof Mail) {
+        if (message.content["@type"] === "Mail" || message.content["@type"] === "RequestMail") {
             value.name = DataViewTranslateable.consumption.mails.mailSubjectFallback;
             value.type = "MailDVO";
+            const mailContent = message.content as MailJSON;
 
-            if (message.content.subject) {
-                value.name = message.content.subject;
+            if (mailContent.subject) {
+                value.name = mailContent.subject;
             }
 
-            // value.to = message.content.to
-            // value.cc
-            value.subject = message.content.subject;
-            value.body = message.content.body;
+            value.to = await this.expandAddresses(mailContent.to);
+            value.toCount = mailContent.to.length;
+            value.ccCount = 0;
+            if (mailContent.cc) {
+                value.cc = await this.expandAddresses(mailContent.cc);
+                value.ccCount = mailContent.cc.length;
+            }
+            value.subject = mailContent.subject;
+            value.body = mailContent.body;
 
-            if (message.content instanceof RequestMail) {
+            if (mailContent["@type"] === "RequestMail") {
+                const requestMailContent = message.content as RequestMailJSON;
                 value.name = DataViewTranslateable.consumption.mails.requestMailSubjectFallback;
-                if (message.content.subject) {
-                    value.name = message.content.subject;
+                if (requestMailContent.subject) {
+                    value.name = requestMailContent.subject;
                 }
                 value.type = "RequestMailDVO";
-                value.requests = message.content.requests;
-                value.requestCount = message.content.requests.length;
+                value.requests = await this.expandUnknownRequests(requestMailContent.requests);
+                value.requestCount = requestMailContent.requests.length;
                 return value as RequestMailDVO;
             }
 
@@ -203,6 +210,26 @@ export class DataViewExpander {
         return await Promise.all(messagePromises);
     }
 
+    public async expandUnknownRequest(request: RequestJSON): Promise<RequestDVO> {
+        switch (request["@type"]) {
+            case "AttributesRequest":
+                return await this.expandAttributesRequest(request as AttributesRequestJSON);
+            case "AttributesShareRequest":
+                return await this.expandAttributesShareRequest(request as AttributesShareRequestJSON);
+            case "AttributesChangeRequest":
+                return await this.expandAttributesChangeRequest(request as AttributesChangeRequestJSON);
+        }
+        return {
+            id: request.id ? request.id : "",
+            name: `${request["@type"]} ${request.key}`,
+            description: "i18n://dvo.request.unknownType",
+            type: "RequestDVO",
+            date: request.expiresAt,
+
+            ...request
+        };
+    }
+
     public expandRequest(request: RequestJSON): RequestDVO {
         return {
             id: request.id ? request.id : "",
@@ -214,8 +241,8 @@ export class DataViewExpander {
         };
     }
 
-    public async expandRequests(requests: RequestJSON[]): Promise<RequestDVO[]> {
-        const requestsPromise = requests.map((request) => this.expandRequest(request));
+    public async expandUnknownRequests(requests: RequestJSON[]): Promise<RequestDVO[]> {
+        const requestsPromise = requests.map((request) => this.expandUnknownRequest(request));
         return await Promise.all(requestsPromise);
     }
 
@@ -328,15 +355,6 @@ export class DataViewExpander {
         return await Promise.all(namesPromise);
     }
 
-    private expandUnsetAttribute(name: string): AttributeDVO {
-        return {
-            id: name,
-            type: "AttributeDVO",
-            name: DataViewTranslateable.consumption.attributes.unknownAttributeName,
-            isOwn: false
-        };
-    }
-
     public expandAttribute(attribute: AttributeJSON): AttributeDVO {
         return {
             type: "AttributeDVO",
@@ -387,6 +405,29 @@ export class DataViewExpander {
         };
     }
 
+    public async expandAttributesRequest(attributesRequest: AttributesRequestJSON): Promise<AttributesRequestDVO> {
+        const request = this.expandRequest(attributesRequest);
+
+        let name: string;
+
+        const attributesObjects = await this.expandAttributeNames(attributesRequest.names);
+
+        if (attributesObjects.length > 1) {
+            name = DataViewTranslateable.consumption.requests.attributesChangeRequestNamePlural;
+        } else {
+            name = DataViewTranslateable.consumption.requests.attributesChangeRequestName;
+        }
+
+        return {
+            ...request,
+            type: "AttributesRequestDVO",
+            names: attributesRequest.names,
+            name: name,
+            attributes: attributesObjects,
+            required: attributesRequest.required
+        };
+    }
+
     public expandSelf(): IdentityDVO {
         const name = "i18n://dvo.identity.self.name";
         const initials = "i18n://dvo.identity.self.initials";
@@ -399,6 +440,22 @@ export class DataViewExpander {
             realm: Realm.Prod,
             description: "i18n://dvo.identity.self.description",
             isSelf: true,
+            hasRelationship: false
+        };
+    }
+
+    public expandUnknown(address: string): IdentityDVO {
+        const name = address.substring(3, 9);
+        const initials = (name.match(/\b\w/g) ?? []).join("");
+
+        return {
+            id: this.identityController.address.toString(),
+            type: "IdentityDVO",
+            name: name,
+            initials: initials,
+            realm: Realm.Prod,
+            description: "i18n://dvo.identity.unknown.description",
+            isSelf: false,
             hasRelationship: false
         };
     }
@@ -420,7 +477,7 @@ export class DataViewExpander {
 
         const result = await this.transport.relationships.getRelationshipByAddress({ address: address });
         if (result.isError) {
-            throw result.error;
+            return this.expandUnknown(address);
         }
 
         return await this.expandRelationshipDTO(result.value);
