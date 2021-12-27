@@ -41,7 +41,7 @@ export interface AttributesRequestDVO extends RequestDVO {
     required?: boolean;
 
     // new
-    attributes: AttributeDVO[];
+    attributes: MatchedAttributesDVO[];
 }
 
 export interface AuthorizationGrantRequestDVO extends RequestDVO {
