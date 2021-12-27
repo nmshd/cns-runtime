@@ -1,5 +1,5 @@
 import { CryptoSecretKey, CryptoSignaturePrivateKey, CryptoSignaturePublicKey } from "@nmshd/crypto";
-import { CoreAddress, CoreDate, CoreId, Device, DeviceSharedSecret, IdentityType, Realm } from "@nmshd/transport";
+import { CoreAddress, CoreDate, CoreId, Device, DeviceSharedSecret, Realm } from "@nmshd/transport";
 import { DeviceOnboardingInfoDTO } from "../../../types";
 import { DeviceDTO } from "../../../types/transport/DeviceDTO";
 
@@ -55,11 +55,7 @@ export class DeviceMapper {
             identity: {
                 address: CoreAddress.from(deviceOnboardingDTO.identity.address),
                 publicKey: await CryptoSignaturePublicKey.deserialize(deviceOnboardingDTO.identity.publicKey),
-                realm: deviceOnboardingDTO.identity.realm as Realm,
-                name: "",
-                description: "",
-                createdAt: CoreDate.utc(),
-                type: IdentityType.UNKNOWN
+                realm: deviceOnboardingDTO.identity.realm as Realm
             },
             password: deviceOnboardingDTO.password,
             username: deviceOnboardingDTO.username
