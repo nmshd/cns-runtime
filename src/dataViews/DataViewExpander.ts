@@ -149,16 +149,8 @@ export class DataViewExpander {
 
         let status = MessageStatus.Received;
         if (isOwn) {
-            status = MessageStatus.Delivering;
-            let received = 0;
-            for (const recipient of message.recipients) {
-                if (recipient.receivedAt) {
-                    received++;
-                }
-            }
-            if (received === message.recipients.length) {
-                status = MessageStatus.Delivered;
-            }
+            const receivedByEveryone = message.recipients.every((r) => !!r.receivedAt);
+            status = receivedByEveryone ? MessageStatus.Delivered : MessageStatus.Delivering;
         }
 
         const name = DataViewTranslateable.transport.messageName;
