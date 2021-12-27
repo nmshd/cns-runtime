@@ -3,7 +3,7 @@ import { FileDVO } from "./FileDVO";
 import { IdentityDVO } from "./IdentityDVO";
 
 export enum MessageStatus {
-    Sent = "sent",
+    Received = "received",
     Delivering = "delivering",
     Delivered = "delivered",
     Errorneous = "errorneous"

@@ -147,7 +147,19 @@ export class DataViewExpander {
 
         const isOwn = this.identityController.isMe(CoreAddress.from(message.createdBy));
 
-        const status = MessageStatus.Delivering; // TODO: JSSNMSHDD-2462 (Map message status once receivedAt is updated)
+        let status = MessageStatus.Received;
+        if (isOwn) {
+            status = MessageStatus.Delivering;
+            let received = 0;
+            for (const recipient of message.recipients) {
+                if (recipient.receivedAt) {
+                    received++;
+                }
+            }
+            if (received === message.recipients.length) {
+                status = MessageStatus.Delivered;
+            }
+        }
 
         const name = DataViewTranslateable.transport.messageName;
         const value: any = {
@@ -266,7 +278,7 @@ export class DataViewExpander {
         if (recipientObjects.length === 0) {
             request.errorCount = (request.errorCount ?? 0) + 1;
             const error: Error = {
-                code: "error.consumption.request.AttributeShareRequest.noRelationship",
+                code: "error.dvo.request.AttributeShareRequest.noRelationship",
                 message: "There are no relationships to any of the recipients of this request."
             };
 
@@ -277,8 +289,8 @@ export class DataViewExpander {
         } else if (recipientObjects.length !== possibleRecipientCount) {
             request.warningCount = (request.warningCount ?? 0) + 1;
             const warning: Warning = {
-                code: "warning.consumption.request.AttributeShareRequest.onlyRelationships",
-                message: "Not to every recipients of this request exist a relationship."
+                code: "warning.dvo.request.AttributeShareRequest.onlyRelationships",
+                message: "Not to every recipient of this request exist a relationship."
             };
 
             if (!request.warnings) {
