@@ -131,11 +131,13 @@ describe("Message errors", () => {
 describe("Message query", () => {
     test("query messages", async () => {
         const message = await exchangeMessage(transportServices1, transportServices2);
-        const conditions = new QueryParamConditions(message, transportServices1)
+        const conditions = new QueryParamConditions(message, transportServices2)
             .addDateSet("createdAt")
             .addDateSet("lastMessageSentAt")
             .addStringSet("createdBy")
             .addStringSet("recipients.address", message.recipients[0].address)
+            .addDateSet("recipients.receivedAt")
+            .addStringSet("recipients.receivedByDevice")
             .addStringSet("content.@type")
             .addStringSet("content.subject")
             .addStringSet("content.body")

@@ -1,5 +1,5 @@
 export class DataViewTranslateable {
-    public static readonly prefix: string = "i18n://";
+    public static readonly prefix: string = "i18n://dvo.";
     public static readonly transport = {
         messageName: `${DataViewTranslateable.prefix}message.name`,
         relationshipOutgoing: `${DataViewTranslateable.prefix}relationship.name`,
@@ -11,6 +11,10 @@ export class DataViewTranslateable {
     };
 
     public static readonly consumption = {
+        mails: {
+            mailSubjectFallback: `${DataViewTranslateable.prefix}mails.mailSubjectFallback`,
+            requestMailSubjectFallback: `${DataViewTranslateable.prefix}mails.requestMailSubjectFallback`
+        },
         attributes: {
             unknownAttributeName: `${DataViewTranslateable.prefix}attributes.UnknownAttributeName`
         },

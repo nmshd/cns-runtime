@@ -25,7 +25,7 @@ export class MessageMapper {
 
         return {
             id: message.id.toString(),
-            content: message.cache.content,
+            content: message.cache.content.toJSON(),
             createdBy: message.cache.createdBy.toString(),
             createdByDevice: message.cache.createdByDevice.toString(),
             recipients: message.cache.recipients.map((r) => this.toRecipient(r)),
@@ -58,7 +58,9 @@ export class MessageMapper {
 
     private static toRecipient(recipient: MessageEnvelopeRecipient): RecipientDTO {
         return {
-            address: recipient.address.toString()
+            address: recipient.address.toString(),
+            receivedAt: recipient.receivedAt?.toString(),
+            receivedByDevice: recipient.receivedByDevice?.toString()
         };
     }
 }

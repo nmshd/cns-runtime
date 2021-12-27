@@ -8,8 +8,7 @@ import {
     RelationshipInfoController,
     RequestsController,
     SettingsController,
-    SharedItemsController,
-    SingleRelationshipController
+    SharedItemsController
 } from "@nmshd/consumption";
 import {
     AccountController,
@@ -240,10 +239,6 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         Container.bind(RelationshipInfoController)
             .factory(() => this.getConsumptionController().relationshipInfo)
-            .scope(Scope.Request);
-
-        Container.bind(SingleRelationshipController)
-            .factory(() => new SingleRelationshipController(this.getConsumptionController()))
             .scope(Scope.Request);
 
         Container.bind(RequestsController)
