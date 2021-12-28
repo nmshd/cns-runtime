@@ -519,7 +519,7 @@ export class DataViewExpander {
         return {
             id: relationship.id,
             name: relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title,
-            description: relationshipInfo.userDescription ? relationshipInfo.userDescription : relationshipInfo.title,
+            description: relationshipInfo.userDescription ? relationshipInfo.userDescription : relationshipInfo.description,
             date: relationship.changes[0].request.createdAt,
             image: "",
             type: "RelationshipDVO",
