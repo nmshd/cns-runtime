@@ -31,7 +31,7 @@ export abstract class UseCase<IRequest, IResponse> {
             return this.resultFromError(e);
         }
 
-        return Result.fail(new ApplicationError("error.runtime.unknown", `An unknown object was thrown in a UseCase: ${stringifySafe(e)}`));
+        return Result.fail(RuntimeErrors.general.unknown(`An unknown object was thrown in a UseCase: ${stringifySafe(e)}`, e));
     }
 
     protected resultFromError(error: Error): Result<any> {
@@ -47,7 +47,7 @@ export abstract class UseCase<IRequest, IResponse> {
             return Result.fail(error);
         }
 
-        return Result.fail(new ApplicationError("error.runtime.unknown", `An error was thrown in a UseCase: ${error.message}`, error));
+        return Result.fail(RuntimeErrors.general.unknown(`An error was thrown in a UseCase: ${error.message}`, error));
     }
 
     private handleServalError(error: ServalError) {
