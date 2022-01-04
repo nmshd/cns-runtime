@@ -28,7 +28,7 @@
         "lint:eslint": "eslint --ext .ts ./src ./test",
         "lint:prettier": "prettier --check .",
         "lint:tsc": "tsc --noEmit && tsc -p test/tsconfig.json --noEmit",
-        "test:ci:lokijs": "jest -i && USE_LOKIJS=true jest -i",
+        "test:ci:lokijs": "USE_LOKIJS=true jest -i",
         "test:ci:mongodb": "CONNECTION_STRING='mongodb://127.0.0.1:27017/?readPreference=primary&appname=runtime&ssl=false' jest -i",
         "test:local": "npm run test:local:mongodb && npm run test:local:lokijs",
         "test:local:lokijs": "USE_LOKIJS=true jest",
