@@ -22,19 +22,15 @@ export abstract class UseCase<IRequest, IResponse> {
         try {
             return await this.executeInternal(request);
         } catch (e) {
-            return this.resultFromUnknown(e);
+            return this.failingResultFromUnknownError(e);
         }
     }
 
-    private resultFromUnknown(e: unknown) {
-        if (e instanceof Error) {
-            return this.resultFromError(e);
+    private failingResultFromUnknownError(error: unknown): Result<any> {
+        if (!(error instanceof Error)) {
+            return Result.fail(RuntimeErrors.general.unknown(`An unknown object was thrown in a UseCase: ${stringifySafe(error)}`, error));
         }
 
-        return Result.fail(RuntimeErrors.general.unknown(`An unknown object was thrown in a UseCase: ${stringifySafe(e)}`, e));
-    }
-
-    protected resultFromError(error: Error): Result<any> {
         if (error instanceof RequestError) {
             return this.handleRequestError(error);
         }
