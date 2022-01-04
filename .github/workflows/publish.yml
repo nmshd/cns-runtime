@@ -18,9 +18,7 @@ jobs:
         env:
           BUILD_NUMBER: ${{ github.run_number }}
           COMMIT_HASH: ${{ github.sha }}
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.6.0
-      - run: bash .ci/test.sh
+      - run: bash .ci/runChecks.sh
       - run: bash .ci/publish.sh
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

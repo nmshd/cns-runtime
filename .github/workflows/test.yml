@@ -6,17 +6,20 @@ on:
       - main
 
 jobs:
-  test:
+  run-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - run: bash .ci/runChecks.sh
+  test-loki:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-      - run: bash .ci/build.sh
-        env:
-          BUILD_NUMBER: ${{ github.run_number }}
-          COMMIT_HASH: ${{ github.sha }}
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.6.0
-      - run: bash .ci/test.sh
+      - run: npm run test:ci:lokijs
+  test-mongo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - uses: supercharge/mongodb-github-action@1.6.0
+      - run: npm run test:ci:mongodb
