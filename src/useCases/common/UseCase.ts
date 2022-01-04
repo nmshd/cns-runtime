@@ -21,15 +21,23 @@ export abstract class UseCase<IRequest, IResponse> {
         try {
             return await this.executeInternal(request);
         } catch (e) {
-            if (!(e instanceof Error)) {
-                throw e;
-            }
-
-            return this.resultFromError(e);
+            return this.resultFromUnknown(e);
         }
     }
 
-    protected resultFromError(error: Error): Result<any> {
+    private resultFromUnknown(e: unknown) {
+        if (e instanceof ApplicationError) {
+            return this.resultFromApplicationError(e);
+        }
+
+        if (e instanceof Error) {
+            return Result.fail(new ApplicationError("error.runtime.unknown", `An error was thrown in a UseCase: ${e.message}`, e));
+        }
+
+        return Result.fail(new ApplicationError("error.runtime.unknown", `An unknown object was thrown in a UseCase: ${JSON.stringify(e)}`));
+    }
+
+    protected resultFromApplicationError(error: ApplicationError): Result<any> {
         if (error instanceof RequestError) {
             return this.handleRequestError(error);
         }
@@ -38,7 +46,7 @@ export abstract class UseCase<IRequest, IResponse> {
             return this.handleServalError(error);
         }
 
-        throw error;
+        return Result.fail(error);
     }
 
     private handleServalError(error: ServalError) {
@@ -68,7 +76,7 @@ export abstract class UseCase<IRequest, IResponse> {
             return Result.fail(new ApplicationError(error.code, error.message));
         }
 
-        throw error;
+        return Result.fail(error);
     }
 
     protected abstract executeInternal(request: IRequest): Promise<Result<IResponse>> | Result<IResponse>;
