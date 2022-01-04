@@ -2,6 +2,7 @@ import { ParsingError, ServalError, ValidationError } from "@js-soft/ts-serval";
 import { ApplicationError, Result } from "@js-soft/ts-utils";
 import { RequestError } from "@nmshd/transport";
 import { ValidationResult } from "fluent-ts-validator";
+import stringifySafe from "json-stringify-safe";
 import { PlatformErrorCodes } from "./PlatformErrorCodes";
 import { RuntimeErrors } from "./RuntimeErrors";
 import { IValidator } from "./validation/IValidator";
@@ -30,7 +31,7 @@ export abstract class UseCase<IRequest, IResponse> {
             return this.resultFromError(e);
         }
 
-        return Result.fail(new ApplicationError("error.runtime.unknown", `An unknown object was thrown in a UseCase: ${JSON.stringify(e)}`));
+        return Result.fail(new ApplicationError("error.runtime.unknown", `An unknown object was thrown in a UseCase: ${stringifySafe(e)}`));
     }
 
     protected resultFromError(error: Error): Result<any> {
