@@ -26,18 +26,14 @@ export abstract class UseCase<IRequest, IResponse> {
     }
 
     private resultFromUnknown(e: unknown) {
-        if (e instanceof ApplicationError) {
-            return this.resultFromApplicationError(e);
-        }
-
         if (e instanceof Error) {
-            return Result.fail(new ApplicationError("error.runtime.unknown", `An error was thrown in a UseCase: ${e.message}`, e));
+            return this.resultFromError(e);
         }
 
         return Result.fail(new ApplicationError("error.runtime.unknown", `An unknown object was thrown in a UseCase: ${JSON.stringify(e)}`));
     }
 
-    protected resultFromApplicationError(error: ApplicationError): Result<any> {
+    protected resultFromError(error: Error): Result<any> {
         if (error instanceof RequestError) {
             return this.handleRequestError(error);
         }
@@ -46,7 +42,11 @@ export abstract class UseCase<IRequest, IResponse> {
             return this.handleServalError(error);
         }
 
-        return Result.fail(error);
+        if (error instanceof ApplicationError) {
+            return Result.fail(error);
+        }
+
+        return Result.fail(new ApplicationError("error.runtime.unknown", `An error was thrown in a UseCase: ${error.message}`, error));
     }
 
     private handleServalError(error: ServalError) {
