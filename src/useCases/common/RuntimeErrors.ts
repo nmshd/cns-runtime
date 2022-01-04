@@ -1,6 +1,10 @@
 import { ApplicationError } from "@js-soft/ts-utils";
 
 class General {
+    public unknown(message: string, data?: any) {
+        return new ApplicationError("error.runtime.unknown", message, data);
+    }
+
     public alreadyInitialized() {
         return new ApplicationError("error.runtime.alreadyInitialized", "The runtime is already initialized. The init method can only be executed once.");
     }

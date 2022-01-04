@@ -2,6 +2,7 @@ import { ParsingError, ServalError, ValidationError } from "@js-soft/ts-serval";
 import { ApplicationError, Result } from "@js-soft/ts-utils";
 import { RequestError } from "@nmshd/transport";
 import { ValidationResult } from "fluent-ts-validator";
+import stringifySafe from "json-stringify-safe";
 import { PlatformErrorCodes } from "./PlatformErrorCodes";
 import { RuntimeErrors } from "./RuntimeErrors";
 import { IValidator } from "./validation/IValidator";
@@ -21,15 +22,15 @@ export abstract class UseCase<IRequest, IResponse> {
         try {
             return await this.executeInternal(request);
         } catch (e) {
-            if (!(e instanceof Error)) {
-                throw e;
-            }
-
-            return this.resultFromError(e);
+            return this.failingResultFromUnknownError(e);
         }
     }
 
-    protected resultFromError(error: Error): Result<any> {
+    private failingResultFromUnknownError(error: unknown): Result<any> {
+        if (!(error instanceof Error)) {
+            return Result.fail(RuntimeErrors.general.unknown(`An unknown object was thrown in a UseCase: ${stringifySafe(error)}`, error));
+        }
+
         if (error instanceof RequestError) {
             return this.handleRequestError(error);
         }
@@ -38,7 +39,11 @@ export abstract class UseCase<IRequest, IResponse> {
             return this.handleServalError(error);
         }
 
-        throw error;
+        if (error instanceof ApplicationError) {
+            return Result.fail(error);
+        }
+
+        return Result.fail(RuntimeErrors.general.unknown(`An error was thrown in a UseCase: ${error.message}`, error));
     }
 
     private handleServalError(error: ServalError) {
@@ -68,7 +73,7 @@ export abstract class UseCase<IRequest, IResponse> {
             return Result.fail(new ApplicationError(error.code, error.message));
         }
 
-        throw error;
+        return Result.fail(error);
     }
 
     protected abstract executeInternal(request: IRequest): Promise<Result<IResponse>> | Result<IResponse>;
