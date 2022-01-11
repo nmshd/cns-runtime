@@ -1,4 +1,4 @@
-import { MatchedAttributesDVO } from "..";
+import { MatchedAttributesDVO } from "../consumption/MatchedAttributesDVO";
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "../transport/IdentityDVO";
 import { AttributeDVO } from "./AttributeDVO";
