@@ -141,6 +141,8 @@ export class DataViewExpander {
 
     public async expandMessageDTO(message: MessageDTO | MessageWithAttachmentsDTO): Promise<MessageDVO | MailDVO | RequestMailDVO> {
         const recipientRelationships = await this.expandRecipients(message.recipients);
+        const addressMap: Record<string, RecipientDVO> = {};
+        recipientRelationships.forEach((value) => (addressMap[value.id] = value));
         const createdByRelationship = await this.expandAddress(message.createdBy);
         const fileIds = [];
         const filePromises = [];
@@ -198,12 +200,16 @@ export class DataViewExpander {
             if (mailContent.subject) {
                 value.name = mailContent.subject;
             }
+            const to: RecipientDVO[] = [];
+            mailContent.to.forEach((value) => to.push(addressMap[value]));
 
-            value.to = await this.expandAddresses(mailContent.to);
+            value.to = to;
             value.toCount = mailContent.to.length;
+
             value.ccCount = 0;
             if (mailContent.cc) {
-                value.cc = await this.expandAddresses(mailContent.cc);
+                const cc: RecipientDVO[] = [];
+                mailContent.cc.forEach((value) => cc.push(addressMap[value]));
                 value.ccCount = mailContent.cc.length;
             }
             value.subject = mailContent.subject;
@@ -574,9 +580,9 @@ export class DataViewExpander {
             name: "",
             date: date,
             status: change.status,
-            statusText: `i18n://dvo.relationshipChange.status.${change.status}`,
+            statusText: `i18n://dvo.relationshipChange.${change.status}`,
             changeType: change.type,
-            changeTypeText: `i18n://dvo.relationshipChange.type.${change.type}`,
+            changeTypeText: `i18n://dvo.relationshipChange.${change.type}`,
             isOwn: isOwn,
             request: {
                 ...change.request,
@@ -652,7 +658,7 @@ export class DataViewExpander {
 
         const relationshipDVO = await this.createRelationshipDVO(relationship, relationshipInfo);
         if (!description) {
-            description = relationshipDVO.status;
+            description = relationshipDVO.statusText;
         }
 
         return {
