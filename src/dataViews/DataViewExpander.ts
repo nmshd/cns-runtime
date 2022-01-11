@@ -174,6 +174,7 @@ export class DataViewExpander {
             recipientCount: message.recipients.length,
             attachmentCount: message.attachments.length,
             status,
+            statusText: `i18n://dvo.message.${status}`,
             image: "",
             peer: peer
         };
