@@ -4,7 +4,17 @@ import { Inject } from "typescript-ioc";
 import { FileDVO, IdentityDVO } from "..";
 import { TransportServices } from "../extensibility";
 import { ConsumptionServices } from "../extensibility/ConsumptionServices";
-import { ConsumptionAttributeDTO, FileDTO, IdentityDTO, MessageDTO, MessageWithAttachmentsDTO, RecipientDTO, RelationshipDTO, RelationshipInfoDTO } from "../types";
+import {
+    ConsumptionAttributeDTO,
+    FileDTO,
+    IdentityDTO,
+    MessageDTO,
+    MessageWithAttachmentsDTO,
+    RecipientDTO,
+    RelationshipChangeDTO,
+    RelationshipDTO,
+    RelationshipInfoDTO
+} from "../types";
 import { RuntimeErrors } from "../useCases";
 import { Error } from "./common/Error";
 import { Warning } from "./common/Warning";
@@ -12,11 +22,11 @@ import { MatchedAttributesDVO } from "./consumption/MatchedAttributesDVO";
 import { StoredAttributeDVO } from "./consumption/StoredAttributeDVO";
 import { AttributeDVO } from "./content/AttributeDVO";
 import { MailDVO, RequestMailDVO } from "./content/MailDVOs";
-import { AttributesChangeRequestDVO, AttributesRequestDVO, AttributesShareRequestDVO, RequestDVO } from "./content/RequestDVOs";
+import { AttributeChange, AttributesChangeRequestDVO, AttributesRequestDVO, AttributesShareRequestDVO, RequestDVO } from "./content/RequestDVOs";
 import { DataViewObject } from "./DataViewObject";
 import { DataViewTranslateable } from "./DataViewTranslateable";
 import { MessageDVO, MessageDVOInternal, MessageStatus, RecipientDVO } from "./transport/MessageDVO";
-import { RelationshipDirection, RelationshipDVO } from "./transport/RelationshipDVO";
+import { RelationshipChangeDVO, RelationshipChangeResponseDVO, RelationshipDirection, RelationshipDVO } from "./transport/RelationshipDVO";
 
 export class DataViewExpander {
     public constructor(
@@ -343,7 +353,8 @@ export class DataViewExpander {
             value: attribute.content.value,
             date: attribute.createdAt,
             isOwn: true,
-            sharedItems: []
+            sharedItems: [],
+            sharedItemCount: 0
         };
     }
 
@@ -368,6 +379,7 @@ export class DataViewExpander {
             id: name,
             name: name,
             matches: matchedAttributes,
+            matchCount: matchedAttributes.length,
             bestMatch: bestMatch
         };
     }
@@ -417,13 +429,25 @@ export class DataViewExpander {
             name = DataViewTranslateable.consumption.requests.attributesChangeRequestName;
         }
 
+        const changes: AttributeChange[] = [];
+        attributesObjects.forEach((attribute, index) => {
+            changes.push({
+                oldAttribute: oldAttributesObjects[index],
+                newAttribute: attribute
+            });
+        });
+
         return {
             ...request,
             type: "AttributesChangeRequestDVO",
             name: name,
             newAttributes: attributesObjects,
+            newAttributeCount: attributesObjects.length,
             oldAttributes: oldAttributesObjects,
-            applyTo: applyToObject
+            oldAttributeCount: oldAttributesObjects.length,
+            applyTo: applyToObject,
+            changes: changes,
+            changeCount: changes.length
         };
     }
 
@@ -444,8 +468,10 @@ export class DataViewExpander {
             ...request,
             type: "AttributesRequestDVO",
             names: attributesRequest.names,
+            nameCount: attributesRequest.names.length,
             name: name,
             attributes: attributesObjects,
+            attributeCount: attributesObjects.length,
             required: attributesRequest.required
         };
     }
@@ -525,6 +551,48 @@ export class DataViewExpander {
         return await Promise.all(relationshipPromises);
     }
 
+    public expandRelationshipChange(relationship: RelationshipDTO, change: RelationshipChangeDTO): Promise<RelationshipChangeDVO> {
+        const date = change.response ? change.response.createdAt : change.request.createdAt;
+        let isOwn = false;
+        if (this.identityController.isMe(CoreAddress.from(change.request.createdBy))) {
+            isOwn = true;
+        }
+
+        let response: RelationshipChangeResponseDVO | undefined;
+        if (change.response) {
+            response = {
+                ...change.response,
+                id: `${change.id}_response`,
+                name: "i18n://dvo.relationshipChange.response.name",
+                type: "RelationshipChangeResponseDVO"
+            };
+        }
+
+        return Promise.resolve({
+            type: "RelationshipChangeDVO",
+            id: change.id,
+            name: "",
+            date: date,
+            status: change.status,
+            statusText: `i18n://dvo.relationshipChange.status.${change.status}`,
+            changeType: change.type,
+            changeTypeText: `i18n://dvo.relationshipChange.type.${change.type}`,
+            isOwn: isOwn,
+            request: {
+                ...change.request,
+                id: `${change.id}_request`,
+                name: "i18n://dvo.relationshipChange.request.name",
+                type: "RelationshipChangeRequestDVO"
+            },
+            response: response
+        });
+    }
+
+    public async expandRelationshipChanges(relationship: RelationshipDTO): Promise<RelationshipChangeDVO[]> {
+        const changePromises = relationship.changes.map((change) => this.expandRelationshipChange(relationship, change));
+        return await Promise.all(changePromises);
+    }
+
     protected async createRelationshipDVO(relationship: RelationshipDTO, relationshipInfo?: RelationshipInfoDTO): Promise<RelationshipDVO> {
         if (!relationshipInfo) {
             const relationshipInfoResult = await this.consumption.relationshipInfo.getRelationshipInfoByRelationship({ relationshipId: relationship.id });
@@ -549,6 +617,8 @@ export class DataViewExpander {
             statusText = DataViewTranslateable.transport.relationshipActive;
         }
 
+        const changes = await this.expandRelationshipChanges(relationship);
+
         return {
             id: relationship.id,
             name: relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title,
@@ -565,7 +635,9 @@ export class DataViewExpander {
                 headerImage: relationshipInfo.theme?.imageBar,
                 backgroundColor: relationshipInfo.theme?.backgroundColor,
                 foregroundColor: relationshipInfo.theme?.foregroundColor
-            }
+            },
+            changes: changes,
+            changeCount: changes.length
         };
     }
 
