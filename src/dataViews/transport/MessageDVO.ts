@@ -1,6 +1,6 @@
 import { DataViewObject } from "../DataViewObject";
 import { FileDVO } from "./FileDVO";
-import { IdentityDVO } from "./IdentityDVO";
+import { IdentityDVO, IdentityDVOInternal } from "./IdentityDVO";
 
 export enum MessageStatus {
     Received = "received",
@@ -16,7 +16,7 @@ export interface MessageDVOInternal extends DataViewObject {
 
     // overwrite DTO
     createdBy: IdentityDVO;
-    recipients: RecipientDVO[]; // RecipientsDVO?
+    recipients: RecipientDVO[];
     attachments: FileDVO[];
 
     // new in DVO
@@ -24,13 +24,19 @@ export interface MessageDVOInternal extends DataViewObject {
     recipientCount: number;
     attachmentCount: number;
     status: MessageStatus;
+
+    /**
+     * A peer of the message.
+     */
+    peer: IdentityDVO;
 }
 
 export interface MessageDVO extends MessageDVOInternal {
     type: "MessageDVO";
 }
 
-export interface RecipientDVO extends IdentityDVO {
+export interface RecipientDVO extends IdentityDVOInternal {
+    type: "RecipientDVO";
     receivedAt?: string;
     receivedByDevice?: string;
 }

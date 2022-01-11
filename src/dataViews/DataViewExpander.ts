@@ -15,7 +15,7 @@ import { MailDVO, RequestMailDVO } from "./content/MailDVOs";
 import { AttributesChangeRequestDVO, AttributesRequestDVO, AttributesShareRequestDVO, RequestDVO } from "./content/RequestDVOs";
 import { DataViewObject } from "./DataViewObject";
 import { DataViewTranslateable } from "./DataViewTranslateable";
-import { MessageDVO, MessageStatus } from "./transport/MessageDVO";
+import { MessageDVO, MessageDVOInternal, MessageStatus, RecipientDVO } from "./transport/MessageDVO";
 import { RelationshipDirection, RelationshipDVO } from "./transport/RelationshipDVO";
 
 export class DataViewExpander {
@@ -147,14 +147,19 @@ export class DataViewExpander {
 
         const isOwn = this.identityController.isMe(CoreAddress.from(message.createdBy));
 
+        let peer: IdentityDVO;
         let status = MessageStatus.Received;
         if (isOwn) {
             const receivedByEveryone = message.recipients.every((r) => !!r.receivedAt);
             status = receivedByEveryone ? MessageStatus.Delivered : MessageStatus.Delivering;
+            // Overwrite the RecipientDVO to be a IdentityDVO for this special case
+            peer = { ...recipientRelationships[0], type: "IdentityDVO" };
+        } else {
+            peer = createdByRelationship;
         }
 
         const name = DataViewTranslateable.transport.messageName;
-        const value: any = {
+        const internalMessage: MessageDVOInternal = {
             id: message.id,
             name: name,
             date: message.createdAt,
@@ -169,8 +174,10 @@ export class DataViewExpander {
             recipientCount: message.recipients.length,
             attachmentCount: message.attachments.length,
             status,
-            image: ""
+            image: "",
+            peer: peer
         };
+        const value: any = internalMessage;
 
         if (message.content["@type"] === "Mail" || message.content["@type"] === "RequestMail") {
             value.name = DataViewTranslateable.consumption.mails.mailSubjectFallback;
@@ -200,13 +207,23 @@ export class DataViewExpander {
                 value.type = "RequestMailDVO";
                 value.requests = await this.expandUnknownRequests(requestMailContent.requests);
                 value.requestCount = requestMailContent.requests.length;
-                return value as RequestMailDVO;
+                const requestMailDVO: RequestMailDVO = {
+                    ...value
+                };
+                return requestMailDVO;
             }
 
-            return value as MailDVO;
+            const mailDVO: MailDVO = {
+                ...value
+            };
+
+            return mailDVO;
         }
 
-        return value as MessageDVO;
+        const messageDVO: MessageDVO = {
+            ...value
+        };
+        return messageDVO;
     }
 
     public async expandMessageDTOs(messages: MessageDTO[]): Promise<(MessageDVO | MailDVO | RequestMailDVO)[]> {
@@ -492,8 +509,18 @@ export class DataViewExpander {
         return await Promise.all(relationshipPromises);
     }
 
-    public async expandRecipients(recipients: RecipientDTO[]): Promise<IdentityDVO[]> {
-        const relationshipPromises = recipients.map((recipient) => this.expandAddress(recipient.address));
+    public async expandRecipient(recipient: RecipientDTO): Promise<RecipientDVO> {
+        const identity = await this.expandAddress(recipient.address);
+        return {
+            ...identity,
+            type: "RecipientDVO",
+            receivedAt: recipient.receivedAt,
+            receivedByDevice: recipient.receivedByDevice
+        };
+    }
+
+    public async expandRecipients(recipients: RecipientDTO[]): Promise<RecipientDVO[]> {
+        const relationshipPromises = recipients.map((recipient) => this.expandRecipient(recipient));
         return await Promise.all(relationshipPromises);
     }
 
