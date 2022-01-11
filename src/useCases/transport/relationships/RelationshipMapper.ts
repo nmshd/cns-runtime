@@ -34,7 +34,7 @@ export class RelationshipMapper {
             createdBy: change.createdBy.toString(),
             createdByDevice: change.createdByDevice.toString(),
             createdAt: change.createdAt.toString(),
-            content: change.content
+            content: change.content?.toJSON()
         };
     }
 
@@ -43,7 +43,7 @@ export class RelationshipMapper {
             createdBy: change.createdBy.toString(),
             createdByDevice: change.createdByDevice.toString(),
             createdAt: change.createdAt.toString(),
-            content: change.content
+            content: change.content?.toJSON()
         };
     }
 
