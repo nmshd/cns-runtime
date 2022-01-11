@@ -14,7 +14,7 @@ export class RelationshipTemplateMapper {
             createdBy: template.cache.createdBy.toString(),
             createdByDevice: template.cache.createdByDevice.toString(),
             createdAt: template.cache.createdAt.toString(),
-            content: template.cache.content,
+            content: template.cache.content.toJSON(),
             expiresAt: template.cache.expiresAt?.toString(),
             maxNumberOfRelationships: template.cache.maxNumberOfRelationships
         };
