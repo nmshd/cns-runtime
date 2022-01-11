@@ -16,7 +16,7 @@ import { AttributesChangeRequestDVO, AttributesRequestDVO, AttributesShareReques
 import { DataViewObject } from "./DataViewObject";
 import { DataViewTranslateable } from "./DataViewTranslateable";
 import { MessageDVO, MessageStatus } from "./transport/MessageDVO";
-import { RelationshipDVO } from "./transport/RelationshipDVO";
+import { RelationshipDirection, RelationshipDVO } from "./transport/RelationshipDVO";
 
 export class DataViewExpander {
     public constructor(
@@ -503,8 +503,13 @@ export class DataViewExpander {
             relationshipInfo = relationshipInfoResult.value;
         }
 
+        let direction = RelationshipDirection.Incoming;
+        if (this.identityController.isMe(CoreAddress.from(relationship.changes[0].request.createdBy))) {
+            direction = RelationshipDirection.Outgoing;
+        }
+
         let statusText = "";
-        if (relationship.status === RelationshipStatus.Pending && this.identityController.isMe(CoreAddress.from(relationship.changes[0].request.createdBy))) {
+        if (relationship.status === RelationshipStatus.Pending && direction === RelationshipDirection.Outgoing) {
             statusText = DataViewTranslateable.transport.relationshipOutgoing;
         } else if (relationship.status === RelationshipStatus.Pending) {
             statusText = DataViewTranslateable.transport.relationshipIncoming;
@@ -523,7 +528,9 @@ export class DataViewExpander {
             date: relationship.changes[0].request.createdAt,
             image: "",
             type: "RelationshipDVO",
-            status: statusText,
+            status: relationship.status,
+            statusText: statusText,
+            direction: direction,
             isPinned: relationshipInfo.isPinned,
             theme: {
                 image: relationshipInfo.theme?.image,
