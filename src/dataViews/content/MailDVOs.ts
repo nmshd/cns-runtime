@@ -1,5 +1,4 @@
-import { IdentityDVO } from "../transport/IdentityDVO";
-import { MessageDVOInternal } from "../transport/MessageDVO";
+import { MessageDVOInternal, RecipientDVO } from "../transport/MessageDVO";
 import { RequestDVO } from "./RequestDVOs";
 
 interface RequestMailDVOInternal extends MailDVOInternal {
@@ -16,8 +15,8 @@ export interface RequestMailDVO extends RequestMailDVOInternal {
 
 interface MailDVOInternal extends MessageDVOInternal {
     // overwrite DTO
-    to: IdentityDVO[];
-    cc: IdentityDVO[];
+    to: RecipientDVO[];
+    cc: RecipientDVO[];
     subject: string;
     body: string;
 

@@ -2,11 +2,11 @@ export class DataViewTranslateable {
     public static readonly prefix: string = "i18n://dvo.";
     public static readonly transport = {
         messageName: `${DataViewTranslateable.prefix}message.name`,
-        relationshipOutgoing: `${DataViewTranslateable.prefix}relationship.outgoing`,
-        relationshipIncoming: `${DataViewTranslateable.prefix}relationship.incoming`,
-        relationshipRejected: `${DataViewTranslateable.prefix}relationship.rejected`,
-        relationshipRevoked: `${DataViewTranslateable.prefix}relationship.revoked`,
-        relationshipActive: `${DataViewTranslateable.prefix}relationship.active`,
+        relationshipOutgoing: `${DataViewTranslateable.prefix}relationship.Outgoing`,
+        relationshipIncoming: `${DataViewTranslateable.prefix}relationship.Incoming`,
+        relationshipRejected: `${DataViewTranslateable.prefix}relationship.Rejected`,
+        relationshipRevoked: `${DataViewTranslateable.prefix}relationship.Revoked`,
+        relationshipActive: `${DataViewTranslateable.prefix}relationship.Active`,
         fileName: `${DataViewTranslateable.prefix}file.name`
     };
 

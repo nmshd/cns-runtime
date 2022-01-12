@@ -4,7 +4,17 @@ import { Inject } from "typescript-ioc";
 import { FileDVO, IdentityDVO } from "..";
 import { TransportServices } from "../extensibility";
 import { ConsumptionServices } from "../extensibility/ConsumptionServices";
-import { ConsumptionAttributeDTO, FileDTO, IdentityDTO, MessageDTO, MessageWithAttachmentsDTO, RecipientDTO, RelationshipDTO, RelationshipInfoDTO } from "../types";
+import {
+    ConsumptionAttributeDTO,
+    FileDTO,
+    IdentityDTO,
+    MessageDTO,
+    MessageWithAttachmentsDTO,
+    RecipientDTO,
+    RelationshipChangeDTO,
+    RelationshipDTO,
+    RelationshipInfoDTO
+} from "../types";
 import { RuntimeErrors } from "../useCases";
 import { Error } from "./common/Error";
 import { Warning } from "./common/Warning";
@@ -12,11 +22,11 @@ import { MatchedAttributesDVO } from "./consumption/MatchedAttributesDVO";
 import { StoredAttributeDVO } from "./consumption/StoredAttributeDVO";
 import { AttributeDVO } from "./content/AttributeDVO";
 import { MailDVO, RequestMailDVO } from "./content/MailDVOs";
-import { AttributesChangeRequestDVO, AttributesRequestDVO, AttributesShareRequestDVO, RequestDVO } from "./content/RequestDVOs";
+import { AttributeChange, AttributesChangeRequestDVO, AttributesRequestDVO, AttributesShareRequestDVO, RequestDVO } from "./content/RequestDVOs";
 import { DataViewObject } from "./DataViewObject";
 import { DataViewTranslateable } from "./DataViewTranslateable";
-import { MessageDVO, MessageStatus } from "./transport/MessageDVO";
-import { RelationshipDVO } from "./transport/RelationshipDVO";
+import { MessageDVO, MessageDVOInternal, MessageStatus, RecipientDVO } from "./transport/MessageDVO";
+import { RelationshipChangeDVO, RelationshipChangeResponseDVO, RelationshipDirection, RelationshipDVO } from "./transport/RelationshipDVO";
 
 export class DataViewExpander {
     public constructor(
@@ -131,6 +141,8 @@ export class DataViewExpander {
 
     public async expandMessageDTO(message: MessageDTO | MessageWithAttachmentsDTO): Promise<MessageDVO | MailDVO | RequestMailDVO> {
         const recipientRelationships = await this.expandRecipients(message.recipients);
+        const addressMap: Record<string, RecipientDVO> = {};
+        recipientRelationships.forEach((value) => (addressMap[value.id] = value));
         const createdByRelationship = await this.expandAddress(message.createdBy);
         const fileIds = [];
         const filePromises = [];
@@ -147,19 +159,23 @@ export class DataViewExpander {
 
         const isOwn = this.identityController.isMe(CoreAddress.from(message.createdBy));
 
+        let peer: IdentityDVO;
         let status = MessageStatus.Received;
         if (isOwn) {
             const receivedByEveryone = message.recipients.every((r) => !!r.receivedAt);
             status = receivedByEveryone ? MessageStatus.Delivered : MessageStatus.Delivering;
+            // Overwrite the RecipientDVO to be a IdentityDVO for this special case
+            peer = { ...recipientRelationships[0], type: "IdentityDVO" };
+        } else {
+            peer = createdByRelationship;
         }
 
         const name = DataViewTranslateable.transport.messageName;
-        const value: any = {
+        const messageDVO: MessageDVOInternal = {
             id: message.id,
             name: name,
             date: message.createdAt,
             type: "MessageDVO",
-
             createdByDevice: message.createdByDevice,
             createdAt: message.createdAt,
             createdBy: createdByRelationship,
@@ -169,44 +185,51 @@ export class DataViewExpander {
             recipientCount: message.recipients.length,
             attachmentCount: message.attachments.length,
             status,
-            image: ""
+            statusText: `i18n://dvo.message.${status}`,
+            image: "",
+            peer: peer
         };
 
         if (message.content["@type"] === "Mail" || message.content["@type"] === "RequestMail") {
-            value.name = DataViewTranslateable.consumption.mails.mailSubjectFallback;
-            value.type = "MailDVO";
             const mailContent = message.content as MailJSON;
 
-            if (mailContent.subject) {
-                value.name = mailContent.subject;
+            const to: RecipientDVO[] = mailContent.to.map((value) => addressMap[value]);
+
+            let cc: RecipientDVO[] = [];
+            if (mailContent.cc) {
+                cc = mailContent.cc.map((value) => addressMap[value]);
             }
 
-            value.to = await this.expandAddresses(mailContent.to);
-            value.toCount = mailContent.to.length;
-            value.ccCount = 0;
-            if (mailContent.cc) {
-                value.cc = await this.expandAddresses(mailContent.cc);
-                value.ccCount = mailContent.cc.length;
-            }
-            value.subject = mailContent.subject;
-            value.body = mailContent.body;
+            const mailDVO: MailDVO = {
+                ...messageDVO,
+                type: "MailDVO",
+                name: mailContent.subject ? mailContent.subject : DataViewTranslateable.consumption.mails.mailSubjectFallback,
+                subject: mailContent.subject,
+                body: mailContent.body,
+                to: to,
+                toCount: mailContent.to.length,
+                cc: cc,
+                ccCount: cc.length
+            };
 
             if (mailContent["@type"] === "RequestMail") {
                 const requestMailContent = message.content as RequestMailJSON;
-                value.name = DataViewTranslateable.consumption.mails.requestMailSubjectFallback;
-                if (requestMailContent.subject) {
-                    value.name = requestMailContent.subject;
-                }
-                value.type = "RequestMailDVO";
-                value.requests = await this.expandUnknownRequests(requestMailContent.requests);
-                value.requestCount = requestMailContent.requests.length;
-                return value as RequestMailDVO;
+
+                const requestMailDVO: RequestMailDVO = {
+                    ...mailDVO,
+                    type: "RequestMailDVO",
+                    name: requestMailContent.subject ? requestMailContent.subject : DataViewTranslateable.consumption.mails.requestMailSubjectFallback,
+                    requests: await this.expandUnknownRequests(requestMailContent.requests),
+                    requestCount: requestMailContent.requests.length
+                };
+
+                return requestMailDVO;
             }
 
-            return value as MailDVO;
+            return mailDVO;
         }
 
-        return value as MessageDVO;
+        return messageDVO as MessageDVO;
     }
 
     public async expandMessageDTOs(messages: MessageDTO[]): Promise<(MessageDVO | MailDVO | RequestMailDVO)[]> {
@@ -325,7 +348,8 @@ export class DataViewExpander {
             value: attribute.content.value,
             date: attribute.createdAt,
             isOwn: true,
-            sharedItems: []
+            sharedItems: [],
+            sharedItemCount: 0
         };
     }
 
@@ -350,6 +374,7 @@ export class DataViewExpander {
             id: name,
             name: name,
             matches: matchedAttributes,
+            matchCount: matchedAttributes.length,
             bestMatch: bestMatch
         };
     }
@@ -399,13 +424,25 @@ export class DataViewExpander {
             name = DataViewTranslateable.consumption.requests.attributesChangeRequestName;
         }
 
+        const changes: AttributeChange[] = [];
+        attributesObjects.forEach((attribute, index) => {
+            changes.push({
+                oldAttribute: oldAttributesObjects[index],
+                newAttribute: attribute
+            });
+        });
+
         return {
             ...request,
             type: "AttributesChangeRequestDVO",
             name: name,
             newAttributes: attributesObjects,
+            newAttributeCount: attributesObjects.length,
             oldAttributes: oldAttributesObjects,
-            applyTo: applyToObject
+            oldAttributeCount: oldAttributesObjects.length,
+            applyTo: applyToObject,
+            changes: changes,
+            changeCount: changes.length
         };
     }
 
@@ -426,8 +463,10 @@ export class DataViewExpander {
             ...request,
             type: "AttributesRequestDVO",
             names: attributesRequest.names,
+            nameCount: attributesRequest.names.length,
             name: name,
             attributes: attributesObjects,
+            attributeCount: attributesObjects.length,
             required: attributesRequest.required
         };
     }
@@ -492,9 +531,61 @@ export class DataViewExpander {
         return await Promise.all(relationshipPromises);
     }
 
-    public async expandRecipients(recipients: RecipientDTO[]): Promise<IdentityDVO[]> {
-        const relationshipPromises = recipients.map((recipient) => this.expandAddress(recipient.address));
+    public async expandRecipient(recipient: RecipientDTO): Promise<RecipientDVO> {
+        const identity = await this.expandAddress(recipient.address);
+        return {
+            ...identity,
+            type: "RecipientDVO",
+            receivedAt: recipient.receivedAt,
+            receivedByDevice: recipient.receivedByDevice
+        };
+    }
+
+    public async expandRecipients(recipients: RecipientDTO[]): Promise<RecipientDVO[]> {
+        const relationshipPromises = recipients.map((recipient) => this.expandRecipient(recipient));
         return await Promise.all(relationshipPromises);
+    }
+
+    public expandRelationshipChange(relationship: RelationshipDTO, change: RelationshipChangeDTO): Promise<RelationshipChangeDVO> {
+        const date = change.response ? change.response.createdAt : change.request.createdAt;
+        let isOwn = false;
+        if (this.identityController.isMe(CoreAddress.from(change.request.createdBy))) {
+            isOwn = true;
+        }
+
+        let response: RelationshipChangeResponseDVO | undefined;
+        if (change.response) {
+            response = {
+                ...change.response,
+                id: `${change.id}_response`,
+                name: "i18n://dvo.relationshipChange.response.name",
+                type: "RelationshipChangeResponseDVO"
+            };
+        }
+
+        return Promise.resolve({
+            type: "RelationshipChangeDVO",
+            id: change.id,
+            name: "",
+            date: date,
+            status: change.status,
+            statusText: `i18n://dvo.relationshipChange.${change.status}`,
+            changeType: change.type,
+            changeTypeText: `i18n://dvo.relationshipChange.${change.type}`,
+            isOwn: isOwn,
+            request: {
+                ...change.request,
+                id: `${change.id}_request`,
+                name: "i18n://dvo.relationshipChange.request.name",
+                type: "RelationshipChangeRequestDVO"
+            },
+            response: response
+        });
+    }
+
+    public async expandRelationshipChanges(relationship: RelationshipDTO): Promise<RelationshipChangeDVO[]> {
+        const changePromises = relationship.changes.map((change) => this.expandRelationshipChange(relationship, change));
+        return await Promise.all(changePromises);
     }
 
     protected async createRelationshipDVO(relationship: RelationshipDTO, relationshipInfo?: RelationshipInfoDTO): Promise<RelationshipDVO> {
@@ -503,8 +594,13 @@ export class DataViewExpander {
             relationshipInfo = relationshipInfoResult.value;
         }
 
+        let direction = RelationshipDirection.Incoming;
+        if (this.identityController.isMe(CoreAddress.from(relationship.changes[0].request.createdBy))) {
+            direction = RelationshipDirection.Outgoing;
+        }
+
         let statusText = "";
-        if (relationship.status === RelationshipStatus.Pending && this.identityController.isMe(CoreAddress.from(relationship.changes[0].request.createdBy))) {
+        if (relationship.status === RelationshipStatus.Pending && direction === RelationshipDirection.Outgoing) {
             statusText = DataViewTranslateable.transport.relationshipOutgoing;
         } else if (relationship.status === RelationshipStatus.Pending) {
             statusText = DataViewTranslateable.transport.relationshipIncoming;
@@ -516,6 +612,8 @@ export class DataViewExpander {
             statusText = DataViewTranslateable.transport.relationshipActive;
         }
 
+        const changes = await this.expandRelationshipChanges(relationship);
+
         return {
             id: relationship.id,
             name: relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title,
@@ -523,14 +621,18 @@ export class DataViewExpander {
             date: relationship.changes[0].request.createdAt,
             image: "",
             type: "RelationshipDVO",
-            status: statusText,
+            status: relationship.status,
+            statusText: statusText,
+            direction: direction,
             isPinned: relationshipInfo.isPinned,
             theme: {
                 image: relationshipInfo.theme?.image,
                 headerImage: relationshipInfo.theme?.imageBar,
                 backgroundColor: relationshipInfo.theme?.backgroundColor,
                 foregroundColor: relationshipInfo.theme?.foregroundColor
-            }
+            },
+            changes: changes,
+            changeCount: changes.length
         };
     }
 
@@ -545,7 +647,7 @@ export class DataViewExpander {
 
         const relationshipDVO = await this.createRelationshipDVO(relationship, relationshipInfo);
         if (!description) {
-            description = relationshipDVO.status;
+            description = relationshipDVO.statusText;
         }
 
         return {

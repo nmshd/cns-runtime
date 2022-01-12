@@ -127,11 +127,11 @@ describe("MessageDVO", () => {
         expect(dvo.createdBy.name).toBe("i18n://dvo.identity.self.name");
         expect(dvo.createdBy.isSelf).toBe(true);
         const recipient = dvo.recipients[0];
-        expect(recipient.type).toBe("IdentityDVO");
+        expect(recipient.type).toBe("RecipientDVO");
         expect(recipient.id).toStrictEqual(dto.recipients[0].address);
         expect(recipient.name).toBe("Barbara");
         expect(recipient.isSelf).toBe(false);
-        expect(dvo.status).toBe("delivering");
+        expect(dvo.status).toBe("Delivering");
     });
 
     test("check the message dvo for the recipient", async () => {
@@ -152,11 +152,11 @@ describe("MessageDVO", () => {
         expect(dvo.createdBy.name).toBe("Jürgen");
         expect(dvo.createdBy.isSelf).toBe(false);
         const recipient = dvo.recipients[0];
-        expect(recipient.type).toBe("IdentityDVO");
+        expect(recipient.type).toBe("RecipientDVO");
         expect(recipient.id).toStrictEqual(dto.recipients[0].address);
         expect(recipient.name).toBe("i18n://dvo.identity.self.name");
         expect(recipient.isSelf).toBe(true);
-        expect(dvo.status).toBe("received");
+        expect(dvo.status).toBe("Received");
     });
 
     test("check the mail dvo for the sender", async () => {
@@ -183,14 +183,14 @@ describe("MessageDVO", () => {
 
         expect(dvo.recipients).toHaveLength(1);
         const recipient = dvo.recipients[0];
-        expect(recipient.type).toBe("IdentityDVO");
+        expect(recipient.type).toBe("RecipientDVO");
         expect(recipient.id).toStrictEqual(dto.recipients[0].address);
         expect(recipient.name).toBe("Barbara");
         expect(recipient.isSelf).toBe(false);
 
         expect(dvo.to).toHaveLength(1);
         const to = dvo.to[0];
-        expect(to.type).toBe("IdentityDVO");
+        expect(to.type).toBe("RecipientDVO");
         expect(to.id).toStrictEqual(mail.to[0]);
         expect(to.name).toBe("Barbara");
         expect(to.isSelf).toBe(false);
@@ -220,7 +220,7 @@ describe("MessageDVO", () => {
         expect(dvo.createdBy.name).toBe("Jürgen");
         expect(dvo.createdBy.isSelf).toBe(false);
         const recipient = dvo.recipients[0];
-        expect(recipient.type).toBe("IdentityDVO");
+        expect(recipient.type).toBe("RecipientDVO");
         expect(recipient.id).toStrictEqual(dto.recipients[0].address);
         expect(recipient.name).toBe("i18n://dvo.identity.self.name");
         expect(recipient.description).toBe("i18n://dvo.identity.self.description");
@@ -229,7 +229,7 @@ describe("MessageDVO", () => {
 
         expect(dvo.to).toHaveLength(1);
         const to = dvo.to[0];
-        expect(to.type).toBe("IdentityDVO");
+        expect(to.type).toBe("RecipientDVO");
         expect(to.id).toStrictEqual(mail.to[0]);
         expect(to.name).toBe("i18n://dvo.identity.self.name");
         expect(to.isSelf).toBe(true);
@@ -259,14 +259,14 @@ describe("MessageDVO", () => {
         expect(dvo.createdBy.name).toBe("i18n://dvo.identity.self.name");
         expect(dvo.createdBy.isSelf).toBe(true);
         const recipient = dvo.recipients[0];
-        expect(recipient.type).toBe("IdentityDVO");
+        expect(recipient.type).toBe("RecipientDVO");
         expect(recipient.id).toStrictEqual(dto.recipients[0].address);
         expect(recipient.name).toBe("Barbara");
         expect(recipient.isSelf).toBe(false);
 
         expect(dvo.to).toHaveLength(1);
         const to = dvo.to[0];
-        expect(to.type).toBe("IdentityDVO");
+        expect(to.type).toBe("RecipientDVO");
         expect(to.id).toStrictEqual(requestMail.to[0]);
         expect(to.name).toBe("Barbara");
         expect(to.isSelf).toBe(false);
@@ -316,14 +316,14 @@ describe("MessageDVO", () => {
         expect(dvo.createdBy.name).toBe("Jürgen");
         expect(dvo.createdBy.isSelf).toBe(false);
         const recipient = dvo.recipients[0];
-        expect(recipient.type).toBe("IdentityDVO");
+        expect(recipient.type).toBe("RecipientDVO");
         expect(recipient.id).toStrictEqual(dto.recipients[0].address);
         expect(recipient.name).toBe("i18n://dvo.identity.self.name");
         expect(recipient.isSelf).toBe(true);
 
         expect(dvo.to).toHaveLength(1);
         const to = dvo.to[0];
-        expect(to.type).toBe("IdentityDVO");
+        expect(to.type).toBe("RecipientDVO");
         expect(to.id).toStrictEqual(requestMail.to[0]);
         expect(to.name).toBe("i18n://dvo.identity.self.name");
         expect(to.isSelf).toBe(true);
