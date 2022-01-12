@@ -171,12 +171,11 @@ export class DataViewExpander {
         }
 
         const name = DataViewTranslateable.transport.messageName;
-        const internalMessage: MessageDVOInternal = {
+        const messageDVO: MessageDVOInternal = {
             id: message.id,
             name: name,
             date: message.createdAt,
             type: "MessageDVO",
-
             createdByDevice: message.createdByDevice,
             createdAt: message.createdAt,
             createdBy: createdByRelationship,
@@ -190,57 +189,47 @@ export class DataViewExpander {
             image: "",
             peer: peer
         };
-        const value: any = internalMessage;
 
         if (message.content["@type"] === "Mail" || message.content["@type"] === "RequestMail") {
-            value.name = DataViewTranslateable.consumption.mails.mailSubjectFallback;
-            value.type = "MailDVO";
             const mailContent = message.content as MailJSON;
 
-            if (mailContent.subject) {
-                value.name = mailContent.subject;
-            }
-            const to: RecipientDVO[] = [];
-            mailContent.to.forEach((value) => to.push(addressMap[value]));
+            const to: RecipientDVO[] = mailContent.to.map((value) => addressMap[value]);
 
-            value.to = to;
-            value.toCount = mailContent.to.length;
-
-            value.ccCount = 0;
+            let cc: RecipientDVO[] = [];
             if (mailContent.cc) {
-                const cc: RecipientDVO[] = [];
-                mailContent.cc.forEach((value) => cc.push(addressMap[value]));
-                value.ccCount = mailContent.cc.length;
-            }
-            value.subject = mailContent.subject;
-            value.body = mailContent.body;
-
-            if (mailContent["@type"] === "RequestMail") {
-                const requestMailContent = message.content as RequestMailJSON;
-                value.name = DataViewTranslateable.consumption.mails.requestMailSubjectFallback;
-                if (requestMailContent.subject) {
-                    value.name = requestMailContent.subject;
-                }
-                value.type = "RequestMailDVO";
-                value.requests = await this.expandUnknownRequests(requestMailContent.requests);
-                value.requestCount = requestMailContent.requests.length;
-                const requestMailDVO: RequestMailDVO = {
-                    ...value
-                };
-                return requestMailDVO;
+                cc = mailContent.cc.map((value) => addressMap[value]);
             }
 
             const mailDVO: MailDVO = {
-                ...value
+                ...messageDVO,
+                type: "MailDVO",
+                name: mailContent.subject ? mailContent.subject : DataViewTranslateable.consumption.mails.mailSubjectFallback,
+                subject: mailContent.subject,
+                body: mailContent.body,
+                to: to,
+                toCount: mailContent.to.length,
+                cc: cc,
+                ccCount: cc.length
             };
+
+            if (mailContent["@type"] === "RequestMail") {
+                const requestMailContent = message.content as RequestMailJSON;
+
+                const requestMailDVO: RequestMailDVO = {
+                    ...mailDVO,
+                    type: "RequestMailDVO",
+                    name: requestMailContent.subject ? requestMailContent.subject : DataViewTranslateable.consumption.mails.requestMailSubjectFallback,
+                    requests: await this.expandUnknownRequests(requestMailContent.requests),
+                    requestCount: requestMailContent.requests.length
+                };
+
+                return requestMailDVO;
+            }
 
             return mailDVO;
         }
 
-        const messageDVO: MessageDVO = {
-            ...value
-        };
-        return messageDVO;
+        return messageDVO as MessageDVO;
     }
 
     public async expandMessageDTOs(messages: MessageDTO[]): Promise<(MessageDVO | MailDVO | RequestMailDVO)[]> {
