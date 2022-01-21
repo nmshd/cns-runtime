@@ -1,7 +1,9 @@
-import { MessageDVOInternal, RecipientDVO } from "../transport/MessageDVO";
+import { MessageDVO, RecipientDVO } from "../transport/MessageDVO";
 import { RequestDVO } from "./RequestDVOs";
 
-interface RequestMailDVOInternal extends MailDVOInternal {
+export interface RequestMailDVO extends Omit<MailDVO, "type"> {
+    type: "RequestMailDVO";
+
     // overwrite DTO
     requests: RequestDVO[];
 
@@ -9,11 +11,9 @@ interface RequestMailDVOInternal extends MailDVOInternal {
     requestCount: number;
 }
 
-export interface RequestMailDVO extends RequestMailDVOInternal {
-    type: "RequestMailDVO";
-}
+export interface MailDVO extends Omit<MessageDVO, "type"> {
+    type: "MailDVO";
 
-interface MailDVOInternal extends MessageDVOInternal {
     // overwrite DTO
     to: RecipientDVO[];
     cc: RecipientDVO[];
@@ -23,8 +23,4 @@ interface MailDVOInternal extends MessageDVOInternal {
     // new
     toCount: number;
     ccCount: number;
-}
-
-export interface MailDVO extends MailDVOInternal {
-    type: "MailDVO";
 }

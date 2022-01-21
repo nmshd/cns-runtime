@@ -25,7 +25,7 @@ import { MailDVO, RequestMailDVO } from "./content/MailDVOs";
 import { AttributeChange, AttributesChangeRequestDVO, AttributesRequestDVO, AttributesShareRequestDVO, RequestDVO } from "./content/RequestDVOs";
 import { DataViewObject } from "./DataViewObject";
 import { DataViewTranslateable } from "./DataViewTranslateable";
-import { MessageDVO, MessageDVOInternal, MessageStatus, RecipientDVO } from "./transport/MessageDVO";
+import { MessageDVO, MessageStatus, RecipientDVO } from "./transport/MessageDVO";
 import { RelationshipChangeDVO, RelationshipChangeResponseDVO, RelationshipDirection, RelationshipDVO } from "./transport/RelationshipDVO";
 
 export class DataViewExpander {
@@ -171,7 +171,7 @@ export class DataViewExpander {
         }
 
         const name = DataViewTranslateable.transport.messageName;
-        const messageDVO: MessageDVOInternal = {
+        const messageDVO: MessageDVO = {
             id: message.id,
             name: name,
             date: message.createdAt,
@@ -229,7 +229,7 @@ export class DataViewExpander {
             return mailDVO;
         }
 
-        return messageDVO as MessageDVO;
+        return messageDVO;
     }
 
     public async expandMessageDTOs(messages: MessageDTO[]): Promise<(MessageDVO | MailDVO | RequestMailDVO)[]> {
