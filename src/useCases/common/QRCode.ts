@@ -8,7 +8,7 @@ export class QRCode {
     }
 
     public static async from(utf8Content: string): Promise<QRCode> {
-        const dataUrl = await QRCodeLibrary.toDataURL(utf8Content);
+        const dataUrl = await QRCodeLibrary.toDataURL(`nmshd://qr#${utf8Content}`);
         const base64 = dataUrl.split(",")[1];
 
         return new QRCode(base64);
