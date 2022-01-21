@@ -9,13 +9,11 @@ export interface AttributeMetadata {
     dataType?: string;
 }
 
-export interface AttributeDVOInternal extends DataViewObject {
+export interface AttributeDVO extends DataViewObject {
+    type: "AttributeDVO";
+
     value?: any;
     // metadata: AttributeMetadata;
     isOwn: boolean;
     // sharedItems?: string;
-}
-
-export interface AttributeDVO extends AttributeDVOInternal {
-    type: "AttributeDVO";
 }

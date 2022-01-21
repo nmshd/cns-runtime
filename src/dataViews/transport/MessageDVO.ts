@@ -1,6 +1,6 @@
 import { DataViewObject } from "../DataViewObject";
 import { FileDVO } from "./FileDVO";
-import { IdentityDVO, IdentityDVOInternal } from "./IdentityDVO";
+import { IdentityDVO } from "./IdentityDVO";
 
 export enum MessageStatus {
     /**
@@ -17,7 +17,9 @@ export enum MessageStatus {
     Delivered = "Delivered"
 }
 
-export interface MessageDVOInternal extends DataViewObject {
+export interface MessageDVO extends DataViewObject {
+    type: "MessageDVO";
+
     /**
      * The device id of the sender's device which sent the message to
      * the backbone
@@ -78,11 +80,7 @@ export interface MessageDVOInternal extends DataViewObject {
     peer: IdentityDVO;
 }
 
-export interface MessageDVO extends MessageDVOInternal {
-    type: "MessageDVO";
-}
-
-export interface RecipientDVO extends IdentityDVOInternal {
+export interface RecipientDVO extends Omit<IdentityDVO, "type"> {
     type: "RecipientDVO";
 
     /**
