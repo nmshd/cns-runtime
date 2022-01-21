@@ -1,5 +1,4 @@
-import { DataViewObject } from "../DataViewObject";
-import { RecipientDVO } from "../transport/MessageDVO";
+import { MessageDVO, RecipientDVO } from "../transport/MessageDVO";
 import { RequestDVO } from "./RequestDVOs";
 
 export interface RequestMailDVO extends Omit<MailDVO, "type"> {
@@ -12,7 +11,7 @@ export interface RequestMailDVO extends Omit<MailDVO, "type"> {
     requestCount: number;
 }
 
-export interface MailDVO extends DataViewObject {
+export interface MailDVO extends Omit<MessageDVO, "type"> {
     type: "MailDVO";
 
     // overwrite DTO
