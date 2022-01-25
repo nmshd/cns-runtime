@@ -171,7 +171,6 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         this.transport = new Transport(databaseConnection, this.runtimeConfig.transportLibrary, this.loggerFactory);
 
         this.logger.debug("Initializing Transport Library...");
-        this.logger.debug("Transport Library configuration: ", this.runtimeConfig.transportLibrary);
         await this.transport.init();
         this.logger.debug("Finished initialization of Transport Library.");
 
