@@ -3,7 +3,7 @@ import { BackboneIds, CoreDate, CoreId, DevicesController, TokenContentDeviceSha
 import { DateTime } from "luxon";
 import { Inject } from "typescript-ioc";
 import { TokenDTO } from "../../../types";
-import { IdValidator, RuntimeValidator, UseCase } from "../../common";
+import { DateValidator, IdValidator, RuntimeValidator, UseCase } from "../../common";
 import { TokenMapper } from "../tokens/TokenMapper";
 
 export interface CreateDeviceOnboardingTokenRequest {
@@ -17,6 +17,7 @@ class CreateDeviceOnboardingTokenRequestValidator extends RuntimeValidator<Creat
 
         this.validateIfString((x) => x.id).fulfills(IdValidator.required(BackboneIds.device));
 
+        this.validateIf((x) => x.expiresAt).fulfills(DateValidator.optional());
         this.validateIf((x) => x.expiresAt)
             .fulfills((e) => DateTime.fromISO(e) > DateTime.utc())
             .whenNotNull()

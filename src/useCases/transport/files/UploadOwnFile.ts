@@ -4,7 +4,7 @@ import { AccountController, CoreDate, FileController } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
-import { RuntimeValidator, UseCase } from "../../common";
+import { DateValidator, RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
 
 export interface UploadOwnFileRequest {
@@ -42,6 +42,7 @@ class UploadOwnFileRequestValidator extends RuntimeValidator<UploadOwnFileReques
 
         this.validateIf((x) => x.expiresAt).isNotNull();
 
+        this.validateIf((x) => x.expiresAt).fulfills(DateValidator.required());
         this.validateIf((x) => x.expiresAt)
             .fulfills((e) => DateTime.fromISO(e) > DateTime.utc())
             .withFailureMessage("'$propertyName' must be in the future.");

@@ -3,7 +3,7 @@ import { AccountController, CoreDate, RelationshipTemplateController } from "@nm
 import { DateTime } from "luxon";
 import { Inject } from "typescript-ioc";
 import { RelationshipTemplateDTO } from "../../../types";
-import { RuntimeValidator, UseCase } from "../../common";
+import { DateValidator, RuntimeValidator, UseCase } from "../../common";
 import { RelationshipTemplateMapper } from "./RelationshipTemplateMapper";
 
 export interface CreateOwnRelationshipTemplateRequest {
@@ -16,6 +16,7 @@ class CreateOwnRelationshipTemplateRequestValidator extends RuntimeValidator<Cre
     public constructor() {
         super();
 
+        this.validateIf((x) => x.expiresAt).fulfills(DateValidator.required());
         this.validateIf((x) => x.expiresAt)
             .fulfills((e) => DateTime.fromISO(e) > DateTime.utc())
             .withFailureMessage("'$propertyName' must be in the future.");
