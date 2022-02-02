@@ -29,6 +29,15 @@ describe("Template Tests", () => {
         template = response.value;
     });
 
+    test("create a template with undefined expiresAt", async () => {
+        const response = await transportServices1.relationshipTemplates.createOwnRelationshipTemplate({
+            content: { a: "A" },
+            expiresAt: undefined as unknown as string
+        });
+
+        expectError(response, "expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
+    });
+
     test("create a template with undefined maxNumberOfRelationships", async () => {
         const response = await transportServices1.relationshipTemplates.createOwnRelationshipTemplate({
             content: { a: "A" },

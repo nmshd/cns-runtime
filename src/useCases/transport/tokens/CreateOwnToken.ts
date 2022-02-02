@@ -4,7 +4,7 @@ import { AccountController, CoreDate, TokenController } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import { Inject } from "typescript-ioc";
 import { TokenDTO } from "../../../types";
-import { RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { DateValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { TokenMapper } from "./TokenMapper";
 
 export interface CreateOwnTokenRequest {
@@ -21,6 +21,7 @@ class CreateOwnTokenRequestValidator extends RuntimeValidator<CreateOwnTokenRequ
 
         this.validateIf((x) => x.expiresAt).isNotNull();
 
+        this.validateIf((x) => x.expiresAt).fulfills(DateValidator.required());
         this.validateIf((x) => x.expiresAt)
             .fulfills((e) => DateTime.fromISO(e) > DateTime.utc())
             .withFailureMessage("'$propertyName' must be in the future.");

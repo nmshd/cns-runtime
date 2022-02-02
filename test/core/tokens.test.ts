@@ -1,5 +1,5 @@
 import { OwnerRestriction, TransportServices } from "../../src";
-import { exchangeToken, QueryParamConditions, RuntimeServiceProvider, uploadOwnToken } from "../lib";
+import { exchangeToken, expectError, QueryParamConditions, RuntimeServiceProvider, uploadOwnToken } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -11,6 +11,20 @@ beforeAll(async () => {
     transportServices2 = runtimeServices[1].transport;
 }, 30000);
 afterAll(() => serviceProvider.stop());
+
+describe("Tokens errors", () => {
+    test("create a token with 'expiresAt' set to undefined", async () => {
+        const response = await transportServices1.tokens.createOwnToken({
+            content: {
+                content: "Hello"
+            },
+            expiresAt: undefined as unknown as string,
+            ephemeral: false
+        });
+
+        expectError(response, "expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
+    });
+});
 
 describe("Tokens query", () => {
     test("query own tokens", async () => {

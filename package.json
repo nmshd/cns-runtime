@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/runtime",
-    "version": "1.2.19",
+    "version": "1.2.20",
     "description": "The Enmeshed client runtime.",
     "homepage": "https://enmeshed.eu",
     "license": "MIT",
@@ -52,7 +52,7 @@
         "@nmshd/consumption": "1.0.13",
         "@nmshd/content": "1.1.4",
         "@nmshd/crypto": "1.0.8",
-        "@nmshd/transport": "1.1.7",
+        "@nmshd/transport": "1.1.8",
         "ajv": "^8.9.0",
         "ajv-errors": "^3.0.0",
         "ajv-formats": "^2.1.1",
@@ -75,7 +75,7 @@
         "@types/jest-expect-message": "^1.0.3",
         "@types/json-stringify-safe": "^5.0.0",
         "@types/luxon": "^2.0.9",
-        "@types/node": "^17.0.13",
+        "@types/node": "^17.0.14",
         "@types/qrcode": "^1.4.2",
         "@types/qs": "^6.9.7",
         "eslint": "^8.8.0",
@@ -87,7 +87,7 @@
         "ts-json-schema-generator": "^0.97.0",
         "tsconfig-paths": "^3.12.0",
         "typescript": "^4.5.5",
-        "webpack": "^5.67.0",
+        "webpack": "^5.68.0",
         "webpack-cli": "^4.9.2"
     },
     "publishConfig": {
