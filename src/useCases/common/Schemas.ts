@@ -40,11 +40,11 @@ export const LoadPeerTokenAnonymousByTruncatedReferenceRequest: any = {
     }
 }
 
-export const GetAttributesByNameRequest: any = {
+export const GetAttributesByNamesRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetAttributesByNameRequest",
+    "$ref": "#/definitions/GetAttributesByNamesRequest",
     "definitions": {
-        "GetAttributesByNameRequest": {
+        "GetAttributesByNamesRequest": {
             "type": "object",
             "additionalProperties": false
         }
@@ -1085,6 +1085,25 @@ export const DownloadAttachmentRequest: any = {
                 "id",
                 "attachmentId"
             ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const CreateChallengeRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateChallengeRequest",
+    "definitions": {
+        "CreateChallengeRequest": {
+            "type": "object",
+            "properties": {
+                "relationship": {
+                    "type": "string"
+                },
+                "challengeType": {
+                    "type": "string"
+                }
+            },
             "additionalProperties": false
         }
     }
