@@ -1,4 +1,5 @@
 export * from "./AccountFacade";
+export * from "./ChallengesFacade";
 export * from "./DevicesFacade";
 export * from "./FilesFacade";
 export * from "./IdentityFacade";

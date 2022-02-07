@@ -13,6 +13,7 @@ import {
 import {
     AccountController,
     AnonymousTokenController,
+    ChallengeController,
     DeviceController,
     DevicesController,
     FileController,
@@ -222,6 +223,10 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         Container.bind(TokenController)
             .factory(() => this.getAccountController().tokens)
+            .scope(Scope.Request);
+
+        Container.bind(ChallengeController)
+            .factory(() => this.getAccountController().challenges)
             .scope(Scope.Request);
 
         Container.bind(ConsumptionController)
