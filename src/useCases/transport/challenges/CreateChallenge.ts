@@ -1,28 +1,67 @@
 import { Result } from "@js-soft/ts-utils";
-import { BackboneIds, ChallengeController, ChallengeType, CoreId, Relationship, RelationshipsController } from "@nmshd/transport";
+import { ChallengeController, ChallengeType, CoreId, Relationship, RelationshipsController } from "@nmshd/transport";
+import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
 import { ChallengeDTO } from "../../../types";
-import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { ChallengeMapper } from "./ChallengeMapper";
 
-export interface CreateChallengeRequest {
-    relationship?: string;
-    challengeType?: string;
+export interface CreateRelationshipChallengeRequest {
+    challengeType: "Relationship";
+    /**
+     * @format relationshipId
+     */
+    relationship: string;
 }
 
-class Validator extends RuntimeValidator<CreateChallengeRequest> {
-    public constructor() {
-        super();
+function isCreateRelationshipChallengeRequest(value: any): value is CreateRelationshipChallengeRequest {
+    return value.challengeType === "Relationship" && typeof value.relationship === "string";
+}
 
-        this.validateIfString((x) => x.challengeType)
-            .isIn(Object.keys(ChallengeType))
-            .whenDefined();
+export interface CreateIdentityChallengeRequest {
+    challengeType: "Identity";
+}
 
-        this.validateIfString((x) => x.relationship).fulfills(IdValidator.optional(BackboneIds.relationship));
-        this.validateIfString((x) => x.relationship)
-            .fulfills(IdValidator.required(BackboneIds.relationship))
-            .when((x) => x.challengeType === ChallengeType.Relationship)
-            .withFailureMessage("'relationship' is required when 'challengeType' is 'Relationship'");
+function isCreateIdentityChallengeRequest(value: any): value is CreateIdentityChallengeRequest {
+    return value.challengeType === "Identity";
+}
+
+export interface CreateDeviceChallengeRequest {
+    challengeType: "Device";
+}
+
+function isCreateDeviceChallengeRequest(value: any): value is CreateDeviceChallengeRequest {
+    return value.challengeType === "Device";
+}
+
+export type CreateChallengeRequest = CreateRelationshipChallengeRequest | CreateIdentityChallengeRequest | CreateDeviceChallengeRequest;
+
+class Validator extends SchemaValidator<CreateChallengeRequest> {
+    private readonly relationshipSchema: JsonSchema;
+    private readonly identitySchema: JsonSchema;
+    private readonly deviceSchema: JsonSchema;
+
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("CreateChallengeRequest"));
+        this.relationshipSchema = schemaRepository.getSchema("CreateRelationshipChallengeRequest");
+        this.identitySchema = schemaRepository.getSchema("CreateIdentityChallengeRequest");
+        this.deviceSchema = schemaRepository.getSchema("CreateDeviceChallengeRequest");
+    }
+
+    public validate(input: CreateChallengeRequest): ValidationResult {
+        if (this.schema.validate(input).isValid) return new ValidationResult();
+
+        if (isCreateRelationshipChallengeRequest(input)) {
+            return this.convertValidationResult(this.relationshipSchema.validate(input));
+        } else if (isCreateIdentityChallengeRequest(input)) {
+            return this.convertValidationResult(this.identitySchema.validate(input));
+        } else if (isCreateDeviceChallengeRequest(input)) {
+            return this.convertValidationResult(this.deviceSchema.validate(input));
+        }
+
+        const result = new ValidationResult();
+        result.addFailures([new ValidationFailure(undefined, "", undefined, RuntimeErrors.general.invalidPayload().code, RuntimeErrors.general.invalidPayload().message)]);
+        return result;
     }
 }
 
@@ -39,13 +78,28 @@ export class CreateChallengeUseCase extends UseCase<CreateChallengeRequest, Chal
         const relationshipResult = await this.getRelationship(request);
         if (relationshipResult.isError) return Result.fail(relationshipResult.error);
 
-        const signedChallenge = await this.challengeController.createChallenge(request.challengeType as ChallengeType, relationshipResult.value);
+        let challengeType: ChallengeType;
+        switch (request.challengeType) {
+            case "Relationship":
+                challengeType = ChallengeType.Relationship;
+                break;
+            case "Identity":
+                challengeType = ChallengeType.Identity;
+                break;
+            case "Device":
+                challengeType = ChallengeType.Device;
+                break;
+            default:
+                throw new Error("Unknown challenge type.");
+        }
+
+        const signedChallenge = await this.challengeController.createChallenge(challengeType, relationshipResult.value);
 
         return Result.ok(ChallengeMapper.toChallengeDTO(signedChallenge));
     }
 
     private async getRelationship(request: CreateChallengeRequest): Promise<Result<Relationship | undefined>> {
-        if (!request.relationship) return Result.ok(undefined);
+        if (!isCreateRelationshipChallengeRequest(request)) return Result.ok(undefined);
 
         const relationship = await this.relationshipsController.getRelationship(CoreId.from(request.relationship));
         if (!relationship) return Result.fail(RuntimeErrors.general.recordNotFound(Relationship));

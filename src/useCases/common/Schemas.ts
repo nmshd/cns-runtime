@@ -1090,20 +1090,130 @@ export const DownloadAttachmentRequest: any = {
     }
 }
 
+export const CreateRelationshipChallengeRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateRelationshipChallengeRequest",
+    "definitions": {
+        "CreateRelationshipChallengeRequest": {
+            "type": "object",
+            "properties": {
+                "challengeType": {
+                    "type": "string",
+                    "const": "Relationship"
+                },
+                "relationship": {
+                    "type": "string",
+                    "format": "relationshipId"
+                }
+            },
+            "required": [
+                "challengeType",
+                "relationship"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const CreateIdentityChallengeRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateIdentityChallengeRequest",
+    "definitions": {
+        "CreateIdentityChallengeRequest": {
+            "type": "object",
+            "properties": {
+                "challengeType": {
+                    "type": "string",
+                    "const": "Identity"
+                }
+            },
+            "required": [
+                "challengeType"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const CreateDeviceChallengeRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateDeviceChallengeRequest",
+    "definitions": {
+        "CreateDeviceChallengeRequest": {
+            "type": "object",
+            "properties": {
+                "challengeType": {
+                    "type": "string",
+                    "const": "Device"
+                }
+            },
+            "required": [
+                "challengeType"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const CreateChallengeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateChallengeRequest",
     "definitions": {
         "CreateChallengeRequest": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/CreateRelationshipChallengeRequest"
+                },
+                {
+                    "$ref": "#/definitions/CreateIdentityChallengeRequest"
+                },
+                {
+                    "$ref": "#/definitions/CreateDeviceChallengeRequest"
+                }
+            ]
+        },
+        "CreateRelationshipChallengeRequest": {
             "type": "object",
             "properties": {
-                "relationship": {
-                    "type": "string"
-                },
                 "challengeType": {
-                    "type": "string"
+                    "type": "string",
+                    "const": "Relationship"
+                },
+                "relationship": {
+                    "type": "string",
+                    "format": "relationshipId"
                 }
             },
+            "required": [
+                "challengeType",
+                "relationship"
+            ],
+            "additionalProperties": false
+        },
+        "CreateIdentityChallengeRequest": {
+            "type": "object",
+            "properties": {
+                "challengeType": {
+                    "type": "string",
+                    "const": "Identity"
+                }
+            },
+            "required": [
+                "challengeType"
+            ],
+            "additionalProperties": false
+        },
+        "CreateDeviceChallengeRequest": {
+            "type": "object",
+            "properties": {
+                "challengeType": {
+                    "type": "string",
+                    "const": "Device"
+                }
+            },
+            "required": [
+                "challengeType"
+            ],
             "additionalProperties": false
         }
     }

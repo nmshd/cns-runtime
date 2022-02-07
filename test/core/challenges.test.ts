@@ -18,13 +18,6 @@ beforeAll(async () => {
 afterAll(async () => await serviceProvider.stop());
 
 describe("Create challenge", () => {
-    test("should create a challenge with the default challenge type", async () => {
-        const response = await transportServices1.challenges.createChallenge({});
-        expectSuccess(response);
-
-        expect(response.value.type).toBe("Identity");
-    });
-
     test("should create a challenge with the Identity challenge type", async () => {
         const response = await transportServices1.challenges.createChallenge({
             challengeType: "Identity"
@@ -53,17 +46,22 @@ describe("Create challenge", () => {
         expect(response.value.type).toBe("Relationship");
     });
 
+    test("should return an error when a challenge with the default challenge type", async () => {
+        const response = await transportServices1.challenges.createChallenge({} as any);
+        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
+    });
+
     test("should return an error with the Relationship challenge type and missing relationship", async () => {
         const response = await transportServices1.challenges.createChallenge({
             challengeType: "Relationship"
-        });
-        expectError(response, "'relationship' is required when 'challengeType' is 'Relationship'", "error.runtime.validation.invalidPropertyValue");
+        } as any);
+        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
     });
 
     test("should return an error with an invalid challenge type", async () => {
         const response = await transportServices1.challenges.createChallenge({
             challengeType: "-invalid-"
-        });
-        expectError(response, "challengeType is invalid", "error.runtime.validation.invalidPropertyValue");
+        } as any);
+        expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
     });
 });
