@@ -22,7 +22,7 @@ class Validator extends RuntimeValidator<CreateChallengeRequest> {
         this.validateIfString((x) => x.relationship)
             .fulfills(IdValidator.required(BackboneIds.relationship))
             .when((x) => x.challengeType === ChallengeType.Relationship)
-            .withFailureMessage("relationship is required when challengeType is Relationship");
+            .withFailureMessage("'relationship' is required when 'challengeType' is 'Relationship'");
     }
 }
 

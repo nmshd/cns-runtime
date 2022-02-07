@@ -57,7 +57,7 @@ describe("Create challenge", () => {
         const response = await transportServices1.challenges.createChallenge({
             challengeType: "Relationship"
         });
-        expectError(response, "relationship is required when challengeType is Relationship", "error.runtime.validation.invalidPropertyValue");
+        expectError(response, "'relationship' is required when 'challengeType' is 'Relationship'", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should return an error with an invalid challenge type", async () => {
