@@ -65,3 +65,48 @@ describe("Create challenge", () => {
         expectError(response, "The given combination of properties in the payload is not supported.", "error.runtime.validation.invalidPayload");
     });
 });
+
+describe("Validate Challenge", () => {
+    test("should validate a Relationship challenge", async () => {
+        const response = await transportServices1.challenges.createChallenge({
+            challengeType: "Relationship",
+            relationship: relationshipId
+        });
+        expectSuccess(response);
+        expect(response.value.type).toBe("Relationship");
+
+        const valid = await transportServices2.challenges.validateChallenge({
+            challenge: response.value.challengeString,
+            signature: response.value.signature
+        });
+        expectSuccess(valid);
+        expect(valid.value).toBeDefined();
+        expect(valid.value!.id).toBe(relationshipId);
+    });
+
+    test("should validate a Identity challenge", async () => {
+        const response = await transportServices1.challenges.createChallenge({ challengeType: "Identity" });
+        expectSuccess(response);
+        expect(response.value.type).toBe("Identity");
+
+        const valid = await transportServices2.challenges.validateChallenge({
+            challenge: response.value.challengeString,
+            signature: response.value.signature
+        });
+        expectSuccess(valid);
+        expect(valid.value).toBeDefined();
+        expect(valid.value!.id).toBe(relationshipId);
+    });
+
+    test("should validate a Device challenge", async () => {
+        const response = await transportServices1.challenges.createChallenge({ challengeType: "Device" });
+        expectSuccess(response);
+        expect(response.value.type).toBe("Device");
+
+        const valid = await transportServices2.challenges.validateChallenge({
+            challenge: response.value.challengeString,
+            signature: response.value.signature
+        });
+        expectError(valid, "Validating challenges of the type 'Device' is not yet implemented.", "error.runtime.featureNotImplemented");
+    });
+});
