@@ -5,4 +5,5 @@ export interface ChallengeDTO {
     createdByDevice?: string;
     type: string;
     signature: string;
+    challengeString: string;
 }
