@@ -49,6 +49,10 @@ class General {
         return new ApplicationError("error.runtime.methodNotImplemented", "The requested method is not yet implemented.");
     }
 
+    public featureNotImplemented(message: string) {
+        return new ApplicationError("error.runtime.featureNotImplemented", message);
+    }
+
     public invalidTokenContent() {
         return new ApplicationError("error.runtime.invalidTokenContent", "The given token has an invalid content for this route.");
     }
