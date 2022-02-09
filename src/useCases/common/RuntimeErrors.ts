@@ -49,6 +49,10 @@ class General {
         return new ApplicationError("error.runtime.methodNotImplemented", "The requested method is not yet implemented.");
     }
 
+    public featureNotImplemented(message: string) {
+        return new ApplicationError("error.runtime.featureNotImplemented", message);
+    }
+
     public invalidTokenContent() {
         return new ApplicationError("error.runtime.invalidTokenContent", "The given token has an invalid content for this route.");
     }
@@ -140,6 +144,16 @@ class Database {
     }
 }
 
+class Challenges {
+    public invalidSignature(): ApplicationError {
+        return new ApplicationError("error.runtime.challenges.invalidSignature", "The signature is invalid.");
+    }
+
+    public invalidChallenge(): ApplicationError {
+        return new ApplicationError("error.runtime.challenges.invalidChallenge", "The challenge is invalid.");
+    }
+}
+
 export class RuntimeErrors {
     public static readonly general = new General();
     public static readonly serval = new Serval();
@@ -148,4 +162,5 @@ export class RuntimeErrors {
     public static readonly relationshipTemplates = new RelationshipTemplates();
     public static readonly messages = new Messages();
     public static readonly relationshipInfo = new RelationshipInfo();
+    public static readonly challenges = new Challenges();
 }

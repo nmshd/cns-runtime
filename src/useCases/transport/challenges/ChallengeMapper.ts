@@ -10,7 +10,8 @@ export class ChallengeMapper {
             createdBy: challenge.createdBy,
             createdByDevice: challenge.createdByDevice,
             type: challenge.type,
-            signature: signedChallenge.signature.toBase64()
+            signature: signedChallenge.signature.toBase64(),
+            challengeString: signedChallenge.challenge
         };
     }
 }

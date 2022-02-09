@@ -10,7 +10,8 @@ const customFormats: Record<string, string> = {
     relationshipTemplateId: "RLT[A-z0-9]{17}",
     tokenId: "TOK[A-z0-9]{17}",
     relationshipChangeId: "RCH[A-z0-9]{17}",
-    deviceId: "DVC[A-z0-9]{17}"
+    deviceId: "DVC[A-z0-9]{17}",
+    challengeId: "CHL[A-z0-9]{17}"
 };
 
 export class SchemaRepository {

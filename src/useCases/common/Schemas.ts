@@ -2132,3 +2132,26 @@ export const LoadPeerTokenRequest: any = {
         }
     }
 }
+
+export const ValidateChallengeRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/ValidateChallengeRequest",
+    "definitions": {
+        "ValidateChallengeRequest": {
+            "type": "object",
+            "properties": {
+                "challenge": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "challenge",
+                "signature"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

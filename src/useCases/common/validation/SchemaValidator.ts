@@ -6,7 +6,7 @@ import { IValidator } from "./IValidator";
 export class SchemaValidator<T> implements IValidator<T> {
     public constructor(protected readonly schema: JsonSchema) {}
 
-    public validate(input: T): ValidationResult {
+    public validate(input: T): Promise<ValidationResult> | ValidationResult {
         const validationResult = this.schema.validate(input);
 
         return this.convertValidationResult(validationResult);
