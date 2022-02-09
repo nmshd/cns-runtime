@@ -21,11 +21,15 @@ class Validator extends SchemaValidator<ValidateChallengeRequest> {
         const validationResult = await super.validate(value);
         if (validationResult.isInvalid()) return validationResult;
 
-        const signature = await this.validateSignature(value.signature);
-        if (signature.isError) validationResult.addFailures([new ValidationFailure(undefined, "signature", undefined, undefined, signature.error.message)]);
+        const signatureValidationResult = await this.validateSignature(value.signature);
+        if (signatureValidationResult.isError) {
+            validationResult.addFailures([new ValidationFailure(undefined, "signature", undefined, undefined, signatureValidationResult.error.message)]);
+        }
 
-        const challenge = await this.validateChallenge(value.challenge);
-        if (challenge.isError) validationResult.addFailures([new ValidationFailure(undefined, "challenge", undefined, undefined, challenge.error.message)]);
+        const challengeValidationResult = await this.validateChallenge(value.challenge);
+        if (challengeValidationResult.isError) {
+            validationResult.addFailures([new ValidationFailure(undefined, "challenge", undefined, undefined, challengeValidationResult.error.message)]);
+        }
 
         return validationResult;
     }
