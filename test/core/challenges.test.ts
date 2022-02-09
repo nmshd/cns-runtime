@@ -104,7 +104,7 @@ describe("Validate Challenge", () => {
         expect(valid.value.challengeCreatedBy).toBe(transportServices1Address);
     });
 
-    test("should not validate a challenge with wrong signature", async () => {
+    test("challenge with the wrong signature is considered as not valid", async () => {
         const response = await transportServices1.challenges.createChallenge({
             challengeType: "Relationship",
             relationship: relationshipId
