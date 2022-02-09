@@ -104,6 +104,27 @@ describe("Validate Challenge", () => {
         expect(valid.value.challengeCreatedBy).toBe(transportServices1Address);
     });
 
+    test("should not validate a challenge with wrong signature", async () => {
+        const response = await transportServices1.challenges.createChallenge({
+            challengeType: "Relationship",
+            relationship: relationshipId
+        });
+        expectSuccess(response);
+
+        const response2 = await transportServices1.challenges.createChallenge({
+            challengeType: "Relationship",
+            relationship: relationshipId
+        });
+        expectSuccess(response);
+
+        const valid = await transportServices2.challenges.validateChallenge({
+            challenge: response.value.challengeString,
+            signature: response2.value.signature
+        });
+        expectSuccess(valid);
+        expect(valid.value.isValid).toBe(false);
+    });
+
     test("should validate a Device challenge", async () => {
         const response = await transportServices1.challenges.createChallenge({ challengeType: "Device" });
         expectSuccess(response);
