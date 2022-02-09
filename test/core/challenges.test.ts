@@ -5,6 +5,7 @@ const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
 let transportServices2: TransportServices;
 let relationshipId: string;
+let transportServices1Address: string;
 
 // a random valid signature
 const randomValidSignature =
@@ -18,6 +19,7 @@ beforeAll(async () => {
     await establishRelationship(transportServices1, transportServices2);
 
     relationshipId = (await getRelationship(transportServices1)).id;
+    transportServices1Address = (await transportServices1.account.getIdentityInfo()).value.address;
 }, 30000);
 afterAll(async () => await serviceProvider.stop());
 
@@ -84,8 +86,8 @@ describe("Validate Challenge", () => {
             signature: response.value.signature
         });
         expectSuccess(valid);
-        expect(valid.value).toBeDefined();
-        expect(valid.value!.id).toBe(relationshipId);
+        expect(valid.value.isValid).toBe(true);
+        expect(valid.value.challengeCreatedBy).toBe(transportServices1Address);
     });
 
     test("should validate a Identity challenge", async () => {
@@ -98,8 +100,8 @@ describe("Validate Challenge", () => {
             signature: response.value.signature
         });
         expectSuccess(valid);
-        expect(valid.value).toBeDefined();
-        expect(valid.value!.id).toBe(relationshipId);
+        expect(valid.value.isValid).toBe(true);
+        expect(valid.value.challengeCreatedBy).toBe(transportServices1Address);
     });
 
     test("should validate a Device challenge", async () => {
@@ -115,8 +117,9 @@ describe("Validate Challenge", () => {
     });
 
     test("should return an error when the signature is invalid", async () => {
+        const validChallenge = { createdBy: "id1...", createdByDevice: "DVC...", expiresAt: "2022", id: "CHL...", type: "Identity" };
         const valid = await transportServices2.challenges.validateChallenge({
-            challenge: "{}",
+            challenge: JSON.stringify(validChallenge),
             signature: "invalid-signature"
         });
         expectError(valid, "The signature is invalid.", "error.runtime.validation.invalidPropertyValue");

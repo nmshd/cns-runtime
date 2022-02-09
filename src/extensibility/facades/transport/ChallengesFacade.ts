@@ -1,8 +1,7 @@
 import { Result } from "@js-soft/ts-utils";
 import { Inject } from "typescript-ioc";
-import { ChallengeDTO, RelationshipDTO } from "../../../types";
-import { CreateChallengeRequest, CreateChallengeUseCase } from "../../../useCases";
-import { ValidateChallengeRequest, ValidateChallengeUseCase } from "../../../useCases/transport/challenges/ValidateChallange";
+import { ChallengeDTO } from "../../../types";
+import { CreateChallengeRequest, CreateChallengeUseCase, ValidateChallengeRequest, ValidateChallengeResponse, ValidateChallengeUseCase } from "../../../useCases";
 
 export class ChallengesFacade {
     public constructor(@Inject private readonly createChallengeUseCase: CreateChallengeUseCase, @Inject private readonly validateChallengeUseCase: ValidateChallengeUseCase) {}
@@ -11,7 +10,7 @@ export class ChallengesFacade {
         return await this.createChallengeUseCase.execute(request);
     }
 
-    public async validateChallenge(request: ValidateChallengeRequest): Promise<Result<RelationshipDTO | undefined>> {
+    public async validateChallenge(request: ValidateChallengeRequest): Promise<Result<ValidateChallengeResponse>> {
         return await this.validateChallengeUseCase.execute(request);
     }
 }

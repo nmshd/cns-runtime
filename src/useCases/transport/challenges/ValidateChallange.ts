@@ -3,13 +3,16 @@ import { CryptoSignature } from "@nmshd/crypto";
 import { Challenge, ChallengeController, ChallengeSigned, CoreError } from "@nmshd/transport";
 import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
-import { RelationshipMapper } from "..";
-import { RelationshipDTO } from "../../../types";
 import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 
 export interface ValidateChallengeRequest {
     challenge: string;
     signature: string;
+}
+
+export interface ValidateChallengeResponse {
+    isValid: boolean;
+    challengeCreatedBy?: string;
 }
 
 class Validator extends SchemaValidator<ValidateChallengeRequest> {
@@ -53,12 +56,12 @@ class Validator extends SchemaValidator<ValidateChallengeRequest> {
     }
 }
 
-export class ValidateChallengeUseCase extends UseCase<ValidateChallengeRequest, RelationshipDTO | undefined> {
+export class ValidateChallengeUseCase extends UseCase<ValidateChallengeRequest, ValidateChallengeResponse> {
     public constructor(@Inject private readonly challengeController: ChallengeController, @Inject validator: Validator) {
         super(validator);
     }
 
-    protected async executeInternal(request: ValidateChallengeRequest): Promise<Result<RelationshipDTO | undefined>> {
+    protected async executeInternal(request: ValidateChallengeRequest): Promise<Result<ValidateChallengeResponse>> {
         const signature = await CryptoSignature.fromBase64(request.signature);
         const signedChallenge = await ChallengeSigned.from({
             challenge: request.challenge,
@@ -67,7 +70,12 @@ export class ValidateChallengeUseCase extends UseCase<ValidateChallengeRequest, 
 
         try {
             const success = await this.challengeController.checkChallenge(signedChallenge);
-            return Result.ok(success ? RelationshipMapper.toRelationshipDTO(success) : undefined);
+
+            const response = {
+                isValid: !!success,
+                challengeCreatedBy: success?.peer.address.toString()
+            };
+            return Result.ok(response);
         } catch (e: unknown) {
             if (!(e instanceof CoreError) || e.code !== "error.transport.notImplemented") throw e;
 
