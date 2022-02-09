@@ -6,6 +6,10 @@ let transportServices1: TransportServices;
 let transportServices2: TransportServices;
 let relationshipId: string;
 
+// a random valid signature
+const randomValidSignature =
+    "eyJzaWciOiJlMlB2NHp1a3FlakhTUHJCUFdjYW8tWElLdmcxcV9lYTZkM0tJRlNCREV4OFVNYTV4cU95MEhYdEF5Qy1yX014NDBPQWRrQUs1d1dLX3pYbHJsTVVDUSIsImFsZyI6MiwiQHR5cGUiOiJDcnlwdG9TaWduYXR1cmUifQ";
+
 beforeAll(async () => {
     const runtimeServices = await serviceProvider.launch(2, { enableDatawallet: true });
     transportServices1 = runtimeServices[0].transport;
@@ -115,30 +119,24 @@ describe("Validate Challenge", () => {
             challenge: "{}",
             signature: "invalid-signature"
         });
-        expectError(valid, "The signature is invalid.", "error.runtime.challenges.invalidSignature");
+        expectError(valid, "The signature is invalid.", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should return an error when the challenge is an invalid json string", async () => {
         const valid = await transportServices2.challenges.validateChallenge({
             challenge: "{}a",
-
-            // a random valid signature
-            signature:
-                "eyJzaWciOiJlMlB2NHp1a3FlakhTUHJCUFdjYW8tWElLdmcxcV9lYTZkM0tJRlNCREV4OFVNYTV4cU95MEhYdEF5Qy1yX014NDBPQWRrQUs1d1dLX3pYbHJsTVVDUSIsImFsZyI6MiwiQHR5cGUiOiJDcnlwdG9TaWduYXR1cmUifQ"
+            signature: randomValidSignature
         });
 
-        expectError(valid, "The challenge is invalid.", "error.runtime.challenges.invalidChallenge");
+        expectError(valid, "The challenge is invalid.", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should return an error when the challenge is an invalid challenge", async () => {
         const valid = await transportServices2.challenges.validateChallenge({
             challenge: "{}",
-
-            // a random valid signature
-            signature:
-                "eyJzaWciOiJlMlB2NHp1a3FlakhTUHJCUFdjYW8tWElLdmcxcV9lYTZkM0tJRlNCREV4OFVNYTV4cU95MEhYdEF5Qy1yX014NDBPQWRrQUs1d1dLX3pYbHJsTVVDUSIsImFsZyI6MiwiQHR5cGUiOiJDcnlwdG9TaWduYXR1cmUifQ"
+            signature: randomValidSignature
         });
 
-        expectError(valid, "The challenge is invalid.", "error.runtime.challenges.invalidChallenge");
+        expectError(valid, "The challenge is invalid.", "error.runtime.validation.invalidPropertyValue");
     });
 });

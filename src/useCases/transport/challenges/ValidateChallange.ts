@@ -1,6 +1,7 @@
 import { Result } from "@js-soft/ts-utils";
 import { CryptoSignature } from "@nmshd/crypto";
 import { Challenge, ChallengeController, ChallengeSigned, CoreError } from "@nmshd/transport";
+import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
 import { RelationshipMapper } from "..";
 import { RelationshipDTO } from "../../../types";
@@ -15,39 +16,24 @@ class Validator extends SchemaValidator<ValidateChallengeRequest> {
     public constructor(@Inject schemaRepository: SchemaRepository) {
         super(schemaRepository.getSchema("ValidateChallengeRequest"));
     }
-}
 
-export class ValidateChallengeUseCase extends UseCase<ValidateChallengeRequest, RelationshipDTO | undefined> {
-    public constructor(@Inject private readonly challengeController: ChallengeController, @Inject validator: Validator) {
-        super(validator);
+    public async validate(value: ValidateChallengeRequest): Promise<ValidationResult> {
+        const validationResult = await super.validate(value);
+        if (validationResult.isInvalid()) return validationResult;
+
+        const signature = await this.validateSignature(value.signature);
+        if (signature.isError) validationResult.addFailures([new ValidationFailure(undefined, "signature", undefined, undefined, signature.error.message)]);
+
+        const challenge = await this.validateChallenge(value.challenge);
+        if (challenge.isError) validationResult.addFailures([new ValidationFailure(undefined, "challenge", undefined, undefined, challenge.error.message)]);
+
+        return validationResult;
     }
 
-    protected async executeInternal(request: ValidateChallengeRequest): Promise<Result<RelationshipDTO | undefined>> {
-        const signatureResult = await this.parseSignature(request.signature);
-        if (signatureResult.isError) return Result.fail(signatureResult.error);
-
-        const validateChallengeResult = await this.validateChallenge(request.challenge);
-        if (validateChallengeResult.isError) return Result.fail(validateChallengeResult.error);
-
-        const signedChallenge = await ChallengeSigned.from({
-            challenge: request.challenge,
-            signature: signatureResult.value
-        });
-
+    private async validateSignature(signature: string): Promise<Result<void>> {
         try {
-            const success = await this.challengeController.checkChallenge(signedChallenge);
-            return Result.ok(success ? RelationshipMapper.toRelationshipDTO(success) : undefined);
-        } catch (e: unknown) {
-            if (!(e instanceof CoreError) || e.code !== "error.transport.notImplemented") throw e;
-
-            return Result.fail(RuntimeErrors.general.featureNotImplemented("Validating challenges of the type 'Device' is not yet implemented."));
-        }
-    }
-
-    private async parseSignature(signature: string): Promise<Result<CryptoSignature>> {
-        try {
-            const cryptoSignature = await CryptoSignature.fromBase64(signature);
-            return Result.ok(cryptoSignature);
+            await CryptoSignature.fromBase64(signature);
+            return Result.ok(undefined);
         } catch {
             return Result.fail(RuntimeErrors.challenges.invalidSignature());
         }
@@ -59,6 +45,29 @@ export class ValidateChallengeUseCase extends UseCase<ValidateChallengeRequest, 
             return Result.ok(undefined);
         } catch {
             return Result.fail(RuntimeErrors.challenges.invalidChallenge());
+        }
+    }
+}
+
+export class ValidateChallengeUseCase extends UseCase<ValidateChallengeRequest, RelationshipDTO | undefined> {
+    public constructor(@Inject private readonly challengeController: ChallengeController, @Inject validator: Validator) {
+        super(validator);
+    }
+
+    protected async executeInternal(request: ValidateChallengeRequest): Promise<Result<RelationshipDTO | undefined>> {
+        const signature = await CryptoSignature.fromBase64(request.signature);
+        const signedChallenge = await ChallengeSigned.from({
+            challenge: request.challenge,
+            signature: signature
+        });
+
+        try {
+            const success = await this.challengeController.checkChallenge(signedChallenge);
+            return Result.ok(success ? RelationshipMapper.toRelationshipDTO(success) : undefined);
+        } catch (e: unknown) {
+            if (!(e instanceof CoreError) || e.code !== "error.transport.notImplemented") throw e;
+
+            return Result.fail(RuntimeErrors.general.featureNotImplemented("Validating challenges of the type 'Device' is not yet implemented."));
         }
     }
 }
