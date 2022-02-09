@@ -12,7 +12,7 @@ export abstract class UseCase<IRequest, IResponse> {
 
     public async execute(request: IRequest): Promise<Result<IResponse>> {
         if (this.requestValidator) {
-            const validationResult = this.requestValidator.validate(request);
+            const validationResult = await this.requestValidator.validate(request);
 
             if (validationResult.isInvalid()) {
                 return this.validationFailed(validationResult);
