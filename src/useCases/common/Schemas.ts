@@ -1226,7 +1226,7 @@ export const ValidateChallengeRequest: any = {
         "ValidateChallengeRequest": {
             "type": "object",
             "properties": {
-                "challenge": {
+                "challengeString": {
                     "type": "string"
                 },
                 "signature": {
@@ -1234,7 +1234,7 @@ export const ValidateChallengeRequest: any = {
                 }
             },
             "required": [
-                "challenge",
+                "challengeString",
                 "signature"
             ],
             "additionalProperties": false
