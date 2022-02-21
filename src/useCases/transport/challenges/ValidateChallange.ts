@@ -8,7 +8,7 @@ import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../..
 import { RelationshipMapper } from "../relationships/RelationshipMapper";
 
 export interface ValidateChallengeRequest {
-    challenge: string;
+    challengeString: string;
     signature: string;
 }
 
@@ -31,7 +31,7 @@ class Validator extends SchemaValidator<ValidateChallengeRequest> {
             validationResult.addFailures([new ValidationFailure(undefined, "signature", undefined, undefined, signatureValidationResult.error.message)]);
         }
 
-        const challengeValidationResult = await this.validateChallenge(value.challenge);
+        const challengeValidationResult = await this.validateChallenge(value.challengeString);
         if (challengeValidationResult.isError) {
             validationResult.addFailures([new ValidationFailure(undefined, "challenge", undefined, undefined, challengeValidationResult.error.message)]);
         }
@@ -66,7 +66,7 @@ export class ValidateChallengeUseCase extends UseCase<ValidateChallengeRequest, 
     protected async executeInternal(request: ValidateChallengeRequest): Promise<Result<ValidateChallengeResponse>> {
         const signature = await CryptoSignature.fromBase64(request.signature);
         const signedChallenge = await ChallengeSigned.from({
-            challenge: request.challenge,
+            challenge: request.challengeString,
             signature: signature
         });
 
