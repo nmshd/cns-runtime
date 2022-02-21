@@ -87,7 +87,7 @@ describe("Validate Challenge", () => {
         });
         expectSuccess(valid);
         expect(valid.value.isValid).toBe(true);
-        expect(valid.value.challengeCreatedBy).toBe(transportServices1Address);
+        expect(valid.value.correspondingRelationship?.peer).toBe(transportServices1Address);
     });
 
     test("should validate a Identity challenge", async () => {
@@ -101,7 +101,7 @@ describe("Validate Challenge", () => {
         });
         expectSuccess(valid);
         expect(valid.value.isValid).toBe(true);
-        expect(valid.value.challengeCreatedBy).toBe(transportServices1Address);
+        expect(valid.value.correspondingRelationship?.peer).toBe(transportServices1Address);
     });
 
     test("challenge with the wrong signature is considered as not valid", async () => {

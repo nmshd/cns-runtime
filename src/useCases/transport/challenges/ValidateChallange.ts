@@ -3,7 +3,9 @@ import { CryptoSignature } from "@nmshd/crypto";
 import { Challenge, ChallengeController, ChallengeSigned, CoreError } from "@nmshd/transport";
 import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
+import { RelationshipDTO } from "../../../types";
 import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
+import { RelationshipMapper } from "../relationships/RelationshipMapper";
 
 export interface ValidateChallengeRequest {
     challenge: string;
@@ -12,7 +14,7 @@ export interface ValidateChallengeRequest {
 
 export interface ValidateChallengeResponse {
     isValid: boolean;
-    challengeCreatedBy?: string;
+    correspondingRelationship?: RelationshipDTO;
 }
 
 class Validator extends SchemaValidator<ValidateChallengeRequest> {
@@ -69,13 +71,13 @@ export class ValidateChallengeUseCase extends UseCase<ValidateChallengeRequest, 
         });
 
         try {
-            const success = await this.challengeController.checkChallenge(signedChallenge);
+            const success = await this.challengeController.validateChallenge(signedChallenge);
 
-            const response = {
-                isValid: !!success,
-                challengeCreatedBy: success?.peer.address.toString()
-            };
-            return Result.ok(response);
+            const correspondingRelationship = success.correspondingRelationship ? RelationshipMapper.toRelationshipDTO(success.correspondingRelationship) : undefined;
+            return Result.ok({
+                isValid: success.isValid,
+                correspondingRelationship
+            });
         } catch (e: unknown) {
             if (!(e instanceof CoreError) || e.code !== "error.transport.notImplemented") throw e;
 

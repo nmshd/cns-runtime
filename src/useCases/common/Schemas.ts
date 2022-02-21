@@ -1219,6 +1219,29 @@ export const CreateChallengeRequest: any = {
     }
 }
 
+export const ValidateChallengeRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/ValidateChallengeRequest",
+    "definitions": {
+        "ValidateChallengeRequest": {
+            "type": "object",
+            "properties": {
+                "challenge": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "challenge",
+                "signature"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const CreateDeviceRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateDeviceRequest",
@@ -2127,29 +2150,6 @@ export const LoadPeerTokenRequest: any = {
             },
             "required": [
                 "ephemeral"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const ValidateChallengeRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/ValidateChallengeRequest",
-    "definitions": {
-        "ValidateChallengeRequest": {
-            "type": "object",
-            "properties": {
-                "challenge": {
-                    "type": "string"
-                },
-                "signature": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "challenge",
-                "signature"
             ],
             "additionalProperties": false
         }
