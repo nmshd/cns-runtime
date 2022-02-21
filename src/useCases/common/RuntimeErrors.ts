@@ -149,8 +149,8 @@ class Challenges {
         return new ApplicationError("error.runtime.challenges.invalidSignature", "The signature is invalid.");
     }
 
-    public invalidChallenge(): ApplicationError {
-        return new ApplicationError("error.runtime.challenges.invalidChallenge", "The challenge is invalid.");
+    public invalidChallengeString(): ApplicationError {
+        return new ApplicationError("error.runtime.challenges.invalidChallenge", "The challengeString is invalid.");
     }
 }
 

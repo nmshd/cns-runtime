@@ -53,7 +53,7 @@ class Validator extends SchemaValidator<ValidateChallengeRequest> {
             await Challenge.deserialize(challenge);
             return Result.ok(undefined);
         } catch {
-            return Result.fail(RuntimeErrors.challenges.invalidChallenge());
+            return Result.fail(RuntimeErrors.challenges.invalidChallengeString());
         }
     }
 }
