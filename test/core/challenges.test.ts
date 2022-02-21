@@ -81,13 +81,13 @@ describe("Validate Challenge", () => {
         expectSuccess(response);
         expect(response.value.type).toBe("Relationship");
 
-        const valid = await transportServices2.challenges.validateChallenge({
+        const validationResult = await transportServices2.challenges.validateChallenge({
             challenge: response.value.challengeString,
             signature: response.value.signature
         });
-        expectSuccess(valid);
-        expect(valid.value.isValid).toBe(true);
-        expect(valid.value.challengeCreatedBy).toBe(transportServices1Address);
+        expectSuccess(validationResult);
+        expect(validationResult.value.isValid).toBe(true);
+        expect(validationResult.value.correspondingRelationship?.peer).toBe(transportServices1Address);
     });
 
     test("should validate a Identity challenge", async () => {
@@ -95,13 +95,13 @@ describe("Validate Challenge", () => {
         expectSuccess(response);
         expect(response.value.type).toBe("Identity");
 
-        const valid = await transportServices2.challenges.validateChallenge({
+        const validationResult = await transportServices2.challenges.validateChallenge({
             challenge: response.value.challengeString,
             signature: response.value.signature
         });
-        expectSuccess(valid);
-        expect(valid.value.isValid).toBe(true);
-        expect(valid.value.challengeCreatedBy).toBe(transportServices1Address);
+        expectSuccess(validationResult);
+        expect(validationResult.value.isValid).toBe(true);
+        expect(validationResult.value.correspondingRelationship?.peer).toBe(transportServices1Address);
     });
 
     test("challenge with the wrong signature is considered as not valid", async () => {
@@ -117,12 +117,12 @@ describe("Validate Challenge", () => {
         });
         expectSuccess(response);
 
-        const valid = await transportServices2.challenges.validateChallenge({
+        const validationResult = await transportServices2.challenges.validateChallenge({
             challenge: response.value.challengeString,
             signature: response2.value.signature
         });
-        expectSuccess(valid);
-        expect(valid.value.isValid).toBe(false);
+        expectSuccess(validationResult);
+        expect(validationResult.value.isValid).toBe(false);
     });
 
     test("should validate a Device challenge", async () => {
@@ -130,37 +130,37 @@ describe("Validate Challenge", () => {
         expectSuccess(response);
         expect(response.value.type).toBe("Device");
 
-        const valid = await transportServices2.challenges.validateChallenge({
+        const validationResult = await transportServices2.challenges.validateChallenge({
             challenge: response.value.challengeString,
             signature: response.value.signature
         });
-        expectError(valid, "Validating challenges of the type 'Device' is not yet implemented.", "error.runtime.featureNotImplemented");
+        expectError(validationResult, "Validating challenges of the type 'Device' is not yet implemented.", "error.runtime.featureNotImplemented");
     });
 
     test("should return an error when the signature is invalid", async () => {
         const validChallenge = { createdBy: "id1...", createdByDevice: "DVC...", expiresAt: "2022", id: "CHL...", type: "Identity" };
-        const valid = await transportServices2.challenges.validateChallenge({
+        const validationResult = await transportServices2.challenges.validateChallenge({
             challenge: JSON.stringify(validChallenge),
             signature: "invalid-signature"
         });
-        expectError(valid, "The signature is invalid.", "error.runtime.validation.invalidPropertyValue");
+        expectError(validationResult, "The signature is invalid.", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should return an error when the challenge is an invalid json string", async () => {
-        const valid = await transportServices2.challenges.validateChallenge({
+        const validationResult = await transportServices2.challenges.validateChallenge({
             challenge: "{}a",
             signature: randomValidSignature
         });
 
-        expectError(valid, "The challenge is invalid.", "error.runtime.validation.invalidPropertyValue");
+        expectError(validationResult, "The challenge is invalid.", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should return an error when the challenge is an invalid challenge", async () => {
-        const valid = await transportServices2.challenges.validateChallenge({
+        const validationResult = await transportServices2.challenges.validateChallenge({
             challenge: "{}",
             signature: randomValidSignature
         });
 
-        expectError(valid, "The challenge is invalid.", "error.runtime.validation.invalidPropertyValue");
+        expectError(validationResult, "The challenge is invalid.", "error.runtime.validation.invalidPropertyValue");
     });
 });
