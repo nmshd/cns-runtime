@@ -147,12 +147,13 @@ describe("Validate Challenge", () => {
     });
 
     test("should return an error when the challenge is an invalid json string", async () => {
+        const validChallenge = { createdBy: "id1...", createdByDevice: "DVC...", expiresAt: "2022", id: "CHL...", type: "Identity" };
         const validationResult = await transportServices2.challenges.validateChallenge({
-            challengeString: "{}a",
+            challengeString: `${JSON.stringify(validChallenge)}a`,
             signature: randomValidSignature
         });
 
-        expectError(validationResult, "The challenge is invalid.", "error.runtime.validation.invalidPropertyValue");
+        expectError(validationResult, "The challengeString is invalid.", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should return an error when the challenge is an invalid challenge", async () => {
@@ -161,6 +162,6 @@ describe("Validate Challenge", () => {
             signature: randomValidSignature
         });
 
-        expectError(validationResult, "The challenge is invalid.", "error.runtime.validation.invalidPropertyValue");
+        expectError(validationResult, "The challengeString is invalid.", "error.runtime.validation.invalidPropertyValue");
     });
 });
