@@ -18,6 +18,7 @@ class RejectRelationshipChangeRequestValidator extends RuntimeValidator<RejectRe
 
         this.validateIfString((x) => x.relationshipId).fulfills(IdValidator.required(BackboneIds.relationship));
         this.validateIfString((x) => x.changeId).fulfills(IdValidator.required(BackboneIds.relationshipChange));
+        this.validateIfAny((x) => x.content).isDefined();
     }
 }
 
