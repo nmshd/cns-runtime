@@ -276,7 +276,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
             moduleConfiguration.name = moduleName;
 
             if (!moduleConfiguration.enabled) {
-                this.logger.info(`Skip loading module '${this.getModuleName(moduleConfiguration)}' because it is not enabled.`);
+                this.logger.debug(`Skip loading module '${this.getModuleName(moduleConfiguration)}' because it is not enabled.`);
                 continue;
             }
 
