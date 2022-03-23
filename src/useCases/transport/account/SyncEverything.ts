@@ -15,7 +15,11 @@ export interface SyncEverythingResponse {
     messages: MessageDTO[];
 }
 
-export class SyncEverythingUseCase extends UseCase<void, SyncEverythingResponse> {
+export interface SyncEverythingRequest {
+    callback?(percentage: number, syncStep: string): void;
+}
+
+export class SyncEverythingUseCase extends UseCase<SyncEverythingRequest, SyncEverythingResponse> {
     private readonly logger: ILogger;
     public constructor(
         @Inject private readonly accountController: AccountController,
@@ -30,12 +34,12 @@ export class SyncEverythingUseCase extends UseCase<void, SyncEverythingResponse>
 
     private currentSync?: Promise<Result<SyncEverythingResponse>>;
 
-    protected async executeInternal(): Promise<Result<SyncEverythingResponse>> {
+    protected async executeInternal(request: SyncEverythingRequest): Promise<Result<SyncEverythingResponse>> {
         if (this.currentSync) {
             return await this.currentSync;
         }
 
-        this.currentSync = this._executeInternal();
+        this.currentSync = this._executeInternal(request);
 
         try {
             return await this.currentSync;
@@ -44,8 +48,8 @@ export class SyncEverythingUseCase extends UseCase<void, SyncEverythingResponse>
         }
     }
 
-    private async _executeInternal() {
-        const changedItems = await this.accountController.syncEverything();
+    private async _executeInternal(request: SyncEverythingRequest) {
+        const changedItems = await this.accountController.syncEverything(request.callback);
 
         const messageDTOs = changedItems.messages.map((m) => MessageMapper.toMessageDTO(m));
         const relationshipDTOs = changedItems.relationships.map((r) => RelationshipMapper.toRelationshipDTO(r));
