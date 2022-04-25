@@ -50,7 +50,7 @@ export abstract class UseCase<IRequest, IResponse> {
         let runtimeError;
         if (error instanceof ParsingError || error instanceof ValidationError) {
             runtimeError = RuntimeErrors.serval.requestDeserialization(error.message);
-        } else if (error.message.match(/Type '.+' was not found within reflection classes. You might have to install a module first./)) {
+        } else if (error.message.match(/Type '.+' with version [0-9]+ was not found within reflection classes. You might have to install a module first./)) {
             runtimeError = RuntimeErrors.serval.unknownType(error.message);
         } else {
             runtimeError = RuntimeErrors.serval.general(error.message);
