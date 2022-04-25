@@ -65,7 +65,7 @@ export class UpdateRelationshipInfoUseCase extends UseCase<UpdateRelationshipInf
         relationshipInfo.description = request.description === undefined ? relationshipInfo.description : request.description;
         relationshipInfo.userTitle = request.userTitle === undefined ? relationshipInfo.userTitle : request.userTitle;
         relationshipInfo.userDescription = request.userDescription === undefined ? relationshipInfo.userDescription : request.userDescription;
-        relationshipInfo.theme = request.theme === undefined ? relationshipInfo.theme : await RelationshipTheme.from(request.theme as IRelationshipTheme);
+        relationshipInfo.theme = request.theme === undefined ? relationshipInfo.theme : RelationshipTheme.from(request.theme as IRelationshipTheme);
 
         await this.relationshipInfoController.updateRelationshipInfo(relationshipInfo);
         await this.accountController.syncDatawallet();

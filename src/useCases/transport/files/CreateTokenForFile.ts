@@ -40,7 +40,7 @@ export class CreateTokenForFileUseCase extends UseCase<CreateTokenForFileRequest
             return Result.fail(RuntimeErrors.general.recordNotFound(File));
         }
 
-        const tokenContent = await TokenContentFile.from({
+        const tokenContent = TokenContentFile.from({
             fileId: file.id,
             secretKey: file.secretKey
         });
@@ -58,6 +58,6 @@ export class CreateTokenForFileUseCase extends UseCase<CreateTokenForFileRequest
             await this.accountController.syncDatawallet();
         }
 
-        return Result.ok(await TokenMapper.toTokenDTO(token, ephemeral));
+        return Result.ok(TokenMapper.toTokenDTO(token, ephemeral));
     }
 }

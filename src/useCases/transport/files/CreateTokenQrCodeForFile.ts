@@ -36,7 +36,7 @@ export class CreateTokenQrCodeForFileUseCase extends UseCase<CreateTokenQrCodeFo
             return Result.fail(RuntimeErrors.general.recordNotFound(File));
         }
 
-        const tokenContent = await TokenContentFile.from({
+        const tokenContent = TokenContentFile.from({
             fileId: file.id,
             secretKey: file.secretKey
         });
@@ -49,7 +49,7 @@ export class CreateTokenQrCodeForFileUseCase extends UseCase<CreateTokenQrCodeFo
             ephemeral: true
         });
 
-        const qrCode = await QRCode.from(await token.truncate());
+        const qrCode = await QRCode.from(token.truncate());
         return Result.ok({ qrCodeBytes: qrCode.asBase64() });
     }
 }

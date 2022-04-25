@@ -53,8 +53,8 @@ export class CreateRelationshipInfoUseCase extends UseCase<CreateRelationshipInf
                 });
             })
         );
-        const theme = request.theme === undefined ? undefined : await RelationshipTheme.from(request.theme);
-        const parameters = await RelationshipInfo.from({
+        const theme = request.theme === undefined ? undefined : RelationshipTheme.from(request.theme);
+        const parameters = RelationshipInfo.from({
             id: await ConsumptionIds.relationshipInfo.generate(),
             relationshipId: relationshipId,
             attributes: attributes,

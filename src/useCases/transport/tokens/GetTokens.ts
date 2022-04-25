@@ -40,6 +40,6 @@ export class GetTokensUseCase extends UseCase<GetTokensRequest, TokenDTO[]> {
         }
 
         const tokens = await this.tokenController.getTokens(query);
-        return Result.ok(await TokenMapper.toTokenDTOList(tokens, false));
+        return Result.ok(TokenMapper.toTokenDTOList(tokens, false));
     }
 }

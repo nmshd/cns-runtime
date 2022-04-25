@@ -41,20 +41,20 @@ export class DeviceMapper {
         };
     }
 
-    public static async toDeviceSharedSecret(deviceOnboardingDTO: DeviceOnboardingInfoDTO): Promise<DeviceSharedSecret> {
-        const sharedSecret = await DeviceSharedSecret.from({
+    public static toDeviceSharedSecret(deviceOnboardingDTO: DeviceOnboardingInfoDTO): DeviceSharedSecret {
+        const sharedSecret = DeviceSharedSecret.from({
             id: CoreId.from(deviceOnboardingDTO.id),
             createdAt: CoreDate.from(deviceOnboardingDTO.createdAt),
             createdByDevice: CoreId.from(deviceOnboardingDTO.createdByDevice),
             name: deviceOnboardingDTO.name,
             description: deviceOnboardingDTO.description,
-            secretBaseKey: await CryptoSecretKey.fromBase64(deviceOnboardingDTO.secretBaseKey),
+            secretBaseKey: CryptoSecretKey.fromBase64(deviceOnboardingDTO.secretBaseKey),
             deviceIndex: deviceOnboardingDTO.deviceIndex,
-            synchronizationKey: await CryptoSecretKey.fromBase64(deviceOnboardingDTO.synchronizationKey),
-            identityPrivateKey: deviceOnboardingDTO.identityPrivateKey ? await CryptoSignaturePrivateKey.deserialize(deviceOnboardingDTO.identityPrivateKey) : undefined,
+            synchronizationKey: CryptoSecretKey.fromBase64(deviceOnboardingDTO.synchronizationKey),
+            identityPrivateKey: deviceOnboardingDTO.identityPrivateKey ? CryptoSignaturePrivateKey.deserialize(deviceOnboardingDTO.identityPrivateKey) : undefined,
             identity: {
                 address: CoreAddress.from(deviceOnboardingDTO.identity.address),
-                publicKey: await CryptoSignaturePublicKey.deserialize(deviceOnboardingDTO.identity.publicKey),
+                publicKey: CryptoSignaturePublicKey.deserialize(deviceOnboardingDTO.identity.publicKey),
                 realm: deviceOnboardingDTO.identity.realm as Realm
             },
             password: deviceOnboardingDTO.password,

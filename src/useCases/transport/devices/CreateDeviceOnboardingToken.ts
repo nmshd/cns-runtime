@@ -38,13 +38,13 @@ export class CreateDeviceOnboardingTokenUseCase extends UseCase<CreateDeviceOnbo
         const sharedSecret = await this.devicesController.getSharedSecret(CoreId.from(request.id));
         const expiresAt = request.expiresAt ? CoreDate.from(request.expiresAt) : CoreDate.utc().add({ minutes: 5 });
 
-        const tokenContent = await TokenContentDeviceSharedSecret.from({ sharedSecret: sharedSecret });
+        const tokenContent = TokenContentDeviceSharedSecret.from({ sharedSecret: sharedSecret });
         const token = await this.tokenController.sendToken({
             content: tokenContent,
             expiresAt: expiresAt,
             ephemeral: true
         });
 
-        return Result.ok(await TokenMapper.toTokenDTO(token, true));
+        return Result.ok(TokenMapper.toTokenDTO(token, true));
     }
 }

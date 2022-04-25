@@ -3,12 +3,12 @@ import { TokenDTO } from "../../../types";
 import { RuntimeErrors } from "../../common";
 
 export class TokenMapper {
-    public static async toTokenDTO(token: Token, ephemeral: boolean): Promise<TokenDTO> {
+    public static toTokenDTO(token: Token, ephemeral: boolean): TokenDTO {
         if (!token.cache) {
             throw RuntimeErrors.general.cacheEmpty(Token, token.id.toString());
         }
 
-        const reference = await token.toTokenReference();
+        const reference = token.toTokenReference();
         return {
             id: token.id.toString(),
             createdBy: token.cache.createdBy.toString(),
@@ -22,7 +22,7 @@ export class TokenMapper {
         };
     }
 
-    public static async toTokenDTOList(tokens: Token[], ephemeral: boolean): Promise<TokenDTO[]> {
-        return await Promise.all(tokens.map((t) => TokenMapper.toTokenDTO(t, ephemeral)));
+    public static toTokenDTOList(tokens: Token[], ephemeral: boolean): TokenDTO[] {
+        return tokens.map((t) => TokenMapper.toTokenDTO(t, ephemeral));
     }
 }

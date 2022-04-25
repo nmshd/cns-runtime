@@ -47,7 +47,7 @@ export class CreateSharedItemUseCase extends UseCase<CreateSharedItemRequest, Sh
     }
 
     protected async executeInternal(request: CreateSharedItemRequest): Promise<Result<SharedItemDTO>> {
-        const sharedItem = await SharedItem.from({
+        const sharedItem = SharedItem.from({
             id: await ConsumptionIds.sharedItem.generate(),
             tags: request.tags,
             sharedBy: CoreAddress.from(request.sharedBy),

@@ -24,6 +24,6 @@ export class LoadPeerTokenAnonymousByTruncatedReferenceUseCase extends UseCase<L
 
     protected async executeInternal(request: LoadPeerTokenAnonymousByTruncatedReferenceRequest): Promise<Result<TokenDTO>> {
         const createdToken = await this.anonymousTokenController.loadPeerTokenByTruncated(request.reference);
-        return Result.ok(await TokenMapper.toTokenDTO(createdToken, true));
+        return Result.ok(TokenMapper.toTokenDTO(createdToken, true));
     }
 }

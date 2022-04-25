@@ -81,7 +81,7 @@ export class LoadPeerFileUseCase extends UseCase<LoadPeerFileRequest, FileDTO> {
         let createdFile: Result<FileDTO>;
 
         if (isLoadPeerFileViaSecret(request)) {
-            const key = await CryptoSecretKey.fromBase64(request.secretKey);
+            const key = CryptoSecretKey.fromBase64(request.secretKey);
             createdFile = await this.loadFile(CoreId.from(request.id), key);
         } else if (isLoadPeerFileViaReference(request)) {
             createdFile = await this.createFileFromTokenReferenceRequest(request.reference);
