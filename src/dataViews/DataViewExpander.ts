@@ -248,7 +248,7 @@ export class DataViewExpander {
         }
         return {
             id: request.id ? request.id : "",
-            name: `${request["@type"]} ${request.id ? request.id : ""}`,
+            name: `${request["@type"]} ${request.key}`,
             description: "i18n://dvo.request.unknownType",
             type: "RequestDVO",
             date: request.expiresAt,
