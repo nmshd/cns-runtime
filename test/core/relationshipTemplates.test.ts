@@ -102,7 +102,11 @@ describe("Serialization Errors", () => {
             content: { a: "A", "@type": "someNoneExistingType" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
-        expectError(response, "Type 'someNoneExistingType' was not found within reflection classes. You might have to install a module first.", "error.runtime.unknownType");
+        expectError(
+            response,
+            "Type 'someNoneExistingType' with version 1 was not found within reflection classes. You might have to install a module first.",
+            "error.runtime.unknownType"
+        );
     });
 });
 

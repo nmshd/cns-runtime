@@ -41,7 +41,7 @@ export class CreateTokenQrCodeForOwnTemplateUseCase extends UseCase<CreateTokenQ
             return Result.fail(RuntimeErrors.relationshipTemplates.cannotCreateTokenForPeerTemplate());
         }
 
-        const tokenContent = await TokenContentRelationshipTemplate.from({
+        const tokenContent = TokenContentRelationshipTemplate.from({
             templateId: template.id,
             secretKey: template.secretKey
         });
@@ -54,7 +54,7 @@ export class CreateTokenQrCodeForOwnTemplateUseCase extends UseCase<CreateTokenQ
             ephemeral: true
         });
 
-        const qrCode = await QRCode.from(await token.truncate());
+        const qrCode = await QRCode.from(token.truncate());
         return Result.ok({ qrCodeBytes: qrCode.asBase64() });
     }
 }

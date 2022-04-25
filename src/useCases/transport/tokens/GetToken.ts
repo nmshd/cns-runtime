@@ -28,6 +28,6 @@ export class GetTokenUseCase extends UseCase<GetTokenRequest, TokenDTO> {
             return Result.fail(RuntimeErrors.general.recordNotFound("Token"));
         }
 
-        return Result.ok(await TokenMapper.toTokenDTO(token, false));
+        return Result.ok(TokenMapper.toTokenDTO(token, false));
     }
 }

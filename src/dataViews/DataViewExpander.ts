@@ -1,4 +1,4 @@
-import { AttributeJSON, AttributesChangeRequestJSON, AttributesRequestJSON, AttributesShareRequestJSON, MailJSON, RequestJSON, RequestMailJSON } from "@nmshd/content";
+import { AttributeJSON, AttributesChangeRequestJSON, AttributesRequestJSON, AttributesShareRequestJSON, MailJSON, RequestMailJSON } from "@nmshd/content";
 import { CoreAddress, IdentityController, Realm, Relationship, RelationshipStatus } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { FileDVO, IdentityDVO } from "..";
@@ -58,12 +58,12 @@ export class DataViewExpander {
 
                 return await this.expandMessageDTO(content as MessageDTO);
 
-            case "Request":
+            case "AttributesRequest":
                 if (content instanceof Array) {
-                    return await this.expandUnknownRequests(content as RequestJSON[]);
+                    return await this.expandUnknownRequests(content as AttributesRequestJSON[]);
                 }
 
-                return await this.expandUnknownRequest(content as RequestJSON);
+                return await this.expandUnknownRequest(content as AttributesRequestJSON);
 
             case "AttributesShareRequest":
                 if (content instanceof Array) {
@@ -237,7 +237,7 @@ export class DataViewExpander {
         return await Promise.all(messagePromises);
     }
 
-    public async expandUnknownRequest(request: RequestJSON): Promise<RequestDVO> {
+    public async expandUnknownRequest(request: AttributesChangeRequestJSON | AttributesShareRequestJSON | AttributesRequestJSON): Promise<RequestDVO> {
         switch (request["@type"]) {
             case "AttributesRequest":
                 return await this.expandAttributesRequest(request as AttributesRequestJSON);
@@ -257,7 +257,7 @@ export class DataViewExpander {
         };
     }
 
-    public expandRequest(request: RequestJSON): RequestDVO {
+    public expandRequest(request: AttributesChangeRequestJSON | AttributesShareRequestJSON | AttributesRequestJSON): RequestDVO {
         return {
             id: request.id ? request.id : "",
             name: `${request["@type"]} ${request.key}`,
@@ -268,7 +268,7 @@ export class DataViewExpander {
         };
     }
 
-    public async expandUnknownRequests(requests: RequestJSON[]): Promise<RequestDVO[]> {
+    public async expandUnknownRequests(requests: (AttributesRequestJSON | AttributesChangeRequestJSON | AttributesShareRequestJSON)[]): Promise<RequestDVO[]> {
         const requestsPromise = requests.map((request) => this.expandUnknownRequest(request));
         return await Promise.all(requestsPromise);
     }

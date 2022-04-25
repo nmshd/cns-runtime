@@ -1,4 +1,4 @@
-import { SerializableAsync } from "@js-soft/ts-serval";
+import { Serializable } from "@js-soft/ts-serval";
 import { Result } from "@js-soft/ts-utils";
 import { AccountController, CoreDate, TokenController } from "@nmshd/transport";
 import { DateTime } from "luxon";
@@ -42,7 +42,7 @@ export class CreateOwnTokenUseCase extends UseCase<CreateOwnTokenRequest, TokenD
     protected async executeInternal(request: CreateOwnTokenRequest): Promise<Result<TokenDTO>> {
         let tokenContent;
         try {
-            tokenContent = await SerializableAsync.from(request.content);
+            tokenContent = Serializable.fromUnknown(request.content);
         } catch {
             throw RuntimeErrors.general.invalidTokenContent();
         }
@@ -57,6 +57,6 @@ export class CreateOwnTokenUseCase extends UseCase<CreateOwnTokenRequest, TokenD
             await this.accountController.syncDatawallet();
         }
 
-        return Result.ok(await TokenMapper.toTokenDTO(response, request.ephemeral));
+        return Result.ok(TokenMapper.toTokenDTO(response, request.ephemeral));
     }
 }

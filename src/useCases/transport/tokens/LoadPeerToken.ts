@@ -66,7 +66,7 @@ export class LoadPeerTokenUseCase extends UseCase<LoadPeerTokenRequest, TokenDTO
         let createdToken: Token;
 
         if (request.id && request.secretKey) {
-            const key = await CryptoSecretKey.fromBase64(request.secretKey);
+            const key = CryptoSecretKey.fromBase64(request.secretKey);
             createdToken = await this.tokenController.loadPeerToken(CoreId.from(request.id), key, request.ephemeral);
         } else if (request.reference) {
             createdToken = await this.tokenController.loadPeerTokenByTruncated(request.reference, request.ephemeral);
@@ -78,6 +78,6 @@ export class LoadPeerTokenUseCase extends UseCase<LoadPeerTokenRequest, TokenDTO
             await this.accountController.syncDatawallet();
         }
 
-        return Result.ok(await TokenMapper.toTokenDTO(createdToken, request.ephemeral));
+        return Result.ok(TokenMapper.toTokenDTO(createdToken, request.ephemeral));
     }
 }

@@ -6,7 +6,6 @@ import {
     ConsumptionController,
     DraftsController,
     RelationshipInfoController,
-    RequestsController,
     SettingsController,
     SharedItemsController
 } from "@nmshd/consumption";
@@ -243,10 +242,6 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         Container.bind(RelationshipInfoController)
             .factory(() => this.getConsumptionController().relationshipInfo)
-            .scope(Scope.Request);
-
-        Container.bind(RequestsController)
-            .factory(() => this.getConsumptionController().requests)
             .scope(Scope.Request);
 
         Container.bind(SettingsController)

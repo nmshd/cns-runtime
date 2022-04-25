@@ -26,12 +26,12 @@ class Validator extends SchemaValidator<ValidateChallengeRequest> {
         const validationResult = await super.validate(value);
         if (validationResult.isInvalid()) return validationResult;
 
-        const signatureValidationResult = await this.validateSignature(value.signature);
+        const signatureValidationResult = this.validateSignature(value.signature);
         if (signatureValidationResult.isError) {
             validationResult.addFailures([new ValidationFailure(undefined, "signature", undefined, undefined, signatureValidationResult.error.message)]);
         }
 
-        const challengeValidationResult = await this.validateChallenge(value.challengeString);
+        const challengeValidationResult = this.validateChallenge(value.challengeString);
         if (challengeValidationResult.isError) {
             validationResult.addFailures([new ValidationFailure(undefined, "challenge", undefined, undefined, challengeValidationResult.error.message)]);
         }
@@ -39,18 +39,18 @@ class Validator extends SchemaValidator<ValidateChallengeRequest> {
         return validationResult;
     }
 
-    private async validateSignature(signature: string): Promise<Result<void>> {
+    private validateSignature(signature: string): Result<void> {
         try {
-            await CryptoSignature.fromBase64(signature);
+            CryptoSignature.fromBase64(signature);
             return Result.ok(undefined);
         } catch {
             return Result.fail(RuntimeErrors.challenges.invalidSignature());
         }
     }
 
-    private async validateChallenge(challenge: string): Promise<Result<void>> {
+    private validateChallenge(challenge: string): Result<void> {
         try {
-            await Challenge.deserialize(challenge);
+            Challenge.deserialize(challenge);
             return Result.ok(undefined);
         } catch {
             return Result.fail(RuntimeErrors.challenges.invalidChallengeString());
@@ -64,8 +64,8 @@ export class ValidateChallengeUseCase extends UseCase<ValidateChallengeRequest, 
     }
 
     protected async executeInternal(request: ValidateChallengeRequest): Promise<Result<ValidateChallengeResponse>> {
-        const signature = await CryptoSignature.fromBase64(request.signature);
-        const signedChallenge = await ChallengeSigned.from({
+        const signature = CryptoSignature.fromBase64(request.signature);
+        const signedChallenge = ChallengeSigned.from({
             challenge: request.challengeString,
             signature: signature
         });

@@ -1,4 +1,4 @@
-import { SerializableAsync } from "@js-soft/ts-serval";
+import { Serializable } from "@js-soft/ts-serval";
 import { Result } from "@js-soft/ts-utils";
 import { ConsumptionIds, Setting, SettingsController } from "@nmshd/consumption";
 import { AccountController, CoreId } from "@nmshd/transport";
@@ -37,7 +37,7 @@ export class UpdateSettingUseCase extends UseCase<UpdateSettingRequest, SettingD
             return Result.fail(RuntimeErrors.general.recordNotFound(Setting));
         }
 
-        setting.value = await SerializableAsync.from(request.value);
+        setting.value = Serializable.fromUnknown(request.value);
         await this.settingController.updateSetting(setting);
         await this.accountController.syncDatawallet();
 

@@ -26,9 +26,9 @@ export class LoadPeerTokenAnonymousByIdAndKeyUseCase extends UseCase<LoadPeerTok
     }
 
     protected async executeInternal(request: LoadPeerTokenAnonymousByIdAndKeyRequest): Promise<Result<TokenDTO>> {
-        const key = await CryptoSecretKey.fromBase64(request.secretKey);
+        const key = CryptoSecretKey.fromBase64(request.secretKey);
         const createdToken = await this.anonymousTokenController.loadPeerToken(CoreId.from(request.id), key);
 
-        return Result.ok(await TokenMapper.toTokenDTO(createdToken, true));
+        return Result.ok(TokenMapper.toTokenDTO(createdToken, true));
     }
 }

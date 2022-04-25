@@ -1,4 +1,4 @@
-import { SerializableAsync } from "@js-soft/ts-serval";
+import { Serializable } from "@js-soft/ts-serval";
 import { Result } from "@js-soft/ts-utils";
 import { Draft, DraftsController } from "@nmshd/consumption";
 import { AccountController, CoreId } from "@nmshd/transport";
@@ -33,7 +33,7 @@ export class UpdateDraftUseCase extends UseCase<UpdateDraftRequest, DraftDTO> {
             return Result.fail(RuntimeErrors.general.recordNotFound(Draft));
         }
 
-        draft.content = await SerializableAsync.fromUnknown(request.content);
+        draft.content = Serializable.fromUnknown(request.content);
         await this.draftController.updateDraft(draft);
         await this.accountController.syncDatawallet();
 

@@ -50,7 +50,7 @@ export class CreateTokenForOwnTemplateUseCase extends UseCase<CreateTokenForOwnT
             return Result.fail(RuntimeErrors.relationshipTemplates.cannotCreateTokenForPeerTemplate());
         }
 
-        const tokenContent = await TokenContentRelationshipTemplate.from({
+        const tokenContent = TokenContentRelationshipTemplate.from({
             templateId: template.id,
             secretKey: template.secretKey
         });
@@ -68,6 +68,6 @@ export class CreateTokenForOwnTemplateUseCase extends UseCase<CreateTokenForOwnT
             await this.accountController.syncDatawallet();
         }
 
-        return Result.ok(await TokenMapper.toTokenDTO(token, ephemeral));
+        return Result.ok(TokenMapper.toTokenDTO(token, ephemeral));
     }
 }

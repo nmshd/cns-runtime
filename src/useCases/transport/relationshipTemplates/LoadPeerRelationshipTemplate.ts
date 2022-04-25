@@ -63,7 +63,7 @@ export class LoadPeerRelationshipTemplateUseCase extends UseCase<LoadPeerRelatio
         let createdTemplate: Result<RelationshipTemplateDTO>;
 
         if (request.id && request.secretKey) {
-            const key = await CryptoSecretKey.fromBase64(request.secretKey);
+            const key = CryptoSecretKey.fromBase64(request.secretKey);
             createdTemplate = await this.loadTemplate(CoreId.from(request.id), key);
         } else if (request.reference) {
             createdTemplate = await this.createRelationshipTemplateFromTokenReferenceRequest(request.reference);
