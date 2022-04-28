@@ -1,11 +1,10 @@
-import { AttributesChangeRequest, AttributesRequest, AttributesShareRequest } from "@nmshd/content";
-import { MessageDTO } from "../../types";
+import { ConsumptionRequestDTO } from "../../types";
 import { DataEvent } from "../DataEvent";
 
-export class RequestReceivedEvent extends DataEvent<MessageDTO> {
+export class RequestReceivedEvent extends DataEvent<ConsumptionRequestDTO> {
     public static readonly namespace = "consumption.requestReceived";
 
-    public constructor(eventTargetAddress: string, public readonly request: AttributesChangeRequest | AttributesShareRequest | AttributesRequest, data: MessageDTO) {
+    public constructor(eventTargetAddress: string, data: ConsumptionRequestDTO) {
         super(RequestReceivedEvent.namespace, eventTargetAddress, data);
     }
 }
