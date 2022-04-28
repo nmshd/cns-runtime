@@ -75,7 +75,6 @@ describe("Requests", () => {
             expect(triggeredEvent!.data.id).toBe(sConsumptionRequest.id);
 
             expect(sConsumptionRequest.status).toBe(ConsumptionRequestStatus.Draft);
-            expect(sConsumptionRequest.content.expiresAt).toBe("2022-01-01T00:00:00.000Z");
             expect(sConsumptionRequest.content.items).toHaveLength(1);
             expect(sConsumptionRequest.content.items[0]["@type"]).toBe("TestRequestItem");
             expect(sConsumptionRequest.content.items[0].mustBeAccepted).toBe(false);
@@ -317,7 +316,6 @@ describe("Requests", () => {
         let rConsumptionServices: ConsumptionServices;
         let sTransportServices: TransportServices;
         let rTransportServices: TransportServices;
-        let sEventBus: EventBus;
         let rEventBus: EventBus;
 
         let sConsumptionRequest: ConsumptionRequestDTO;
@@ -336,40 +334,6 @@ describe("Requests", () => {
             rEventBus = runtimeServices[1].eventBus;
         }, 30000);
         afterAll(async () => await runtimeServiceProvider.stop());
-
-        // test("sender: create an outgoing Request in status Draft", async () => {
-        //     let triggeredEvent: RequestCreatedEvent | undefined;
-        //     sEventBus.subscribeOnce(RequestCreatedEvent, (event) => {
-        //         triggeredEvent = event;
-        //     });
-
-        //     const result = await sConsumptionServices.outgoingRequests.create({
-        //         content: {
-        //             items: [
-        //                 {
-        //                     "@type": "TestRequestItem",
-        //                     mustBeAccepted: false
-        //                 }
-        //             ],
-        //             expiresAt: "2022-01-01T00:00:00.000Z"
-        //         },
-        //         peer: "id1"
-        //     });
-
-        //     expect(result.isSuccess).toBe(true);
-
-        //     sConsumptionRequest = result.value;
-
-        //     expect(triggeredEvent).toBeDefined();
-        //     expect(triggeredEvent!.data).toBeDefined();
-        //     expect(triggeredEvent!.data.id).toBe(sConsumptionRequest.id);
-
-        //     expect(sConsumptionRequest.status).toBe(ConsumptionRequestStatus.Draft);
-        //     expect(sConsumptionRequest.content.expiresAt).toBe("2022-01-01T00:00:00.000Z");
-        //     expect(sConsumptionRequest.content.items).toHaveLength(1);
-        //     expect(sConsumptionRequest.content.items[0]["@type"]).toBe("TestRequestItem");
-        //     expect(sConsumptionRequest.content.items[0].mustBeAccepted).toBe(false);
-        // });
 
         test("sender: create a Relationship Template with the Request", async () => {
             const result = await sTransportServices.relationshipTemplates.createOwnRelationshipTemplate({
@@ -390,24 +354,6 @@ describe("Requests", () => {
 
             sRelationshipTemplate = result.value;
         });
-
-        // test("sender: mark the outgoing Request as sent", async () => {
-        //     let triggeredEvent: RequestSentEvent | undefined;
-        //     sEventBus.subscribeOnce(RequestSentEvent, (event) => {
-        //         triggeredEvent = event;
-        //     });
-
-        //     const result = await sConsumptionServices.outgoingRequests.sent({ requestId: sConsumptionRequest.id, messageId: sRequestMessage.id });
-
-        //     expect(result.isSuccess).toBe(true);
-
-        //     sConsumptionRequest = result.value;
-
-        //     expect(result.value.status).toBe(ConsumptionRequestStatus.Open);
-        //     expect(triggeredEvent).toBeDefined();
-        //     expect(triggeredEvent!.data).toBeDefined();
-        //     expect(triggeredEvent!.data.id).toBe(result.value.id);
-        // });
 
         test("recipient: load the Relationship Template with the Request", async () => {
             const tokenResult = await sTransportServices.relationshipTemplates.createTokenForOwnTemplate({ templateId: sRelationshipTemplate.id });
