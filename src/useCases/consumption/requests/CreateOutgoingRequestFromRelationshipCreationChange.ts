@@ -1,6 +1,6 @@
 import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
 import { ICreateOutgoingRequestFromRelationshipCreationChangeParameters, OutgoingRequestsController } from "@nmshd/consumption";
-import { CoreId, Relationship, RelationshipsController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
+import { CoreId, RelationshipChange, RelationshipsController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { RequestCreatedEvent } from "../../../events";
 import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
@@ -9,7 +9,7 @@ import { RequestMapper } from "./RequestMapper";
 
 export interface CreateOutgoingRequestFromRelationshipCreationChangeRequest {
     templateId: string;
-    relationshipId: string;
+    relationshipChangeId: string;
 }
 
 export class CreateOutgoingRequestFromRelationshipCreationChangeUseCase extends UseCase<CreateOutgoingRequestFromRelationshipCreationChangeRequest, ConsumptionRequestDTO> {
@@ -24,21 +24,20 @@ export class CreateOutgoingRequestFromRelationshipCreationChangeUseCase extends 
 
     protected async executeInternal(request: CreateOutgoingRequestFromRelationshipCreationChangeRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
         const template = await this.relationshipTemplateController.getRelationshipTemplate(CoreId.from(request.templateId));
-        const relationship = await this.relationshipController.getRelationship(CoreId.from(request.relationshipId));
+        const relationships = await this.relationshipController.getRelationships({ "cache.changes.id": request.relationshipChangeId }); // eslint-disable-line @typescript-eslint/naming-convention
+
+        if (relationships.length === 0) {
+            return Result.fail(RuntimeErrors.general.recordNotFound(RelationshipChange));
+        }
+        const relationship = relationships[0];
 
         if (!template) {
             return Result.fail(RuntimeErrors.general.recordNotFound(RelationshipTemplate));
         }
 
-        if (!relationship) {
-            return Result.fail(RuntimeErrors.general.recordNotFound(Relationship));
-        }
-
-        const change = relationship.cache!.creationChange;
-
         const params: ICreateOutgoingRequestFromRelationshipCreationChangeParameters = {
             template: template,
-            creationChange: change
+            creationChange: relationship.cache!.creationChange
         };
 
         const consumptionRequest = await this.outgoingRequestsController.createFromRelationshipCreationChange(params);

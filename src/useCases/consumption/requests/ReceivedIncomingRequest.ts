@@ -12,7 +12,7 @@ export interface ReceivedIncomingRequestRequest {
     receivedRequest: RequestJSON;
 
     /**
-     * The id of the Message or Relationship in which the Response was received.
+     * The id of the Message or RelationshipTemplate in which the Response was received.
      */
     requestSourceId: string;
 }
