@@ -3,7 +3,7 @@ import { ICreateOutgoingRequestParameters, OutgoingRequestsController } from "@n
 import { IRequest, RequestJSON } from "@nmshd/content";
 import { CoreAddress } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { RequestCreatedEvent } from "../../../events";
+import { OutgoingRequestCreatedEvent } from "../../../events";
 import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
 import { UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -29,7 +29,7 @@ export class CreateOutgoingRequestUseCase extends UseCase<CreateOutgoingRequestR
 
         const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
 
-        this.eventBus.publish(new RequestCreatedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, dto));
+        this.eventBus.publish(new OutgoingRequestCreatedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, dto));
 
         return Result.ok(dto);
     }

@@ -3,7 +3,7 @@ import { IncomingRequestsController } from "@nmshd/consumption";
 import { RequestJSON } from "@nmshd/content";
 import { CoreId, Message, MessageController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { RequestReceivedEvent } from "../../../events/consumption/RequestReceivedEvent";
+import { IncomingRequestReceivedEvent } from "../../../events/consumption/IncomingRequestReceivedEvent";
 import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -52,7 +52,7 @@ export class ReceivedIncomingRequestUseCase extends UseCase<ReceivedIncomingRequ
 
         const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
 
-        this.eventBus.publish(new RequestReceivedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, dto));
+        this.eventBus.publish(new IncomingRequestReceivedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, dto));
 
         return Result.ok(dto);
     }

@@ -6,15 +6,15 @@ import {
     ConsumptionRequestDTO,
     ConsumptionServices,
     MessageDTO,
+    OutgoingRequestCreatedEvent,
     OutgoingRequestStatusChangedEvent,
     RelationshipChangeDTO,
     RelationshipTemplateDTO,
-    RequestCreatedEvent,
     RequestSentEvent,
     TransportServices
 } from "../../src";
+import { IncomingRequestReceivedEvent } from "../../src/events/consumption/IncomingRequestReceivedEvent";
 import { IncomingRequestStatusChangedEvent } from "../../src/events/consumption/IncomingRequestStatusChangedEvent";
-import { RequestReceivedEvent } from "../../src/events/consumption/RequestReceivedEvent";
 import { establishRelationship, RuntimeServiceProvider, syncUntilHasMessages, syncUntilHasRelationships } from "../lib";
 
 describe("Requests", () => {
@@ -48,8 +48,8 @@ describe("Requests", () => {
         afterAll(async () => await runtimeServiceProvider.stop());
 
         test("sender: create an outgoing Request in status Draft", async () => {
-            let triggeredEvent: RequestCreatedEvent | undefined;
-            sEventBus.subscribeOnce(RequestCreatedEvent, (event) => {
+            let triggeredEvent: OutgoingRequestCreatedEvent | undefined;
+            sEventBus.subscribeOnce(OutgoingRequestCreatedEvent, (event) => {
                 triggeredEvent = event;
             });
 
@@ -118,8 +118,8 @@ describe("Requests", () => {
         });
 
         test("recipient: create an incoming Request from the Message content", async () => {
-            let triggeredEvent: RequestReceivedEvent | undefined;
-            rEventBus.subscribeOnce(RequestReceivedEvent, (event) => {
+            let triggeredEvent: IncomingRequestReceivedEvent | undefined;
+            rEventBus.subscribeOnce(IncomingRequestReceivedEvent, (event) => {
                 triggeredEvent = event;
             });
 
@@ -366,8 +366,8 @@ describe("Requests", () => {
         });
 
         test("recipient: create an incoming Request from the Relationship Template content", async () => {
-            let triggeredEvent: RequestReceivedEvent | undefined;
-            rEventBus.subscribeOnce(RequestReceivedEvent, (event) => {
+            let triggeredEvent: IncomingRequestReceivedEvent | undefined;
+            rEventBus.subscribeOnce(IncomingRequestReceivedEvent, (event) => {
                 triggeredEvent = event;
             });
 
