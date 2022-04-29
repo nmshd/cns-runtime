@@ -1,5 +1,4 @@
-/* eslint-disable jest/no-commented-out-tests */
-import { EventBus } from "@js-soft/ts-utils";
+import { EventBus, Result } from "@js-soft/ts-utils";
 import { ConsumptionRequestStatus } from "@nmshd/consumption";
 import { DateTime } from "luxon";
 import {
@@ -18,7 +17,14 @@ import { IncomingRequestStatusChangedEvent } from "../../src/events/consumption/
 import { establishRelationship, RuntimeServiceProvider, syncUntilHasMessages, syncUntilHasRelationships } from "../lib";
 
 describe("Requests", () => {
-    describe("Complete flow with Messages", () => {
+    describe.each([
+        {
+            type: "Accept"
+        } as { type: "Accept" | "Reject" },
+        {
+            type: "Reject"
+        } as { type: "Accept" | "Reject" }
+    ])("Complete flow with Messages: $type Request", ({ type }) => {
         const runtimeServiceProvider = new RuntimeServiceProvider();
         let sConsumptionServices: ConsumptionServices;
         let rConsumptionServices: ConsumptionServices;
@@ -188,11 +194,11 @@ describe("Requests", () => {
         });
 
         test("recipient: call canAccept for incoming Request", async () => {
-            const result = await rConsumptionServices.incomingRequests.canAccept({
+            const result = await rConsumptionServices.incomingRequests[`can${type}`]({
                 requestId: rConsumptionRequest.id,
                 items: [
                     {
-                        accept: true
+                        accept: type === "Accept" ? true : false // eslint-disable-line jest/no-if
                     }
                 ]
             });
@@ -213,15 +219,27 @@ describe("Requests", () => {
                 triggeredEvent = event;
             });
 
-            const result = await rConsumptionServices.incomingRequests.accept({
-                requestId: rConsumptionRequest.id,
-                items: [
-                    {
-                        accept: true
-                    }
-                ]
-            });
-
+            let result: Result<ConsumptionRequestDTO>;
+            // eslint-disable-next-line jest/no-if
+            if (type === "Accept") {
+                result = await rConsumptionServices.incomingRequests.accept({
+                    requestId: rConsumptionRequest.id,
+                    items: [
+                        {
+                            accept: true
+                        }
+                    ]
+                });
+            } else {
+                result = await rConsumptionServices.incomingRequests.reject({
+                    requestId: rConsumptionRequest.id,
+                    items: [
+                        {
+                            accept: false
+                        }
+                    ]
+                });
+            }
             expect(result.isSuccess).toBe(true);
 
             rConsumptionRequest = result.value;
@@ -310,7 +328,14 @@ describe("Requests", () => {
         });
     });
 
-    describe("Complete flow with Relationship Template and Change", () => {
+    describe.each([
+        {
+            type: "Accept"
+        } as { type: "Accept" | "Reject" },
+        {
+            type: "Reject"
+        } as { type: "Accept" | "Reject" }
+    ])("Complete flow with Relationship Template and Change: $type Request", ({ type }) => {
         const runtimeServiceProvider = new RuntimeServiceProvider();
         let sConsumptionServices: ConsumptionServices;
         let rConsumptionServices: ConsumptionServices;
@@ -436,11 +461,11 @@ describe("Requests", () => {
         });
 
         test("recipient: call canAccept for incoming Request", async () => {
-            const result = await rConsumptionServices.incomingRequests.canAccept({
+            const result = await rConsumptionServices.incomingRequests[`can${type}`]({
                 requestId: rConsumptionRequest.id,
                 items: [
                     {
-                        accept: true
+                        accept: type === "Accept" ? true : false // eslint-disable-line jest/no-if
                     }
                 ]
             });
@@ -461,14 +486,27 @@ describe("Requests", () => {
                 triggeredEvent = event;
             });
 
-            const result = await rConsumptionServices.incomingRequests.accept({
-                requestId: rConsumptionRequest.id,
-                items: [
-                    {
-                        accept: true
-                    }
-                ]
-            });
+            let result: Result<ConsumptionRequestDTO>;
+            // eslint-disable-next-line jest/no-if
+            if (type === "Accept") {
+                result = await rConsumptionServices.incomingRequests.accept({
+                    requestId: rConsumptionRequest.id,
+                    items: [
+                        {
+                            accept: true
+                        }
+                    ]
+                });
+            } else {
+                result = await rConsumptionServices.incomingRequests.reject({
+                    requestId: rConsumptionRequest.id,
+                    items: [
+                        {
+                            accept: false
+                        }
+                    ]
+                });
+            }
 
             expect(result.isSuccess).toBe(true);
 
