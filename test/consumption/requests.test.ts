@@ -1,6 +1,6 @@
 /* eslint-disable jest/no-commented-out-tests */
 import { EventBus } from "@js-soft/ts-utils";
-import { ConsumptionRequestStatus, RequestItemDecision } from "@nmshd/consumption";
+import { ConsumptionRequestStatus } from "@nmshd/consumption";
 import { DateTime } from "luxon";
 import {
     ConsumptionRequestDTO,
@@ -192,7 +192,7 @@ describe("Requests", () => {
                 requestId: rConsumptionRequest.id,
                 items: [
                     {
-                        decision: RequestItemDecision.Accept
+                        accept: true
                     }
                 ]
             });
@@ -217,7 +217,7 @@ describe("Requests", () => {
                 requestId: rConsumptionRequest.id,
                 items: [
                     {
-                        decision: RequestItemDecision.Accept
+                        accept: true
                     }
                 ]
             });
@@ -440,7 +440,7 @@ describe("Requests", () => {
                 requestId: rConsumptionRequest.id,
                 items: [
                     {
-                        decision: RequestItemDecision.Accept
+                        accept: true
                     }
                 ]
             });
@@ -465,7 +465,7 @@ describe("Requests", () => {
                 requestId: rConsumptionRequest.id,
                 items: [
                     {
-                        decision: RequestItemDecision.Accept
+                        accept: true
                     }
                 ]
             });
