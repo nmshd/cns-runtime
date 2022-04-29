@@ -187,7 +187,7 @@ describe("Requests", () => {
             expect(triggeredEvent!.data.newStatus).toBe(ConsumptionRequestStatus.ManualDecisionRequired);
         });
 
-        test("recipient: call canAccept of incoming Request", async () => {
+        test("recipient: call canAccept for incoming Request", async () => {
             const result = await rConsumptionServices.incomingRequests.canAccept({
                 requestId: rConsumptionRequest.id,
                 items: [
@@ -435,7 +435,7 @@ describe("Requests", () => {
             expect(triggeredEvent!.data.newStatus).toBe(ConsumptionRequestStatus.ManualDecisionRequired);
         });
 
-        test("recipient: call canAccept of incoming Request", async () => {
+        test("recipient: call canAccept for incoming Request", async () => {
             const result = await rConsumptionServices.incomingRequests.canAccept({
                 requestId: rConsumptionRequest.id,
                 items: [
@@ -530,7 +530,7 @@ describe("Requests", () => {
             sRelationshipChange = result[0].changes[0];
         });
 
-        test("sender: complete the outgoing Request with Response from Message", async () => {
+        test("sender: create the outgoing Request with Request from Relationship Template and Response from Relationship Creation Change", async () => {
             const result = await sConsumptionServices.outgoingRequests.createFromRelationshipCreationChange({
                 relationshipChangeId: sRelationshipChange.id,
                 templateId: sRelationshipTemplate.id
