@@ -3,9 +3,11 @@ import { Inject } from "typescript-ioc";
 import { ConsumptionRequestDTO, RequestValidationResultDTO } from "../../../types";
 import { AcceptIncomingRequestRequest, AcceptIncomingRequestUseCase } from "../../../useCases/consumption/requests/AcceptIncomingRequest";
 import { CanAcceptIncomingRequestUseCase } from "../../../useCases/consumption/requests/CanAcceptIncomingRequest";
+import { CanRejectIncomingRequestUseCase } from "../../../useCases/consumption/requests/CanRejectIncomingRequest";
 import { CheckPrerequisitesOfIncomingRequestRequest, CheckPrerequisitesOfIncomingRequestUseCase } from "../../../useCases/consumption/requests/CheckPrerequisitesOfIncomingRequest";
 import { CompleteIncomingRequestRequest, CompleteIncomingRequestUseCase } from "../../../useCases/consumption/requests/CompleteIncomingRequest";
 import { ReceivedIncomingRequestRequest, ReceivedIncomingRequestUseCase } from "../../../useCases/consumption/requests/ReceivedIncomingRequest";
+import { RejectIncomingRequestRequest, RejectIncomingRequestUseCase } from "../../../useCases/consumption/requests/RejectIncomingRequest";
 import {
     RequireManualDecisionOfIncomingRequestRequest,
     RequireManualDecisionOfIncomingRequestUseCase
@@ -18,6 +20,8 @@ export class IncomingRequestsFacade {
         @Inject private readonly requireManualDecisionUseCase: RequireManualDecisionOfIncomingRequestUseCase,
         @Inject private readonly canAcceptUseCase: CanAcceptIncomingRequestUseCase,
         @Inject private readonly acceptUseCase: AcceptIncomingRequestUseCase,
+        @Inject private readonly canRejectUseCase: CanRejectIncomingRequestUseCase,
+        @Inject private readonly rejectUseCase: RejectIncomingRequestUseCase,
         @Inject private readonly completeUseCase: CompleteIncomingRequestUseCase
     ) {}
 
@@ -39,6 +43,14 @@ export class IncomingRequestsFacade {
 
     public async accept(request: AcceptIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
         return await this.acceptUseCase.execute(request);
+    }
+
+    public async canReject(request: RejectIncomingRequestRequest): Promise<Result<RequestValidationResultDTO>> {
+        return await this.canRejectUseCase.execute(request);
+    }
+
+    public async reject(request: RejectIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+        return await this.rejectUseCase.execute(request);
     }
 
     public async complete(request: CompleteIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
