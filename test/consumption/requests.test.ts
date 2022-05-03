@@ -74,7 +74,7 @@ describe("Requests", () => {
 
             expect(result.isSuccess).toBe(true);
 
-            sConsumptionRequest = result.value;
+            sConsumptionRequest = (await sConsumptionServices.outgoingRequests.get({ id: result.value.id })).value;
 
             expect(triggeredEvent).toBeDefined();
             expect(triggeredEvent!.data).toBeDefined();
@@ -136,7 +136,7 @@ describe("Requests", () => {
 
             expect(result.isSuccess).toBe(true);
 
-            rConsumptionRequest = result.value;
+            rConsumptionRequest = (await rConsumptionServices.incomingRequests.get({ id: result.value.id })).value;
 
             expect(rConsumptionRequest).toBeDefined();
             expect(rConsumptionRequest.status).toBe(ConsumptionRequestStatus.Open);

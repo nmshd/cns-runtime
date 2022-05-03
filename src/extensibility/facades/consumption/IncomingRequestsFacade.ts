@@ -6,6 +6,7 @@ import { CanAcceptIncomingRequestUseCase } from "../../../useCases/consumption/r
 import { CanRejectIncomingRequestUseCase } from "../../../useCases/consumption/requests/CanRejectIncomingRequest";
 import { CheckPrerequisitesOfIncomingRequestRequest, CheckPrerequisitesOfIncomingRequestUseCase } from "../../../useCases/consumption/requests/CheckPrerequisitesOfIncomingRequest";
 import { CompleteIncomingRequestRequest, CompleteIncomingRequestUseCase } from "../../../useCases/consumption/requests/CompleteIncomingRequest";
+import { GetIncomingRequestRequest, GetIncomingRequestUseCase } from "../../../useCases/consumption/requests/GetIncomingRequest";
 import { ReceivedIncomingRequestRequest, ReceivedIncomingRequestUseCase } from "../../../useCases/consumption/requests/ReceivedIncomingRequest";
 import { RejectIncomingRequestRequest, RejectIncomingRequestUseCase } from "../../../useCases/consumption/requests/RejectIncomingRequest";
 import {
@@ -22,7 +23,8 @@ export class IncomingRequestsFacade {
         @Inject private readonly acceptUseCase: AcceptIncomingRequestUseCase,
         @Inject private readonly canRejectUseCase: CanRejectIncomingRequestUseCase,
         @Inject private readonly rejectUseCase: RejectIncomingRequestUseCase,
-        @Inject private readonly completeUseCase: CompleteIncomingRequestUseCase
+        @Inject private readonly completeUseCase: CompleteIncomingRequestUseCase,
+        @Inject private readonly getRequestUseCase: GetIncomingRequestUseCase
     ) {}
 
     public async received(request: ReceivedIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
@@ -55,5 +57,9 @@ export class IncomingRequestsFacade {
 
     public async complete(request: CompleteIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
         return await this.completeUseCase.execute(request);
+    }
+
+    public async get(request: GetIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+        return await this.getRequestUseCase.execute(request);
     }
 }

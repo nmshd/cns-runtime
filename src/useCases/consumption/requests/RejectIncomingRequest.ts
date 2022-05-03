@@ -15,7 +15,7 @@ export class RejectIncomingRequestUseCase extends UseCase<RejectIncomingRequestR
     }
 
     protected async executeInternal(request: RejectIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
-        let consumptionRequest = await this.incomingRequestsController.get(CoreId.from(request.requestId));
+        let consumptionRequest = await this.incomingRequestsController.getIncomingRequest(CoreId.from(request.requestId));
 
         if (!consumptionRequest) {
             return Result.fail(RuntimeErrors.general.recordNotFound(ConsumptionRequest));
