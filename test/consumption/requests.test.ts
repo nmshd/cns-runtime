@@ -20,11 +20,11 @@ describe("Requests", () => {
     describe.each([
         {
             type: "Accept"
-        } as { type: "Accept" | "Reject" },
+        },
         {
             type: "Reject"
-        } as { type: "Accept" | "Reject" }
-    ])("Complete flow with Messages: $type Request", ({ type }) => {
+        }
+    ] as TestCase[])("Complete flow with Messages: $type Request", ({ type }: TestCase) => {
         const runtimeServiceProvider = new RuntimeServiceProvider();
         let sConsumptionServices: ConsumptionServices;
         let rConsumptionServices: ConsumptionServices;
@@ -331,11 +331,11 @@ describe("Requests", () => {
     describe.each([
         {
             type: "Accept"
-        } as { type: "Accept" | "Reject" },
+        },
         {
             type: "Reject"
-        } as { type: "Accept" | "Reject" }
-    ])("Complete flow with Relationship Template and Change: $type Request", ({ type }) => {
+        }
+    ] as TestCase[])("Complete flow with Relationship Template and Change: $type Request", ({ type }) => {
         const runtimeServiceProvider = new RuntimeServiceProvider();
         let sConsumptionServices: ConsumptionServices;
         let rConsumptionServices: ConsumptionServices;
@@ -586,3 +586,7 @@ describe("Requests", () => {
         });
     });
 });
+
+interface TestCase {
+    type: "Accept" | "Reject";
+}
