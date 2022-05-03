@@ -36,6 +36,10 @@ export class TestRuntime extends Runtime {
         return loggerFactory;
     }
 
+    public get accountController(): AccountController {
+        return this.getAccountController();
+    }
+
     public get dataViewExpander(): DataViewExpander {
         return this.getDataViewExpander();
     }
@@ -62,7 +66,7 @@ export class TestRuntime extends Runtime {
         const accountController = await new AccountController(this.transport, db, this.transport.config).init();
         const consumptionController = await new ConsumptionController(this.transport, accountController).init();
 
-        this.login(accountController, consumptionController);
+        await this.login(accountController, consumptionController);
     }
 
     public getHealth(): Promise<RuntimeHealth> {
