@@ -12,7 +12,7 @@ afterAll(async () => await runtimeServiceProvider.stop());
 describe("DatabaseSchemaUpgrader", () => {
     test("should write version 1 to the database during startup", async () => {
         const collection = await runtime.accountController.db.getCollection("meta");
-        const doc = await collection.findOne({ id: "version" });
+        const doc = await collection.findOne({ id: "databaseSchema" });
 
         expect(doc).toBeDefined();
         expect(doc.version).toBeGreaterThan(0);

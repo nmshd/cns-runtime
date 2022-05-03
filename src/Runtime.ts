@@ -81,7 +81,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         this._expander = Container.get<DataViewExpander>(DataViewExpander);
 
-        await new DatabaseSchemaUpgrader(this, accountController, consumptionController).upgradeSchemaVersion();
+        await new DatabaseSchemaUpgrader(accountController, consumptionController).upgradeSchemaVersion();
 
         return this;
     }
