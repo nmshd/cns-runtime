@@ -6,11 +6,10 @@ export interface ConsumptionRequestDTO {
     isOwn: boolean;
     peer: string;
     createdAt: string;
+    status: ConsumptionRequestStatus;
     content: RequestJSON;
     source?: ConsumptionRequestSourceDTO;
     response?: ConsumptionResponseDTO;
-    status: ConsumptionRequestStatus;
-    statusLog: ConsumptionRequestStatusLogEntryDTO[];
 }
 
 export interface ConsumptionRequestSourceDTO {
@@ -27,12 +26,4 @@ export interface ConsumptionResponseDTO {
     createdAt: string;
     content: ResponseJSON;
     source?: ConsumptionResponseSourceDTO;
-}
-
-export interface ConsumptionRequestStatusLogEntryDTO {
-    createdAt: string;
-    oldStatus: ConsumptionRequestStatus;
-    newStatus: ConsumptionRequestStatus;
-    data?: object;
-    code?: string;
 }
