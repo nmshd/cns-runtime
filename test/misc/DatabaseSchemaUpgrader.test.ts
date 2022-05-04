@@ -57,8 +57,8 @@ describe("DatabaseSchemaUpgrader", () => {
     test("should write the current version to the database during startup", async () => {
         await new DatabaseSchemaUpgrader(accountController, consumptionController).upgradeSchemaVersion();
 
-        const collection = await accountController.db.getCollection("meta");
-        const doc = await collection.findOne({ id: "databaseSchema" });
+        const metaCollection = await accountController.db.getCollection("meta");
+        const doc = await metaCollection.findOne({ id: "databaseSchema" });
 
         expect(doc).toBeDefined();
         expect(doc.version).toBeGreaterThan(0);

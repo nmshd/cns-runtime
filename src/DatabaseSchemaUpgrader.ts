@@ -2,27 +2,27 @@ import { Serializable, serialize, type, validate } from "@js-soft/ts-serval";
 import { ConsumptionController } from "@nmshd/consumption";
 import { AccountController } from "@nmshd/transport";
 
-@type("RuntimeDatabaseSchema")
-class RuntimeDatabaseSchema extends Serializable {
+@type("RuntimeDatabaseSchemaMetadata")
+class RuntimeDatabaseSchemaMetadata extends Serializable {
     public static readonly DATABASE_SCHEMA_ID = "databaseSchema";
 
     @serialize()
-    @validate({ customValidator: (value: string) => (value === RuntimeDatabaseSchema.DATABASE_SCHEMA_ID ? undefined : "Invalid database schema id") })
+    @validate({ customValidator: (value: string) => (value === RuntimeDatabaseSchemaMetadata.DATABASE_SCHEMA_ID ? undefined : "Invalid database schema id") })
     public id: string;
 
     @serialize()
     @validate({ min: 0 })
     public version: number;
 
-    public static from(value: { id?: string; version: number }): RuntimeDatabaseSchema {
-        if (!value.id) value.id = RuntimeDatabaseSchema.DATABASE_SCHEMA_ID;
-        return super.fromT(value, RuntimeDatabaseSchema);
+    public static from(value: { id?: string; version: number }): RuntimeDatabaseSchemaMetadata {
+        if (!value.id) value.id = RuntimeDatabaseSchemaMetadata.DATABASE_SCHEMA_ID;
+        return super.fromT(value, RuntimeDatabaseSchemaMetadata);
     }
 }
 
 export class DatabaseSchemaUpgrader {
     private readonly CURRENT_DATABASE_SCHEMA_VERSION = 1;
-    private readonly DATABASE_SCHEMA_QUERY = { id: RuntimeDatabaseSchema.DATABASE_SCHEMA_ID };
+    private readonly DATABASE_SCHEMA_QUERY = { id: RuntimeDatabaseSchemaMetadata.DATABASE_SCHEMA_ID };
 
     public constructor(private readonly accountController: AccountController, private readonly consumptionController: ConsumptionController) {}
 
@@ -47,28 +47,27 @@ export class DatabaseSchemaUpgrader {
         // If no version is found, assume version 0
         if (!doc) return 0;
 
-        const schema = RuntimeDatabaseSchema.from(doc);
-        return schema.version;
+        const metadata = RuntimeDatabaseSchemaMetadata.from(doc);
+        return metadata.version;
     }
 
     private async writeVersionToDB(version: number): Promise<void> {
         const collection = await this.accountController.db.getCollection("meta");
 
-        const schema = RuntimeDatabaseSchema.from({ version });
+        const metadata = RuntimeDatabaseSchemaMetadata.from({ version });
 
         const oldDoc = await collection.findOne(this.DATABASE_SCHEMA_QUERY);
         if (oldDoc) {
-            await collection.update(oldDoc, schema);
+            await collection.update(oldDoc, metadata);
         } else {
-            await collection.create(schema);
+            await collection.create(metadata);
         }
     }
 }
 
-const noop = async () => {
-    // noop
-};
-
 const UPGRADE_LOGIC: Record<number, ((accountController: AccountController, consumptionController: ConsumptionController) => void | Promise<void>) | undefined> = {
-    1: noop // eslint-disable-line @typescript-eslint/naming-convention
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    1: () => {
+        // noop
+    }
 };
