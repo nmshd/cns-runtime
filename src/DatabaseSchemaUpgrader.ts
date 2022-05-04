@@ -41,8 +41,8 @@ export class DatabaseSchemaUpgrader {
     }
 
     private async getVersionFromDB(): Promise<number> {
-        const collection = await this.accountController.db.getCollection("meta");
-        const doc = await collection.findOne(this.DATABASE_SCHEMA_QUERY);
+        const metaCollection = await this.accountController.db.getCollection("meta");
+        const doc = await metaCollection.findOne(this.DATABASE_SCHEMA_QUERY);
 
         // If no version is found, assume version 0
         if (!doc) return 0;
@@ -52,15 +52,15 @@ export class DatabaseSchemaUpgrader {
     }
 
     private async writeVersionToDB(version: number): Promise<void> {
-        const collection = await this.accountController.db.getCollection("meta");
+        const metaCollection = await this.accountController.db.getCollection("meta");
 
         const metadata = RuntimeDatabaseSchemaMetadata.from({ version });
 
-        const oldDoc = await collection.findOne(this.DATABASE_SCHEMA_QUERY);
+        const oldDoc = await metaCollection.findOne(this.DATABASE_SCHEMA_QUERY);
         if (oldDoc) {
-            await collection.update(oldDoc, metadata);
+            await metaCollection.update(oldDoc, metadata);
         } else {
-            await collection.create(metadata);
+            await metaCollection.create(metadata);
         }
     }
 }
