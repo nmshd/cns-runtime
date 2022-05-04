@@ -68,7 +68,7 @@ export class TestRuntime extends Runtime {
             }
         ]);
 
-        this.login(accountController, consumptionController);
+        await this.login(accountController, consumptionController);
     }
 
     public getHealth(): Promise<RuntimeHealth> {
