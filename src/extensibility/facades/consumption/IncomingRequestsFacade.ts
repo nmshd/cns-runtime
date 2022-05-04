@@ -61,11 +61,11 @@ export class IncomingRequestsFacade {
         return await this.completeUseCase.execute(request);
     }
 
-    public async getIncomingRequest(request: GetIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async getRequest(request: GetIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
         return await this.getRequestUseCase.execute(request);
     }
 
-    public async getIncomingRequests(request: GetIncomingRequestsRequest): Promise<Result<ConsumptionRequestDTO[]>> {
+    public async getRequests(request: GetIncomingRequestsRequest): Promise<Result<ConsumptionRequestDTO[]>> {
         return await this.getRequestsUseCase.execute(request);
     }
 }

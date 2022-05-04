@@ -138,7 +138,7 @@ describe("Requests", () => {
 
             expect(result).toBeSuccessful();
 
-            rConsumptionRequest = (await rConsumptionServices.incomingRequests.getIncomingRequest({ id: result.value.id })).value;
+            rConsumptionRequest = (await rConsumptionServices.incomingRequests.getRequest({ id: result.value.id })).value;
 
             expect(rConsumptionRequest).toBeDefined();
             expect(rConsumptionRequest.status).toBe(ConsumptionRequestStatus.Open);
@@ -394,7 +394,7 @@ describe("Requests", () => {
 
             expect(result).toBeSuccessful();
 
-            rConsumptionRequest = (await rConsumptionServices.incomingRequests.getIncomingRequest({ id: result.value.id })).value;
+            rConsumptionRequest = (await rConsumptionServices.incomingRequests.getRequest({ id: result.value.id })).value;
 
             expect(rConsumptionRequest).toBeDefined();
             expect(rConsumptionRequest.status).toBe(ConsumptionRequestStatus.Open);
