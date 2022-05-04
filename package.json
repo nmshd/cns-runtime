@@ -39,8 +39,14 @@
         "maxWorkers": 1,
         "preset": "ts-jest",
         "setupFilesAfterEnv": [
-            "@alex_neo/jest-expect-message"
+            "@alex_neo/jest-expect-message",
+            "./test/setupJest.ts"
         ],
+        "globals": {
+            "ts-jest": {
+                "tsconfig": "test/tsconfig.json"
+            }
+        },
         "testEnvironment": "node",
         "testTimeout": 60000
     },

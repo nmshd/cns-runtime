@@ -1,7 +1,6 @@
 import { DateTime } from "luxon";
 import { ConsumptionServices } from "../../src";
 import { RuntimeServiceProvider } from "../lib/RuntimeServiceProvider";
-import { expectError, expectSuccess } from "../lib/validation";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
 let consumptionServices: ConsumptionServices;
@@ -37,7 +36,7 @@ describe("Attributes", () => {
     test("should create an attribute without date information", async () => {
         const timestamp = DateTime.utc().toString();
         const response = await consumptionServices.attributes.createAttribute(attributeWithoutDate);
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         const attribute = response.value;
         expect(attribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
         expect(attribute.content).toMatchObject(attributeWithoutDate.attribute);
@@ -49,7 +48,7 @@ describe("Attributes", () => {
         const timestamp = DateTime.utc().toString();
 
         const response = await consumptionServices.attributes.createAttribute(attributeWithDate);
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         const attribute = response.value;
         const attributeContent = attribute.content;
         expect(attribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
@@ -73,12 +72,12 @@ describe("Attributes", () => {
             }
         };
         const response = await consumptionServices.attributes.createAttribute(attributeWithEmptyValues);
-        expectError(response, "attribute.name is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("attribute.name is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should get an attribute by id", async () => {
         const response = await consumptionServices.attributes.getAttribute({ id: attributeWithoutDateId });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         const attribute = response.value;
         expect(attribute.id).toStrictEqual(attributeWithoutDateId);
         expect(attribute.content).toBeDefined();
@@ -92,17 +91,17 @@ describe("Attributes", () => {
 
     test("should throw an error for get with an empty id", async () => {
         const response = await consumptionServices.attributes.getAttribute({ id: "" });
-        expectError(response, "id is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("id is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should throw an error for get with an invalid id", async () => {
         const response = await consumptionServices.attributes.getAttribute({ id: "ThisIsAnInvalidId" });
-        expectError(response, "id is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("id is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should get an attribute without date information by name", async () => {
         const response = await consumptionServices.attributes.getAttributeByName({ name: attributeWithoutDateName });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         const attribute = response.value;
         expect(attribute.id).toStrictEqual(attributeWithoutDateId);
         expect(attribute.content).toBeDefined();
@@ -116,7 +115,7 @@ describe("Attributes", () => {
 
     test("should get attribute with date information by name", async () => {
         const response = await consumptionServices.attributes.getAttributeByName({ name: attributeWithDateName });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         const attribute = response.value;
         expect(attribute.id).toStrictEqual(attributeWithDateId);
         expect(attribute.content).toBeDefined();
@@ -130,19 +129,19 @@ describe("Attributes", () => {
 
     test("should throw an error for get with empty name", async () => {
         const response = await consumptionServices.attributes.getAttributeByName({ name: "" });
-        expectError(response, "name is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("name is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should throw an error for get with non-existent name", async () => {
         const response = await consumptionServices.attributes.getAttributeByName({
             name: "ThisIsANon-ExistentAttributeName"
         });
-        expectError(response, "Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(response).toBeAnError("Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
     test("should get all attributes", async () => {
         const response = await consumptionServices.attributes.getAttributes({});
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         expect(response.value).toHaveLength(2);
     });
 
@@ -151,7 +150,7 @@ describe("Attributes", () => {
             id: attributeWithoutDateId,
             attribute: { name: attributeWithoutDateName, value: "new-Value" }
         });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         const attribute = response.value;
         expect(attribute.content).toBeDefined();
         expect(attribute.content.value).toBe("new-Value");
@@ -163,7 +162,7 @@ describe("Attributes", () => {
             id: attributeWithoutDateId,
             attribute: { name: "", value: "new-Value" }
         });
-        expectError(response, "attribute.name is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("attribute.name is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should succeed attribute without validFrom parameter", async () => {
@@ -177,7 +176,7 @@ describe("Attributes", () => {
         const response = await consumptionServices.attributes.succeedAttribute({
             attribute: { name: attributeToSucceed.name, value: successorValue1 }
         });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         const attribute = response.value;
         expect(attribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
         expect(attribute.content.validFrom!.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
@@ -197,7 +196,7 @@ describe("Attributes", () => {
             attribute: { name: attributeToSucceed.name, value: successorValue2 },
             validFrom: validFrom
         });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         const attribute = response.value;
         expect(attribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
         expect(attribute.content).toStrictEqual(expect.objectContaining({ name: attributeWithDateName, value: successorValue2, validFrom: validFrom }));
@@ -205,7 +204,7 @@ describe("Attributes", () => {
         const getCurrentAttributeResponse = await consumptionServices.attributes.getAttributeByName({
             name: attributeToSucceed.name
         });
-        expectSuccess(getCurrentAttributeResponse);
+        expect(getCurrentAttributeResponse).toBeSuccessful();
         expect(getCurrentAttributeResponse.value.content).toStrictEqual(
             expect.objectContaining({
                 name: attributeToSucceed.name,
@@ -229,12 +228,12 @@ describe("Attributes", () => {
             validFrom: validFrom
         });
 
-        expectError(response, "attribute.name is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("attribute.name is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should get history", async () => {
         const response = await consumptionServices.attributes.getHistoryByName({ name: attributeWithDateName });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         let validTo = "";
         for (const attribute of response.value) {
             expect(attribute.content).toStrictEqual(expect.objectContaining({ name: attributeWithDateName }));
@@ -251,12 +250,12 @@ describe("Attributes", () => {
         const response = await consumptionServices.attributes.getHistoryByName({
             name: "ThisIsANon-ExistentAttributeName"
         });
-        expectError(response, "Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(response).toBeAnError("Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
     test("should get all currently valid attributes", async () => {
         const response = await consumptionServices.attributes.getAllValid();
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         const now = DateTime.utc();
         for (const attribute of response.value) {
             if (attribute.content.validFrom) {
@@ -276,31 +275,31 @@ describe("Attributes", () => {
 
     test("should delete an attribute by id", async () => {
         const response = await consumptionServices.attributes.deleteAttribute({ id: attributeWithoutDateId });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
 
         const responseGetAttribute = await consumptionServices.attributes.getAttribute({ id: attributeWithoutDateId });
-        expectError(responseGetAttribute, "Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(responseGetAttribute).toBeAnError("Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
     test("should delete attributes by name", async () => {
         const response = await consumptionServices.attributes.deleteAttributeByName({ name: attributeWithDateName });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
 
         const responseGetAttribute = await consumptionServices.attributes.getAttributeByName({
             name: attributeWithDateName
         });
-        expectError(responseGetAttribute, "Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(responseGetAttribute).toBeAnError("Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
     test("should throw an error for delete with invalid attribute id", async () => {
         const response = await consumptionServices.attributes.deleteAttribute({ id: "ThisIsAnInvalidId" });
-        expectError(response, "id is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("id is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("should throw an error for delete with non-existent attribute name", async () => {
         const response = await consumptionServices.attributes.deleteAttributeByName({
             name: "ThisIsANon-ExistentAttributeName"
         });
-        expectError(response, "ConsumptionAttribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+        expect(response).toBeAnError("ConsumptionAttribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 });

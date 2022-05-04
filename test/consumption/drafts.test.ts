@@ -1,5 +1,5 @@
 import { ConsumptionServices } from "../../src";
-import { expectSuccess, QueryParamConditions, RuntimeServiceProvider } from "../lib";
+import { QueryParamConditions, RuntimeServiceProvider } from "../lib";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
 let consumptionServices: ConsumptionServices;
@@ -17,7 +17,7 @@ describe("Drafts", () => {
     test("should create a draft", async () => {
         const result = await consumptionServices.drafts.createDraft({ content: content, type: "test" });
 
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const draft = result.value;
         draftId = draft.id;
@@ -25,7 +25,7 @@ describe("Drafts", () => {
 
     test("should get the draft", async () => {
         const result = await consumptionServices.drafts.getDraft({ id: draftId });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const draft = result.value;
         expect(draft.content).toStrictEqual(content);
@@ -33,7 +33,7 @@ describe("Drafts", () => {
 
     test("should have query the draft", async () => {
         const result = await consumptionServices.drafts.getDrafts({});
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const drafts = result.value;
         expect(drafts).toHaveLength(1);
@@ -44,10 +44,10 @@ describe("Drafts", () => {
     test("should edit the draft", async () => {
         const newContent = { aKey: "another-Value" };
         const updateResult = await consumptionServices.drafts.updateDraft({ id: draftId, content: newContent });
-        expectSuccess(updateResult);
+        expect(updateResult).toBeSuccessful();
 
         const result = await consumptionServices.drafts.getDraft({ id: draftId });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const draft = result.value;
         expect(draft.content).toStrictEqual(newContent);
@@ -55,10 +55,10 @@ describe("Drafts", () => {
 
     test("should delete the draft", async () => {
         const deleteResult = await consumptionServices.drafts.deleteDraft({ id: draftId });
-        expectSuccess(deleteResult);
+        expect(deleteResult).toBeSuccessful();
 
         const result = await consumptionServices.drafts.getDrafts({});
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const drafts = result.value;
         expect(drafts).toHaveLength(0);
@@ -69,7 +69,7 @@ describe("Drafts query", () => {
     test("drafts can be queried by their attributes", async () => {
         const result = await consumptionServices.drafts.createDraft({ content: {}, type: "test" });
 
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const draft = result.value;
 

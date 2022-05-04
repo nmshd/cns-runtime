@@ -2,7 +2,6 @@ import { TokenDTO, TransportServices } from "../../src";
 import { RuntimeServiceProvider } from "../lib/RuntimeServiceProvider";
 import { NoLoginTestRuntime, TestRuntime } from "../lib/TestRuntime";
 import { uploadOwnToken } from "../lib/testUtils";
-import { expectSuccess } from "../lib/validation";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices: TransportServices;
@@ -31,7 +30,7 @@ describe("Anonymous tokens", () => {
         const result = await noLoginRuntime.anonymousServices.tokens.loadPeerTokenByTruncatedReference({
             reference: uploadedToken.truncatedReference
         });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const token = result.value;
         expect(token.content).toStrictEqual(uploadedToken.content);
@@ -42,7 +41,7 @@ describe("Anonymous tokens", () => {
             id: uploadedToken.id,
             secretKey: uploadedToken.secretKey
         });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const token = result.value;
         expect(token.content).toStrictEqual(uploadedToken.content);

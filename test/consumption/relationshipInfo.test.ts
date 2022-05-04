@@ -2,7 +2,7 @@
 /* eslint-disable jest/no-disabled-tests */
 import { AttributeJSON } from "@nmshd/content";
 import { ConsumptionServices, CreateRelationshipInfoRequest } from "../../src";
-import { expectError, expectSuccess, RuntimeServiceProvider } from "../lib";
+import { RuntimeServiceProvider } from "../lib";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
 let consumptionServices: ConsumptionServices;
@@ -73,17 +73,17 @@ describe.skip("RelationshipInfo", () => {
 
     test("create a RelationshipInfo", async () => {
         const result = await createSimpleRelationshipInfo(relationshipId);
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
         expect(result.value.relationshipId).toStrictEqual(relationshipId);
     });
 
     test("prohibit creation of multiple RelationshipInfos for a single Relationship", async () => {
         let result = await createSimpleRelationshipInfo(relationshipId);
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
         result = await createSimpleRelationshipInfo(relationshipId);
         const code = "error.runtime.relationshipInfo.relationshipInfoExists";
         const message = `RelationshipInfo for RelationshipId ${relationshipId} already exists. Try to update the RelationshipInfo instead.`;
-        expectError(result, message, code);
+        expect(result).toBeAnError(message, code);
     });
 
     test("retrieve a RelationshipInfo by its RelationshipId", async () => {
@@ -91,7 +91,7 @@ describe.skip("RelationshipInfo", () => {
         resultCreate = await consumptionServices.relationshipInfo.getRelationshipInfoByRelationship({
             relationshipId: relationshipId
         });
-        expectSuccess(resultCreate);
+        expect(resultCreate).toBeSuccessful();
         expect(resultCreate.value.relationshipId).toBe(relationshipId);
     });
 
@@ -99,13 +99,13 @@ describe.skip("RelationshipInfo", () => {
         const resultCreate = await createSimpleRelationshipInfo(relationshipId);
         const id: string = resultCreate.value.id;
         const resultDelete = await consumptionServices.relationshipInfo.deleteRelationshipInfo({ id: id });
-        expectSuccess(resultDelete);
+        expect(resultDelete).toBeSuccessful();
         const resultGet = await consumptionServices.relationshipInfo.getRelationshipInfoByRelationship({
             relationshipId: relationshipId
         });
         const code = "error.runtime.recordNotFound";
         const message = "RelationshipInfo not found. Make sure the ID exists and the record is not expired.";
-        expectError(resultGet, message, code);
+        expect(resultGet).toBeAnError(message, code);
     });
 
     test("delete a RelationshipInfo by its RelationshipId", async () => {
@@ -113,13 +113,13 @@ describe.skip("RelationshipInfo", () => {
         const resultDelete = await consumptionServices.relationshipInfo.deleteRelationshipInfoByRelationship({
             relationshipId: relationshipId
         });
-        expectSuccess(resultDelete);
+        expect(resultDelete).toBeSuccessful();
         const resultGet = await consumptionServices.relationshipInfo.getRelationshipInfoByRelationship({
             relationshipId: relationshipId
         });
         const code = "error.runtime.recordNotFound";
         const message = "RelationshipInfo not found. Make sure the ID exists and the record is not expired.";
-        expectError(resultGet, message, code);
+        expect(resultGet).toBeAnError(message, code);
     });
 
     test("prohibit deletion of non-existing RelationshipInfo", async () => {
@@ -128,7 +128,7 @@ describe.skip("RelationshipInfo", () => {
         });
         const code = "error.runtime.recordNotFound";
         const message = "RelationshipInfo not found. Make sure the ID exists and the record is not expired.";
-        expectError(resultDelete, message, code);
+        expect(resultDelete).toBeAnError(message, code);
     });
 
     test("prohibit deletion of non-existing RelationshipInfo by its RelationshipId", async () => {
@@ -137,17 +137,17 @@ describe.skip("RelationshipInfo", () => {
         });
         const code = "error.runtime.recordNotFound";
         const message = "RelationshipInfo not found. Make sure the ID exists and the record is not expired.";
-        expectError(resultDelete, message, code);
+        expect(resultDelete).toBeAnError(message, code);
     });
 
     test("create, fetch and update a complex RelationshipInfo", async () => {
         const resultCreate = await createComplexRelationshipInfo(relationshipId);
-        expectSuccess(resultCreate);
+        expect(resultCreate).toBeSuccessful();
 
         const resultGet = await consumptionServices.relationshipInfo.getRelationshipInfoByRelationship({
             relationshipId: relationshipId
         });
-        expectSuccess(resultGet);
+        expect(resultGet).toBeSuccessful();
 
         // Compare fields. Note that jest's partial matching does not support nested objects.
         const relationshipInfoDto = resultGet.value;
@@ -180,7 +180,7 @@ describe.skip("RelationshipInfo", () => {
             id: relationshipInfoDto.id,
             ...updatedParameters
         });
-        expectSuccess(resultUpdate);
+        expect(resultUpdate).toBeSuccessful();
         const updatedDto = resultUpdate.value;
         const { attributes: _4, theme: _5, ...newSimpleFields } = updatedDto;
         expect(updatedDto).toStrictEqual(expect.objectContaining(newSimpleFields));

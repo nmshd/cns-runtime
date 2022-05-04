@@ -74,7 +74,7 @@ describe("Requests", () => {
                 peer: (await rTransportServices.account.getIdentityInfo()).value.address
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             sConsumptionRequest = (await sConsumptionServices.outgoingRequests.getRequest({ id: result.value.id })).value;
 
@@ -94,7 +94,7 @@ describe("Requests", () => {
                 recipients: [(await rTransportServices.account.getIdentityInfo()).value.address]
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             sRequestMessage = result.value;
         });
@@ -107,7 +107,7 @@ describe("Requests", () => {
 
             const result = await sConsumptionServices.outgoingRequests.sent({ requestId: sConsumptionRequest.id, messageId: sRequestMessage.id });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             sConsumptionRequest = result.value;
 
@@ -136,7 +136,7 @@ describe("Requests", () => {
                 requestSourceId: rRequestMessage.id
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rConsumptionRequest = (await rConsumptionServices.incomingRequests.getIncomingRequest({ id: result.value.id })).value;
 
@@ -159,7 +159,7 @@ describe("Requests", () => {
                 requestId: rConsumptionRequest.id
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rConsumptionRequest = result.value;
 
@@ -182,7 +182,7 @@ describe("Requests", () => {
                 requestId: rConsumptionRequest.id
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rConsumptionRequest = result.value;
 
@@ -205,7 +205,7 @@ describe("Requests", () => {
                 ]
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             const resultValue = result.value;
 
@@ -229,7 +229,7 @@ describe("Requests", () => {
                     }
                 ]
             });
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rConsumptionRequest = result.value;
 
@@ -250,7 +250,7 @@ describe("Requests", () => {
                 recipients: [(await sTransportServices.account.getIdentityInfo()).value.address]
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rResponseMessage = result.value;
 
@@ -268,7 +268,7 @@ describe("Requests", () => {
                 responseSourceId: rResponseMessage.id
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rConsumptionRequest = result.value;
 
@@ -301,7 +301,7 @@ describe("Requests", () => {
                 receivedResponse: sResponseMessage.content
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             sConsumptionRequest = result.value;
 
@@ -366,7 +366,7 @@ describe("Requests", () => {
                 expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             sRelationshipTemplate = result.value;
         });
@@ -376,7 +376,7 @@ describe("Requests", () => {
 
             const result = await rTransportServices.relationshipTemplates.loadPeerRelationshipTemplate({ reference: tokenResult.value.truncatedReference });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rRelationshipTemplate = result.value;
         });
@@ -392,7 +392,7 @@ describe("Requests", () => {
                 requestSourceId: rRelationshipTemplate.id
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rConsumptionRequest = (await rConsumptionServices.incomingRequests.getIncomingRequest({ id: result.value.id })).value;
 
@@ -415,7 +415,7 @@ describe("Requests", () => {
                 requestId: rConsumptionRequest.id
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rConsumptionRequest = result.value;
 
@@ -438,7 +438,7 @@ describe("Requests", () => {
                 requestId: rConsumptionRequest.id
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rConsumptionRequest = result.value;
 
@@ -461,7 +461,7 @@ describe("Requests", () => {
                 ]
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             const resultValue = result.value;
 
@@ -486,7 +486,7 @@ describe("Requests", () => {
                 ]
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rConsumptionRequest = result.value;
 
@@ -507,7 +507,7 @@ describe("Requests", () => {
                 templateId: rRelationshipTemplate.id
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rRelationshipChange = result.value.changes[0];
 
@@ -525,7 +525,7 @@ describe("Requests", () => {
                 responseSourceId: rRelationshipChange.id
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             rConsumptionRequest = result.value;
 
@@ -552,7 +552,7 @@ describe("Requests", () => {
                 templateId: sRelationshipTemplate.id
             });
 
-            expect(result.isSuccess).toBe(true);
+            expect(result).toBeSuccessful();
 
             sConsumptionRequest = sConsumptionRequest = (await sConsumptionServices.outgoingRequests.getRequest({ id: result.value.id })).value;
 

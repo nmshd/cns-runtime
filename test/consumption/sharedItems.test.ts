@@ -1,7 +1,7 @@
 import { ConsumptionIds } from "@nmshd/consumption";
 import { CoreDate, CoreId, TransportIds } from "@nmshd/transport";
 import { ConsumptionServices } from "../../src";
-import { expectSuccess, QueryParamConditions, RuntimeServiceProvider } from "../lib";
+import { QueryParamConditions, RuntimeServiceProvider } from "../lib";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
 let consumptionServices: ConsumptionServices;
@@ -27,7 +27,7 @@ describe("SharedItems", () => {
             sharedAt: CoreDate.utc().toISOString(),
             reference: reference
         });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const sharedItem = result.value;
         sharedItemId = sharedItem.id;
@@ -35,7 +35,7 @@ describe("SharedItems", () => {
 
     test("should request the shared item", async () => {
         const result = await consumptionServices.sharedItems.getSharedItem({ id: sharedItemId });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const sharedItem = result.value;
 
@@ -45,7 +45,7 @@ describe("SharedItems", () => {
 
     test("should get the shared items in the list", async () => {
         const result = await consumptionServices.sharedItems.getSharedItems({});
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const sharedItems = result.value;
         expect(sharedItems).toHaveLength(1);
@@ -55,7 +55,7 @@ describe("SharedItems", () => {
 
     test("should get the shared item by address", async () => {
         const result = await consumptionServices.sharedItems.getSharedItemsByAddress({ address: address });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const sharedItems = result.value;
         expect(sharedItems).toHaveLength(1);
@@ -65,7 +65,7 @@ describe("SharedItems", () => {
 
     test("should get shared the shared item by sharedBy address", async () => {
         const result = await consumptionServices.sharedItems.getSharedItemsSharedByAddress({ address: address });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const sharedItems = result.value;
         expect(sharedItems).toHaveLength(1);
@@ -75,7 +75,7 @@ describe("SharedItems", () => {
 
     test("should get shared the shared item by sharedWith address", async () => {
         const result = await consumptionServices.sharedItems.getSharedItemsSharedWithAddress({ address: address });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const sharedItems = result.value;
         expect(sharedItems).toHaveLength(1);
@@ -85,7 +85,7 @@ describe("SharedItems", () => {
 
     test("should get the shared item by reference", async () => {
         const result = await consumptionServices.sharedItems.getSharedItemsByReference({ reference: reference });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const sharedItems = result.value;
         expect(sharedItems).toHaveLength(1);
@@ -99,20 +99,20 @@ describe("SharedItems", () => {
             id: sharedItemId,
             content: newContent
         });
-        expectSuccess(updateResult);
+        expect(updateResult).toBeSuccessful();
 
         const result = await consumptionServices.sharedItems.getSharedItem({ id: sharedItemId });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
         const sharedItem = result.value;
         expect(sharedItem.content).toStrictEqual(newContent);
     });
 
     test("should delete the shared item", async () => {
         const deleteResult = await consumptionServices.sharedItems.deleteSharedItem({ id: sharedItemId });
-        expectSuccess(deleteResult);
+        expect(deleteResult).toBeSuccessful();
 
         const result = await consumptionServices.sharedItems.getSharedItems({});
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const sharedItems = result.value;
         expect(sharedItems).toHaveLength(0);
@@ -135,7 +135,7 @@ describe("SharedItems query", () => {
             succeedsItem: (await ConsumptionIds.sharedItem.generate()).toString(),
             expiresAt: date
         });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const sharedItem = result.value;
 
