@@ -28,14 +28,11 @@ export class RequestMapper {
                           : undefined
                   }
                 : undefined,
-            status: request.status,
-            statusLog: request.statusLog.map((logEntry) => ({
-                createdAt: logEntry.createdAt.toString(),
-                oldStatus: logEntry.oldStatus,
-                newStatus: logEntry.newStatus,
-                data: logEntry.data,
-                code: logEntry.code
-            }))
+            status: request.status
         };
+    }
+
+    public static toConsumptionRequestDTOList(requests: ConsumptionRequest[]): ConsumptionRequestDTO[] {
+        return requests.map((request) => this.toConsumptionRequestDTO(request));
     }
 }

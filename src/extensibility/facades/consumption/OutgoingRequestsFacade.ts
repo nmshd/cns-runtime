@@ -8,6 +8,7 @@ import {
     CreateOutgoingRequestFromRelationshipCreationChangeUseCase
 } from "../../../useCases/consumption/requests/CreateOutgoingRequestFromRelationshipCreationChange";
 import { GetOutgoingRequestRequest, GetOutgoingRequestUseCase } from "../../../useCases/consumption/requests/GetOutgoingRequest";
+import { GetOutgoingRequestsRequest, GetOutgoingRequestsUseCase } from "../../../useCases/consumption/requests/GetOutgoingRequests";
 import { SentOutgoingRequestRequest, SentOutgoingRequestUseCase } from "../../../useCases/consumption/requests/SentOutgoingRequest";
 
 export class OutgoingRequestsFacade {
@@ -16,7 +17,8 @@ export class OutgoingRequestsFacade {
         @Inject private readonly sentOutgoingRequests: SentOutgoingRequestUseCase,
         @Inject private readonly createOutgoingRequestFromRelationshipCreationChange: CreateOutgoingRequestFromRelationshipCreationChangeUseCase,
         @Inject private readonly completeOutgoingRequests: CompleteOutgoingRequestUseCase,
-        @Inject private readonly getOutgoingRequests: GetOutgoingRequestUseCase
+        @Inject private readonly getOutgoingRequest: GetOutgoingRequestUseCase,
+        @Inject private readonly getOutgoingRequests: GetOutgoingRequestsUseCase
     ) {}
 
     public async create(request: CreateOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
@@ -35,7 +37,11 @@ export class OutgoingRequestsFacade {
         return await this.completeOutgoingRequests.execute(request);
     }
 
-    public async get(request: GetOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async getRequest(request: GetOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+        return await this.getOutgoingRequest.execute(request);
+    }
+
+    public async getRequests(request: GetOutgoingRequestsRequest): Promise<Result<ConsumptionRequestDTO[]>> {
         return await this.getOutgoingRequests.execute(request);
     }
 }
