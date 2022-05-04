@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es2019",
+        "target": "es2021",
         "module": "commonjs",
         "sourceMap": true,
         "declaration": true,
@@ -18,7 +18,7 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": false,
         "downlevelIteration": true,
-        "lib": ["es2019", "dom"],
+        "lib": ["es2021", "dom"],
         "typeRoots": ["../node_modules/@types"],
         "baseUrl": "../",
         "paths": {
