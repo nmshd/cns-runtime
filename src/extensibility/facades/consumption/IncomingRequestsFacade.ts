@@ -7,6 +7,7 @@ import { CanRejectIncomingRequestUseCase } from "../../../useCases/consumption/r
 import { CheckPrerequisitesOfIncomingRequestRequest, CheckPrerequisitesOfIncomingRequestUseCase } from "../../../useCases/consumption/requests/CheckPrerequisitesOfIncomingRequest";
 import { CompleteIncomingRequestRequest, CompleteIncomingRequestUseCase } from "../../../useCases/consumption/requests/CompleteIncomingRequest";
 import { GetIncomingRequestRequest, GetIncomingRequestUseCase } from "../../../useCases/consumption/requests/GetIncomingRequest";
+import { GetIncomingRequestsRequest, GetIncomingRequestsUseCase } from "../../../useCases/consumption/requests/GetIncomingRequests";
 import { ReceivedIncomingRequestRequest, ReceivedIncomingRequestUseCase } from "../../../useCases/consumption/requests/ReceivedIncomingRequest";
 import { RejectIncomingRequestRequest, RejectIncomingRequestUseCase } from "../../../useCases/consumption/requests/RejectIncomingRequest";
 import {
@@ -24,7 +25,8 @@ export class IncomingRequestsFacade {
         @Inject private readonly canRejectUseCase: CanRejectIncomingRequestUseCase,
         @Inject private readonly rejectUseCase: RejectIncomingRequestUseCase,
         @Inject private readonly completeUseCase: CompleteIncomingRequestUseCase,
-        @Inject private readonly getRequestUseCase: GetIncomingRequestUseCase
+        @Inject private readonly getRequestUseCase: GetIncomingRequestUseCase,
+        @Inject private readonly getRequestsUseCase: GetIncomingRequestsUseCase
     ) {}
 
     public async received(request: ReceivedIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
@@ -59,7 +61,11 @@ export class IncomingRequestsFacade {
         return await this.completeUseCase.execute(request);
     }
 
-    public async get(request: GetIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async getIncomingRequest(request: GetIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
         return await this.getRequestUseCase.execute(request);
+    }
+
+    public async getIncomingRequests(request: GetIncomingRequestsRequest): Promise<Result<ConsumptionRequestDTO[]>> {
+        return await this.getRequestsUseCase.execute(request);
     }
 }
