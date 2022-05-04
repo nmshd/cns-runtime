@@ -1,6 +1,8 @@
 import { Result } from "@js-soft/ts-utils";
 import { Inject } from "typescript-ioc";
+import { RequestValidationResultDTO } from "../../../types";
 import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
+import { CanCreateOutgoingRequestUseCase } from "../../../useCases/consumption/requests/CanCreateOutgoingRequest";
 import { CompleteOutgoingRequestRequest, CompleteOutgoingRequestUseCase } from "../../../useCases/consumption/requests/CompleteOutgoingRequest";
 import { CreateOutgoingRequestRequest, CreateOutgoingRequestUseCase } from "../../../useCases/consumption/requests/CreateOutgoingRequest";
 import {
@@ -13,6 +15,7 @@ import { SentOutgoingRequestRequest, SentOutgoingRequestUseCase } from "../../..
 
 export class OutgoingRequestsFacade {
     public constructor(
+        @Inject private readonly canCreateOutgoingRequests: CanCreateOutgoingRequestUseCase,
         @Inject private readonly createOutgoingRequests: CreateOutgoingRequestUseCase,
         @Inject private readonly sentOutgoingRequests: SentOutgoingRequestUseCase,
         @Inject private readonly createOutgoingRequestFromRelationshipCreationChange: CreateOutgoingRequestFromRelationshipCreationChangeUseCase,
@@ -20,6 +23,10 @@ export class OutgoingRequestsFacade {
         @Inject private readonly getOutgoingRequest: GetOutgoingRequestUseCase,
         @Inject private readonly getOutgoingRequests: GetOutgoingRequestsUseCase
     ) {}
+
+    public async canCreate(request: CreateOutgoingRequestRequest): Promise<Result<RequestValidationResultDTO>> {
+        return await this.canCreateOutgoingRequests.execute(request);
+    }
 
     public async create(request: CreateOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
         return await this.createOutgoingRequests.execute(request);
