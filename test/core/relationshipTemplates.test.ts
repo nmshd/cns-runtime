@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { OwnerRestriction, RelationshipTemplateDTO, TransportServices } from "../../src";
-import { createTemplate, exchangeTemplate, expectError, QueryParamConditions, RuntimeServiceProvider } from "../lib";
+import { createTemplate, exchangeTemplate, QueryParamConditions, RuntimeServiceProvider } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -102,8 +102,7 @@ describe("Serialization Errors", () => {
             content: { a: "A", "@type": "someNoneExistingType" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
-        expectError(
-            response,
+        expect(response).toBeAnError(
             "Type 'someNoneExistingType' with version 1 was not found within reflection classes. You might have to install a module first.",
             "error.runtime.unknownType"
         );
