@@ -1,4 +1,4 @@
-import { EventBus, Result } from "@js-soft/ts-utils";
+import { EventBus } from "@js-soft/ts-utils";
 import { ConsumptionRequestStatus } from "@nmshd/consumption";
 import { DateTime } from "luxon";
 import {
@@ -19,12 +19,14 @@ import { establishRelationship, RuntimeServiceProvider, syncUntilHasMessages, sy
 describe("Requests", () => {
     describe.each([
         {
-            type: "Accept"
+            action: "Accept"
         },
         {
-            type: "Reject"
+            action: "Reject"
         }
-    ] as TestCase[])("Complete flow with Messages: $type Request", ({ type }: TestCase) => {
+    ] as TestCase[])("Complete flow with Messages: $type Request", ({ action }) => {
+        const actionLowerCase = action.toLowerCase() as "accept" | "reject";
+
         const runtimeServiceProvider = new RuntimeServiceProvider();
         let sConsumptionServices: ConsumptionServices;
         let rConsumptionServices: ConsumptionServices;
@@ -69,12 +71,12 @@ describe("Requests", () => {
                     ],
                     expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
                 },
-                peer: "id1"
+                peer: (await rTransportServices.account.getIdentityInfo()).value.address
             });
 
             expect(result.isSuccess).toBe(true);
 
-            sConsumptionRequest = (await sConsumptionServices.outgoingRequests.get({ id: result.value.id })).value;
+            sConsumptionRequest = (await sConsumptionServices.outgoingRequests.getRequest({ id: result.value.id })).value;
 
             expect(triggeredEvent).toBeDefined();
             expect(triggeredEvent!.data).toBeDefined();
@@ -136,7 +138,7 @@ describe("Requests", () => {
 
             expect(result.isSuccess).toBe(true);
 
-            rConsumptionRequest = (await rConsumptionServices.incomingRequests.get({ id: result.value.id })).value;
+            rConsumptionRequest = (await rConsumptionServices.incomingRequests.getIncomingRequest({ id: result.value.id })).value;
 
             expect(rConsumptionRequest).toBeDefined();
             expect(rConsumptionRequest.status).toBe(ConsumptionRequestStatus.Open);
@@ -193,53 +195,40 @@ describe("Requests", () => {
             expect(triggeredEvent!.data.newStatus).toBe(ConsumptionRequestStatus.ManualDecisionRequired);
         });
 
-        test("recipient: call canAccept for incoming Request", async () => {
-            const result = await rConsumptionServices.incomingRequests[`can${type}`]({
+        test(`recipient: call can${action} for incoming Request`, async () => {
+            const result = await rConsumptionServices.incomingRequests[`can${action}`]({
                 requestId: rConsumptionRequest.id,
                 items: [
                     {
-                        accept: type === "Accept" ? true : false // eslint-disable-line jest/no-if
+                        accept: action === "Accept"
                     }
                 ]
             });
 
             expect(result.isSuccess).toBe(true);
 
-            const canAcceptResult = result.value;
+            const resultValue = result.value;
 
-            expect(canAcceptResult.isSuccess).toBe(true);
-            expect(canAcceptResult.items).toHaveLength(1);
-            expect(canAcceptResult.items[0].isSuccess).toBe(true);
-            expect(canAcceptResult.items[0].items).toHaveLength(0);
+            expect(resultValue.isSuccess).toBe(true);
+            expect(resultValue.items).toHaveLength(1);
+            expect(resultValue.items[0].isSuccess).toBe(true);
+            expect(resultValue.items[0].items).toHaveLength(0);
         });
 
-        test("recipient: accept incoming Request", async () => {
+        test(`recipient: ${actionLowerCase} incoming Request`, async () => {
             let triggeredEvent: IncomingRequestStatusChangedEvent | undefined;
             rEventBus.subscribeOnce(IncomingRequestStatusChangedEvent, (event) => {
                 triggeredEvent = event;
             });
 
-            let result: Result<ConsumptionRequestDTO>;
-            // eslint-disable-next-line jest/no-if
-            if (type === "Accept") {
-                result = await rConsumptionServices.incomingRequests.accept({
-                    requestId: rConsumptionRequest.id,
-                    items: [
-                        {
-                            accept: true
-                        }
-                    ]
-                });
-            } else {
-                result = await rConsumptionServices.incomingRequests.reject({
-                    requestId: rConsumptionRequest.id,
-                    items: [
-                        {
-                            accept: false
-                        }
-                    ]
-                });
-            }
+            const result = await rConsumptionServices.incomingRequests[actionLowerCase]({
+                requestId: rConsumptionRequest.id,
+                items: [
+                    {
+                        accept: action === "Accept"
+                    }
+                ]
+            });
             expect(result.isSuccess).toBe(true);
 
             rConsumptionRequest = result.value;
@@ -330,12 +319,14 @@ describe("Requests", () => {
 
     describe.each([
         {
-            type: "Accept"
+            action: "Accept"
         },
         {
-            type: "Reject"
+            action: "Reject"
         }
-    ] as TestCase[])("Complete flow with Relationship Template and Change: $type Request", ({ type }) => {
+    ] as TestCase[])("Complete flow with Relationship Template and Change: $type Request", ({ action }) => {
+        const actionLowerCase = action.toLowerCase() as "accept" | "reject";
+
         const runtimeServiceProvider = new RuntimeServiceProvider();
         let sConsumptionServices: ConsumptionServices;
         let rConsumptionServices: ConsumptionServices;
@@ -403,7 +394,7 @@ describe("Requests", () => {
 
             expect(result.isSuccess).toBe(true);
 
-            rConsumptionRequest = result.value;
+            rConsumptionRequest = (await rConsumptionServices.incomingRequests.getIncomingRequest({ id: result.value.id })).value;
 
             expect(rConsumptionRequest).toBeDefined();
             expect(rConsumptionRequest.status).toBe(ConsumptionRequestStatus.Open);
@@ -460,53 +451,40 @@ describe("Requests", () => {
             expect(triggeredEvent!.data.newStatus).toBe(ConsumptionRequestStatus.ManualDecisionRequired);
         });
 
-        test("recipient: call canAccept for incoming Request", async () => {
-            const result = await rConsumptionServices.incomingRequests[`can${type}`]({
+        test(`recipient: call can${action} for incoming Request`, async () => {
+            const result = await rConsumptionServices.incomingRequests[`can${action}`]({
                 requestId: rConsumptionRequest.id,
                 items: [
                     {
-                        accept: type === "Accept" ? true : false // eslint-disable-line jest/no-if
+                        accept: action === "Accept" ? true : false // eslint-disable-line jest/no-if
                     }
                 ]
             });
 
             expect(result.isSuccess).toBe(true);
 
-            const canAcceptResult = result.value;
+            const resultValue = result.value;
 
-            expect(canAcceptResult.isSuccess).toBe(true);
-            expect(canAcceptResult.items).toHaveLength(1);
-            expect(canAcceptResult.items[0].isSuccess).toBe(true);
-            expect(canAcceptResult.items[0].items).toHaveLength(0);
+            expect(resultValue.isSuccess).toBe(true);
+            expect(resultValue.items).toHaveLength(1);
+            expect(resultValue.items[0].isSuccess).toBe(true);
+            expect(resultValue.items[0].items).toHaveLength(0);
         });
 
-        test("recipient: accept incoming Request", async () => {
+        test(`recipient: ${actionLowerCase} incoming Request`, async () => {
             let triggeredEvent: IncomingRequestStatusChangedEvent | undefined;
             rEventBus.subscribeOnce(IncomingRequestStatusChangedEvent, (event) => {
                 triggeredEvent = event;
             });
 
-            let result: Result<ConsumptionRequestDTO>;
-            // eslint-disable-next-line jest/no-if
-            if (type === "Accept") {
-                result = await rConsumptionServices.incomingRequests.accept({
-                    requestId: rConsumptionRequest.id,
-                    items: [
-                        {
-                            accept: true
-                        }
-                    ]
-                });
-            } else {
-                result = await rConsumptionServices.incomingRequests.reject({
-                    requestId: rConsumptionRequest.id,
-                    items: [
-                        {
-                            accept: false
-                        }
-                    ]
-                });
-            }
+            const result = await rConsumptionServices.incomingRequests[actionLowerCase]({
+                requestId: rConsumptionRequest.id,
+                items: [
+                    {
+                        accept: action === "Accept"
+                    }
+                ]
+            });
 
             expect(result.isSuccess).toBe(true);
 
@@ -576,7 +554,7 @@ describe("Requests", () => {
 
             expect(result.isSuccess).toBe(true);
 
-            sConsumptionRequest = result.value;
+            sConsumptionRequest = sConsumptionRequest = (await sConsumptionServices.outgoingRequests.getRequest({ id: result.value.id })).value;
 
             expect(sConsumptionRequest).toBeDefined();
             expect(sConsumptionRequest.id).toBe(rConsumptionRequest.id);
@@ -588,5 +566,5 @@ describe("Requests", () => {
 });
 
 interface TestCase {
-    type: "Accept" | "Reject";
+    action: "Accept" | "Reject";
 }
