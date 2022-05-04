@@ -57,22 +57,6 @@ export class RuntimeServiceProvider {
         return runtimeServices;
     }
 
-    public async launchUnsafe(launchConfiguration: LaunchConfiguration = {}): Promise<TestRuntime> {
-        const config = RuntimeServiceProvider.runtimeConfig;
-
-        if (launchConfiguration.enableDatawallet) {
-            config.transportLibrary.datawalletEnabled = true;
-        }
-
-        const runtime = new TestRuntime(config);
-        this.runtimes.push(runtime);
-
-        await runtime.init();
-        await runtime.start();
-
-        return runtime;
-    }
-
     public async stop(): Promise<void> {
         for (const runtime of this.runtimes) {
             await runtime.stop();

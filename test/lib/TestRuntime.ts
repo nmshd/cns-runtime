@@ -36,10 +36,6 @@ export class TestRuntime extends Runtime {
         return loggerFactory;
     }
 
-    public get accountController(): AccountController {
-        return this.getAccountController();
-    }
-
     public get dataViewExpander(): DataViewExpander {
         return this.getDataViewExpander();
     }
