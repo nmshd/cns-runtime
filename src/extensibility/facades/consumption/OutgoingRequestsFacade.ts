@@ -1,17 +1,21 @@
 import { Result } from "@js-soft/ts-utils";
 import { Inject } from "typescript-ioc";
-import { RequestValidationResultDTO } from "../../../types";
-import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
-import { CanCreateOutgoingRequestUseCase } from "../../../useCases/consumption/requests/CanCreateOutgoingRequest";
-import { CompleteOutgoingRequestRequest, CompleteOutgoingRequestUseCase } from "../../../useCases/consumption/requests/CompleteOutgoingRequest";
-import { CreateOutgoingRequestRequest, CreateOutgoingRequestUseCase } from "../../../useCases/consumption/requests/CreateOutgoingRequest";
+import { ConsumptionRequestDTO, RequestValidationResultDTO } from "../../../types";
 import {
+    CanCreateOutgoingRequestUseCase,
+    CompleteOutgoingRequestRequest,
+    CompleteOutgoingRequestUseCase,
     CreateOutgoingRequestFromRelationshipCreationChangeRequest,
-    CreateOutgoingRequestFromRelationshipCreationChangeUseCase
-} from "../../../useCases/consumption/requests/CreateOutgoingRequestFromRelationshipCreationChange";
-import { GetOutgoingRequestRequest, GetOutgoingRequestUseCase } from "../../../useCases/consumption/requests/GetOutgoingRequest";
-import { GetOutgoingRequestsRequest, GetOutgoingRequestsUseCase } from "../../../useCases/consumption/requests/GetOutgoingRequests";
-import { SentOutgoingRequestRequest, SentOutgoingRequestUseCase } from "../../../useCases/consumption/requests/SentOutgoingRequest";
+    CreateOutgoingRequestFromRelationshipCreationChangeUseCase,
+    CreateOutgoingRequestRequest,
+    CreateOutgoingRequestUseCase,
+    GetOutgoingRequestRequest,
+    GetOutgoingRequestsRequest,
+    GetOutgoingRequestsUseCase,
+    GetOutgoingRequestUseCase,
+    SentOutgoingRequestRequest,
+    SentOutgoingRequestUseCase
+} from "../../../useCases";
 
 export class OutgoingRequestsFacade {
     public constructor(

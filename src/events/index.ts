@@ -1,6 +1,5 @@
 export * from "./consumption/OutgoingRequestCreatedEvent";
 export * from "./consumption/OutgoingRequestStatusChangedEvent";
-export * from "./consumption/RequestSentEvent";
 export * from "./DataEvent";
 export * from "./Event";
 export * from "./runtime/ModulesInitializedEvent";

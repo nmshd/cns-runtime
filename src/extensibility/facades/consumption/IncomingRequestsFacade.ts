@@ -1,19 +1,26 @@
 import { Result } from "@js-soft/ts-utils";
 import { Inject } from "typescript-ioc";
 import { ConsumptionRequestDTO, RequestValidationResultDTO } from "../../../types";
-import { AcceptIncomingRequestRequest, AcceptIncomingRequestUseCase } from "../../../useCases/consumption/requests/AcceptIncomingRequest";
-import { CanAcceptIncomingRequestUseCase } from "../../../useCases/consumption/requests/CanAcceptIncomingRequest";
-import { CanRejectIncomingRequestUseCase } from "../../../useCases/consumption/requests/CanRejectIncomingRequest";
-import { CheckPrerequisitesOfIncomingRequestRequest, CheckPrerequisitesOfIncomingRequestUseCase } from "../../../useCases/consumption/requests/CheckPrerequisitesOfIncomingRequest";
-import { CompleteIncomingRequestRequest, CompleteIncomingRequestUseCase } from "../../../useCases/consumption/requests/CompleteIncomingRequest";
-import { GetIncomingRequestRequest, GetIncomingRequestUseCase } from "../../../useCases/consumption/requests/GetIncomingRequest";
-import { GetIncomingRequestsRequest, GetIncomingRequestsUseCase } from "../../../useCases/consumption/requests/GetIncomingRequests";
-import { ReceivedIncomingRequestRequest, ReceivedIncomingRequestUseCase } from "../../../useCases/consumption/requests/ReceivedIncomingRequest";
-import { RejectIncomingRequestRequest, RejectIncomingRequestUseCase } from "../../../useCases/consumption/requests/RejectIncomingRequest";
 import {
+    AcceptIncomingRequestRequest,
+    AcceptIncomingRequestUseCase,
+    CanAcceptIncomingRequestUseCase,
+    CanRejectIncomingRequestUseCase,
+    CheckPrerequisitesOfIncomingRequestRequest,
+    CheckPrerequisitesOfIncomingRequestUseCase,
+    CompleteIncomingRequestRequest,
+    CompleteIncomingRequestUseCase,
+    GetIncomingRequestRequest,
+    GetIncomingRequestsRequest,
+    GetIncomingRequestsUseCase,
+    GetIncomingRequestUseCase,
+    ReceivedIncomingRequestRequest,
+    ReceivedIncomingRequestUseCase,
+    RejectIncomingRequestRequest,
+    RejectIncomingRequestUseCase,
     RequireManualDecisionOfIncomingRequestRequest,
     RequireManualDecisionOfIncomingRequestUseCase
-} from "../../../useCases/consumption/requests/RequireManualDecisionOfIncomingRequest";
+} from "../../../useCases";
 
 export class IncomingRequestsFacade {
     public constructor(
