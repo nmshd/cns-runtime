@@ -40,7 +40,7 @@
         "preset": "ts-jest",
         "setupFilesAfterEnv": [
             "@alex_neo/jest-expect-message",
-            "./test/setupJest.ts"
+            "./test/customMatchers.ts"
         ],
         "globals": {
             "ts-jest": {
