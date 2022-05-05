@@ -27,17 +27,17 @@ expect.extend({
             };
         }
 
-        if (actual.error.message.match(expectedMessage) === null) {
+        if (actual.error.message.match(new RegExp(expectedMessage)) === null) {
             return {
                 pass: false,
-                message: () => `expected the error message of the result to be '${expectedMessage}', but received '${actual.error.message}'.`
+                message: () => `expected the error message of the result to match '${expectedMessage}', but received '${actual.error.message}'.`
             };
         }
 
-        if (actual.error.code.match(expectedCode) === null) {
+        if (actual.error.code.match(new RegExp(expectedCode)) === null) {
             return {
                 pass: false,
-                message: () => `expected the error code of the result to be '${expectedCode}', but received '${actual.error.code}'.`
+                message: () => `expected the error code of the result to match '${expectedCode}', but received '${actual.error.code}'.`
             };
         }
 

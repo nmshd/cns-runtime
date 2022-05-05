@@ -116,7 +116,7 @@ describe("Get file", () => {
     test("accessing invalid file id causes an error", async () => {
         const invalidFileId = "NOT_A_FILE_IDXXXXXXX";
         const response = await transportServices1.files.getFile({ id: invalidFileId });
-        expect(response).toBeAnError("id must match format fileId", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("id must match pattern FIL.*", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
@@ -220,7 +220,7 @@ describe.each([
     test("cannot generate token with wrong type of id", async () => {
         const response = await createToken(transportServices1, { fileId: UNKNOWN_TOKEN_ID }, tokenType as any);
 
-        expect(response).toBeAnError("fileId must match format fileId", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("fileId must match pattern FIL.*", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("cannot generate token for non-existant file", async () => {
@@ -232,7 +232,7 @@ describe.each([
     test("cannot generate token for invalid file id", async () => {
         const response = await createToken(transportServices1, { fileId: "INVALID FILE ID" }, tokenType as any);
 
-        expect(response).toBeAnError("fileId must match format fileId", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("fileId must match pattern FIL.*", "error.runtime.validation.invalidPropertyValue");
     });
 });
 
@@ -358,7 +358,7 @@ describe("Load peer file with file id and secret", () => {
 
         const response = await transportServices2.files.loadPeerFile({ id: UNKNOWN_TOKEN_ID, secretKey: file.secretKey });
 
-        expect(response).toBeAnError("id must match format fileId", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("id must match pattern FIL.*", "error.runtime.validation.invalidPropertyValue");
     });
 
     test.each([
@@ -374,7 +374,7 @@ describe("Load peer file with file id and secret", () => {
     test.each([
         [null, "id must be string"],
         [undefined, "must have required property 'id'"],
-        ["", "id must match format fileId"]
+        ["", "id must match pattern FIL.*"]
     ])("cannot pass %p as file id", async (fileId, expectedMessage) => {
         const response = await transportServices2.files.loadPeerFile({ id: fileId!, secretKey: file.secretKey });
 

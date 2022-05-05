@@ -479,7 +479,10 @@ export const CreateRelationshipInfoRequest: any = {
                 "@type": {
                     "type": "string"
                 },
-                "@schema": {
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
                     "type": "string"
                 },
                 "name": {
@@ -670,7 +673,10 @@ export const UpdateRelationshipInfoRequest: any = {
                 "@type": {
                     "type": "string"
                 },
-                "@schema": {
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
                     "type": "string"
                 },
                 "name": {
@@ -1047,6 +1053,17 @@ export const RegisterPushNotificationTokenRequest: any = {
     }
 }
 
+export const SyncDatawalletRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/SyncDatawalletRequest",
+    "definitions": {
+        "SyncDatawalletRequest": {
+            "type": "object",
+            "additionalProperties": false
+        }
+    }
+}
+
 export const DownloadFileRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/DownloadFileRequest",
@@ -1056,7 +1073,7 @@ export const DownloadFileRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "format": "fileId"
+                    "pattern": "FIL[A-z0-9]{17}"
                 }
             },
             "required": [
@@ -1090,6 +1107,17 @@ export const DownloadAttachmentRequest: any = {
     }
 }
 
+export const SyncEverythingRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/SyncEverythingRequest",
+    "definitions": {
+        "SyncEverythingRequest": {
+            "type": "object",
+            "additionalProperties": false
+        }
+    }
+}
+
 export const CreateRelationshipChallengeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateRelationshipChallengeRequest",
@@ -1103,7 +1131,7 @@ export const CreateRelationshipChallengeRequest: any = {
                 },
                 "relationship": {
                     "type": "string",
-                    "format": "relationshipId"
+                    "pattern": "REL[A-z0-9]{17}"
                 }
             },
             "required": [
@@ -1181,7 +1209,7 @@ export const CreateChallengeRequest: any = {
                 },
                 "relationship": {
                     "type": "string",
-                    "format": "relationshipId"
+                    "pattern": "REL[A-z0-9]{17}"
                 }
             },
             "required": [
@@ -1377,7 +1405,7 @@ export const CreateTokenForFileRequest: any = {
             "properties": {
                 "fileId": {
                     "type": "string",
-                    "format": "fileId"
+                    "pattern": "FIL[A-z0-9]{17}"
                 },
                 "expiresAt": {
                     "type": "string",
@@ -1404,7 +1432,7 @@ export const CreateTokenQrCodeForFileRequest: any = {
             "properties": {
                 "fileId": {
                     "type": "string",
-                    "format": "fileId"
+                    "pattern": "FIL[A-z0-9]{17}"
                 },
                 "expiresAt": {
                     "type": "string",
@@ -1428,7 +1456,7 @@ export const GetFileRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "format": "fileId"
+                    "pattern": "FIL[A-z0-9]{17}"
                 }
             },
             "required": [
@@ -1472,7 +1500,7 @@ export const LoadPeerFileViaSecretRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "format": "fileId"
+                    "pattern": "FIL[A-z0-9]{17}"
                 },
                 "secretKey": {
                     "type": "string",
@@ -1528,7 +1556,7 @@ export const LoadPeerFileRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "format": "fileId"
+                    "pattern": "FIL[A-z0-9]{17}"
                 },
                 "secretKey": {
                     "type": "string",
