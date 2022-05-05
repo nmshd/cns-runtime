@@ -99,8 +99,8 @@ describe("Requests", () => {
         });
 
         test("sender: mark the outgoing Request as sent", async () => {
-            let triggeredEvent: IncomingRequestStatusChangedEvent | undefined;
-            sEventBus.subscribeOnce(IncomingRequestStatusChangedEvent, (event) => {
+            let triggeredEvent: OutgoingRequestStatusChangedEvent | undefined;
+            sEventBus.subscribeOnce(OutgoingRequestStatusChangedEvent, (event) => {
                 triggeredEvent = event;
             });
 
