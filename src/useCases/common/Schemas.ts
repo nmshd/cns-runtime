@@ -814,188 +814,6 @@ export const AcceptIncomingRequestRequest: any = {
     }
 }
 
-export const CheckPrerequisitesOfIncomingRequestRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/CheckPrerequisitesOfIncomingRequestRequest",
-    "definitions": {
-        "CheckPrerequisitesOfIncomingRequestRequest": {
-            "type": "object",
-            "properties": {
-                "requestId": {
-                    "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
-                }
-            },
-            "required": [
-                "requestId"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const CompleteIncomingRequestRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/CompleteIncomingRequestRequest",
-    "definitions": {
-        "CompleteIncomingRequestRequest": {
-            "type": "object",
-            "properties": {
-                "requestId": {
-                    "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
-                },
-                "responseSourceId": {
-                    "type": "string",
-                    "pattern": "(MSG|RCH)[A-Za-z0-9]{17}"
-                }
-            },
-            "required": [
-                "requestId",
-                "responseSourceId"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const CompleteOutgoingRequestRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/CompleteOutgoingRequestRequest",
-    "definitions": {
-        "CompleteOutgoingRequestRequest": {
-            "type": "object",
-            "properties": {
-                "requestId": {
-                    "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
-                },
-                "receivedResponse": {
-                    "$ref": "#/definitions/ResponseJSON"
-                },
-                "messageId": {
-                    "type": "string",
-                    "pattern": "MSG[A-Za-z0-9]{17}"
-                }
-            },
-            "required": [
-                "requestId",
-                "receivedResponse",
-                "messageId"
-            ],
-            "additionalProperties": false
-        },
-        "ResponseJSON": {
-            "type": "object",
-            "properties": {
-                "@type": {
-                    "type": "string"
-                },
-                "@context": {
-                    "type": "string"
-                },
-                "@version": {
-                    "type": "string"
-                },
-                "result": {
-                    "$ref": "#/definitions/ResponseResult"
-                },
-                "requestId": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/ResponseItemGroupJSON"
-                            },
-                            {
-                                "$ref": "#/definitions/ResponseItemJSON"
-                            }
-                        ]
-                    }
-                }
-            },
-            "required": [
-                "@type",
-                "items",
-                "requestId",
-                "result"
-            ],
-            "additionalProperties": false
-        },
-        "ResponseResult": {
-            "type": "string",
-            "enum": [
-                "Accepted",
-                "Rejected"
-            ]
-        },
-        "ResponseItemGroupJSON": {
-            "type": "object",
-            "properties": {
-                "@type": {
-                    "type": "string"
-                },
-                "@context": {
-                    "type": "string"
-                },
-                "@version": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ResponseItemJSON"
-                    }
-                },
-                "metadata": {
-                    "type": "object"
-                }
-            },
-            "required": [
-                "@type",
-                "items"
-            ],
-            "additionalProperties": false
-        },
-        "ResponseItemJSON": {
-            "type": "object",
-            "properties": {
-                "@type": {
-                    "type": "string"
-                },
-                "@context": {
-                    "type": "string"
-                },
-                "@version": {
-                    "type": "string"
-                },
-                "result": {
-                    "$ref": "#/definitions/ResponseItemResult"
-                },
-                "metadata": {
-                    "type": "object"
-                }
-            },
-            "required": [
-                "@type",
-                "result"
-            ],
-            "additionalProperties": false
-        },
-        "ResponseItemResult": {
-            "type": "string",
-            "enum": [
-                "Accepted",
-                "Rejected",
-                "Error"
-            ]
-        }
-    }
-}
-
 export const CreateOutgoingRequestRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateOutgoingRequestRequest",
@@ -1228,6 +1046,278 @@ export const CreateOutgoingRequestRequest: any = {
     }
 }
 
+export const RejectIncomingRequestRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/RejectIncomingRequestRequest",
+    "definitions": {
+        "RejectIncomingRequestRequest": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "requestId": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/DecideRequestItemParametersJSON"
+                            },
+                            {
+                                "$ref": "#/definitions/DecideRequestItemGroupParametersJSON"
+                            }
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "items",
+                "requestId"
+            ]
+        },
+        "DecideRequestItemParametersJSON": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/AcceptRequestItemParametersJSON"
+                },
+                {
+                    "$ref": "#/definitions/RejectRequestItemParametersJSON"
+                }
+            ]
+        },
+        "AcceptRequestItemParametersJSON": {
+            "type": "object",
+            "properties": {
+                "accept": {
+                    "type": "boolean",
+                    "const": true
+                }
+            },
+            "required": [
+                "accept"
+            ],
+            "additionalProperties": false
+        },
+        "RejectRequestItemParametersJSON": {
+            "type": "object",
+            "properties": {
+                "accept": {
+                    "type": "boolean",
+                    "const": false
+                },
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "accept"
+            ],
+            "additionalProperties": false
+        },
+        "DecideRequestItemGroupParametersJSON": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DecideRequestItemParametersJSON"
+                    }
+                }
+            },
+            "required": [
+                "items"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const CheckPrerequisitesOfIncomingRequestRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CheckPrerequisitesOfIncomingRequestRequest",
+    "definitions": {
+        "CheckPrerequisitesOfIncomingRequestRequest": {
+            "type": "object",
+            "properties": {
+                "requestId": {
+                    "type": "string",
+                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                }
+            },
+            "required": [
+                "requestId"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const CompleteIncomingRequestRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CompleteIncomingRequestRequest",
+    "definitions": {
+        "CompleteIncomingRequestRequest": {
+            "type": "object",
+            "properties": {
+                "requestId": {
+                    "type": "string",
+                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                },
+                "responseSourceId": {
+                    "type": "string",
+                    "pattern": "(MSG|RCH)[A-Za-z0-9]{17}"
+                }
+            },
+            "required": [
+                "requestId",
+                "responseSourceId"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const CompleteOutgoingRequestRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CompleteOutgoingRequestRequest",
+    "definitions": {
+        "CompleteOutgoingRequestRequest": {
+            "type": "object",
+            "properties": {
+                "requestId": {
+                    "type": "string",
+                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                },
+                "receivedResponse": {
+                    "$ref": "#/definitions/ResponseJSON"
+                },
+                "messageId": {
+                    "type": "string",
+                    "pattern": "MSG[A-Za-z0-9]{17}"
+                }
+            },
+            "required": [
+                "requestId",
+                "receivedResponse",
+                "messageId"
+            ],
+            "additionalProperties": false
+        },
+        "ResponseJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "result": {
+                    "$ref": "#/definitions/ResponseResult"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/ResponseItemGroupJSON"
+                            },
+                            {
+                                "$ref": "#/definitions/ResponseItemJSON"
+                            }
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "@type",
+                "items",
+                "requestId",
+                "result"
+            ],
+            "additionalProperties": false
+        },
+        "ResponseResult": {
+            "type": "string",
+            "enum": [
+                "Accepted",
+                "Rejected"
+            ]
+        },
+        "ResponseItemGroupJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ResponseItemJSON"
+                    }
+                },
+                "metadata": {
+                    "type": "object"
+                }
+            },
+            "required": [
+                "@type",
+                "items"
+            ],
+            "additionalProperties": false
+        },
+        "ResponseItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "result": {
+                    "$ref": "#/definitions/ResponseItemResult"
+                },
+                "metadata": {
+                    "type": "object"
+                }
+            },
+            "required": [
+                "@type",
+                "result"
+            ],
+            "additionalProperties": false
+        },
+        "ResponseItemResult": {
+            "type": "string",
+            "enum": [
+                "Accepted",
+                "Rejected",
+                "Error"
+            ]
+        }
+    }
+}
+
 export const CreateOutgoingRequestFromRelationshipCreationChangeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateOutgoingRequestFromRelationshipCreationChangeRequest",
@@ -1249,6 +1339,270 @@ export const CreateOutgoingRequestFromRelationshipCreationChangeRequest: any = {
                 "relationshipChangeId"
             ],
             "additionalProperties": false
+        }
+    }
+}
+
+export const GetIncomingRequestRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/GetIncomingRequestRequest",
+    "definitions": {
+        "GetIncomingRequestRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const GetIncomingRequestsRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/GetIncomingRequestsRequest",
+    "definitions": {
+        "GetIncomingRequestsRequest": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "$ref": "#/definitions/GetIncomingRequestsRequestsQuery"
+                }
+            },
+            "additionalProperties": false
+        },
+        "GetIncomingRequestsRequestsQuery": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "peer": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "object",
+                    "properties": {
+                        "expiresAt": {
+                            "type": "string"
+                        },
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "@type": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "source": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string"
+                        },
+                        "reference": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "response": {
+                    "type": "object",
+                    "properties": {
+                        "createdAt": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                },
+                                "reference": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        "content": {
+                            "type": "object",
+                            "properties": {
+                                "result": {
+                                    "type": "string"
+                                },
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "@type": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": {}
+        }
+    }
+}
+
+export const GetOutgoingRequestRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/GetOutgoingRequestRequest",
+    "definitions": {
+        "GetOutgoingRequestRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const GetOutgoingRequestsRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/GetOutgoingRequestsRequest",
+    "definitions": {
+        "GetOutgoingRequestsRequest": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "$ref": "#/definitions/GetOutgoingRequestsRequestQuery"
+                }
+            },
+            "additionalProperties": false
+        },
+        "GetOutgoingRequestsRequestQuery": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "peer": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "object",
+                    "properties": {
+                        "expiresAt": {
+                            "type": "string"
+                        },
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "@type": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "source": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string"
+                        },
+                        "reference": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "response": {
+                    "type": "object",
+                    "properties": {
+                        "createdAt": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                },
+                                "reference": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        "content": {
+                            "type": "object",
+                            "properties": {
+                                "result": {
+                                    "type": "string"
+                                },
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "@type": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": {}
         }
     }
 }
@@ -2899,360 +3253,6 @@ export const LoadPeerTokenRequest: any = {
                 "ephemeral"
             ],
             "additionalProperties": false
-        }
-    }
-}
-
-export const RejectIncomingRequestRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/RejectIncomingRequestRequest",
-    "definitions": {
-        "RejectIncomingRequestRequest": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "requestId": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/definitions/DecideRequestItemParametersJSON"
-                            },
-                            {
-                                "$ref": "#/definitions/DecideRequestItemGroupParametersJSON"
-                            }
-                        ]
-                    }
-                }
-            },
-            "required": [
-                "items",
-                "requestId"
-            ]
-        },
-        "DecideRequestItemParametersJSON": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/AcceptRequestItemParametersJSON"
-                },
-                {
-                    "$ref": "#/definitions/RejectRequestItemParametersJSON"
-                }
-            ]
-        },
-        "AcceptRequestItemParametersJSON": {
-            "type": "object",
-            "properties": {
-                "accept": {
-                    "type": "boolean",
-                    "const": true
-                }
-            },
-            "required": [
-                "accept"
-            ],
-            "additionalProperties": false
-        },
-        "RejectRequestItemParametersJSON": {
-            "type": "object",
-            "properties": {
-                "accept": {
-                    "type": "boolean",
-                    "const": false
-                },
-                "code": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "accept"
-            ],
-            "additionalProperties": false
-        },
-        "DecideRequestItemGroupParametersJSON": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/DecideRequestItemParametersJSON"
-                    }
-                }
-            },
-            "required": [
-                "items"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetIncomingRequestRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetIncomingRequestRequest",
-    "definitions": {
-        "GetIncomingRequestRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetIncomingRequestsRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetIncomingRequestsRequest",
-    "definitions": {
-        "GetIncomingRequestsRequest": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "$ref": "#/definitions/GetIncomingRequestsRequestsQuery"
-                }
-            },
-            "additionalProperties": false
-        },
-        "GetIncomingRequestsRequestsQuery": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "peer": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "content": {
-                    "type": "object",
-                    "properties": {
-                        "expiresAt": {
-                            "type": "string"
-                        },
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "@type": {
-                                    "type": "string"
-                                }
-                            },
-                            "additionalProperties": false
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "source": {
-                    "type": "object",
-                    "properties": {
-                        "type": {
-                            "type": "string"
-                        },
-                        "reference": {
-                            "type": "string"
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "response": {
-                    "type": "object",
-                    "properties": {
-                        "createdAt": {
-                            "type": "string"
-                        },
-                        "source": {
-                            "type": "object",
-                            "properties": {
-                                "type": {
-                                    "type": "string"
-                                },
-                                "reference": {
-                                    "type": "string"
-                                }
-                            },
-                            "additionalProperties": false
-                        },
-                        "content": {
-                            "type": "object",
-                            "properties": {
-                                "result": {
-                                    "type": "string"
-                                },
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "@type": {
-                                            "type": "string"
-                                        },
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "@type": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "additionalProperties": false
-                                        }
-                                    },
-                                    "additionalProperties": false
-                                }
-                            },
-                            "additionalProperties": false
-                        }
-                    },
-                    "additionalProperties": false
-                }
-            },
-            "additionalProperties": {}
-        }
-    }
-}
-
-export const GetOutgoingRequestRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetOutgoingRequestRequest",
-    "definitions": {
-        "GetOutgoingRequestRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetOutgoingRequestsRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetOutgoingRequestsRequest",
-    "definitions": {
-        "GetOutgoingRequestsRequest": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "$ref": "#/definitions/GetOutgoingRequestsRequestQuery"
-                }
-            },
-            "additionalProperties": false
-        },
-        "GetOutgoingRequestsRequestQuery": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "peer": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "content": {
-                    "type": "object",
-                    "properties": {
-                        "expiresAt": {
-                            "type": "string"
-                        },
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "@type": {
-                                    "type": "string"
-                                }
-                            },
-                            "additionalProperties": false
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "source": {
-                    "type": "object",
-                    "properties": {
-                        "type": {
-                            "type": "string"
-                        },
-                        "reference": {
-                            "type": "string"
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "response": {
-                    "type": "object",
-                    "properties": {
-                        "createdAt": {
-                            "type": "string"
-                        },
-                        "source": {
-                            "type": "object",
-                            "properties": {
-                                "type": {
-                                    "type": "string"
-                                },
-                                "reference": {
-                                    "type": "string"
-                                }
-                            },
-                            "additionalProperties": false
-                        },
-                        "content": {
-                            "type": "object",
-                            "properties": {
-                                "result": {
-                                    "type": "string"
-                                },
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "@type": {
-                                            "type": "string"
-                                        },
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "@type": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "additionalProperties": false
-                                        }
-                                    },
-                                    "additionalProperties": false
-                                }
-                            },
-                            "additionalProperties": false
-                        }
-                    },
-                    "additionalProperties": false
-                }
-            },
-            "additionalProperties": {}
         }
     }
 }
