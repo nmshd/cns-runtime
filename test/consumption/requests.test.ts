@@ -9,7 +9,6 @@ import {
     OutgoingRequestStatusChangedEvent,
     RelationshipChangeDTO,
     RelationshipTemplateDTO,
-    RequestSentEvent,
     TransportServices
 } from "../../src";
 import { IncomingRequestReceivedEvent } from "../../src/events/consumption/IncomingRequestReceivedEvent";
@@ -100,8 +99,8 @@ describe("Requests", () => {
         });
 
         test("sender: mark the outgoing Request as sent", async () => {
-            let triggeredEvent: RequestSentEvent | undefined;
-            sEventBus.subscribeOnce(RequestSentEvent, (event) => {
+            let triggeredEvent: IncomingRequestStatusChangedEvent | undefined;
+            sEventBus.subscribeOnce(IncomingRequestStatusChangedEvent, (event) => {
                 triggeredEvent = event;
             });
 
@@ -114,7 +113,7 @@ describe("Requests", () => {
             expect(result.value.status).toBe(ConsumptionRequestStatus.Open);
             expect(triggeredEvent).toBeDefined();
             expect(triggeredEvent!.data).toBeDefined();
-            expect(triggeredEvent!.data.id).toBe(result.value.id);
+            expect(triggeredEvent!.data.request.id).toBe(result.value.id);
         });
 
         test("recipient: sync the Message with the Request", async () => {
