@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/runtime",
-    "version": "2.0.0-alpha.1",
+    "version": "2.0.0-alpha.2",
     "description": "The Enmeshed client runtime.",
     "homepage": "https://enmeshed.eu",
     "license": "MIT",
@@ -55,7 +55,7 @@
         "@js-soft/logging-abstractions": "1.0.0",
         "@js-soft/ts-serval": "2.0.3",
         "@js-soft/ts-utils": "^1.1.1",
-        "@nmshd/consumption": "2.0.0-alpha.7",
+        "@nmshd/consumption": "2.0.0-alpha.8",
         "@nmshd/content": "2.0.0-alpha.8",
         "@nmshd/crypto": "2.0.1",
         "@nmshd/transport": "2.0.0-alpha.1",

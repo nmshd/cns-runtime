@@ -13,5 +13,7 @@ export class OutgoingRequestStatusChangedEvent extends DataEvent<OutgoingRequest
 
     public constructor(eventTargetAddress: string, data: OutgoingRequestStatusChangedEventData) {
         super(OutgoingRequestStatusChangedEvent.namespace, eventTargetAddress, data);
+
+        if (!data.request.isOwn) throw new Error("Cannot create this event for an incoming Request");
     }
 }

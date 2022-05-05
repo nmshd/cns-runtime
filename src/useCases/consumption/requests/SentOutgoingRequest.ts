@@ -1,8 +1,8 @@
 import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
-import { ISentOutgoingRequestParameters, OutgoingRequestsController } from "@nmshd/consumption";
+import { ConsumptionRequestStatus, ISentOutgoingRequestParameters, OutgoingRequestsController } from "@nmshd/consumption";
 import { CoreId, Message, MessageController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { RequestSentEvent } from "../../../events";
+import { OutgoingRequestStatusChangedEvent } from "../../../events";
 import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -44,7 +44,13 @@ export class SentOutgoingRequestUseCase extends UseCase<SentOutgoingRequestReque
 
         const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
 
-        this.eventBus.publish(new RequestSentEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, dto));
+        this.eventBus.publish(
+            new OutgoingRequestStatusChangedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, {
+                request: dto,
+                oldStatus: ConsumptionRequestStatus.Decided,
+                newStatus: dto.status
+            })
+        );
 
         return Result.ok(dto);
     }
