@@ -4,7 +4,7 @@ import { IRequest, RequestJSON } from "@nmshd/content";
 import { CoreAddress } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { OutgoingRequestCreatedEvent } from "../../../events";
-import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
+import { ConsumptionRequestDTO } from "../../../types";
 import { UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 

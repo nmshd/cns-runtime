@@ -3,7 +3,7 @@ import { ICreateOutgoingRequestFromRelationshipCreationChangeParameters, Outgoin
 import { CoreId, RelationshipChange, RelationshipsController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { OutgoingRequestCreatedEvent } from "../../../events";
-import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
+import { ConsumptionRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 

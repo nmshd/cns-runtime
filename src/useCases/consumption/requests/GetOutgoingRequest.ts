@@ -2,7 +2,7 @@ import { ApplicationError, Result } from "@js-soft/ts-utils";
 import { ConsumptionRequest, OutgoingRequestsController } from "@nmshd/consumption";
 import { CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
+import { ConsumptionRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 

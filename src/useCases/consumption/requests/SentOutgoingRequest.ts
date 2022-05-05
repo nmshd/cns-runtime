@@ -3,7 +3,7 @@ import { ConsumptionRequestStatus, ISentOutgoingRequestParameters, OutgoingReque
 import { CoreId, Message, MessageController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { OutgoingRequestStatusChangedEvent } from "../../../events";
-import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
+import { ConsumptionRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 

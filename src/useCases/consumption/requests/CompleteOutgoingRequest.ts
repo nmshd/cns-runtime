@@ -4,7 +4,7 @@ import { ResponseJSON } from "@nmshd/content";
 import { CoreId, Message, MessageController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { OutgoingRequestStatusChangedEvent } from "../../../events";
-import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
+import { ConsumptionRequestDTO } from "../../../types";
 import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 

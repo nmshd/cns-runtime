@@ -3,7 +3,7 @@ import { ConsumptionRequestStatus, IncomingRequestsController } from "@nmshd/con
 import { CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { IncomingRequestStatusChangedEvent } from "../../../events/consumption/IncomingRequestStatusChangedEvent";
-import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
+import { ConsumptionRequestDTO } from "../../../types";
 import { UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 

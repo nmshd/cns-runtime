@@ -4,7 +4,7 @@ import { ConsumptionRequest, ConsumptionRequestSource, ConsumptionResponse, Cons
 import { RequestItemGroupJSON, RequestItemJSON, RequestJSON, ResponseItemGroupJSON, ResponseItemJSON, ResponseJSON } from "@nmshd/content";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
-import { ConsumptionRequestDTO, ConsumptionRequestSourceDTO, ConsumptionResponseDTO, ConsumptionResponseSourceDTO } from "../../../types/consumption/ConsumptionRequestDTO";
+import { ConsumptionRequestDTO, ConsumptionRequestSourceDTO, ConsumptionResponseDTO, ConsumptionResponseSourceDTO } from "../../../types";
 import { UseCase } from "../../common";
 import { flattenObject } from "./flattenObject";
 import { RequestMapper } from "./RequestMapper";

@@ -1,5 +1,5 @@
 import { ValidationResult } from "@nmshd/consumption";
-import { RequestValidationResultDTO } from "../../../types/consumption/RequestValidationResultDTO";
+import { RequestValidationResultDTO } from "../../../types";
 
 export class RequestValidationResultMapper {
     public static toRequestValidationResultDTO(request: ValidationResult): RequestValidationResultDTO {
