@@ -62,7 +62,7 @@ export class TestRuntime extends Runtime {
         const accountController = await new AccountController(this.transport, db, this.transport.config).init();
         const consumptionController = await new ConsumptionController(this.transport, accountController).init();
 
-        this.login(accountController, consumptionController);
+        await this.login(accountController, consumptionController);
     }
 
     public getHealth(): Promise<RuntimeHealth> {

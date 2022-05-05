@@ -24,6 +24,7 @@ import {
     Transport
 } from "@nmshd/transport";
 import { Container, Scope } from "typescript-ioc";
+import { DatabaseSchemaUpgrader } from "./DatabaseSchemaUpgrader";
 import { DataViewExpander } from "./dataViews";
 import {
     ModulesInitializedEvent,
@@ -70,7 +71,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         return this._expander;
     }
 
-    protected login(accountController: AccountController, consumptionController: ConsumptionController): this {
+    protected async login(accountController: AccountController, consumptionController: ConsumptionController): Promise<this> {
         this._accountController = accountController;
         this._transportServices = Container.get<TransportServices>(TransportServices);
 
@@ -78,6 +79,8 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         this._consumptionServices = Container.get<ConsumptionServices>(ConsumptionServices);
 
         this._expander = Container.get<DataViewExpander>(DataViewExpander);
+
+        await new DatabaseSchemaUpgrader(accountController, consumptionController).upgradeSchemaVersion();
 
         return this;
     }
