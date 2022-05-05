@@ -8,7 +8,13 @@ import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
 export interface CreateOutgoingRequestFromRelationshipCreationChangeRequest {
+    /**
+     * @pattern RLT[A-Za-z0-9]{17}
+     */
     templateId: string;
+    /**
+     * @pattern RCH[A-Za-z0-9]{17}
+     */
     relationshipChangeId: string;
 }
 

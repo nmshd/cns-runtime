@@ -5,27 +5,37 @@ import { CoreId, Message, MessageController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { OutgoingRequestStatusChangedEvent } from "../../../events";
 import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
-import { RuntimeErrors, UseCase } from "../../common";
+import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
 export interface CompleteOutgoingRequestRequest {
+    /**
+     * @pattern CNSREQ[A-Za-z0-9]{14}
+     */
     requestId: string;
 
     receivedResponse: ResponseJSON;
 
     /**
-     * The id of the Message in which the Response was received.
+     * @pattern MSG[A-Za-z0-9]{17}
      */
     messageId: string;
 }
 
+class Validator extends SchemaValidator<CompleteOutgoingRequestRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("CompleteOutgoingRequestRequest"));
+    }
+}
+
 export class CompleteOutgoingRequestUseCase extends UseCase<CompleteOutgoingRequestRequest, ConsumptionRequestDTO> {
     public constructor(
+        @Inject validator: Validator,
         @Inject private readonly outgoingRequestsController: OutgoingRequestsController,
         @Inject private readonly messageController: MessageController,
         @Inject private readonly eventBus: EventBus
     ) {
-        super();
+        super(validator);
     }
 
     protected async executeInternal(request: CompleteOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {

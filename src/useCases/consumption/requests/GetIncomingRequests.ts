@@ -10,10 +10,10 @@ import { flattenObject } from "./flattenObject";
 import { RequestMapper } from "./RequestMapper";
 
 export interface GetIncomingRequestsRequest {
-    query?: GetIncomingRequestsRequestQuery;
+    query?: GetIncomingRequestsRequestsQuery;
 }
 
-export interface GetIncomingRequestsRequestQuery {
+export interface GetIncomingRequestsRequestsQuery {
     id?: string;
     peer?: string;
     createdAt?: string;

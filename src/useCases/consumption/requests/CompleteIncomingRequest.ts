@@ -4,22 +4,36 @@ import { CoreId, IMessage, IRelationshipChange, Message, MessageController, Rela
 import { Inject } from "typescript-ioc";
 import { IncomingRequestStatusChangedEvent } from "../../../events/consumption/IncomingRequestStatusChangedEvent";
 import { ConsumptionRequestDTO } from "../../../types/consumption/ConsumptionRequestDTO";
-import { RuntimeErrors, UseCase } from "../../common";
+import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
 export interface CompleteIncomingRequestRequest {
+    /**
+     * @pattern CNSREQ[A-Za-z0-9]{14}
+     */
     requestId: string;
+
+    /**
+     * @pattern (MSG|RCH)[A-Za-z0-9]{17}
+     */
     responseSourceId: string;
+}
+
+class Validator extends SchemaValidator<CompleteIncomingRequestRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("CompleteIncomingRequestRequest"));
+    }
 }
 
 export class CompleteIncomingRequestUseCase extends UseCase<CompleteIncomingRequestRequest, ConsumptionRequestDTO> {
     public constructor(
+        @Inject validator: Validator,
         @Inject private readonly incomingRequestsController: IncomingRequestsController,
         @Inject private readonly eventBus: EventBus,
         @Inject private readonly messageController: MessageController,
         @Inject private readonly relationshipController: RelationshipsController
     ) {
-        super();
+        super(validator);
     }
 
     protected async executeInternal(request: CompleteIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {

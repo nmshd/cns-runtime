@@ -8,6 +8,9 @@ import { UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
 export interface RequireManualDecisionOfIncomingRequestRequest {
+    /**
+     * @pattern CNSREQ[A-Za-z0-9]{14}
+     */
     requestId: string;
 }
 

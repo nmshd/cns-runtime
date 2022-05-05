@@ -8,10 +8,13 @@ import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
 export interface SentOutgoingRequestRequest {
+    /**
+     * @pattern CNSREQ[A-Za-z0-9]{14}
+     */
     requestId: string;
 
     /**
-     * The id of the Message in which the Request was sent.
+     * @pattern MSG[A-Za-z0-9]{17}
      */
     messageId: string;
 }

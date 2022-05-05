@@ -10,6 +10,9 @@ import { RequestMapper } from "./RequestMapper";
 
 export interface CreateOutgoingRequestRequest {
     content: Omit<RequestJSON | IRequest, "id" | "@type" | "@version">;
+    /**
+     * @pattern id1[A-Za-z0-9]{32,33}
+     */
     peer: string;
 }
 
