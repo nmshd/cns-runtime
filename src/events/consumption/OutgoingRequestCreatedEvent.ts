@@ -6,5 +6,7 @@ export class OutgoingRequestCreatedEvent extends DataEvent<ConsumptionRequestDTO
 
     public constructor(eventTargetAddress: string, data: ConsumptionRequestDTO) {
         super(OutgoingRequestCreatedEvent.namespace, eventTargetAddress, data);
+
+        if (!data.isOwn) throw new Error("Cannot create this event for an incoming Request");
     }
 }
