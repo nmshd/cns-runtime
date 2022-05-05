@@ -3,7 +3,6 @@ import { MessageReceivedEvent } from "../events";
 import { MailReceivedEvent } from "../events/consumption/MailReceivedEvent";
 import { RelationshipEvent } from "../events/consumption/RelationshipEvent";
 import { RequestMailReceivedEvent } from "../events/consumption/RequestMailReceivedEvent";
-import { RequestReceivedEventOld } from "../events/consumption/RequestReceivedEventOld";
 import { Event } from "../events/Event";
 import { ModuleConfiguration, RuntimeModule } from "../extensibility/modules/RuntimeModule";
 
@@ -39,13 +38,6 @@ export default class MessageModule extends RuntimeModule<MessageModuleConfigurat
                 event = new RequestMailReceivedEvent(messageReceivedEvent.eventTargetAddress, requestMail, message);
                 this.runtime.eventBus.publish(event);
                 this.logger.trace(`Published RequestMailReceivedEvent for ${message.id}`);
-
-                let i = 0;
-                for (const request of requestMail.requests) {
-                    this.runtime.eventBus.publish(new RequestReceivedEventOld(messageReceivedEvent.eventTargetAddress, request, message));
-                    this.logger.trace(`Published RequestReceivedEvent request #${i} of RequestMail ${message.id}`);
-                    i++;
-                }
 
                 break;
 
