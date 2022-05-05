@@ -1,15 +1,15 @@
-export function flattenObject(obj: any): Record<string, unknown> {
+export function flattenObject(object: any): Record<string, unknown> {
     const result: Record<string, unknown> = {};
 
-    for (const i in obj) {
-        const propertyValue = obj[i];
+    for (const key in object) {
+        const propertyValue = object[key];
         if (typeof propertyValue === "object" && !Array.isArray(propertyValue)) {
             const temp = flattenObject(propertyValue);
             for (const j in temp) {
-                result[`${i}.${j}`] = temp[j];
+                result[`${key}.${j}`] = temp[j];
             }
         } else {
-            result[i] = propertyValue;
+            result[key] = propertyValue;
         }
     }
     return result;
