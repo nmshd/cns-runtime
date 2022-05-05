@@ -1,7 +1,5 @@
 import { Inject } from "typescript-ioc";
-import { AttributesFacade, DraftsFacade, RelationshipInfoFacade, SettingsFacade, SharedItemsFacade } from "./facades/consumption";
-import { IncomingRequestsFacade } from "./facades/consumption/IncomingRequestsFacade";
-import { OutgoingRequestsFacade } from "./facades/consumption/OutgoingRequestsFacade";
+import { AttributesFacade, DraftsFacade, IncomingRequestsFacade, OutgoingRequestsFacade, RelationshipInfoFacade, SettingsFacade, SharedItemsFacade } from "./facades/consumption";
 
 export class ConsumptionServices {
     public constructor(
