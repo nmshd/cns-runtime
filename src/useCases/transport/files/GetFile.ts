@@ -7,7 +7,7 @@ import { FileMapper } from "./FileMapper";
 
 export interface GetFileRequest {
     /**
-     * @format fileId
+     * @pattern FIL[A-z0-9]{17}
      */
     id: string;
 }

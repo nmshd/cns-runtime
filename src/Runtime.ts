@@ -5,6 +5,8 @@ import {
     ConsumptionAttributesController,
     ConsumptionController,
     DraftsController,
+    IncomingRequestsController,
+    OutgoingRequestsController,
     RelationshipInfoController,
     SettingsController,
     SharedItemsController
@@ -245,6 +247,14 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         Container.bind(RelationshipInfoController)
             .factory(() => this.getConsumptionController().relationshipInfo)
+            .scope(Scope.Request);
+
+        Container.bind(IncomingRequestsController)
+            .factory(() => this.getConsumptionController().incomingRequests)
+            .scope(Scope.Request);
+
+        Container.bind(OutgoingRequestsController)
+            .factory(() => this.getConsumptionController().outgoingRequests)
             .scope(Scope.Request);
 
         Container.bind(SettingsController)

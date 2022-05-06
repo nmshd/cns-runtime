@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { TransportServices } from "../../src";
-import { expectSuccess, RuntimeServiceProvider, uploadFile } from "../lib";
+import { RuntimeServiceProvider, uploadFile } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices: TransportServices;
@@ -21,7 +21,7 @@ describe("Sync", () => {
 
     test("should query the syncRun", async () => {
         const syncRunResponse = await transportServices.account.getSyncInfo();
-        expectSuccess(syncRunResponse);
+        expect(syncRunResponse).toBeSuccessful();
 
         const syncRun = syncRunResponse.value;
         const dateTime = DateTime.fromISO(syncRun.lastSyncRun!.completedAt);
@@ -32,7 +32,7 @@ describe("Sync", () => {
 describe("Automatic Datawallet Sync", () => {
     async function getSyncInfo() {
         const sync = await transportServices.account.getSyncInfo();
-        expectSuccess(sync);
+        expect(sync).toBeSuccessful();
         return sync.value;
     }
 
@@ -48,7 +48,7 @@ describe("Automatic Datawallet Sync", () => {
 
     test("should not run an automatic datawallet sync", async () => {
         const disableResult = await transportServices.account.disableAutoSync();
-        expectSuccess(disableResult);
+        expect(disableResult).toBeSuccessful();
 
         await transportServices.account.syncDatawallet();
         const oldSyncTime = await getSyncInfo();
@@ -57,7 +57,7 @@ describe("Automatic Datawallet Sync", () => {
         expect(await getSyncInfo()).toStrictEqual(oldSyncTime);
 
         const enableResult = await transportServices.account.enableAutoSync();
-        expectSuccess(enableResult);
+        expect(enableResult).toBeSuccessful();
 
         expect(await getSyncInfo()).not.toStrictEqual(oldSyncTime);
     });
@@ -66,7 +66,7 @@ describe("Automatic Datawallet Sync", () => {
 describe("IdentityInfo", () => {
     test("should get the IndentityInformation", async () => {
         const identityInfoResult = await transportServices.account.getIdentityInfo();
-        expectSuccess(identityInfoResult);
+        expect(identityInfoResult).toBeSuccessful();
 
         const identityInfo = identityInfoResult.value;
         expect(identityInfo.address.length).toBeLessThanOrEqual(36);

@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { OwnerRestriction, RelationshipTemplateDTO, TransportServices } from "../../src";
-import { createTemplate, exchangeTemplate, expectError, expectSuccess, QueryParamConditions, RuntimeServiceProvider } from "../lib";
+import { createTemplate, exchangeTemplate, QueryParamConditions, RuntimeServiceProvider } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -24,7 +24,7 @@ describe("Template Tests", () => {
             content: { a: "b" }
         });
 
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
 
         template = response.value;
     });
@@ -35,7 +35,7 @@ describe("Template Tests", () => {
             expiresAt: undefined as unknown as string
         });
 
-        expectError(response, "expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 
     test("create a template with undefined maxNumberOfRelationships", async () => {
@@ -46,7 +46,7 @@ describe("Template Tests", () => {
 
         templateWithUndefinedMaxNumberOfRelationships = response.value;
 
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         expect(templateWithUndefinedMaxNumberOfRelationships.maxNumberOfRelationships).toBeUndefined();
     });
 
@@ -55,7 +55,7 @@ describe("Template Tests", () => {
             id: templateWithUndefinedMaxNumberOfRelationships.id
         });
 
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         expect(templateWithUndefinedMaxNumberOfRelationships.maxNumberOfRelationships).toBeUndefined();
     });
 
@@ -65,7 +65,7 @@ describe("Template Tests", () => {
         const response = await transportServices1.relationshipTemplates.getRelationshipTemplates({
             ownerRestriction: OwnerRestriction.Own
         });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         expect(response.value).toContainEqual(template);
     });
 
@@ -73,7 +73,7 @@ describe("Template Tests", () => {
         expect(template).toBeDefined();
 
         const response = await transportServices1.relationshipTemplates.getRelationshipTemplate({ id: template.id });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
     });
 
     test("expect a validation error for sending maxNumberOfRelationships 0", async () => {
@@ -94,7 +94,7 @@ describe("Serialization Errors", () => {
             content: { a: "A", "@type": "Message" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
-        expectError(response, "Message.secretKey :: Value is not defined", "error.runtime.requestDeserialization");
+        expect(response).toBeAnError("Message.secretKey :: Value is not defined", "error.runtime.requestDeserialization");
     });
 
     test("create a template with wrong content : not existent type", async () => {
@@ -102,8 +102,7 @@ describe("Serialization Errors", () => {
             content: { a: "A", "@type": "someNoneExistingType" },
             expiresAt: DateTime.utc().plus({ minutes: 1 }).toString()
         });
-        expectError(
-            response,
+        expect(response).toBeAnError(
             "Type 'someNoneExistingType' with version 1 was not found within reflection classes. You might have to install a module first.",
             "error.runtime.unknownType"
         );

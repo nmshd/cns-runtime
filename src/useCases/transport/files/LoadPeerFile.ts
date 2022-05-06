@@ -9,7 +9,7 @@ import { FileMapper } from "./FileMapper";
 
 export interface LoadPeerFileViaSecretRequest {
     /**
-     * @format fileId
+     * @pattern FIL[A-z0-9]{17}
      */
     id: string;
     /**

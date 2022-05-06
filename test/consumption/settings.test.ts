@@ -1,7 +1,7 @@
 import { ConsumptionIds } from "@nmshd/consumption";
 import { CoreDate, TransportIds } from "@nmshd/transport";
 import { ConsumptionServices } from "../../src";
-import { expectSuccess, QueryParamConditions, RuntimeServiceProvider } from "../lib";
+import { QueryParamConditions, RuntimeServiceProvider } from "../lib";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
 let consumptionServices: ConsumptionServices;
@@ -21,7 +21,7 @@ describe("Settings", () => {
             key: "a-key",
             value: value
         });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const setting = result.value;
         settingId = setting.id;
@@ -29,7 +29,7 @@ describe("Settings", () => {
 
     test("should get the setting", async () => {
         const result = await consumptionServices.settings.getSetting({ id: settingId });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const setting = result.value;
         settingId = setting.id;
@@ -39,7 +39,7 @@ describe("Settings", () => {
 
     test("should contain the setting in the list of settings", async () => {
         const result = await consumptionServices.settings.getSettings({});
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const settings = result.value;
 
@@ -54,10 +54,10 @@ describe("Settings", () => {
             id: settingId,
             value: newValue
         });
-        expectSuccess(updateResult);
+        expect(updateResult).toBeSuccessful();
 
         const result = await consumptionServices.settings.getSetting({ id: settingId });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const setting = result.value;
         expect(setting.value).toStrictEqual(newValue);
@@ -65,10 +65,10 @@ describe("Settings", () => {
 
     test("should delete the setting", async () => {
         const deleteResult = await consumptionServices.settings.deleteSetting({ id: settingId });
-        expectSuccess(deleteResult);
+        expect(deleteResult).toBeSuccessful();
 
         const result = await consumptionServices.settings.getSettings({});
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const settings = result.value;
         expect(settings).toHaveLength(0);
@@ -86,7 +86,7 @@ describe("Settings query", () => {
             succeedsItem: (await ConsumptionIds.setting.generate()).toString(),
             succeedsAt: CoreDate.utc().toString()
         });
-        expectSuccess(result);
+        expect(result).toBeSuccessful();
 
         const setting = result.value;
 

@@ -1,5 +1,5 @@
 import { OwnerRestriction, TransportServices } from "../../src";
-import { exchangeToken, expectError, QueryParamConditions, RuntimeServiceProvider, uploadOwnToken } from "../lib";
+import { exchangeToken, QueryParamConditions, RuntimeServiceProvider, uploadOwnToken } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -22,7 +22,7 @@ describe("Tokens errors", () => {
             ephemeral: false
         });
 
-        expectError(response, "expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
+        expect(response).toBeAnError("expiresAt is invalid", "error.runtime.validation.invalidPropertyValue");
     });
 });
 

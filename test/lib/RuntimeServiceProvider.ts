@@ -1,3 +1,4 @@
+import { EventBus } from "@js-soft/ts-utils";
 import { AnonymousServices, ConsumptionServices, DataViewExpander, RuntimeConfig, TransportServices } from "../../src";
 import { TestRuntime } from "./TestRuntime";
 
@@ -6,6 +7,7 @@ export interface RuntimeServices {
     consumption: ConsumptionServices;
     anonymous: AnonymousServices;
     expander: DataViewExpander;
+    eventBus: EventBus;
 }
 
 export interface LaunchConfiguration {
@@ -50,7 +52,8 @@ export class RuntimeServiceProvider {
                 transport: runtime.transportServices,
                 consumption: runtime.consumptionServices,
                 anonymous: runtime.anonymousServices,
-                expander: runtime.dataViewExpander
+                expander: runtime.dataViewExpander,
+                eventBus: runtime.eventBus
             });
         }
 

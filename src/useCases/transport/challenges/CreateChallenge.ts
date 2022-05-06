@@ -9,7 +9,7 @@ import { ChallengeMapper } from "./ChallengeMapper";
 export interface CreateRelationshipChallengeRequest {
     challengeType: "Relationship";
     /**
-     * @format relationshipId
+     * @pattern REL[A-z0-9]{17}
      */
     relationship: string;
 }

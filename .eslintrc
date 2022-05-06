@@ -8,7 +8,7 @@
         "jest/expect-expect": [
             "error",
             {
-                "assertFunctionNames": ["expect", "*.executeTests", "expectSuccess", "expectError"]
+                "assertFunctionNames": ["expect", "*.executeTests"]
             }
         ]
     },

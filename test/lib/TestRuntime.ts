@@ -3,9 +3,10 @@ import { LokiJsConnection } from "@js-soft/docdb-access-loki";
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILoggerFactory } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
-import { ConsumptionController } from "@nmshd/consumption";
+import { ConsumptionController, GenericRequestItemProcessor } from "@nmshd/consumption";
 import { AccountController } from "@nmshd/transport";
 import { DataViewExpander, ModuleConfiguration, Runtime, RuntimeHealth } from "../../src";
+import { TestRequestItem } from "../consumption/TestRequestItem";
 
 export class TestRuntime extends Runtime {
     private dbConnection?: MongoDbConnection | LokiJsConnection;
@@ -60,7 +61,12 @@ export class TestRuntime extends Runtime {
         const db = await this.transport.createDatabase(`acc-${randomAccountName}`);
 
         const accountController = await new AccountController(this.transport, db, this.transport.config).init();
-        const consumptionController = await new ConsumptionController(this.transport, accountController).init();
+        const consumptionController = await new ConsumptionController(this.transport, accountController).init([
+            {
+                itemConstructor: TestRequestItem,
+                processorConstructor: GenericRequestItemProcessor
+            }
+        ]);
 
         await this.login(accountController, consumptionController);
     }

@@ -3,17 +3,6 @@ import addErrors from "ajv-errors";
 import addFormats from "ajv-formats";
 import { Definition } from "ts-json-schema-generator";
 
-const customFormats: Record<string, string> = {
-    fileId: "FIL[A-z0-9]{17}",
-    relationshipId: "REL[A-z0-9]{17}",
-    messageId: "MSG[A-z0-9]{17}",
-    relationshipTemplateId: "RLT[A-z0-9]{17}",
-    tokenId: "TOK[A-z0-9]{17}",
-    relationshipChangeId: "RCH[A-z0-9]{17}",
-    deviceId: "DVC[A-z0-9]{17}",
-    challengeId: "CHL[A-z0-9]{17}"
-};
-
 export class SchemaRepository {
     private readonly compiler: Ajv;
     private schemaDefinitions: Record<string, Definition | undefined>;
@@ -23,14 +12,6 @@ export class SchemaRepository {
         this.compiler = new Ajv({ allErrors: true });
         addFormats(this.compiler);
         addErrors(this.compiler);
-
-        this.addCustomFormats();
-    }
-
-    private addCustomFormats() {
-        Object.entries(customFormats).forEach(([name, format]) => {
-            this.compiler.addFormat(name, format);
-        });
     }
 
     public async loadSchemas(): Promise<void> {

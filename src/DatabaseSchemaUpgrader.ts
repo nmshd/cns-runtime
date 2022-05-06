@@ -14,9 +14,13 @@ class RuntimeDatabaseSchemaMetadata extends Serializable {
     @validate({ min: 0 })
     public version: number;
 
-    public static from(value: { id?: string; version: number }): RuntimeDatabaseSchemaMetadata {
+    protected static override preFrom(value: any) {
         if (!value.id) value.id = RuntimeDatabaseSchemaMetadata.DATABASE_SCHEMA_ID;
-        return super.fromT(value, RuntimeDatabaseSchemaMetadata);
+        return value;
+    }
+
+    public static from(value: { version: number }): RuntimeDatabaseSchemaMetadata {
+        return this.fromAny(value);
     }
 }
 

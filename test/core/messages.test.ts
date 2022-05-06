@@ -1,15 +1,5 @@
 import { TransportServices } from "../../src";
-import {
-    establishRelationship,
-    exchangeMessage,
-    expectError,
-    expectSuccess,
-    getRelationship,
-    QueryParamConditions,
-    RuntimeServiceProvider,
-    syncUntilHasMessages,
-    uploadFile
-} from "../lib";
+import { establishRelationship, exchangeMessage, getRelationship, QueryParamConditions, RuntimeServiceProvider, syncUntilHasMessages, uploadFile } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -52,7 +42,7 @@ describe("Messaging", () => {
             },
             attachments: [fileId]
         });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
 
         messageId = response.value.id;
     });
@@ -78,7 +68,7 @@ describe("Messaging", () => {
         expect(messageId).toBeDefined();
 
         const response = await transportServices2.messages.getMessages({});
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         expect(response.value).toHaveLength(1);
 
         const message = response.value[0];
@@ -96,7 +86,7 @@ describe("Messaging", () => {
         expect(messageId).toBeDefined();
 
         const response = await transportServices2.messages.getMessage({ id: messageId });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
     });
 });
 
@@ -112,7 +102,7 @@ describe("Message errors", () => {
                 body: "A Body"
             }
         });
-        expectError(result, "Mail.to:Array :: may not be empty", "error.runtime.requestDeserialization");
+        expect(result).toBeAnError("Mail.to:Array :: may not be empty", "error.runtime.requestDeserialization");
     });
 
     test("should throw correct error for missing 'to' in the Message", async () => {
@@ -124,7 +114,7 @@ describe("Message errors", () => {
                 body: "A Body"
             }
         });
-        expectError(result, "Mail.to :: Value is not defined", "error.runtime.requestDeserialization");
+        expect(result).toBeAnError("Mail.to :: Value is not defined", "error.runtime.requestDeserialization");
     });
 });
 

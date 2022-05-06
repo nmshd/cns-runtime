@@ -1,7 +1,7 @@
 import { Result } from "@js-soft/ts-utils";
 import { AccountController, DevicesController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { DeviceDTO } from "../../../types/transport/DeviceDTO";
+import { DeviceDTO } from "../../../types";
 import { RuntimeValidator, UseCase } from "../../common";
 import { DeviceMapper } from "./DeviceMapper";
 

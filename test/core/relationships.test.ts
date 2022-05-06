@@ -1,6 +1,5 @@
 import { TransportServices } from "../../src";
 import { getRelationship, getTemplateToken, QueryParamConditions, RuntimeServiceProvider, syncUntilHasRelationships } from "../lib";
-import { expectSuccess } from "../lib/validation";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -24,7 +23,7 @@ describe("Create Relationship", () => {
         const response = await transportServices2.relationshipTemplates.loadPeerRelationshipTemplate({
             reference: token.truncatedReference
         });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         templateId = response.value.id;
     });
 
@@ -35,7 +34,7 @@ describe("Create Relationship", () => {
             templateId: templateId,
             content: { a: "b" }
         });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
     });
 
     test("sync relationships", async () => {
@@ -57,14 +56,14 @@ describe("Create Relationship", () => {
             changeId: relationshipChangeId,
             content: { a: "b" }
         });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
     });
 
     test("should exist a relationship on TransportService1", async () => {
         expect(relationshipId).toBeDefined();
 
         const response = await transportServices1.relationships.getRelationships({});
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         expect(response.value).toHaveLength(1);
     });
 
@@ -79,7 +78,7 @@ describe("Create Relationship", () => {
         expect(relationshipId).toBeDefined();
 
         const response = await transportServices2.relationships.getRelationships({});
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         expect(response.value).toHaveLength(1);
     });
 
@@ -87,7 +86,7 @@ describe("Create Relationship", () => {
         expect(relationshipId).toBeDefined();
 
         const response = await transportServices1.relationships.getRelationship({ id: relationshipId });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         expect(response.value.status).toBe("Active");
     });
 
@@ -95,7 +94,7 @@ describe("Create Relationship", () => {
         expect(relationshipId).toBeDefined();
 
         const response = await transportServices2.relationships.getRelationship({ id: relationshipId });
-        expectSuccess(response);
+        expect(response).toBeSuccessful();
         expect(response.value.status).toBe("Active");
     });
 });

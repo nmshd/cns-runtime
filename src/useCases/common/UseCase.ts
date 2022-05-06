@@ -1,6 +1,6 @@
 import { ParsingError, ServalError, ValidationError } from "@js-soft/ts-serval";
 import { ApplicationError, Result } from "@js-soft/ts-utils";
-import { RequestError } from "@nmshd/transport";
+import { CoreError, RequestError } from "@nmshd/transport";
 import { ValidationResult } from "fluent-ts-validator";
 import stringifySafe from "json-stringify-safe";
 import { PlatformErrorCodes } from "./PlatformErrorCodes";
@@ -41,6 +41,10 @@ export abstract class UseCase<IRequest, IResponse> {
 
         if (error instanceof ApplicationError) {
             return Result.fail(error);
+        }
+
+        if (error instanceof CoreError) {
+            return Result.fail(new ApplicationError(error.code, error.message));
         }
 
         return Result.fail(RuntimeErrors.general.unknown(`An error was thrown in a UseCase: ${error.message}`, error));

@@ -5,7 +5,7 @@ import { QRCode, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } fro
 
 export interface CreateTokenQrCodeForFileRequest {
     /**
-     * @format fileId
+     * @pattern FIL[A-z0-9]{17}
      */
     fileId: string;
     /**

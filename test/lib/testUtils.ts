@@ -14,7 +14,6 @@ import {
     TransportServices,
     UploadOwnFileRequest
 } from "../../src";
-import { expectSuccess } from "./validation";
 
 export async function syncUntil(transportServices: TransportServices, until: (syncResult: SyncEverythingResponse) => boolean): Promise<SyncEverythingResponse> {
     const { messages, relationships } = (await transportServices.account.syncEverything()).value;
@@ -50,7 +49,7 @@ export async function uploadOwnToken(transportServices: TransportServices): Prom
         ephemeral: false
     });
 
-    expectSuccess(response);
+    expect(response).toBeSuccessful();
 
     return response.value;
 }
@@ -58,7 +57,7 @@ export async function uploadOwnToken(transportServices: TransportServices): Prom
 export async function uploadFile(transportServices: TransportServices): Promise<FileDTO> {
     const response = await transportServices.files.uploadOwnFile(await makeUploadRequest());
 
-    expectSuccess(response);
+    expect(response).toBeSuccessful();
 
     return response.value;
 }
@@ -99,7 +98,7 @@ export async function createTemplate(
         content: body
     });
 
-    expectSuccess(response);
+    expect(response).toBeSuccessful();
 
     return response.value;
 }
@@ -108,7 +107,7 @@ export async function getTemplateToken(transportServices: TransportServices, bod
     const template = await createTemplate(transportServices, body);
 
     const response = await transportServices.relationshipTemplates.createTokenForOwnTemplate({ templateId: template.id });
-    expectSuccess(response);
+    expect(response).toBeSuccessful();
 
     return response.value;
 }
@@ -117,7 +116,7 @@ export async function getFileToken(transportServices: TransportServices): Promis
     const file = await uploadFile(transportServices);
 
     const response = await transportServices.files.createTokenForFile({ fileId: file.id });
-    expectSuccess(response);
+    expect(response).toBeSuccessful();
 
     return response.value;
 }
@@ -132,7 +131,7 @@ export async function exchangeTemplate(
     const response = await transportServicesRecipient.relationshipTemplates.loadPeerRelationshipTemplate({
         reference: templateToken.truncatedReference
     });
-    expectSuccess(response);
+    expect(response).toBeSuccessful();
 
     return response.value;
 }
@@ -141,7 +140,7 @@ export async function exchangeFile(transportServicesCreator: TransportServices, 
     const fileToken = await getFileToken(transportServicesCreator);
 
     const response = await transportServicesRecipient.files.loadPeerFile({ reference: fileToken.truncatedReference });
-    expectSuccess(response);
+    expect(response).toBeSuccessful();
 
     return response.value;
 }
@@ -153,7 +152,7 @@ export async function exchangeToken(transportServicesCreator: TransportServices,
         reference: token.truncatedReference,
         ephemeral: false
     });
-    expectSuccess(response);
+    expect(response).toBeSuccessful();
 
     return response.value;
 }
@@ -169,7 +168,7 @@ export async function sendMessage(transportServices: TransportServices, recipien
             to: [recipient]
         }
     });
-    expectSuccess(response);
+    expect(response).toBeSuccessful();
 
     return response.value;
 }
@@ -189,7 +188,7 @@ export async function exchangeMessage(transportServicesCreator: TransportService
 export async function getRelationship(transportServices: TransportServices): Promise<RelationshipDTO> {
     const response = await transportServices.relationships.getRelationships({});
 
-    expectSuccess(response);
+    expect(response).toBeSuccessful();
     expect(response.value).toHaveLength(1);
 
     return response.value[0];
@@ -202,7 +201,7 @@ export async function establishRelationship(transportServices1: TransportService
         templateId: template.id,
         content: { a: "b" }
     });
-    expectSuccess(createRelationshipResponse);
+    expect(createRelationshipResponse).toBeSuccessful();
 
     const relationships = await syncUntilHasRelationships(transportServices1);
     expect(relationships).toHaveLength(1);
@@ -212,7 +211,7 @@ export async function establishRelationship(transportServices1: TransportService
         changeId: relationships[0].changes[0].id,
         content: { a: "b" }
     });
-    expectSuccess(acceptResponse);
+    expect(acceptResponse).toBeSuccessful();
 
     const relationships2 = await syncUntilHasRelationships(transportServices2);
     expect(relationships2).toHaveLength(1);
@@ -230,7 +229,7 @@ export async function establishRelationshipWithBodys(
         templateId: template.id,
         content: requestBody
     });
-    expectSuccess(createRelationshipResponse);
+    expect(createRelationshipResponse).toBeSuccessful();
 
     const relationships = await syncUntilHasRelationships(transportServices1);
     expect(relationships).toHaveLength(1);
@@ -240,7 +239,7 @@ export async function establishRelationshipWithBodys(
         changeId: relationships[0].changes[0].id,
         content: { a: "b" }
     });
-    expectSuccess(acceptResponse);
+    expect(acceptResponse).toBeSuccessful();
 
     const relationships2 = await syncUntilHasRelationships(transportServices2);
     expect(relationships2).toHaveLength(1);

@@ -1,7 +1,6 @@
 import { CryptoSecretKey, CryptoSignaturePrivateKey, CryptoSignaturePublicKey } from "@nmshd/crypto";
 import { CoreAddress, CoreDate, CoreId, Device, DeviceSharedSecret, Realm } from "@nmshd/transport";
-import { DeviceOnboardingInfoDTO } from "../../../types";
-import { DeviceDTO } from "../../../types/transport/DeviceDTO";
+import { DeviceDTO, DeviceOnboardingInfoDTO } from "../../../types";
 
 export class DeviceMapper {
     public static toDeviceDTO(device: Device): DeviceDTO {
