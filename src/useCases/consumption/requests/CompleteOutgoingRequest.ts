@@ -47,7 +47,7 @@ export class CompleteOutgoingRequestUseCase extends UseCase<CompleteOutgoingRequ
 
         const params: ICompleteOugoingRequestParameters = {
             requestId: CoreId.from(request.requestId),
-            // @ts-expect-error // TODO: TIMO: remove this as soon as the Type Definitions are correct
+            // @ts-expect-error // TODO: remove this as soon as the Type Definitions are correct
             receivedResponse: request.receivedResponse,
             responseSourceObject: message
         };

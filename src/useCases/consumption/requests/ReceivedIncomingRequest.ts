@@ -46,7 +46,7 @@ export class ReceivedIncomingRequestUseCase extends UseCase<ReceivedIncomingRequ
         }
 
         const consumptionRequest = await this.incomingRequestsController.received({
-            // @ts-expect-error // TODO: TIMO: remove this as soon as the Type Definitions are correct
+            // @ts-expect-error // TODO: remove this as soon as the Type Definitions are correct
             receivedRequest: request.receivedRequest,
             requestSourceObject
         });

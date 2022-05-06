@@ -14,7 +14,7 @@ export class CanCreateOutgoingRequestUseCase extends UseCase<CreateOutgoingReque
 
     protected async executeInternal(request: CreateOutgoingRequestRequest): Promise<Result<RequestValidationResultDTO, ApplicationError>> {
         const params: ICreateOutgoingRequestParameters = {
-            // @ts-expect-error // TODO: TIMO: remove this as soon as the Type Definitions are correct
+            // @ts-expect-error // TODO: remove this as soon as the Type Definitions are correct
             content: request.content,
             peer: CoreAddress.from(request.peer)
         };
