@@ -317,7 +317,7 @@ describe("Requests", () => {
         });
     });
 
-    describe.each([
+    describe.only.each([
         {
             action: "Accept"
         },
@@ -333,6 +333,7 @@ describe("Requests", () => {
         let sTransportServices: TransportServices;
         let rTransportServices: TransportServices;
         let rEventBus: EventBus;
+        let sEventBus: EventBus;
 
         let sConsumptionRequest: ConsumptionRequestDTO;
         let sRelationshipTemplate: RelationshipTemplateDTO;
@@ -345,6 +346,7 @@ describe("Requests", () => {
             const runtimeServices = await runtimeServiceProvider.launch(2);
             sConsumptionServices = runtimeServices[0].consumption;
             sTransportServices = runtimeServices[0].transport;
+            sEventBus = runtimeServices[0].eventBus;
             rConsumptionServices = runtimeServices[1].consumption;
             rTransportServices = runtimeServices[1].transport;
             rEventBus = runtimeServices[1].eventBus;
@@ -548,7 +550,7 @@ describe("Requests", () => {
 
         test("sender: create the outgoing Request with Request from Relationship Template and Response from Relationship Creation Change", async () => {
             let triggeredEvent: OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent | undefined;
-            rEventBus.subscribeOnce(OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent, (event) => {
+            sEventBus.subscribeOnce(OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent, (event) => {
                 triggeredEvent = event;
             });
 
