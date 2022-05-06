@@ -569,8 +569,6 @@ describe("Requests", () => {
 
             expect(triggeredEvent).toBeDefined();
             expect(triggeredEvent!.data).toBeDefined();
-            expect(triggeredEvent!.data.oldStatus).toBe(ConsumptionRequestStatus.Decided);
-            expect(triggeredEvent!.data.newStatus).toBe(ConsumptionRequestStatus.Completed);
         });
     });
 });
