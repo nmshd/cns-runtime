@@ -6,6 +6,7 @@ import {
     ConsumptionServices,
     MessageDTO,
     OutgoingRequestCreatedEvent,
+    OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent,
     OutgoingRequestStatusChangedEvent,
     RelationshipChangeDTO,
     RelationshipTemplateDTO,
@@ -546,6 +547,11 @@ describe("Requests", () => {
         });
 
         test("sender: create the outgoing Request with Request from Relationship Template and Response from Relationship Creation Change", async () => {
+            let triggeredEvent: OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent | undefined;
+            rEventBus.subscribeOnce(OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent, (event) => {
+                triggeredEvent = event;
+            });
+
             const result = await sConsumptionServices.outgoingRequests.createAndCompleteFromRelationshipCreationChange({
                 relationshipChangeId: sRelationshipChange.id,
                 templateId: sRelationshipTemplate.id
@@ -560,6 +566,11 @@ describe("Requests", () => {
             expect(sConsumptionRequest.status).toBe(ConsumptionRequestStatus.Completed);
             expect(sConsumptionRequest.response).toBeDefined();
             expect(sConsumptionRequest.response!.content).toBeDefined();
+
+            expect(triggeredEvent).toBeDefined();
+            expect(triggeredEvent!.data).toBeDefined();
+            expect(triggeredEvent!.data.oldStatus).toBe(ConsumptionRequestStatus.Decided);
+            expect(triggeredEvent!.data.newStatus).toBe(ConsumptionRequestStatus.Completed);
         });
     });
 });

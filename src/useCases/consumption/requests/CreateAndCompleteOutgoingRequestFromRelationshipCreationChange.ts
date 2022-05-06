@@ -2,7 +2,7 @@ import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
 import { ICreateOutgoingRequestFromRelationshipCreationChangeParameters, OutgoingRequestsController } from "@nmshd/consumption";
 import { CoreId, RelationshipChange, RelationshipsController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { OutgoingRequestCreatedEvent } from "../../../events";
+import { OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent } from "../../../events/consumption/OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent";
 import { ConsumptionRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -53,7 +53,9 @@ export class CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCa
 
         const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
 
-        this.eventBus.publish(new OutgoingRequestCreatedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, dto));
+        this.eventBus.publish(
+            new OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, dto)
+        );
 
         return Result.ok(dto);
     }

@@ -26,15 +26,13 @@ export class RequireManualDecisionOfIncomingRequestUseCase extends UseCase<Requi
 
         const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
 
-        if (consumptionRequest.status === ConsumptionRequestStatus.ManualDecisionRequired) {
-            this.eventBus.publish(
-                new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
-                    request: dto,
-                    oldStatus: ConsumptionRequestStatus.DecisionRequired,
-                    newStatus: dto.status
-                })
-            );
-        }
+        this.eventBus.publish(
+            new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
+                request: dto,
+                oldStatus: ConsumptionRequestStatus.DecisionRequired,
+                newStatus: dto.status
+            })
+        );
 
         return Result.ok(dto);
     }

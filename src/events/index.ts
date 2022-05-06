@@ -1,6 +1,7 @@
 export * from "./consumption/IncomingRequestReceivedEvent";
 export * from "./consumption/IncomingRequestStatusChangedEvent";
 export * from "./consumption/OutgoingRequestCreatedEvent";
+export * from "./consumption/OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent";
 export * from "./consumption/OutgoingRequestStatusChangedEvent";
 export * from "./DataEvent";
 export * from "./Event";

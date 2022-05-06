@@ -63,15 +63,13 @@ export class CompleteIncomingRequestUseCase extends UseCase<CompleteIncomingRequ
 
         const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
 
-        if (consumptionRequest.status === ConsumptionRequestStatus.Completed) {
-            this.eventBus.publish(
-                new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
-                    request: dto,
-                    oldStatus: ConsumptionRequestStatus.Decided,
-                    newStatus: dto.status
-                })
-            );
-        }
+        this.eventBus.publish(
+            new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
+                request: dto,
+                oldStatus: ConsumptionRequestStatus.Decided,
+                newStatus: dto.status
+            })
+        );
 
         return Result.ok(dto);
     }
