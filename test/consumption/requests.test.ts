@@ -317,7 +317,7 @@ describe("Requests", () => {
         });
     });
 
-    describe.only.each([
+    describe.each([
         {
             action: "Accept"
         },
