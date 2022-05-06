@@ -546,7 +546,7 @@ describe("Requests", () => {
         });
 
         test("sender: create the outgoing Request with Request from Relationship Template and Response from Relationship Creation Change", async () => {
-            const result = await sConsumptionServices.outgoingRequests.createFromRelationshipCreationChange({
+            const result = await sConsumptionServices.outgoingRequests.createAndCompleteFromRelationshipCreationChange({
                 relationshipChangeId: sRelationshipChange.id,
                 templateId: sRelationshipTemplate.id
             });

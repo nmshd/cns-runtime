@@ -5,8 +5,8 @@ import {
     CanCreateOutgoingRequestUseCase,
     CompleteOutgoingRequestRequest,
     CompleteOutgoingRequestUseCase,
-    CreateOutgoingRequestFromRelationshipCreationChangeRequest,
-    CreateOutgoingRequestFromRelationshipCreationChangeUseCase,
+    CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest,
+    CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCase,
     CreateOutgoingRequestRequest,
     CreateOutgoingRequestUseCase,
     GetOutgoingRequestRequest,
@@ -22,7 +22,7 @@ export class OutgoingRequestsFacade {
         @Inject private readonly canCreateOutgoingRequests: CanCreateOutgoingRequestUseCase,
         @Inject private readonly createOutgoingRequests: CreateOutgoingRequestUseCase,
         @Inject private readonly sentOutgoingRequests: SentOutgoingRequestUseCase,
-        @Inject private readonly createOutgoingRequestFromRelationshipCreationChange: CreateOutgoingRequestFromRelationshipCreationChangeUseCase,
+        @Inject private readonly createAndCompleteOutgoingRequestFromRelationshipCreationChange: CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCase,
         @Inject private readonly completeOutgoingRequests: CompleteOutgoingRequestUseCase,
         @Inject private readonly getOutgoingRequest: GetOutgoingRequestUseCase,
         @Inject private readonly getOutgoingRequests: GetOutgoingRequestsUseCase
@@ -36,8 +36,10 @@ export class OutgoingRequestsFacade {
         return await this.createOutgoingRequests.execute(request);
     }
 
-    public async createFromRelationshipCreationChange(request: CreateOutgoingRequestFromRelationshipCreationChangeRequest): Promise<Result<ConsumptionRequestDTO>> {
-        return await this.createOutgoingRequestFromRelationshipCreationChange.execute(request);
+    public async createAndCompleteFromRelationshipCreationChange(
+        request: CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest
+    ): Promise<Result<ConsumptionRequestDTO>> {
+        return await this.createAndCompleteOutgoingRequestFromRelationshipCreationChange.execute(request);
     }
 
     public async sent(request: SentOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {

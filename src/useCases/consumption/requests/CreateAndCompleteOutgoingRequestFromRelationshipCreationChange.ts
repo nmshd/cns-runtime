@@ -7,7 +7,7 @@ import { ConsumptionRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
-export interface CreateOutgoingRequestFromRelationshipCreationChangeRequest {
+export interface CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest {
     /**
      * @pattern RLT[A-Za-z0-9]{17}
      */
@@ -18,7 +18,10 @@ export interface CreateOutgoingRequestFromRelationshipCreationChangeRequest {
     relationshipChangeId: string;
 }
 
-export class CreateOutgoingRequestFromRelationshipCreationChangeUseCase extends UseCase<CreateOutgoingRequestFromRelationshipCreationChangeRequest, ConsumptionRequestDTO> {
+export class CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCase extends UseCase<
+    CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest,
+    ConsumptionRequestDTO
+> {
     public constructor(
         @Inject private readonly outgoingRequestsController: OutgoingRequestsController,
         @Inject private readonly relationshipController: RelationshipsController,
@@ -28,7 +31,7 @@ export class CreateOutgoingRequestFromRelationshipCreationChangeUseCase extends 
         super();
     }
 
-    protected async executeInternal(request: CreateOutgoingRequestFromRelationshipCreationChangeRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
+    protected async executeInternal(request: CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
         const template = await this.relationshipTemplateController.getRelationshipTemplate(CoreId.from(request.templateId));
         const relationships = await this.relationshipController.getRelationships({ "cache.changes.id": request.relationshipChangeId }); // eslint-disable-line @typescript-eslint/naming-convention
 
