@@ -589,10 +589,11 @@ export class DataViewExpander {
     }
 
     protected async createRelationshipDVO(relationship: RelationshipDTO, relationshipInfo?: RelationshipInfoDTO): Promise<RelationshipDVO> {
-        if (!relationshipInfo) {
-            const relationshipInfoResult = await this.consumption.relationshipInfo.getRelationshipInfoByRelationship({ relationshipId: relationship.id });
-            relationshipInfo = relationshipInfoResult.value;
-        }
+        // TODO: re-enable when we can query relationship info
+        // if (!relationshipInfo) {
+        //     const relationshipInfoResult = await this.consumption.relationshipInfo.getRelationshipInfoByRelationship({ relationshipId: relationship.id });
+        //     relationshipInfo = relationshipInfoResult.value;
+        // }
 
         let direction = RelationshipDirection.Incoming;
         if (this.identityController.isMe(CoreAddress.from(relationship.changes[0].request.createdBy))) {
@@ -616,20 +617,20 @@ export class DataViewExpander {
 
         return {
             id: relationship.id,
-            name: relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title,
-            description: relationshipInfo.userDescription ? relationshipInfo.userDescription : relationshipInfo.description,
+            name: relationshipInfo?.userTitle ?? relationshipInfo?.title ?? "",
+            description: relationshipInfo?.userDescription ?? relationshipInfo?.description ?? "",
             date: relationship.changes[0].request.createdAt,
             image: "",
             type: "RelationshipDVO",
             status: relationship.status,
             statusText: statusText,
             direction: direction,
-            isPinned: relationshipInfo.isPinned,
+            isPinned: relationshipInfo?.isPinned ?? false,
             theme: {
-                image: relationshipInfo.theme?.image,
-                headerImage: relationshipInfo.theme?.imageBar,
-                backgroundColor: relationshipInfo.theme?.backgroundColor,
-                foregroundColor: relationshipInfo.theme?.foregroundColor
+                image: relationshipInfo?.theme?.image,
+                headerImage: relationshipInfo?.theme?.imageBar,
+                backgroundColor: relationshipInfo?.theme?.backgroundColor,
+                foregroundColor: relationshipInfo?.theme?.foregroundColor
             },
             changes: changes,
             changeCount: changes.length
@@ -637,18 +638,22 @@ export class DataViewExpander {
     }
 
     public async expandRelationshipDTO(relationship: RelationshipDTO): Promise<IdentityDVO> {
-        const relationshipInfoResult = await this.consumption.relationshipInfo.getRelationshipInfoByRelationship({ relationshipId: relationship.id });
-        const relationshipInfo = relationshipInfoResult.value;
+        // TODO: re-enable when we can query relationship info
+        // const relationshipInfoResult = await this.consumption.relationshipInfo.getRelationshipInfoByRelationship({ relationshipId: relationship.id });
+        // const relationshipInfo = relationshipInfoResult.value;
 
-        const name = relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title;
-        let description = relationshipInfo.userDescription ? relationshipInfo.userDescription : relationshipInfo.description;
+        // const name = relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title;
+        // let description = relationshipInfo.userDescription ? relationshipInfo.userDescription : relationshipInfo.description;
+        const name = "";
+        const description = "";
 
         const initials = (name.match(/\b\w/g) ?? []).join("");
 
-        const relationshipDVO = await this.createRelationshipDVO(relationship, relationshipInfo);
-        if (!description) {
-            description = relationshipDVO.statusText;
-        }
+        const relationshipDVO = await this.createRelationshipDVO(relationship);
+        // TODO: re-enable when we can query relationship info
+        // if (!description) {
+        //     description = relationshipDVO.statusText;
+        // }
 
         return {
             type: "IdentityDVO",
