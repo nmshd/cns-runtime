@@ -35,6 +35,7 @@ beforeAll(async () => {
 
 afterAll(() => serviceProvider.stop());
 
+// TODO: re-enable when DVOs work again
 // eslint-disable-next-line jest/no-disabled-tests
 describe.skip("RelationshipDVO", () => {
     test("check the relationship dvo for the templator", async () => {
