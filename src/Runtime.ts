@@ -7,9 +7,7 @@ import {
     DraftsController,
     IncomingRequestsController,
     OutgoingRequestsController,
-    RelationshipInfoController,
-    SettingsController,
-    SharedItemsController
+    SettingsController
 } from "@nmshd/consumption";
 import {
     AccountController,
@@ -245,10 +243,6 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
             .factory(() => this.getConsumptionController().drafts)
             .scope(Scope.Request);
 
-        Container.bind(RelationshipInfoController)
-            .factory(() => this.getConsumptionController().relationshipInfo)
-            .scope(Scope.Request);
-
         Container.bind(IncomingRequestsController)
             .factory(() => this.getConsumptionController().incomingRequests)
             .scope(Scope.Request);
@@ -259,10 +253,6 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         Container.bind(SettingsController)
             .factory(() => this.getConsumptionController().settings)
-            .scope(Scope.Request);
-
-        Container.bind(SharedItemsController)
-            .factory(() => this.getConsumptionController().sharedItems)
             .scope(Scope.Request);
 
         Container.bind(AnonymousTokenController)

@@ -7,5 +7,4 @@ export * from "./UseCase";
 export * from "./validation/AddressValidator";
 export * from "./validation/DateValidator";
 export * from "./validation/IdValidator";
-export * from "./validation/RelationshipAttributeDTOValidator";
 export * from "./validation/SchemaValidator";
