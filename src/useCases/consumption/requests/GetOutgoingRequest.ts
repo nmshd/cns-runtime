@@ -8,7 +8,7 @@ import { RequestMapper } from "./RequestMapper";
 
 export interface GetOutgoingRequestRequest {
     /**
-     * @pattern CNSREQ[A-Za-z0-9]{14}
+     * @pattern REQ[A-Za-z0-9]{14}
      */
     id: string;
 }

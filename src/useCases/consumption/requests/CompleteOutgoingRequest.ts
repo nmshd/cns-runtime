@@ -10,7 +10,7 @@ import { RequestMapper } from "./RequestMapper";
 
 export interface CompleteOutgoingRequestRequest {
     /**
-     * @pattern CNSREQ[A-Za-z0-9]{14}
+     * @pattern REQ[A-Za-z0-9]{14}
      */
     requestId: string;
 

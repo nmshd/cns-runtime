@@ -410,320 +410,6 @@ export const UpdateDraftRequest: any = {
     }
 }
 
-export const CreateRelationshipInfoRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/CreateRelationshipInfoRequest",
-    "definitions": {
-        "CreateRelationshipInfoRequest": {
-            "type": "object",
-            "properties": {
-                "relationshipId": {
-                    "type": "string"
-                },
-                "attributes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/RelationshipAttributeDTO"
-                    }
-                },
-                "isPinned": {
-                    "type": "boolean"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "userTitle": {
-                    "type": "string"
-                },
-                "userDescription": {
-                    "type": "string"
-                },
-                "theme": {
-                    "$ref": "#/definitions/RelationshipThemeDTO"
-                }
-            },
-            "required": [
-                "relationshipId",
-                "attributes",
-                "isPinned",
-                "title"
-            ],
-            "additionalProperties": false
-        },
-        "RelationshipAttributeDTO": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "content": {
-                    "$ref": "#/definitions/AttributeJSON"
-                },
-                "sharedItem": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "content",
-                "sharedItem"
-            ],
-            "additionalProperties": false
-        },
-        "AttributeJSON": {
-            "type": "object",
-            "properties": {
-                "@type": {
-                    "type": "string"
-                },
-                "@context": {
-                    "type": "string"
-                },
-                "@version": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "value": {},
-                "validFrom": {
-                    "type": "string"
-                },
-                "validTo": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "@type",
-                "name",
-                "value"
-            ],
-            "additionalProperties": false
-        },
-        "RelationshipThemeDTO": {
-            "type": "object",
-            "properties": {
-                "image": {
-                    "type": "string"
-                },
-                "imageBar": {
-                    "type": "string"
-                },
-                "backgroundColor": {
-                    "type": "string"
-                },
-                "foregroundColor": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "image",
-                "imageBar",
-                "backgroundColor",
-                "foregroundColor"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const DeleteRelationshipInfoRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/DeleteRelationshipInfoRequest",
-    "definitions": {
-        "DeleteRelationshipInfoRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const DeleteRelationshipInfoByRelationshipRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/DeleteRelationshipInfoByRelationshipRequest",
-    "definitions": {
-        "DeleteRelationshipInfoByRelationshipRequest": {
-            "type": "object",
-            "properties": {
-                "relationshipId": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "relationshipId"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetRelationshipInfoRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetRelationshipInfoRequest",
-    "definitions": {
-        "GetRelationshipInfoRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetRelationshipInfoByRelationshipRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetRelationshipInfoByRelationshipRequest",
-    "definitions": {
-        "GetRelationshipInfoByRelationshipRequest": {
-            "type": "object",
-            "properties": {
-                "relationshipId": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "relationshipId"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const UpdateRelationshipInfoRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/UpdateRelationshipInfoRequest",
-    "definitions": {
-        "UpdateRelationshipInfoRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "attributes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/RelationshipAttributeDTO"
-                    }
-                },
-                "isPinned": {
-                    "type": "boolean"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "userTitle": {
-                    "type": "string"
-                },
-                "userDescription": {
-                    "type": "string"
-                },
-                "theme": {
-                    "$ref": "#/definitions/RelationshipThemeDTO"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false,
-            "description": "Overwrite a RelationshipInfo's attributes with the request's corresponding fields. Undefined fields in the request will leave the corresponding RelationshipInfo's attributes untouched."
-        },
-        "RelationshipAttributeDTO": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "content": {
-                    "$ref": "#/definitions/AttributeJSON"
-                },
-                "sharedItem": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "content",
-                "sharedItem"
-            ],
-            "additionalProperties": false
-        },
-        "AttributeJSON": {
-            "type": "object",
-            "properties": {
-                "@type": {
-                    "type": "string"
-                },
-                "@context": {
-                    "type": "string"
-                },
-                "@version": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "value": {},
-                "validFrom": {
-                    "type": "string"
-                },
-                "validTo": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "@type",
-                "name",
-                "value"
-            ],
-            "additionalProperties": false
-        },
-        "RelationshipThemeDTO": {
-            "type": "object",
-            "properties": {
-                "image": {
-                    "type": "string"
-                },
-                "imageBar": {
-                    "type": "string"
-                },
-                "backgroundColor": {
-                    "type": "string"
-                },
-                "foregroundColor": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "image",
-                "imageBar",
-                "backgroundColor",
-                "foregroundColor"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
 export const AcceptIncomingRequestRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/AcceptIncomingRequestRequest",
@@ -1145,7 +831,7 @@ export const CheckPrerequisitesOfIncomingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{14}"
                 }
             },
             "required": [
@@ -1165,7 +851,7 @@ export const CompleteIncomingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{14}"
                 },
                 "responseSourceId": {
                     "type": "string",
@@ -1190,7 +876,7 @@ export const CompleteOutgoingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{14}"
                 },
                 "receivedResponse": {
                     "$ref": "#/definitions/ResponseJSON"
@@ -1318,11 +1004,11 @@ export const CompleteOutgoingRequestRequest: any = {
     }
 }
 
-export const CreateOutgoingRequestFromRelationshipCreationChangeRequest: any = {
+export const CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/CreateOutgoingRequestFromRelationshipCreationChangeRequest",
+    "$ref": "#/definitions/CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest",
     "definitions": {
-        "CreateOutgoingRequestFromRelationshipCreationChangeRequest": {
+        "CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest": {
             "type": "object",
             "properties": {
                 "templateId": {
@@ -1352,7 +1038,7 @@ export const GetIncomingRequestRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{14}"
                 }
             },
             "required": [
@@ -1484,7 +1170,7 @@ export const GetOutgoingRequestRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{14}"
                 }
             },
             "required": [
@@ -1761,7 +1447,7 @@ export const RequireManualDecisionOfIncomingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{14}"
                 }
             },
             "required": [
@@ -1781,7 +1467,7 @@ export const SentOutgoingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "CNSREQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{14}"
                 },
                 "messageId": {
                     "type": "string",
@@ -1897,202 +1583,6 @@ export const UpdateSettingRequest: any = {
             "required": [
                 "id",
                 "value"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const CreateSharedItemRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/CreateSharedItemRequest",
-    "definitions": {
-        "CreateSharedItemRequest": {
-            "type": "object",
-            "properties": {
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "sharedBy": {
-                    "type": "string"
-                },
-                "sharedWith": {
-                    "type": "string"
-                },
-                "sharedAt": {
-                    "type": "string"
-                },
-                "reference": {
-                    "type": "string"
-                },
-                "content": {},
-                "succeedsItem": {
-                    "type": "string"
-                },
-                "succeedsAt": {
-                    "type": "string"
-                },
-                "expiresAt": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "sharedBy",
-                "sharedWith",
-                "sharedAt",
-                "content"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const DeleteSharedItemRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/DeleteSharedItemRequest",
-    "definitions": {
-        "DeleteSharedItemRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetSharedItemRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetSharedItemRequest",
-    "definitions": {
-        "GetSharedItemRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetSharedItemsRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetSharedItemsRequest",
-    "definitions": {
-        "GetSharedItemsRequest": {
-            "type": "object",
-            "properties": {
-                "query": {}
-            },
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetSharedItemsByAddressRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetSharedItemsByAddressRequest",
-    "definitions": {
-        "GetSharedItemsByAddressRequest": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "address"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetSharedItemsByReferenceRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetSharedItemsByReferenceRequest",
-    "definitions": {
-        "GetSharedItemsByReferenceRequest": {
-            "type": "object",
-            "properties": {
-                "reference": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "reference"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetSharedItemsSharedByAddressRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetSharedItemsSharedByAddressRequest",
-    "definitions": {
-        "GetSharedItemsSharedByAddressRequest": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "address"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetSharedItemsSharedWithAddressRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetSharedItemsSharedWithAddressRequest",
-    "definitions": {
-        "GetSharedItemsSharedWithAddressRequest": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "address"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const UpdateSharedItemRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/UpdateSharedItemRequest",
-    "definitions": {
-        "UpdateSharedItemRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "content": {}
-            },
-            "required": [
-                "id",
-                "content"
             ],
             "additionalProperties": false
         }
