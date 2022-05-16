@@ -8,7 +8,7 @@ import { ModuleConfiguration, RuntimeModule } from "../extensibility/modules/Run
 
 export interface MessageModuleConfiguration extends ModuleConfiguration {}
 
-export default class MessageModule extends RuntimeModule<MessageModuleConfiguration> {
+export class MessageModule extends RuntimeModule<MessageModuleConfiguration> {
     private messageReceivedSubscription: number;
     public init(): void {
         // Nothing to do here
@@ -46,7 +46,8 @@ export default class MessageModule extends RuntimeModule<MessageModuleConfigurat
                 return;
         }
 
-        const result = await this.runtime.transportServices.relationships.getRelationshipByAddress({ address: message.createdBy });
+        const services = this.runtime.getServices(messageReceivedEvent.eventTargetAddress);
+        const result = await services.transportServices.relationships.getRelationshipByAddress({ address: message.createdBy });
         if (!result.isSuccess) {
             this.logger.error(`Could not find relationship for address '${message.createdBy}'.`, result.error);
             return;
