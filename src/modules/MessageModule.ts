@@ -9,13 +9,12 @@ import { ModuleConfiguration, RuntimeModule } from "../extensibility/modules/Run
 export interface MessageModuleConfiguration extends ModuleConfiguration {}
 
 export class MessageModule extends RuntimeModule<MessageModuleConfiguration> {
-    private messageReceivedSubscription: number;
     public init(): void {
         // Nothing to do here
     }
 
     public start(): void {
-        this.messageReceivedSubscription = this.runtime.eventBus.subscribe(MessageReceivedEvent, this.handleMessageReceived);
+        this.subscribeToEvent(MessageReceivedEvent, this.handleMessageReceived.bind(this));
     }
 
     private async handleMessageReceived(messageReceivedEvent: MessageReceivedEvent) {
@@ -59,6 +58,6 @@ export class MessageModule extends RuntimeModule<MessageModuleConfiguration> {
     }
 
     public stop(): void {
-        this.runtime.eventBus.unsubscribe(MessageReceivedEvent, this.messageReceivedSubscription);
+        this.unsubscribeFromAllEvents();
     }
 }

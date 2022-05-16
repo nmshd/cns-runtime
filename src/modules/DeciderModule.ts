@@ -8,7 +8,7 @@ export class DeciderModule extends RuntimeModule {
     }
 
     public start(): void | Promise<void> {
-        this.subscribe(IncomingRequestStatusChangedEvent, this.handleIncomingRequestStatusChanged.bind(this));
+        this.subscribeToEvent(IncomingRequestStatusChangedEvent, this.handleIncomingRequestStatusChanged.bind(this));
     }
 
     private async handleIncomingRequestStatusChanged(event: IncomingRequestStatusChangedEvent) {
@@ -23,6 +23,6 @@ export class DeciderModule extends RuntimeModule {
     }
 
     public stop(): void | Promise<void> {
-        this.unsubscribeAll();
+        this.unsubscribeFromAllEvents();
     }
 }

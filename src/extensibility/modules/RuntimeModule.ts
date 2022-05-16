@@ -31,12 +31,12 @@ export abstract class RuntimeModule<TConfig extends ModuleConfiguration = Module
 
     private readonly registeredSubscriptions: RuntimeModuleEventSubscription[] = [];
 
-    protected subscribe<TEvent>(event: EventConstructor<TEvent>, handler: EventHandler<TEvent>): void {
+    protected subscribeToEvent<TEvent>(event: EventConstructor<TEvent>, handler: EventHandler<TEvent>): void {
         const subscriptionId = this.runtime.eventBus.subscribe(event, handler);
         this.registeredSubscriptions.push({ id: subscriptionId, target: event });
     }
 
-    protected unsubscribeAll(): void {
+    protected unsubscribeFromAllEvents(): void {
         for (const subscription of this.registeredSubscriptions) {
             this.runtime.eventBus.unsubscribe(subscription.target, subscription.id);
         }
