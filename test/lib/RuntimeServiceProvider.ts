@@ -28,7 +28,7 @@ export class RuntimeServiceProvider {
         },
         modules: {
             deciderModule: {
-                enabled: true,
+                enabled: false,
                 displayName: "Decider Module",
                 name: "DeciderModule",
                 location: "builtin"
