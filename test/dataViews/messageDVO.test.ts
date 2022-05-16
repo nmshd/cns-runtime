@@ -1,6 +1,6 @@
 import { MailJSON, RequestMailJSON } from "@nmshd/content";
 import { AttributesChangeRequestDVO, ConsumptionServices, DataViewExpander, MailDVO, RequestMailDVO, TransportServices } from "../../src";
-import { establishRelationshipWithBodys, getRelationship, RuntimeServiceProvider, syncUntilHasMessages, uploadFile } from "../lib";
+import { getRelationship, RuntimeServiceProvider, syncUntilHasMessages, uploadFile } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -16,18 +16,18 @@ beforeAll(async () => {
     expander1 = runtimeServices[0].expander;
     expander2 = runtimeServices[1].expander;
     consumptionServices2 = runtimeServices[1].consumption;
-    await establishRelationshipWithBodys(
-        transportServices1,
-        transportServices2,
-        {
-            "@type": "RelationshipTemplateBody",
-            sharedAttributes: [{ "@type": "Attribute", name: "Thing.name", value: "Jürgen" }]
-        },
-        {
-            "@type": "RelationshipCreationChangeRequestBody",
-            sharedAttributes: [{ "@type": "Attribute", name: "Thing.name", value: "Barbara" }]
-        }
-    );
+    // await establishRelationshipWithBodys(
+    //     transportServices1,
+    //     transportServices2,
+    //     {
+    //         "@type": "RelationshipTemplateBody",
+    //         sharedAttributes: [{ "@type": "Attribute", name: "Thing.name", value: "Jürgen" }]
+    //     },
+    //     {
+    //         "@type": "RelationshipCreationChangeRequestBody",
+    //         sharedAttributes: [{ "@type": "Attribute", name: "Thing.name", value: "Barbara" }]
+    //     }
+    // );
 }, 30000);
 
 afterAll(() => serviceProvider.stop());

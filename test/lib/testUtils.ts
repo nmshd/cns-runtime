@@ -90,7 +90,10 @@ export async function makeUploadRequest(values: object = {}): Promise<UploadOwnF
 
 export async function createTemplate(
     transportServices: TransportServices,
-    body: RelationshipTemplateBodyJSON = { "@type": "RelationshipTemplateBody" }
+    body: RelationshipTemplateBodyJSON = {
+        "@type": "RelationshipTemplateBody",
+        newRelationshipRequest: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
+    }
 ): Promise<RelationshipTemplateDTO> {
     const response = await transportServices.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfRelationships: 1,
@@ -103,7 +106,13 @@ export async function createTemplate(
     return response.value;
 }
 
-export async function getTemplateToken(transportServices: TransportServices, body: RelationshipTemplateBodyJSON = { "@type": "RelationshipTemplateBody" }): Promise<TokenDTO> {
+export async function getTemplateToken(
+    transportServices: TransportServices,
+    body: RelationshipTemplateBodyJSON = {
+        "@type": "RelationshipTemplateBody",
+        newRelationshipRequest: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
+    }
+): Promise<TokenDTO> {
     const template = await createTemplate(transportServices, body);
 
     const response = await transportServices.relationshipTemplates.createTokenForOwnTemplate({ templateId: template.id });
@@ -124,7 +133,10 @@ export async function getFileToken(transportServices: TransportServices): Promis
 export async function exchangeTemplate(
     transportServicesCreator: TransportServices,
     transportServicesRecipient: TransportServices,
-    body: RelationshipTemplateBodyJSON = { "@type": "RelationshipTemplateBody" }
+    body: RelationshipTemplateBodyJSON = {
+        "@type": "RelationshipTemplateBody",
+        newRelationshipRequest: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
+    }
 ): Promise<RelationshipTemplateDTO> {
     const templateToken = await getTemplateToken(transportServicesCreator, body);
 

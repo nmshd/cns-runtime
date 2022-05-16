@@ -1,5 +1,5 @@
 import { DataViewExpander, TransportServices } from "../../src";
-import { establishRelationshipWithBodys, RuntimeServiceProvider } from "../lib";
+import { RuntimeServiceProvider } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -13,24 +13,24 @@ beforeAll(async () => {
     transportServices2 = runtimeServices[1].transport;
     expander1 = runtimeServices[0].expander;
     expander2 = runtimeServices[1].expander;
-    await establishRelationshipWithBodys(
-        transportServices1,
-        transportServices2,
-        {
-            "@type": "RelationshipTemplateBody",
-            sharedAttributes: [
-                { "@type": "Attribute", name: "Person.givenName", value: "Jürgen" },
-                { "@type": "Attribute", name: "Person.familyName", value: "Becker" }
-            ]
-        },
-        {
-            "@type": "RelationshipCreationChangeRequestBody",
-            sharedAttributes: [
-                { "@type": "Attribute", name: "Person.gender", value: "f" },
-                { "@type": "Attribute", name: "Person.familyName", value: "Sèzanné" }
-            ]
-        }
-    );
+    // await establishRelationshipWithBodys(
+    //     transportServices1,
+    //     transportServices2
+    //     {
+    //         "@type": "RelationshipTemplateBody",
+    //         sharedAttributes: [
+    //             { "@type": "Attribute", name: "Person.givenName", value: "Jürgen" },
+    //             { "@type": "Attribute", name: "Person.familyName", value: "Becker" }
+    //         ]
+    //     },
+    //     {
+    //         "@type": "RelationshipCreationChangeRequestBody",
+    //         sharedAttributes: [
+    //             { "@type": "Attribute", name: "Person.gender", value: "f" },
+    //             { "@type": "Attribute", name: "Person.familyName", value: "Sèzanné" }
+    //         ]
+    //     }
+    // );
 }, 30000);
 
 afterAll(() => serviceProvider.stop());
