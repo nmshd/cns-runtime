@@ -310,7 +310,7 @@ export async function waitForEvent<TEvent>(
             resolve(event);
         });
     });
-    if (!timeout) return await eventPromise;
+    if (!timeout) return await eventPromise.finally(() => eventBus.unsubscribe(subscriptionTarget, subscriptionId));
 
     let timeoutId: NodeJS.Timeout;
     const timeoutPromise = new Promise<TEvent>((_resolve, reject) => {
