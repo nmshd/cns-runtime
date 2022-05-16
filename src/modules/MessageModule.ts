@@ -8,14 +8,13 @@ import { ModuleConfiguration, RuntimeModule } from "../extensibility/modules/Run
 
 export interface MessageModuleConfiguration extends ModuleConfiguration {}
 
-export default class MessageModule extends RuntimeModule<MessageModuleConfiguration> {
-    private messageReceivedSubscription: number;
+export class MessageModule extends RuntimeModule<MessageModuleConfiguration> {
     public init(): void {
         // Nothing to do here
     }
 
     public start(): void {
-        this.messageReceivedSubscription = this.runtime.eventBus.subscribe(MessageReceivedEvent, this.handleMessageReceived);
+        this.subscribeToEvent(MessageReceivedEvent, this.handleMessageReceived.bind(this));
     }
 
     private async handleMessageReceived(messageReceivedEvent: MessageReceivedEvent) {
@@ -46,7 +45,8 @@ export default class MessageModule extends RuntimeModule<MessageModuleConfigurat
                 return;
         }
 
-        const result = await this.runtime.transportServices.relationships.getRelationshipByAddress({ address: message.createdBy });
+        const services = this.runtime.getServices(messageReceivedEvent.eventTargetAddress);
+        const result = await services.transportServices.relationships.getRelationshipByAddress({ address: message.createdBy });
         if (!result.isSuccess) {
             this.logger.error(`Could not find relationship for address '${message.createdBy}'.`, result.error);
             return;
@@ -58,6 +58,6 @@ export default class MessageModule extends RuntimeModule<MessageModuleConfigurat
     }
 
     public stop(): void {
-        this.runtime.eventBus.unsubscribe(MessageReceivedEvent, this.messageReceivedSubscription);
+        this.unsubscribeFromAllEvents();
     }
 }

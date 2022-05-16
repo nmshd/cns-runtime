@@ -1,4 +1,5 @@
 import { EventBus } from "@js-soft/ts-utils";
+import _ from "lodash";
 import { AnonymousServices, ConsumptionServices, DataViewExpander, RuntimeConfig, TransportServices } from "../../src";
 import { TestRuntime } from "./TestRuntime";
 
@@ -12,6 +13,7 @@ export interface RuntimeServices {
 
 export interface LaunchConfiguration {
     enableDatawallet?: boolean;
+    modules?: Record<string, { enabled: boolean }>;
 }
 
 export class RuntimeServiceProvider {
@@ -24,7 +26,14 @@ export class RuntimeServiceProvider {
             platformClientSecret: "a6owPRo8c98Ue8Z6mHoNgg5viF5teD",
             debug: true
         },
-        modules: {}
+        modules: {
+            deciderModule: {
+                enabled: false,
+                displayName: "Decider Module",
+                name: "DeciderModule",
+                location: "builtin"
+            }
+        }
     };
 
     public static get runtimeConfig(): RuntimeConfig {
@@ -42,17 +51,21 @@ export class RuntimeServiceProvider {
                 config.transportLibrary.datawalletEnabled = true;
             }
 
+            config.modules = _.defaultsDeep(config.modules, launchConfiguration.modules);
+
             const runtime = new TestRuntime(config);
             this.runtimes.push(runtime);
 
             await runtime.init();
             await runtime.start();
 
+            const services = runtime.getServices("");
+
             runtimeServices.push({
-                transport: runtime.transportServices,
-                consumption: runtime.consumptionServices,
+                transport: services.transportServices,
+                consumption: services.consumptionServices,
                 anonymous: runtime.anonymousServices,
-                expander: runtime.dataViewExpander,
+                expander: services.dataViewExpander,
                 eventBus: runtime.eventBus
             });
         }

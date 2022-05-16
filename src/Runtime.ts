@@ -16,6 +16,7 @@ import {
     DeviceController,
     DevicesController,
     FileController,
+    ICoreAddress,
     IdentityController,
     MessageController,
     RelationshipsController,
@@ -36,11 +37,18 @@ import {
     TransportLibraryInitializingEvent
 } from "./events";
 import { AnonymousServices, ConsumptionServices, ModuleConfiguration, RuntimeModule, RuntimeModuleRegistry, TransportServices } from "./extensibility";
+import { DeciderModule, MessageModule } from "./modules";
 import { RuntimeConfig } from "./RuntimeConfig";
 import { RuntimeLoggerFactory } from "./RuntimeLoggerFactory";
 import { RuntimeHealth } from "./types";
 import { RuntimeErrors } from "./useCases";
 import { SchemaRepository } from "./useCases/common/SchemaRepository";
+
+export interface RuntimeServices {
+    transportServices: TransportServices;
+    consumptionServices: ConsumptionServices;
+    dataViewExpander: DataViewExpander;
+}
 
 export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
     protected logger: ILogger;
@@ -48,9 +56,13 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
     protected runtimeConfig: TConfig;
     protected transport: Transport;
 
+    private _anonymousServices: AnonymousServices;
+    public get anonymousServices(): AnonymousServices {
+        return this._anonymousServices;
+    }
+
     private _accountController?: AccountController;
     private _consumptionController?: ConsumptionController;
-    private _expander?: DataViewExpander;
 
     protected isLoggedIn(): boolean {
         return !!this._accountController;
@@ -66,23 +78,18 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         return this._consumptionController;
     }
 
-    protected getDataViewExpander(): DataViewExpander {
-        if (!this._expander) throw RuntimeErrors.startup.noActiveExpander();
-        return this._expander;
-    }
-
-    protected async login(accountController: AccountController, consumptionController: ConsumptionController): Promise<this> {
+    protected async login(accountController: AccountController, consumptionController: ConsumptionController): Promise<RuntimeServices> {
         this._accountController = accountController;
-        this._transportServices = Container.get<TransportServices>(TransportServices);
+        const transportServices = Container.get<TransportServices>(TransportServices);
 
         this._consumptionController = consumptionController;
-        this._consumptionServices = Container.get<ConsumptionServices>(ConsumptionServices);
+        const consumptionServices = Container.get<ConsumptionServices>(ConsumptionServices);
 
-        this._expander = Container.get<DataViewExpander>(DataViewExpander);
+        const dataViewExpander = Container.get<DataViewExpander>(DataViewExpander);
 
         await new DatabaseSchemaUpgrader(accountController, consumptionController).upgradeSchemaVersion();
 
-        return this;
+        return { transportServices, consumptionServices, dataViewExpander };
     }
 
     private _modules: RuntimeModuleRegistry;
@@ -90,20 +97,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         return this._modules;
     }
 
-    private _transportServices: TransportServices;
-    public get transportServices(): TransportServices {
-        return this._transportServices;
-    }
-
-    private _consumptionServices: ConsumptionServices;
-    public get consumptionServices(): ConsumptionServices {
-        return this._consumptionServices;
-    }
-
-    private _anonymousServices: AnonymousServices;
-    public get anonymousServices(): AnonymousServices {
-        return this._anonymousServices;
-    }
+    public abstract getServices(address: string | ICoreAddress): RuntimeServices;
 
     private readonly _eventBus: EventBus;
     public get eventBus(): EventBus {
@@ -283,8 +277,21 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
                 continue;
             }
 
-            await this.loadModule(moduleConfiguration);
+            switch (moduleConfiguration.name.toLocaleLowerCase()) {
+                case "decidermodule":
+                    const deciderModule = new DeciderModule(this, moduleConfiguration, this.loggerFactory.getLogger(DeciderModule));
+                    this.modules.add(deciderModule);
+                    break;
+                case "messagemodule":
+                    const messageModule = new MessageModule(this, moduleConfiguration, this.loggerFactory.getLogger(MessageModule));
+                    this.modules.add(messageModule);
+                    break;
+                default:
+                    await this.loadModule(moduleConfiguration);
+                    break;
+            }
         }
+
         this.eventBus.publish(new ModulesLoadedEvent());
     }
 
