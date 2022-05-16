@@ -303,26 +303,24 @@ export async function waitForEvent<TEvent>(
 ): Promise<TEvent> {
     let subscriptionId: number;
 
-    const promise = new Promise<TEvent>((resolve) => {
+    const eventPromise = new Promise<TEvent>((resolve) => {
         subscriptionId = eventBus.subscribe(subscriptionTarget, (event: TEvent) => {
             if (assertionFunction && !assertionFunction(event)) return;
 
             resolve(event);
         });
     });
-    if (!timeout) return await promise;
+    if (!timeout) return await eventPromise;
 
     let timeoutId: NodeJS.Timeout;
+    const timeoutPromise = new Promise<TEvent>((_resolve, reject) => {
+        timeoutId = setTimeout(
+            () => reject(new Error(`timeout exceeded for waiting for event ${typeof subscriptionTarget === "string" ? subscriptionTarget : subscriptionTarget.name}`)),
+            timeout
+        );
+    });
 
-    return await Promise.race([
-        promise,
-        new Promise<TEvent>((_resolve, reject) => {
-            timeoutId = setTimeout(
-                () => reject(new Error(`timeout exceeded for waiting for event ${typeof subscriptionTarget === "string" ? subscriptionTarget : subscriptionTarget.name}`)),
-                timeout
-            );
-        })
-    ]).finally(() => {
+    return await Promise.race([eventPromise, timeoutPromise]).finally(() => {
         eventBus.unsubscribe(subscriptionTarget, subscriptionId);
         clearTimeout(timeoutId);
     });
