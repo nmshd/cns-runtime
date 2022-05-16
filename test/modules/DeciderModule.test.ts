@@ -30,7 +30,12 @@ describe("DeciderModule", () => {
         });
         expect(requestReceivedResult).toBeSuccessful();
 
-        const eventPromise = waitForEvent(rEventBus, IncomingRequestStatusChangedEvent, 4000, (event) => event.data.newStatus === ConsumptionRequestStatus.DecisionRequired);
+        const eventPromise = waitForEvent(
+            rEventBus,
+            IncomingRequestStatusChangedEvent,
+            4000,
+            (event) => event.data.newStatus === ConsumptionRequestStatus.DecisionRequired && event.data.request.id === requestReceivedResult.value.id
+        );
 
         const checkPrerequisitesResult = await rConsumptionServices.incomingRequests.checkPrerequisites({ requestId: requestReceivedResult.value.id });
         expect(checkPrerequisitesResult).toBeSuccessful();
