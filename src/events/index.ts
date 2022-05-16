@@ -12,6 +12,7 @@ export * from "./runtime/RuntimeInitializedEvent";
 export * from "./runtime/RuntimeInitializingEvent";
 export * from "./transport/MessageReceivedEvent";
 export * from "./transport/MessageSentEvent";
+export * from "./transport/PeerRelationshipTemplateLoadedEvent";
 export * from "./transport/RelationshipChangedEvent";
 export * from "./transport/TransportLibraryInitializedEvent";
 export * from "./transport/TransportLibraryInitializingEvent";

@@ -1,7 +1,8 @@
-import { Result } from "@js-soft/ts-utils";
+import { EventBus, Result } from "@js-soft/ts-utils";
 import { CryptoSecretKey } from "@nmshd/crypto";
 import { AccountController, BackboneIds, CoreId, RelationshipTemplateController, Token, TokenContentRelationshipTemplate, TokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
+import { PeerRelationshipTemplateLoadedEvent } from "../../../events";
 import { RelationshipTemplateDTO } from "../../../types";
 import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { RelationshipTemplateMapper } from "./RelationshipTemplateMapper";
@@ -54,26 +55,32 @@ export class LoadPeerRelationshipTemplateUseCase extends UseCase<LoadPeerRelatio
         @Inject private readonly templateController: RelationshipTemplateController,
         @Inject private readonly tokenController: TokenController,
         @Inject private readonly accountController: AccountController,
+        @Inject private readonly eventBus: EventBus,
         @Inject validator: LoadPeerRelationshipTemplateRequestValidator
     ) {
         super(validator);
     }
 
     protected async executeInternal(request: LoadPeerRelationshipTemplateRequest): Promise<Result<RelationshipTemplateDTO>> {
-        let createdTemplate: Result<RelationshipTemplateDTO>;
+        let createdTemplateResult: Result<RelationshipTemplateDTO>;
 
         if (request.id && request.secretKey) {
             const key = CryptoSecretKey.fromBase64(request.secretKey);
-            createdTemplate = await this.loadTemplate(CoreId.from(request.id), key);
+            createdTemplateResult = await this.loadTemplate(CoreId.from(request.id), key);
         } else if (request.reference) {
-            createdTemplate = await this.createRelationshipTemplateFromTokenReferenceRequest(request.reference);
+            createdTemplateResult = await this.createRelationshipTemplateFromTokenReferenceRequest(request.reference);
         } else {
             throw new Error("Invalid request format.");
         }
 
         await this.accountController.syncDatawallet();
 
-        return createdTemplate;
+        if (createdTemplateResult.isSuccess) {
+            const event = new PeerRelationshipTemplateLoadedEvent(this.accountController.identity.address.address, createdTemplateResult.value);
+            this.eventBus.publish(event);
+        }
+
+        return createdTemplateResult;
     }
 
     private async createRelationshipTemplateFromTokenReferenceRequest(reference: string): Promise<Result<RelationshipTemplateDTO>> {
