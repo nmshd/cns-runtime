@@ -24,7 +24,14 @@ export class RuntimeServiceProvider {
             platformClientSecret: "a6owPRo8c98Ue8Z6mHoNgg5viF5teD",
             debug: true
         },
-        modules: {}
+        modules: {
+            deciderModule: {
+                enabled: true,
+                displayName: "Decider Module",
+                name: "DeciderModule",
+                location: "builtin"
+            }
+        }
     };
 
     public static get runtimeConfig(): RuntimeConfig {
@@ -48,11 +55,13 @@ export class RuntimeServiceProvider {
             await runtime.init();
             await runtime.start();
 
+            const services = runtime.getServices("");
+
             runtimeServices.push({
-                transport: runtime.transportServices,
-                consumption: runtime.consumptionServices,
+                transport: services.transportServices,
+                consumption: services.consumptionServices,
                 anonymous: runtime.anonymousServices,
-                expander: runtime.dataViewExpander,
+                expander: services.dataViewExpander,
                 eventBus: runtime.eventBus
             });
         }

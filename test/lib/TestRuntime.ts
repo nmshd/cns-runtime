@@ -4,12 +4,26 @@ import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { ILoggerFactory } from "@js-soft/logging-abstractions";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
 import { ConsumptionController, GenericRequestItemProcessor } from "@nmshd/consumption";
-import { AccountController } from "@nmshd/transport";
-import { DataViewExpander, ModuleConfiguration, Runtime, RuntimeHealth } from "../../src";
+import { AccountController, ICoreAddress } from "@nmshd/transport";
+import { ConsumptionServices, DataViewExpander, ModuleConfiguration, Runtime, RuntimeHealth, RuntimeServices, TransportServices } from "../../src";
 import { TestRequestItem } from "../consumption/TestRequestItem";
 
 export class TestRuntime extends Runtime {
     private dbConnection?: MongoDbConnection | LokiJsConnection;
+
+    private _transportServices: TransportServices;
+    private _consumptionServices: ConsumptionServices;
+    private _dataViewExpander: DataViewExpander;
+
+    public getServices(_address: string | ICoreAddress): RuntimeServices {
+        // ignoring the address b/c we only have one account in the test runtime
+
+        return {
+            transportServices: this._transportServices,
+            consumptionServices: this._consumptionServices,
+            dataViewExpander: this._dataViewExpander
+        };
+    }
 
     protected createLoggerFactory(): ILoggerFactory {
         const loggerFactory = new NodeLoggerFactory({
@@ -35,10 +49,6 @@ export class TestRuntime extends Runtime {
         this.logger = loggerFactory.getLogger(Runtime);
 
         return loggerFactory;
-    }
-
-    public get dataViewExpander(): DataViewExpander {
-        return this.getDataViewExpander();
     }
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
@@ -68,7 +78,11 @@ export class TestRuntime extends Runtime {
             }
         ]);
 
-        await this.login(accountController, consumptionController);
+        ({
+            transportServices: this._transportServices,
+            consumptionServices: this._consumptionServices,
+            dataViewExpander: this._dataViewExpander
+        } = await this.login(accountController, consumptionController));
     }
 
     public getHealth(): Promise<RuntimeHealth> {
