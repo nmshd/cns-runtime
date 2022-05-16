@@ -9,9 +9,7 @@ export interface ModuleConfiguration {
 }
 
 export abstract class RuntimeModule<TConfig extends ModuleConfiguration = ModuleConfiguration, TRuntime extends Runtime = Runtime> {
-    public runtime: TRuntime;
-    public configuration: TConfig;
-    public logger: ILogger;
+    public constructor(public readonly runtime: TRuntime, public readonly configuration: TConfig, public readonly logger: ILogger) {}
 
     public get name(): string {
         return this.configuration.name;
