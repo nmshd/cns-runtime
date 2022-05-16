@@ -23,21 +23,21 @@ beforeAll(async () => {
 afterAll(async () => await runtimeServiceProvider.stop());
 
 describe("DeciderModule", () => {
-    test("should decide", async () => {
-        const requestReceivedResult = await rConsumptionServices.incomingRequests.received({
+    test("moves incoming Requests into status 'ManualDecisionRequired' after they reach status 'Open'", async () => {
+        const receivedRequestResult = await rConsumptionServices.incomingRequests.received({
             receivedRequest: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] },
             requestSourceId: messageId
         });
-        expect(requestReceivedResult).toBeSuccessful();
+        expect(receivedRequestResult).toBeSuccessful();
 
         const eventPromise = waitForEvent(
             rEventBus,
             IncomingRequestStatusChangedEvent,
             4000,
-            (event) => event.data.newStatus === ConsumptionRequestStatus.DecisionRequired && event.data.request.id === requestReceivedResult.value.id
+            (event) => event.data.newStatus === ConsumptionRequestStatus.DecisionRequired && event.data.request.id === receivedRequestResult.value.id
         );
 
-        const checkPrerequisitesResult = await rConsumptionServices.incomingRequests.checkPrerequisites({ requestId: requestReceivedResult.value.id });
+        const checkPrerequisitesResult = await rConsumptionServices.incomingRequests.checkPrerequisites({ requestId: receivedRequestResult.value.id });
         expect(checkPrerequisitesResult).toBeSuccessful();
 
         const event = await eventPromise;
