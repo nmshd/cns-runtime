@@ -9,8 +9,7 @@ let rEventBus: EventBus;
 let messageId: string;
 
 beforeAll(async () => {
-    // disable the request module b/c we only want to test the decider module
-    const runtimeServices = await runtimeServiceProvider.launch(2, { modules: { deciderModule: { enabled: true } } });
+    const runtimeServices = await runtimeServiceProvider.launch(2, { modules: { deciderModule: true } });
     rConsumptionServices = runtimeServices[0].consumption;
     rEventBus = runtimeServices[0].eventBus;
 

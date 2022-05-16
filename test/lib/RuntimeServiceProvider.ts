@@ -1,5 +1,4 @@
 import { EventBus } from "@js-soft/ts-utils";
-import _ from "lodash";
 import { AnonymousServices, ConsumptionServices, DataViewExpander, RuntimeConfig, TransportServices } from "../../src";
 import { TestRuntime } from "./TestRuntime";
 
@@ -13,7 +12,9 @@ export interface RuntimeServices {
 
 export interface LaunchConfiguration {
     enableDatawallet?: boolean;
-    modules?: Record<string, { enabled: boolean }>;
+    modules?: {
+        deciderModule?: boolean;
+    };
 }
 
 export class RuntimeServiceProvider {
@@ -51,7 +52,7 @@ export class RuntimeServiceProvider {
                 config.transportLibrary.datawalletEnabled = true;
             }
 
-            config.modules = _.defaultsDeep(config.modules, launchConfiguration.modules);
+            if (launchConfiguration.modules?.deciderModule) config.modules.deciderModule.enabled = true;
 
             const runtime = new TestRuntime(config);
             this.runtimes.push(runtime);
