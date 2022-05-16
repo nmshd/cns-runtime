@@ -277,12 +277,12 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
                 continue;
             }
 
-            switch (moduleConfiguration.name) {
-                case "DeciderModule":
+            switch (moduleConfiguration.name.toLocaleLowerCase()) {
+                case "decidermodule":
                     const deciderModule = new DeciderModule(this, moduleConfiguration, this.loggerFactory.getLogger(DeciderModule));
                     this.modules.add(deciderModule);
                     break;
-                case "MessageModule":
+                case "messagemodule":
                     const messageModule = new MessageModule(this, moduleConfiguration, this.loggerFactory.getLogger(MessageModule));
                     this.modules.add(messageModule);
                     break;
