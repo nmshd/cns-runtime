@@ -33,16 +33,15 @@ export class CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCa
 
     protected async executeInternal(request: CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
         const template = await this.relationshipTemplateController.getRelationshipTemplate(CoreId.from(request.templateId));
-        const relationships = await this.relationshipController.getRelationships({ "cache.changes.id": request.relationshipChangeId }); // eslint-disable-line @typescript-eslint/naming-convention
+        if (!template) {
+            return Result.fail(RuntimeErrors.general.recordNotFound(RelationshipTemplate));
+        }
 
+        const relationships = await this.relationshipController.getRelationships({ "cache.changes.id": request.relationshipChangeId }); // eslint-disable-line @typescript-eslint/naming-convention
         if (relationships.length === 0) {
             return Result.fail(RuntimeErrors.general.recordNotFound(RelationshipChange));
         }
         const relationship = relationships[0];
-
-        if (!template) {
-            return Result.fail(RuntimeErrors.general.recordNotFound(RelationshipTemplate));
-        }
 
         const params: ICreateOutgoingRequestFromRelationshipCreationChangeParameters = {
             template: template,
