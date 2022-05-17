@@ -37,7 +37,7 @@ import {
     TransportLibraryInitializingEvent
 } from "./events";
 import { AnonymousServices, ConsumptionServices, ModuleConfiguration, RuntimeModule, RuntimeModuleRegistry, TransportServices } from "./extensibility";
-import { DeciderModule, MessageModule } from "./modules";
+import { DeciderModule, MessageModule, RequestModule } from "./modules";
 import { RuntimeConfig } from "./RuntimeConfig";
 import { RuntimeLoggerFactory } from "./RuntimeLoggerFactory";
 import { RuntimeHealth } from "./types";
@@ -281,6 +281,10 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
                 case "decidermodule":
                     const deciderModule = new DeciderModule(this, moduleConfiguration, this.loggerFactory.getLogger(DeciderModule));
                     this.modules.add(deciderModule);
+                    break;
+                case "requestmodule":
+                    const requestModule = new RequestModule(this, moduleConfiguration, this.loggerFactory.getLogger(RequestModule));
+                    this.modules.add(requestModule);
                     break;
                 case "messagemodule":
                     const messageModule = new MessageModule(this, moduleConfiguration, this.loggerFactory.getLogger(MessageModule));
