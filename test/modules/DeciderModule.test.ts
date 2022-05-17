@@ -9,7 +9,7 @@ let rEventBus: EventBus;
 let messageId: string;
 
 beforeAll(async () => {
-    const runtimeServices = await runtimeServiceProvider.launch(2, { modules: { decider: true } });
+    const runtimeServices = await runtimeServiceProvider.launch(2, { enableDeciderModule: true });
     rConsumptionServices = runtimeServices[0].consumption;
     rEventBus = runtimeServices[0].eventBus;
 

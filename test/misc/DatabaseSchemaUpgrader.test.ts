@@ -39,7 +39,7 @@ beforeAll(async () => {
         }
     });
 
-    const transport = new Transport(databaseConnection, RuntimeServiceProvider.runtimeConfig.transportLibrary, loggerFactory);
+    const transport = new Transport(databaseConnection, RuntimeServiceProvider.defaultConfig.transportLibrary, loggerFactory);
 
     const randomAccountName = Math.random().toString(36).substring(7);
     const db = await transport.createDatabase(`acc-${randomAccountName}`);

@@ -507,11 +507,10 @@ describe("Requests", () => {
             expect(triggeredEvent!.data.newStatus).toBe(ConsumptionRequestStatus.Decided);
         });
 
-        // TODO: via message is not correct?!
-        test("recipient: send Response via Message", async () => {
-            const content = RelationshipCreationChangeRequestBody.from({ response: rConsumptionRequest.response!.content as unknown as IResponse });
+        test("recipient: send Response via Relationship Creation Change", async () => {
+            const creationChangeBody = RelationshipCreationChangeRequestBody.from({ response: rConsumptionRequest.response!.content as unknown as IResponse });
             const result = await rTransportServices.relationships.createRelationship({
-                content: content,
+                content: creationChangeBody,
                 templateId: rRelationshipTemplate.id
             });
 

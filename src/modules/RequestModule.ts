@@ -12,8 +12,8 @@ export class RequestModule extends RuntimeModule {
 
     public start(): void | Promise<void> {
         this.subscribeToEvent(PeerRelationshipTemplateLoadedEvent, this.handlePeerRelationshipTemplateLoaded.bind(this));
-        this.subscribeToEvent(IncomingRequestStatusChangedEvent, this.handleIncomingRequestStatusChanged.bind(this));
         this.subscribeToEvent(MessageReceivedEvent, this.handleMessageReceivedEvent.bind(this));
+        this.subscribeToEvent(IncomingRequestStatusChangedEvent, this.handleIncomingRequestStatusChanged.bind(this));
         this.subscribeToEvent(RelationshipChangedEvent, this.handleRelationshipChangedEvent.bind(this));
     }
 
@@ -23,23 +23,22 @@ export class RequestModule extends RuntimeModule {
         const body = event.data.content as RelationshipTemplateBodyJSON;
         const request = body.onNewRelationship;
 
-        // TODO: check if relationship exexists to handle the `onExistingRelationship` request
-
         const services = this.runtime.getServices(event.eventTargetAddress);
-        await this.handleIncomingRequest(services, request, event.data.id);
+        await this.createIncomingRequest(services, request, event.data.id);
     }
 
     private async handleMessageReceivedEvent(event: MessageReceivedEvent) {
         if (event.data.content["@type"] !== "Request") return;
+        // TODO: JSSNMSHDD-2896 (handle response)
 
         const request = event.data.content as RequestJSON;
 
         const services = this.runtime.getServices(event.eventTargetAddress);
 
-        await this.handleIncomingRequest(services, request, event.data.id);
+        await this.createIncomingRequest(services, request, event.data.id);
     }
 
-    private async handleIncomingRequest(services: RuntimeServices, request: RequestJSON, requestSourceId: string) {
+    private async createIncomingRequest(services: RuntimeServices, request: RequestJSON, requestSourceId: string) {
         const receivedRequestResult = await services.consumptionServices.incomingRequests.received({ receivedRequest: request, requestSourceId });
         if (receivedRequestResult.isError) {
             this.logger.error(`Could not receive request ${request.id}`, receivedRequestResult.error);
@@ -57,14 +56,11 @@ export class RequestModule extends RuntimeModule {
         if (event.data.newStatus !== ConsumptionRequestStatus.Decided) return;
 
         switch (event.data.request.source!.type) {
-            case "Message":
-                await this.handleIncomingRequestCompletedForMessage(event);
-                break;
             case "RelationshipTemplate":
                 await this.handleIncomingRequestCompletedForRelationship(event);
                 break;
             default:
-                throw new Error(`Cannot handle SourceType '${event.data.request.source!.type}'.`);
+                throw new Error(`Cannot handle source.type '${event.data.request.source!.type}'.`);
         }
     }
 
@@ -81,13 +77,13 @@ export class RequestModule extends RuntimeModule {
 
         const template = templateResponse.value;
 
-        const content = RelationshipCreationChangeRequestBody.from({
+        const creationChangeBody = RelationshipCreationChangeRequestBody.from({
             "@type": "RelationshipCreationChangeRequestBody",
             response: event.data.request.response!.content,
             templateContentMetadata: template.content.metadata
         });
 
-        const createRelationshipResponse = await services.transportServices.relationships.createRelationship({ templateId, content });
+        const createRelationshipResponse = await services.transportServices.relationships.createRelationship({ templateId, content: creationChangeBody });
         if (createRelationshipResponse.isError) {
             this.logger.error(`Could not create relationship for templateId '${templateId}'.`);
             // TODO: error state
@@ -105,14 +101,8 @@ export class RequestModule extends RuntimeModule {
         }
     }
 
-    private async handleIncomingRequestCompletedForMessage(_event: IncomingRequestStatusChangedEvent) {
-        // TODO: send message
-        // TODO: complete the request
-        return await Promise.reject(new Error("Method not implemented"));
-    }
-
     private async handleRelationshipChangedEvent(event: RelationshipChangedEvent) {
-        // only trigger for new relationships that was created from an own template
+        // only trigger for new relationships that were created from an own template
         if (event.data.status !== RelationshipStatus.Pending || !event.data.template.isOwn) return;
 
         const services = this.runtime.getServices(event.eventTargetAddress);
