@@ -1,7 +1,13 @@
-import { AttributeJSON } from "@nmshd/content";
+import { IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content";
 
 export interface ConsumptionAttributeDTO {
     id: string;
-    content: AttributeJSON;
+    attributeType: string;
+    valueType: string;
+    content: IdentityAttributeJSON | RelationshipAttributeJSON;
     createdAt: string;
+    succeeds?: string;
+    sucessor?: string;
+    sharedWithPeer?: string;
+    sharedFromSourceAttribute: string;
 }
