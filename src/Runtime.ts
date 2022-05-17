@@ -37,7 +37,7 @@ import {
     TransportLibraryInitializingEvent
 } from "./events";
 import { AnonymousServices, ConsumptionServices, ModuleConfiguration, RuntimeModule, RuntimeModuleRegistry, TransportServices } from "./extensibility";
-import { DeciderModule, MessageModule } from "./modules";
+import { DeciderModule, MessageModule, RequestModule } from "./modules";
 import { RuntimeConfig } from "./RuntimeConfig";
 import { RuntimeLoggerFactory } from "./RuntimeLoggerFactory";
 import { RuntimeHealth } from "./types";
@@ -265,7 +265,6 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         for (const moduleName in this.runtimeConfig.modules) {
             const moduleConfiguration = this.runtimeConfig.modules[moduleName];
-            moduleConfiguration.name = moduleName;
 
             if (!moduleConfiguration.enabled) {
                 this.logger.debug(`Skip loading module '${this.getModuleName(moduleConfiguration)}' because it is not enabled.`);
@@ -277,22 +276,34 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
                 continue;
             }
 
-            switch (moduleConfiguration.name.toLocaleLowerCase()) {
-                case "decidermodule":
-                    const deciderModule = new DeciderModule(this, moduleConfiguration, this.loggerFactory.getLogger(DeciderModule));
-                    this.modules.add(deciderModule);
-                    break;
-                case "messagemodule":
-                    const messageModule = new MessageModule(this, moduleConfiguration, this.loggerFactory.getLogger(MessageModule));
-                    this.modules.add(messageModule);
-                    break;
-                default:
-                    await this.loadModule(moduleConfiguration);
-                    break;
-            }
+            // load the builtin '@nmshd/runtime' modules based on their specifier after the colon
+            if (moduleConfiguration.location.startsWith("@nmshd/runtime:")) return this.loadBuiltinModule(moduleConfiguration);
+
+            await this.loadModule(moduleConfiguration);
         }
 
         this.eventBus.publish(new ModulesLoadedEvent());
+    }
+
+    private loadBuiltinModule(moduleConfiguration: ModuleConfiguration) {
+        const moduleSpecifier = moduleConfiguration.location.split(":")[1];
+
+        switch (moduleSpecifier) {
+            case "DeciderModule":
+                const deciderModule = new DeciderModule(this, moduleConfiguration, this.loggerFactory.getLogger(DeciderModule));
+                this.modules.add(deciderModule);
+                break;
+            case "RequestModule":
+                const requestModule = new RequestModule(this, moduleConfiguration, this.loggerFactory.getLogger(RequestModule));
+                this.modules.add(requestModule);
+                break;
+            case "MessageModule":
+                const messageModule = new MessageModule(this, moduleConfiguration, this.loggerFactory.getLogger(MessageModule));
+                this.modules.add(messageModule);
+                break;
+            default:
+                throw new Error(`Module ${moduleConfiguration.name} is not a builtin module.`);
+        }
     }
 
     protected abstract loadModule(moduleConfiguration: ModuleConfiguration): Promise<void>;

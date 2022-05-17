@@ -11,7 +11,7 @@ beforeAll(async () => {
     const runtimeServices = await serviceProvider.launch(1);
     transportServices = runtimeServices[0].transport;
 
-    noLoginRuntime = new NoLoginTestRuntime(RuntimeServiceProvider.runtimeConfig);
+    noLoginRuntime = new NoLoginTestRuntime(RuntimeServiceProvider.defaultConfig);
     await noLoginRuntime.init();
     await noLoginRuntime.start();
 }, 30000);

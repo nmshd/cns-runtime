@@ -92,7 +92,7 @@ export async function createTemplate(
     transportServices: TransportServices,
     body: RelationshipTemplateBodyJSON = {
         "@type": "RelationshipTemplateBody",
-        newRelationshipRequest: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
+        onNewRelationship: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
     }
 ): Promise<RelationshipTemplateDTO> {
     const response = await transportServices.relationshipTemplates.createOwnRelationshipTemplate({
@@ -110,7 +110,7 @@ export async function getTemplateToken(
     transportServices: TransportServices,
     body: RelationshipTemplateBodyJSON = {
         "@type": "RelationshipTemplateBody",
-        newRelationshipRequest: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
+        onNewRelationship: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
     }
 ): Promise<TokenDTO> {
     const template = await createTemplate(transportServices, body);
@@ -135,7 +135,7 @@ export async function exchangeTemplate(
     transportServicesRecipient: TransportServices,
     body: RelationshipTemplateBodyJSON = {
         "@type": "RelationshipTemplateBody",
-        newRelationshipRequest: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
+        onNewRelationship: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
     }
 ): Promise<RelationshipTemplateDTO> {
     const templateToken = await getTemplateToken(transportServicesCreator, body);
