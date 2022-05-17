@@ -1,5 +1,6 @@
 import { EventBus } from "@js-soft/ts-utils";
 import { ConsumptionRequestStatus } from "@nmshd/consumption";
+import { IResponse, RelationshipCreationChangeRequestBody } from "@nmshd/content";
 import { DateTime } from "luxon";
 import {
     ConsumptionRequestDTO,
@@ -24,7 +25,7 @@ describe("Requests", () => {
         {
             action: "Reject"
         }
-    ] as TestCase[])("Complete flow with Messages: $type Request", ({ action }) => {
+    ] as TestCase[])("Complete flow with Messages: $action Request", ({ action }) => {
         const actionLowerCase = action.toLowerCase() as "accept" | "reject";
 
         const runtimeServiceProvider = new RuntimeServiceProvider();
@@ -324,7 +325,7 @@ describe("Requests", () => {
         {
             action: "Reject"
         }
-    ] as TestCase[])("Complete flow with Relationship Template and Change: $type Request", ({ action }) => {
+    ] as TestCase[])("Complete flow with Relationship Template and Change: $action Request", ({ action }) => {
         const actionLowerCase = action.toLowerCase() as "accept" | "reject";
 
         const runtimeServiceProvider = new RuntimeServiceProvider();
@@ -356,14 +357,17 @@ describe("Requests", () => {
         test("sender: create a Relationship Template with the Request", async () => {
             const result = await sTransportServices.relationshipTemplates.createOwnRelationshipTemplate({
                 content: {
-                    "@type": "Request",
-                    items: [
-                        {
-                            "@type": "TestRequestItem",
-                            mustBeAccepted: false
-                        }
-                    ],
-                    expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
+                    "@type": "RelationshipTemplateBody",
+                    onNewRelationship: {
+                        "@type": "Request",
+                        items: [
+                            {
+                                "@type": "TestRequestItem",
+                                mustBeAccepted: false
+                            }
+                        ],
+                        expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
+                    }
                 },
                 expiresAt: DateTime.now().plus({ hour: 1 }).toISO()
             });
@@ -390,7 +394,7 @@ describe("Requests", () => {
             });
 
             const result = await rConsumptionServices.incomingRequests.received({
-                receivedRequest: rRelationshipTemplate.content,
+                receivedRequest: rRelationshipTemplate.content.onNewRelationship,
                 requestSourceId: rRelationshipTemplate.id
             });
 
@@ -503,9 +507,11 @@ describe("Requests", () => {
             expect(triggeredEvent!.data.newStatus).toBe(ConsumptionRequestStatus.Decided);
         });
 
+        // TODO: via message is not correct?!
         test("recipient: send Response via Message", async () => {
+            const content = RelationshipCreationChangeRequestBody.from({ response: rConsumptionRequest.response!.content as unknown as IResponse });
             const result = await rTransportServices.relationships.createRelationship({
-                content: rConsumptionRequest.response!.content,
+                content: content,
                 templateId: rRelationshipTemplate.id
             });
 
@@ -513,7 +519,7 @@ describe("Requests", () => {
 
             rRelationshipChange = result.value.changes[0];
 
-            expect(rRelationshipChange.request.content["@type"]).toBe("Response");
+            expect(rRelationshipChange.request.content["@type"]).toBe("RelationshipCreationChangeRequestBody");
         });
 
         test("recipient: complete incoming Request", async () => {
