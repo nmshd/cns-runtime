@@ -23,7 +23,7 @@ let rEventBus: EventBus;
 let requestId: string;
 
 beforeAll(async () => {
-    const runtimeServices = await runtimeServiceProvider.launch(2, { modules: { requestModule: true } });
+    const runtimeServices = await runtimeServiceProvider.launch(2, { modules: { request: true } });
     sTransportServices = runtimeServices[1].transport;
     sConsumptionServices = runtimeServices[1].consumption;
     sEventBus = runtimeServices[1].eventBus;

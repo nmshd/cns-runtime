@@ -13,8 +13,8 @@ export interface RuntimeServices {
 export interface LaunchConfiguration {
     enableDatawallet?: boolean;
     modules?: {
-        deciderModule?: boolean;
-        requestModule?: boolean;
+        decider?: boolean;
+        request?: boolean;
     };
 }
 
@@ -59,8 +59,8 @@ export class RuntimeServiceProvider {
                 config.transportLibrary.datawalletEnabled = true;
             }
 
-            if (launchConfiguration.modules?.requestModule) config.modules.request.enabled = true;
-            if (launchConfiguration.modules?.deciderModule) config.modules.decider.enabled = true;
+            if (launchConfiguration.modules?.request) config.modules.request.enabled = true;
+            if (launchConfiguration.modules?.decider) config.modules.decider.enabled = true;
 
             const runtime = new TestRuntime(config);
             this.runtimes.push(runtime);
