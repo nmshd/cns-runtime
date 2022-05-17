@@ -276,7 +276,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
                 continue;
             }
 
-            // handle the builtin '@nmshd/runtime' modules based on their name
+            // load the builtin '@nmshd/runtime' modules based on their specifier after the colon
             if (moduleConfiguration.location.startsWith("@nmshd/runtime:")) return this.loadBuiltinModule(moduleConfiguration);
 
             await this.loadModule(moduleConfiguration);
@@ -286,9 +286,9 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
     }
 
     private loadBuiltinModule(moduleConfiguration: ModuleConfiguration) {
-        const moduleName = moduleConfiguration.location.split(":")[1];
+        const moduleSpecifier = moduleConfiguration.location.split(":")[1];
 
-        switch (moduleName) {
+        switch (moduleSpecifier) {
             case "DeciderModule":
                 const deciderModule = new DeciderModule(this, moduleConfiguration, this.loggerFactory.getLogger(DeciderModule));
                 this.modules.add(deciderModule);
