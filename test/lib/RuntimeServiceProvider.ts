@@ -14,6 +14,7 @@ export interface LaunchConfiguration {
     enableDatawallet?: boolean;
     modules?: {
         deciderModule?: boolean;
+        requestModule?: boolean;
     };
 }
 
@@ -32,6 +33,12 @@ export class RuntimeServiceProvider {
                 enabled: false,
                 displayName: "Decider Module",
                 name: "DeciderModule",
+                location: "builtin"
+            },
+            requestModule: {
+                enabled: false,
+                displayName: "Request Module",
+                name: "RequestModule",
                 location: "builtin"
             }
         }
@@ -52,6 +59,7 @@ export class RuntimeServiceProvider {
                 config.transportLibrary.datawalletEnabled = true;
             }
 
+            if (launchConfiguration.modules?.requestModule) config.modules.requestModule.enabled = true;
             if (launchConfiguration.modules?.deciderModule) config.modules.deciderModule.enabled = true;
 
             const runtime = new TestRuntime(config);
