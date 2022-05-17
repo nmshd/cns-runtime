@@ -29,17 +29,17 @@ export class RuntimeServiceProvider {
             debug: true
         },
         modules: {
-            deciderModule: {
+            decider: {
                 enabled: false,
                 displayName: "Decider Module",
                 name: "DeciderModule",
-                location: "builtin"
+                location: "@nmshd/runtime:DeciderModule"
             },
-            requestModule: {
+            request: {
                 enabled: false,
                 displayName: "Request Module",
                 name: "RequestModule",
-                location: "builtin"
+                location: "@nmshd/runtime:RequestModule"
             }
         }
     };
@@ -59,8 +59,8 @@ export class RuntimeServiceProvider {
                 config.transportLibrary.datawalletEnabled = true;
             }
 
-            if (launchConfiguration.modules?.requestModule) config.modules.requestModule.enabled = true;
-            if (launchConfiguration.modules?.deciderModule) config.modules.deciderModule.enabled = true;
+            if (launchConfiguration.modules?.requestModule) config.modules.request.enabled = true;
+            if (launchConfiguration.modules?.deciderModule) config.modules.decider.enabled = true;
 
             const runtime = new TestRuntime(config);
             this.runtimes.push(runtime);
