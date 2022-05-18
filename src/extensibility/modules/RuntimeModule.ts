@@ -1,10 +1,10 @@
 import { ILogger } from "@js-soft/logging-abstractions";
-import { EventConstructor, EventHandler } from "@js-soft/ts-utils";
+import { EventHandler, SubscriptionTarget } from "@js-soft/ts-utils";
 import { Runtime } from "../../Runtime";
 
 interface RuntimeModuleEventSubscription {
     id: number;
-    target: EventConstructor<unknown>;
+    target: SubscriptionTarget<unknown>;
 }
 
 export interface ModuleConfiguration {
@@ -31,7 +31,7 @@ export abstract class RuntimeModule<TConfig extends ModuleConfiguration = Module
 
     private readonly registeredSubscriptions: RuntimeModuleEventSubscription[] = [];
 
-    protected subscribeToEvent<TEvent>(event: EventConstructor<TEvent>, handler: EventHandler<TEvent>): void {
+    protected subscribeToEvent<TEvent>(event: SubscriptionTarget<TEvent>, handler: EventHandler<TEvent>): void {
         const subscriptionId = this.runtime.eventBus.subscribe(event, handler);
         this.registeredSubscriptions.push({ id: subscriptionId, target: event });
     }
