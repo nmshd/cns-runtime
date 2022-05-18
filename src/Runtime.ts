@@ -277,7 +277,10 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
             }
 
             // load the builtin '@nmshd/runtime' modules based on their specifier after the colon
-            if (moduleConfiguration.location.startsWith("@nmshd/runtime:")) return this.loadBuiltinModule(moduleConfiguration);
+            if (moduleConfiguration.location.startsWith("@nmshd/runtime:")) {
+                this.loadBuiltinModule(moduleConfiguration);
+                continue;
+            }
 
             await this.loadModule(moduleConfiguration);
         }
