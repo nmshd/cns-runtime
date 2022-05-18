@@ -1,3 +1,4 @@
+import { ConsumptionAttributeShareInfoJSON } from "@nmshd/consumption/dist/modules/attributes/local/ConsumptionAttributeShareInfo";
 import { IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content";
 
 export interface ConsumptionAttributeDTO {
@@ -8,6 +9,5 @@ export interface ConsumptionAttributeDTO {
     createdAt: string;
     succeeds?: string;
     sucessor?: string;
-    sharedWithPeer?: string;
-    sharedFromSourceAttribute: string;
+    shareInfo?: ConsumptionAttributeShareInfoJSON;
 }
