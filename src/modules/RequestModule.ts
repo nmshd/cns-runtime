@@ -57,45 +57,44 @@ export class RequestModule extends RuntimeModule {
 
         switch (event.data.request.source!.type) {
             case "RelationshipTemplate":
-                await this.handleIncomingRequestCompletedForRelationship(event);
+                await this.handleIncomingRequestDecidedForRelationship(event);
                 break;
             default:
                 throw new Error(`Cannot handle source.type '${event.data.request.source!.type}'.`);
         }
     }
 
-    private async handleIncomingRequestCompletedForRelationship(event: IncomingRequestStatusChangedEvent) {
+    private async handleIncomingRequestDecidedForRelationship(event: IncomingRequestStatusChangedEvent) {
         const templateId = event.data.request.source!.reference;
 
         const services = this.runtime.getServices(event.eventTargetAddress);
-        const templateResponse = await services.transportServices.relationshipTemplates.getRelationshipTemplate({ id: templateId });
-        if (templateResponse.isError) {
+        const templateResult = await services.transportServices.relationshipTemplates.getRelationshipTemplate({ id: templateId });
+        if (templateResult.isError) {
             this.logger.error(`Could not find template with id '${templateId}'.`);
             // TODO: error state
             return;
         }
 
-        const template = templateResponse.value;
-
+        const template = templateResult.value;
         const creationChangeBody = RelationshipCreationChangeRequestBody.from({
             "@type": "RelationshipCreationChangeRequestBody",
             response: event.data.request.response!.content,
             templateContentMetadata: template.content.metadata
         });
 
-        const createRelationshipResponse = await services.transportServices.relationships.createRelationship({ templateId, content: creationChangeBody });
-        if (createRelationshipResponse.isError) {
+        const createRelationshipResult = await services.transportServices.relationships.createRelationship({ templateId, content: creationChangeBody });
+        if (createRelationshipResult.isError) {
             this.logger.error(`Could not create relationship for templateId '${templateId}'.`);
             // TODO: error state
             return;
         }
 
         const requestId = event.data.request.id;
-        const completeRequestResponse = await services.consumptionServices.incomingRequests.complete({
+        const completeRequestResult = await services.consumptionServices.incomingRequests.complete({
             requestId,
-            responseSourceId: createRelationshipResponse.value.changes[0].id
+            responseSourceId: createRelationshipResult.value.changes[0].id
         });
-        if (completeRequestResponse.isError) {
+        if (completeRequestResult.isError) {
             this.logger.error(`Could not complete the request '${requestId}'.`);
             return;
         }
