@@ -67,6 +67,12 @@ export class RequestModule extends RuntimeModule {
     private async handleIncomingRequestDecidedForRelationship(event: IncomingRequestStatusChangedEvent) {
         const templateId = event.data.request.source!.reference;
 
+        if (event.data.request.response!.content.result !== "Accepted") {
+            // TODO: correctly handle rejection (=> delete / new status)
+            // ignore rejection for now
+            return;
+        }
+
         const services = this.runtime.getServices(event.eventTargetAddress);
         const templateResult = await services.transportServices.relationshipTemplates.getRelationshipTemplate({ id: templateId });
         if (templateResult.isError) {
