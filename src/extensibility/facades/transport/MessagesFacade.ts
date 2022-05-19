@@ -17,11 +17,11 @@ import {
 
 export class MessagesFacade {
     public constructor(
-        @Inject public getMessagesUseCase: GetMessagesUseCase,
-        @Inject public getMessageUseCase: GetMessageUseCase,
-        @Inject public sendMessageUseCase: SendMessageUseCase,
-        @Inject public downloadAttachmentUseCase: DownloadAttachmentUseCase,
-        @Inject public getAttachmentMetadataUseCase: GetAttachmentMetadataUseCase
+        @Inject private readonly getMessagesUseCase: GetMessagesUseCase,
+        @Inject private readonly getMessageUseCase: GetMessageUseCase,
+        @Inject private readonly sendMessageUseCase: SendMessageUseCase,
+        @Inject private readonly downloadAttachmentUseCase: DownloadAttachmentUseCase,
+        @Inject private readonly getAttachmentMetadataUseCase: GetAttachmentMetadataUseCase
     ) {}
 
     public async sendMessage(request: SendMessageRequest): Promise<Result<MessageDTO>> {
