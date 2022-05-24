@@ -1,27 +1,50 @@
 import { QueryTranslator } from "@js-soft/docdb-querytranslator";
 import { Result } from "@js-soft/ts-utils";
 import { ConsumptionAttribute, ConsumptionAttributesController } from "@nmshd/consumption";
-import { ConsumptionAttributeShareInfo } from "@nmshd/consumption/dist/modules/attributes/local/ConsumptionAttributeShareInfo";
+import { ConsumptionAttributeShareInfoJSON } from "@nmshd/consumption/dist/modules/attributes/local/ConsumptionAttributeShareInfo";
 import {
     AbstractAttribute,
-    AbstractAttributeQuery,
+    AbstractAttributeJSON,
     AbstractAttributeValueJSON,
     IdentityAttribute,
-    IdentityAttributeQuery,
-    IIdentityAttributeQuery,
-    IRelationshipAttributeQuery,
-    RelationshipAttribute,
-    RelationshipAttributeQuery
+    IdentityAttributeJSON,
+    RelationshipAttributeConfidentiality,
+    RelationshipAttributeJSON
 } from "@nmshd/content";
 import { DateTime } from "luxon";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
 import { RuntimeValidator, UseCase } from "../../common";
+import { flattenObject } from "../requests/flattenObject";
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface GetAttributesRequest {
-    query: IIdentityAttributeQuery | IRelationshipAttributeQuery;
+    query: ConsumptionAttributeQuery;
+}
+
+export interface ConsumptionAttributeQuery {
+    createdAt?: string;
+    content?: {
+        "@type"?: string;
+        tags?: string[];
+        owner?: string;
+        validFrom?: string;
+        validTo?: string;
+        key?: string;
+        isTechnical?: boolean;
+        confidenttiality?: RelationshipAttributeConfidentiality;
+        value?: {
+            "@type"?: string;
+        };
+    };
+    succeeds?: string;
+    succeededBy?: string;
+    shareInfo?: {
+        requestReference?: string;
+        peer?: string;
+        sourceAttribute?: string;
+    };
 }
 
 class GetAttributesRequestValidator extends RuntimeValidator<GetAttributesRequest> {
@@ -33,52 +56,106 @@ class GetAttributesRequestValidator extends RuntimeValidator<GetAttributesReques
 export class GetAttributesUseCase extends UseCase<GetAttributesRequest, ConsumptionAttributeDTO[]> {
     private static readonly queryTranslator = new QueryTranslator({
         whitelist: {
-            [nameof<AbstractAttributeQuery>((c) => c.valueType)]: true,
-            [nameof<AbstractAttributeQuery>((c) => c.validFrom)]: true,
-            [nameof<AbstractAttributeQuery>((c) => c.validTo)]: true,
-            [nameof<IdentityAttributeQuery>((c) => c.tags)]: true,
-            [nameof<RelationshipAttributeQuery>((c) => c.key)]: true,
-            [nameof<RelationshipAttributeQuery>((c) => c.owner)]: true,
-            [nameof<RelationshipAttributeQuery>((c) => c.thirdParty)]: true,
-            [nameof<RelationshipAttributeQuery>((c) => c.attributeHints)]: true
+            [nameof<ConsumptionAttributeDTO>((x) => x.createdAt)]: true,
+            [nameof<ConsumptionAttributeDTO>((x) => x.succeeds)]: true,
+            [nameof<ConsumptionAttributeDTO>((x) => x.succeededBy)]: true,
+
+            // content.abstractAttribute
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`]: true,
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`]: true,
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.owner)}`]: true,
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x["@type"])}`]: true,
+
+            // content.identityAttribute
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.tags)}`]: true,
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.value)}.${nameof<AbstractAttributeValueJSON>((x) => x["@type"])}`]:
+                true,
+
+            // content.relationshipAttribute
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.key)}`]: true,
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.isTechnical)}`]: true,
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.confidentiality)}`]: true,
+
+            // content.shareInfo
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfoJSON>((x) => x.peer)}`]: true,
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfoJSON>((x) => x.requestReference)}`]: true,
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfoJSON>((x) => x.sourceAttribute)}`]: true
         },
         alias: {
-            [nameof<AbstractAttributeQuery>((c) => c.valueType)]: `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttribute>(
-                (x) => x.value
-            )}.${nameof<AbstractAttributeValueJSON>((x) => x["@type"])}`,
-            [nameof<AbstractAttributeQuery>((c) => c.validFrom)]: `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.validFrom)}`,
-            [nameof<AbstractAttributeQuery>((c) => c.validTo)]: `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.validTo)}`,
-            // [nameof<IdentityAttributeQuery>((c) => c.tags)]: `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttribute>((x) => x.tags)}`,
-            [nameof<RelationshipAttributeQuery>((c) => c.key)]: `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<RelationshipAttribute>((x) => x.key)}`,
-            [nameof<RelationshipAttributeQuery>((x) => x.owner)]: `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<RelationshipAttribute>((x) => x.owner)}`,
-            [nameof<RelationshipAttributeQuery>((x) => x.thirdParty)]: `${nameof<ConsumptionAttribute>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfo>((x) => x.peer)}`
+            [nameof<ConsumptionAttributeDTO>((x) => x.createdAt)]: [nameof<ConsumptionAttribute>((x) => x.createdAt)],
+            [nameof<ConsumptionAttributeDTO>((x) => x.succeeds)]: [nameof<ConsumptionAttribute>((x) => x.succeeds)],
+            [nameof<ConsumptionAttributeDTO>((x) => x.succeededBy)]: [nameof<ConsumptionAttribute>((x) => x.succeededBy)],
+
+            // content.abstractAttribute
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`
+            ],
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`
+            ],
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.owner)}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.owner)}`
+            ],
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x["@type"])}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x["@type"])}`
+            ],
+
+            // content.identityAttribute
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.tags)}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.tags)}`
+            ],
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.value)}.${nameof<AbstractAttributeValueJSON>((x) => x["@type"])}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.value)}.${nameof<AbstractAttributeValueJSON>((x) => x["@type"])}`
+            ],
+
+            // content.relationshipAttribute
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.key)}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.key)}`
+            ],
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.isTechnical)}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.isTechnical)}`
+            ],
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.confidentiality)}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.confidentiality)}`
+            ],
+
+            // content.shareInfo
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfoJSON>((x) => x.peer)}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfoJSON>((x) => x.peer)}`
+            ],
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfoJSON>((x) => x.requestReference)}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfoJSON>((x) => x.requestReference)}`
+            ],
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfoJSON>((x) => x.sourceAttribute)}`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfoJSON>((x) => x.sourceAttribute)}`
+            ]
         },
         custom: {
-            // validFrom
-            [nameof<AbstractAttributeQuery>((c) => c.validFrom)]: (query: any, input: any) => {
+            // content.validFrom
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.validFrom)}`]: (query: any, input: any) => {
                 if (!input) {
                     return;
                 }
                 const validFromUtcString = DateTime.fromISO(input).toUTC().toString();
-                query["validFrom"] = {
+                query[`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.validFrom)}`] = {
                     $gte: validFromUtcString
                 };
             },
-            // validTo
-            [nameof<AbstractAttributeQuery>((c) => c.validTo)]: (query: any, input: any) => {
+            // content.validTo
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.validTo)}`]: (query: any, input: any) => {
                 if (!input) {
                     return;
                 }
                 const validToUtcString = DateTime.fromISO(input).toUTC().toString();
-                query["validTO"] = {
+                query[`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`] = {
                     $lte: validToUtcString
                 };
             },
-            // tags
-            [nameof<IdentityAttributeQuery>((c) => c.tags)]: (query: any, input: any) => {
+            // content.tags
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<IdentityAttribute>((x) => x.tags)}`]: (query: any, input: any) => {
                 const allowedTags = [];
                 for (const tag of input) {
-                    const tagQuery = { [`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttribute>((x) => x.tags)}`]: { $contains: tag } };
+                    const tagQuery = { [`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.tags)}`]: { $contains: tag } };
                     allowedTags.push(tagQuery);
                 }
                 query["$or"] = allowedTags;
@@ -91,7 +168,9 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
     }
 
     protected async executeInternal(request: GetAttributesRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
-        const fetched = await this.attributeController.getConsumptionAttributes(request.query);
+        const flattenedQuery = flattenObject(request.query);
+        const dbQuery = GetAttributesUseCase.queryTranslator.parse(flattenedQuery);
+        const fetched = await this.attributeController.getConsumptionAttributes(dbQuery);
         return Result.ok(AttributeMapper.toAttributeDTOList(fetched));
     }
 }
