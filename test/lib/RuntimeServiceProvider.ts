@@ -1,5 +1,4 @@
 import { EventBus } from "@js-soft/ts-utils";
-import _ from "lodash";
 import { AnonymousServices, ConsumptionServices, DataViewExpander, RuntimeConfig, TransportServices } from "../../src";
 import { TestRuntime } from "./TestRuntime";
 
@@ -13,7 +12,8 @@ export interface RuntimeServices {
 
 export interface LaunchConfiguration {
     enableDatawallet?: boolean;
-    modules?: Record<string, { enabled: boolean }>;
+    enableDeciderModule?: boolean;
+    enableRequestModule?: boolean;
 }
 
 export class RuntimeServiceProvider {
@@ -27,16 +27,22 @@ export class RuntimeServiceProvider {
             debug: true
         },
         modules: {
-            deciderModule: {
+            decider: {
                 enabled: false,
                 displayName: "Decider Module",
                 name: "DeciderModule",
-                location: "builtin"
+                location: "@nmshd/runtime:DeciderModule"
+            },
+            request: {
+                enabled: false,
+                displayName: "Request Module",
+                name: "RequestModule",
+                location: "@nmshd/runtime:RequestModule"
             }
         }
     };
 
-    public static get runtimeConfig(): RuntimeConfig {
+    public static get defaultConfig(): RuntimeConfig {
         const copy = JSON.parse(JSON.stringify(RuntimeServiceProvider._runtimeConfig));
         return copy;
     }
@@ -45,13 +51,14 @@ export class RuntimeServiceProvider {
         const runtimeServices = [];
 
         for (let i = 0; i < count; i++) {
-            const config = RuntimeServiceProvider.runtimeConfig;
+            const config = RuntimeServiceProvider.defaultConfig;
 
             if (launchConfiguration.enableDatawallet) {
                 config.transportLibrary.datawalletEnabled = true;
             }
 
-            config.modules = _.defaultsDeep(config.modules, launchConfiguration.modules);
+            if (launchConfiguration.enableRequestModule) config.modules.request.enabled = true;
+            if (launchConfiguration.enableDeciderModule) config.modules.decider.enabled = true;
 
             const runtime = new TestRuntime(config);
             this.runtimes.push(runtime);
