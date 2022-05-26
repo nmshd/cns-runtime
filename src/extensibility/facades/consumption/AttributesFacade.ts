@@ -4,6 +4,8 @@ import { ConsumptionAttributeDTO } from "../../../types";
 import {
     CreateAttributeRequest,
     CreateAttributeUseCase,
+    CreateShareAttributeCopyRequest,
+    CreateSharedAttributeCopyUseCase,
     DeleteAttributeRequest,
     DeleteAttributeUseCase,
     GetAllValidUseCase,
@@ -20,6 +22,7 @@ import {
 export class AttributesFacade {
     public constructor(
         @Inject private readonly createAttributeUseCase: CreateAttributeUseCase,
+        @Inject private readonly createSharedAttributeCopyUseCase: CreateSharedAttributeCopyUseCase,
         @Inject private readonly deleteAttributeUseCase: DeleteAttributeUseCase,
         @Inject private readonly getAllValidUseCase: GetAllValidUseCase,
         @Inject private readonly getAttributeUseCase: GetAttributeUseCase,
@@ -30,6 +33,10 @@ export class AttributesFacade {
 
     public async createAttribute(request: CreateAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
         return await this.createAttributeUseCase.execute(request);
+    }
+
+    public async createSharedAttributeCopy(request: CreateShareAttributeCopyRequest): Promise<Result<ConsumptionAttributeDTO>> {
+        return await this.createSharedAttributeCopyUseCase.execute(request);
     }
 
     public async deleteAttribute(request: DeleteAttributeRequest): Promise<Result<void>> {

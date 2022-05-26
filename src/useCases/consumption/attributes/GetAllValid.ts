@@ -11,7 +11,7 @@ export class GetAllValidUseCase extends UseCase<void, ConsumptionAttributeDTO[]>
     }
 
     protected async executeInternal(): Promise<Result<ConsumptionAttributeDTO[]>> {
-        const attributes = await this.attributeController.getValidAttributes();
+        const attributes = await this.attributeController.getValidConsumptionAttributes();
         return Result.ok(AttributeMapper.toAttributeDTOList(attributes));
     }
 }

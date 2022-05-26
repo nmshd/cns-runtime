@@ -3,7 +3,6 @@ import { Result } from "@js-soft/ts-utils";
 import { ConsumptionAttribute, ConsumptionAttributesController } from "@nmshd/consumption";
 import { ConsumptionAttributeShareInfoJSON } from "@nmshd/consumption/dist/modules/attributes/local/ConsumptionAttributeShareInfo";
 import {
-    AbstractAttribute,
     AbstractAttributeJSON,
     AbstractAttributeValueJSON,
     IdentityAttribute,
@@ -45,6 +44,7 @@ export interface ConsumptionAttributeQuery {
         peer?: string;
         sourceAttribute?: string;
     };
+    [key: string]: unknown;
 }
 
 class GetAttributesRequestValidator extends RuntimeValidator<GetAttributesRequest> {
@@ -132,17 +132,17 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
         },
         custom: {
             // content.validFrom
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.validFrom)}`]: (query: any, input: any) => {
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`]: (query: any, input: any) => {
                 if (!input) {
                     return;
                 }
                 const validFromUtcString = DateTime.fromISO(input).toUTC().toString();
-                query[`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.validFrom)}`] = {
+                query[`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`] = {
                     $gte: validFromUtcString
                 };
             },
             // content.validTo
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.validTo)}`]: (query: any, input: any) => {
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`]: (query: any, input: any) => {
                 if (!input) {
                     return;
                 }

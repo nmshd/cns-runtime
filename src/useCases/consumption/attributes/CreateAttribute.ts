@@ -1,6 +1,5 @@
 import { Result } from "@js-soft/ts-utils";
-import { ConsumptionAttribute, ConsumptionAttributesController } from "@nmshd/consumption";
-import { IAttribute } from "@nmshd/content";
+import { ConsumptionAttribute, ConsumptionAttributesController, ICreateConsumptionAttributeParams } from "@nmshd/consumption";
 import { AccountController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
@@ -8,15 +7,15 @@ import { RuntimeValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface CreateAttributeRequest {
-    attribute: IAttribute;
+    params: ICreateConsumptionAttributeParams;
 }
 
 class CreateAttributeRequestValidator extends RuntimeValidator<CreateAttributeRequest> {
     public constructor() {
         super();
 
-        this.validateIf((x) => x.attribute).isDefined();
-        this.validateIfString((x) => x.attribute.name).isNotEmpty();
+        this.validateIf((x) => x.params.content).isDefined();
+        this.validateIf((x) => x.params.content.value).isDefined();
     }
 }
 
@@ -30,9 +29,9 @@ export class CreateAttributeUseCase extends UseCase<CreateAttributeRequest, Cons
     }
 
     protected async executeInternal(request: CreateAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
-        const attribute = await ConsumptionAttribute.fromAttribute(request.attribute);
+        const attribute = await ConsumptionAttribute.fromAttribute(request.params.content);
 
-        const createdAttribute = await this.attributeController.createAttribute(attribute);
+        const createdAttribute = await this.attributeController.createConsumptionAttribute(attribute);
         await this.accountController.syncDatawallet();
 
         return Result.ok(AttributeMapper.toAttributeDTO(createdAttribute));

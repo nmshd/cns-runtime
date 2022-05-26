@@ -1,6 +1,6 @@
 import { Result } from "@js-soft/ts-utils";
 import { ConsumptionAttribute, ConsumptionAttributesController, ConsumptionIds } from "@nmshd/consumption";
-import { Attribute, IAttribute } from "@nmshd/content";
+import { UpdateConsumptionAttributeParams } from "@nmshd/consumption/dist/modules/attributes/UpdateConsumptionAttributeParams";
 import { AccountController, CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
@@ -8,17 +8,16 @@ import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../com
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface UpdateAttributeRequest {
-    id: string;
-    attribute: IAttribute;
+    params: UpdateConsumptionAttributeParams;
 }
 
 class UpdateAttributeRequestValidator extends RuntimeValidator<UpdateAttributeRequest> {
     public constructor() {
         super();
 
-        this.validateIfString((x) => x.id).fulfills(IdValidator.required(ConsumptionIds.attribute));
-        this.validateIf((x) => x.attribute).isDefined();
-        this.validateIf((x) => x.attribute.name).isNotEmpty();
+        this.validateIfString((x) => x.params.id.toString()).fulfills(IdValidator.required(ConsumptionIds.attribute));
+        this.validateIf((x) => x.params.content).isDefined();
+        this.validateIf((x) => x.params.content.value).isNotEmpty();
     }
 }
 
@@ -32,16 +31,13 @@ export class UpdateAttributeUseCase extends UseCase<UpdateAttributeRequest, Cons
     }
 
     protected async executeInternal(request: UpdateAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
-        const attribute = await this.attributeController.getAttribute(CoreId.from(request.id));
+        const attribute = await this.attributeController.getConsumptionAttribute(CoreId.from(request.params.id));
         if (!attribute) {
             return Result.fail(RuntimeErrors.general.recordNotFound(ConsumptionAttribute));
         }
-
-        attribute.content = Attribute.from(request.attribute);
-        const updated = await this.attributeController.updateAttribute(attribute);
-
+        attribute.content = request.params.content;
+        const updated = await this.attributeController.updateConsumptionAttribute(attribute);
         await this.accountController.syncDatawallet();
-
         return Result.ok(AttributeMapper.toAttributeDTO(updated));
     }
 }

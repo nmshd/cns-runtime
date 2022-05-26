@@ -3,8 +3,8 @@ import { IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content
 
 export interface ConsumptionAttributeDTO {
     id: string;
-    content: IdentityAttributeJSON | RelationshipAttributeJSON;
     createdAt: string;
+    content: IdentityAttributeJSON | RelationshipAttributeJSON;
     succeeds?: string;
     succeededBy?: string;
     shareInfo?: ConsumptionAttributeShareInfoJSON;

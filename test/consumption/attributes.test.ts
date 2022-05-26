@@ -1,3 +1,7 @@
+import { ICreateConsumptionAttributeParams, ICreateSharedConsumptionAttributeCopyParams, ISucceedConsumptionAttributeParams } from "@nmshd/consumption";
+import { UpdateConsumptionAttributeParams } from "@nmshd/consumption/dist/modules/attributes/UpdateConsumptionAttributeParams";
+import { IdentityAttribute } from "@nmshd/content";
+import { CoreAddress, CoreDate, CoreId } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import { ConsumptionServices } from "../../src";
 import { RuntimeServiceProvider } from "../lib/RuntimeServiceProvider";
@@ -12,294 +16,228 @@ beforeAll(async () => {
 afterAll(async () => await runtimeServiceProvider.stop());
 
 describe("Attributes", () => {
-    const attributeWithoutDateName = "attributeWithoutDate-Name";
-    const attributeWithoutDate = {
-        attribute: {
-            name: attributeWithoutDateName,
-            value: "attributeWithoutDate-Value"
-        }
-    };
-    let attributeWithoutDateId: string;
-
-    const attributeWithDateName = "attributeWithDate-Name";
-    const attributeWithDate = {
-        attribute: {
-            name: attributeWithDateName,
-            value: "attributeWithDate-Value",
-            validFrom: { date: DateTime.utc().minus({ years: 1 }).toString() },
-            validTo: { date: DateTime.utc().plus({ years: 1 }).toString() }
-        }
-    };
-    let attributeWithDateId: string;
-    let attributeWithoutDateCreatedAt: string;
-
-    test("should create an attribute without date information", async () => {
-        const timestamp = DateTime.utc().toString();
-        const response = await consumptionServices.attributes.createAttribute(attributeWithoutDate);
-        expect(response).toBeSuccessful();
-        const attribute = response.value;
-        expect(attribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
-        expect(attribute.content).toMatchObject(attributeWithoutDate.attribute);
-        attributeWithoutDateId = attribute.id;
-        attributeWithoutDateCreatedAt = attribute.createdAt;
-    });
-
-    test("should create an attribute with date information", async () => {
-        const timestamp = DateTime.utc().toString();
-
-        const response = await consumptionServices.attributes.createAttribute(attributeWithDate);
-        expect(response).toBeSuccessful();
-        const attribute = response.value;
-        const attributeContent = attribute.content;
-        expect(attribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
-        expect(attributeContent).toBeDefined();
-        expect(attributeContent).toStrictEqual(
-            expect.objectContaining({
-                name: attributeWithDate.attribute.name,
-                value: attributeWithDate.attribute.value
+    beforeEach(async function () {
+        const surnameParams: ICreateConsumptionAttributeParams = {
+            content: IdentityAttribute.from({
+                value: {
+                    "@type": "Surname",
+                    value: "ASurname"
+                },
+                owner: CoreAddress.from("address")
             })
-        );
-        expect(attributeContent.validFrom).toStrictEqual(attributeWithDate.attribute.validFrom.date);
-        expect(attributeContent.validTo).toStrictEqual(attributeWithDate.attribute.validTo.date);
-        attributeWithDateId = attribute.id;
-    });
-
-    test("should throw an error for create with an empty name", async () => {
-        const attributeWithEmptyValues = {
-            attribute: {
-                name: "",
-                value: "new-Value"
-            }
         };
-        const response = await consumptionServices.attributes.createAttribute(attributeWithEmptyValues);
-        expect(response).toBeAnError("attribute.name is invalid", "error.runtime.validation.invalidPropertyValue");
-    });
 
-    test("should get an attribute by id", async () => {
-        const response = await consumptionServices.attributes.getAttribute({ id: attributeWithoutDateId });
-        expect(response).toBeSuccessful();
-        const attribute = response.value;
-        expect(attribute.id).toStrictEqual(attributeWithoutDateId);
-        expect(attribute.content).toBeDefined();
-        expect(attribute.content).toStrictEqual(
-            expect.objectContaining({
-                name: attributeWithoutDate.attribute.name,
-                value: attributeWithoutDate.attribute.value
+        const givenNamesParams: ICreateConsumptionAttributeParams = {
+            content: IdentityAttribute.from({
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                },
+                owner: CoreAddress.from("address")
             })
-        );
+        };
+        await consumptionServices.attributes.createAttribute({ params: surnameParams });
+        await consumptionServices.attributes.createAttribute({ params: givenNamesParams });
     });
 
-    test("should throw an error for get with an empty id", async () => {
-        const response = await consumptionServices.attributes.getAttribute({ id: "" });
-        expect(response).toBeAnError("id is invalid", "error.runtime.validation.invalidPropertyValue");
-    });
-
-    test("should throw an error for get with an invalid id", async () => {
-        const response = await consumptionServices.attributes.getAttribute({ id: "ThisIsAnInvalidId" });
-        expect(response).toBeAnError("id is invalid", "error.runtime.validation.invalidPropertyValue");
-    });
-
-    test("should get an attribute without date information by name", async () => {
-        const response = await consumptionServices.attributes.getAttributeByName({ name: attributeWithoutDateName });
-        expect(response).toBeSuccessful();
-        const attribute = response.value;
-        expect(attribute.id).toStrictEqual(attributeWithoutDateId);
-        expect(attribute.content).toBeDefined();
-        expect(attribute.content).toStrictEqual(
-            expect.objectContaining({
-                name: attributeWithoutDate.attribute.name,
-                value: attributeWithoutDate.attribute.value
-            })
-        );
-    });
-
-    test("should get attribute with date information by name", async () => {
-        const response = await consumptionServices.attributes.getAttributeByName({ name: attributeWithDateName });
-        expect(response).toBeSuccessful();
-        const attribute = response.value;
-        expect(attribute.id).toStrictEqual(attributeWithDateId);
-        expect(attribute.content).toBeDefined();
-        expect(attribute.content).toStrictEqual(
-            expect.objectContaining({
-                name: attributeWithDate.attribute.name,
-                value: attributeWithDate.attribute.value
-            })
-        );
-    });
-
-    test("should throw an error for get with empty name", async () => {
-        const response = await consumptionServices.attributes.getAttributeByName({ name: "" });
-        expect(response).toBeAnError("name is invalid", "error.runtime.validation.invalidPropertyValue");
-    });
-
-    test("should throw an error for get with non-existent name", async () => {
-        const response = await consumptionServices.attributes.getAttributeByName({
-            name: "ThisIsANon-ExistentAttributeName"
+    afterEach(async function () {
+        const attributes = await consumptionServices.attributes.getAttributes({ query: {} });
+        attributes.value.forEach(async (attribute) => {
+            await consumptionServices.attributes.deleteAttribute(attribute);
         });
-        expect(response).toBeAnError("Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
     });
 
-    test("should get all attributes", async () => {
-        const response = await consumptionServices.attributes.getAttributes({});
-        expect(response).toBeSuccessful();
-        expect(response.value).toHaveLength(2);
+    test("should list all attributes with empty query", async () => {
+        const attributes = await consumptionServices.attributes.getAttributes({ query: {} });
+        expect(attributes.value).toHaveLength(2);
     });
 
-    test("should update an attribute", async () => {
-        const response = await consumptionServices.attributes.updateAttribute({
-            id: attributeWithoutDateId,
-            attribute: { name: attributeWithoutDateName, value: "new-Value" }
-        });
-        expect(response).toBeSuccessful();
-        const attribute = response.value;
-        expect(attribute.content).toBeDefined();
-        expect(attribute.content.value).toBe("new-Value");
-        expect(attribute.createdAt).toStrictEqual(attributeWithoutDateCreatedAt);
-    });
+    test("should allow to create new attributes", async () => {
+        const attributesBeforeCreate = await consumptionServices.attributes.getAttributes({ query: {} });
+        const nrAttributesBeforeCreate = attributesBeforeCreate.value.length;
 
-    test("should throw an error for update with empty name", async () => {
-        const response = await consumptionServices.attributes.updateAttribute({
-            id: attributeWithoutDateId,
-            attribute: { name: "", value: "new-Value" }
-        });
-        expect(response).toBeAnError("attribute.name is invalid", "error.runtime.validation.invalidPropertyValue");
-    });
-
-    test("should succeed attribute without validFrom parameter", async () => {
-        const getAttributeResponse = await consumptionServices.attributes.getAttributeByName({
-            name: attributeWithDate.attribute.name
-        });
-        const attributeToSucceed = getAttributeResponse.value.content;
-
-        const successorValue1 = "successor_value_1";
         const timestamp = DateTime.utc().toString();
-        const response = await consumptionServices.attributes.succeedAttribute({
-            attribute: { name: attributeToSucceed.name, value: successorValue1 }
-        });
-        expect(response).toBeSuccessful();
-        const attribute = response.value;
-        expect(attribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
-        expect(attribute.content.validFrom!.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
-        expect(attribute.content).toStrictEqual(expect.objectContaining({ name: attributeWithDateName, value: successorValue1 }));
-    });
-
-    test("should succeed attribute with validFrom parameter", async () => {
-        const getAttributeResponse = await consumptionServices.attributes.getAttributeByName({
-            name: attributeWithDate.attribute.name
-        });
-        const attributeToSucceed = getAttributeResponse.value.content;
-
-        const successorValue2 = "successor_value_2";
-        const validFrom = DateTime.utc().plus({ years: 1 }).toString();
-        const timestamp = DateTime.utc().toString();
-        const response = await consumptionServices.attributes.succeedAttribute({
-            attribute: { name: attributeToSucceed.name, value: successorValue2 },
-            validFrom: validFrom
-        });
-        expect(response).toBeSuccessful();
-        const attribute = response.value;
-        expect(attribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
-        expect(attribute.content).toStrictEqual(expect.objectContaining({ name: attributeWithDateName, value: successorValue2, validFrom: validFrom }));
-
-        const getCurrentAttributeResponse = await consumptionServices.attributes.getAttributeByName({
-            name: attributeToSucceed.name
-        });
-        expect(getCurrentAttributeResponse).toBeSuccessful();
-        expect(getCurrentAttributeResponse.value.content).toStrictEqual(
-            expect.objectContaining({
-                name: attributeToSucceed.name,
-                value: attributeToSucceed.value,
-                validTo: validFrom
+        const addressParams: ICreateConsumptionAttributeParams = {
+            content: IdentityAttribute.from({
+                value: {
+                    "@type": "StreetAddress",
+                    recipient: "ARecipient",
+                    street: "AStreet",
+                    houseNo: "AHouseNo",
+                    zipCode: "AZipCode",
+                    city: "ACity",
+                    country: "DE"
+                },
+                validTo: CoreDate.utc(),
+                owner: CoreAddress.from("address")
             })
-        );
+        };
+
+        const birthDateParams: ICreateConsumptionAttributeParams = {
+            content: IdentityAttribute.from({
+                value: {
+                    "@type": "BirthDate",
+                    day: 22,
+                    month: 2,
+                    year: 2022
+                },
+                owner: CoreAddress.from("address")
+            })
+        };
+
+        const address = await consumptionServices.attributes.createAttribute({ params: addressParams });
+        expect(address).toBeSuccessful();
+        const addressAttribute = address.value;
+        expect(addressAttribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
+        expect(IdentityAttribute.from(addressAttribute.content)).toMatchObject(addressParams.content);
+
+        const birthDate = await consumptionServices.attributes.createAttribute({ params: birthDateParams });
+        expect(birthDate).toBeSuccessful();
+        const birthDateAttribute = birthDate.value;
+        expect(birthDateAttribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
+        expect(IdentityAttribute.from(birthDateAttribute.content)).toMatchObject(birthDateParams.content);
+
+        const attributesAfterCreate = await consumptionServices.attributes.getAttributes({ query: {} });
+        const nrAttributesAfterCreate = attributesAfterCreate.value.length;
+        expect(nrAttributesAfterCreate).toBe(nrAttributesBeforeCreate + 2);
     });
 
-    test("should throw an error for succeed attribute with empty name", async () => {
-        const getAttributeResponse = await consumptionServices.attributes.getAttributeByName({
-            name: attributeWithDate.attribute.name
+    test("should allow to delete an attribute", async () => {
+        const attributes = await consumptionServices.attributes.getAttributes({ query: {} });
+        const nrAttributesBeforeDelete = attributes.value.length;
+        await consumptionServices.attributes.deleteAttribute(attributes.value[0]);
+
+        const attributesAfterDelete = await consumptionServices.attributes.getAttributes({ query: {} });
+        const nrAttributesAfterDelete = attributesAfterDelete.value.length;
+        expect(nrAttributesAfterDelete).toBe(nrAttributesBeforeDelete - 1);
+
+        const attributesJSON = attributesAfterDelete.value.map((v) => v.id.toString());
+        expect(attributesJSON).not.toContain(attributes.value[0]?.id.toString());
+    });
+
+    test("should allow to succeed an attribute", async () => {
+        const displayNameParams: ICreateConsumptionAttributeParams = {
+            content: IdentityAttribute.from({
+                value: {
+                    "@type": "DisplayName",
+                    value: "ADisplayName"
+                },
+                owner: CoreAddress.from("address")
+            })
+        };
+
+        const successorDate = CoreDate.utc();
+        const displayNameSuccessor = IdentityAttribute.from({
+            value: {
+                "@type": "DisplayName",
+                value: "ANewDisplayName"
+            },
+            owner: CoreAddress.from("address"),
+            validFrom: successorDate
         });
-        const attributeToSucceed = getAttributeResponse.value.content;
-        attributeToSucceed.name = "";
 
-        const successorValue3 = "successor_value_3";
-        const validFrom = DateTime.utc().plus({ years: 2 }).toString();
-        const response = await consumptionServices.attributes.succeedAttribute({
-            attribute: { name: attributeToSucceed.name, value: successorValue3 },
-            validFrom: validFrom
+        const attribute = await consumptionServices.attributes.createAttribute({ params: displayNameParams });
+        const attributeId = attribute.value.id;
+        const createSuccessorParams: ISucceedConsumptionAttributeParams = {
+            successorContent: displayNameSuccessor,
+            succeeds: CoreId.from(attributeId)
+        };
+        const successor = await consumptionServices.attributes.succeedAttribute({ params: createSuccessorParams });
+        const successorId = successor.value.id;
+        const succeededAttribute = await consumptionServices.attributes.getAttribute({ id: attributeId });
+        expect(succeededAttribute.value.content.validTo).toBe(successorDate.subtract(1).toISOString());
+
+        const succeessorAttribute = await consumptionServices.attributes.getAttribute({ id: successorId });
+        expect(succeessorAttribute.value.content.validFrom).toBe(successorDate.toISOString());
+
+        const allAttributes = await consumptionServices.attributes.getAttributes({ query: {} });
+        const allAttributesJSON = allAttributes.value.map((v) => v.id);
+        expect(allAttributesJSON).toContain(succeededAttribute.value.id);
+
+        const currentAttributes = await consumptionServices.attributes.getAllValid();
+        const currentAttributesJSON = currentAttributes.value.map((v) => v.id);
+        expect(currentAttributesJSON).not.toContain(succeededAttribute.value.id);
+        expect(currentAttributesJSON).toContain(succeessorAttribute.value.id);
+    });
+
+    test("should allow to create a share copy", async function () {
+        const nationalityParams: ICreateConsumptionAttributeParams = {
+            content: IdentityAttribute.from({
+                value: {
+                    "@type": "Nationality",
+                    value: "DE"
+                },
+                owner: CoreAddress.from("address")
+            })
+        };
+        const nationalityAttribute = await consumptionServices.attributes.createAttribute({ params: nationalityParams });
+
+        const peer = CoreAddress.from("address");
+        const createSharedAttributesParams: ICreateSharedConsumptionAttributeCopyParams = {
+            attributeId: CoreId.from(nationalityAttribute.value.id),
+            peer: peer,
+            requestReference: CoreId.from("requestId")
+        };
+
+        const sharedNationality = await consumptionServices.attributes.createSharedAttributeCopy({ params: createSharedAttributesParams });
+        expect(sharedNationality).toBeSuccessful();
+        const sharedNationalityAttribute = sharedNationality.value;
+        expect(IdentityAttribute.from(sharedNationalityAttribute.content)).toMatchObject(nationalityParams.content);
+        expect(sharedNationalityAttribute.shareInfo?.peer).toBe(peer.address);
+    });
+
+    test("should allow to update an attribute", async () => {
+        const addressParams: ICreateConsumptionAttributeParams = {
+            content: IdentityAttribute.from({
+                value: {
+                    "@type": "StreetAddress",
+                    recipient: "ARecipient",
+                    street: "AStreet",
+                    houseNo: "AHouseNo",
+                    zipCode: "AZipCode",
+                    city: "ACity",
+                    country: "DE"
+                },
+                validTo: CoreDate.utc(),
+                owner: CoreAddress.from("address")
+            })
+        };
+
+        const newAddressContent = IdentityAttribute.from({
+            value: {
+                "@type": "StreetAddress",
+                recipient: "ANewRecipient",
+                street: "ANewStreet",
+                houseNo: "ANewHouseNo",
+                zipCode: "ANewZipCode",
+                city: "ANewCity",
+                country: "DE"
+            },
+            validTo: CoreDate.utc(),
+            owner: CoreAddress.from("address")
         });
 
-        expect(response).toBeAnError("attribute.name is invalid", "error.runtime.validation.invalidPropertyValue");
+        const address = await consumptionServices.attributes.createAttribute({ params: addressParams });
+        const updateParams = UpdateConsumptionAttributeParams.from({ id: CoreId.from(address.value.id), content: newAddressContent });
+        const newAddress = await consumptionServices.attributes.updateAttribute({ params: updateParams });
+        expect(newAddress).toBeSuccessful();
+        const newAddressAttribute = newAddress.value;
+        expect(IdentityAttribute.from(newAddressAttribute.content)).toMatchObject(newAddressContent);
     });
 
-    test("should get history", async () => {
-        const response = await consumptionServices.attributes.getHistoryByName({ name: attributeWithDateName });
-        expect(response).toBeSuccessful();
-        let validTo = "";
-        for (const attribute of response.value) {
-            expect(attribute.content).toStrictEqual(expect.objectContaining({ name: attributeWithDateName }));
-            if (validTo !== "") {
-                // TODO: JSSNMSHDD-2520 (move test to consumption library)
-                // eslint-disable-next-line jest/no-conditional-expect
-                expect(validTo).toStrictEqual(attribute.content.validFrom);
-            }
-            validTo = attribute.content.validTo ? attribute.content.validTo : "";
-        }
-    });
-
-    test("should throw an error for get history with a non-existent name", async () => {
-        const response = await consumptionServices.attributes.getHistoryByName({
-            name: "ThisIsANon-ExistentAttributeName"
-        });
-        expect(response).toBeAnError("Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
-    });
-
-    test("should get all currently valid attributes", async () => {
-        const response = await consumptionServices.attributes.getAllValid();
-        expect(response).toBeSuccessful();
-        const now = DateTime.utc();
-        for (const attribute of response.value) {
-            if (attribute.content.validFrom) {
-                const validFrom = DateTime.fromISO(attribute.content.validFrom);
-                // TODO: JSSNMSHDD-2520 (move test to consumption library)
-                // eslint-disable-next-line jest/no-conditional-expect
-                expect(validFrom <= now).toBeTruthy();
-            }
-            if (attribute.content.validTo) {
-                const validTo = DateTime.fromISO(attribute.content.validTo);
-                // TODO: JSSNMSHDD-2520 (move test to consumption library)
-                // eslint-disable-next-line jest/no-conditional-expect
-                expect(validTo > now).toBeTruthy();
-            }
-        }
-    });
-
-    test("should delete an attribute by id", async () => {
-        const response = await consumptionServices.attributes.deleteAttribute({ id: attributeWithoutDateId });
-        expect(response).toBeSuccessful();
-
-        const responseGetAttribute = await consumptionServices.attributes.getAttribute({ id: attributeWithoutDateId });
-        expect(responseGetAttribute).toBeAnError("Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
-    });
-
-    test("should delete attributes by name", async () => {
-        const response = await consumptionServices.attributes.deleteAttributeByName({ name: attributeWithDateName });
-        expect(response).toBeSuccessful();
-
-        const responseGetAttribute = await consumptionServices.attributes.getAttributeByName({
-            name: attributeWithDateName
-        });
-        expect(responseGetAttribute).toBeAnError("Attribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
-    });
-
-    test("should throw an error for delete with invalid attribute id", async () => {
-        const response = await consumptionServices.attributes.deleteAttribute({ id: "ThisIsAnInvalidId" });
-        expect(response).toBeAnError("id is invalid", "error.runtime.validation.invalidPropertyValue");
-    });
-
-    test("should throw an error for delete with non-existent attribute name", async () => {
-        const response = await consumptionServices.attributes.deleteAttributeByName({
-            name: "ThisIsANon-ExistentAttributeName"
-        });
-        expect(response).toBeAnError("ConsumptionAttribute not found. Make sure the ID exists and the record is not expired.", "error.runtime.recordNotFound");
+    test("should allow to get an attribute by id", async function () {
+        const nationalityParams: ICreateConsumptionAttributeParams = {
+            content: IdentityAttribute.from({
+                value: {
+                    "@type": "Nationality",
+                    value: "DE"
+                },
+                owner: CoreAddress.from("address")
+            })
+        };
+        const nationalityAttribute = await consumptionServices.attributes.createAttribute({ params: nationalityParams });
+        const receivedAttribute = await consumptionServices.attributes.getAttribute({ id: nationalityAttribute.value.id });
+        expect(receivedAttribute).toBeSuccessful();
+        expect(receivedAttribute).toStrictEqual(nationalityAttribute);
     });
 });

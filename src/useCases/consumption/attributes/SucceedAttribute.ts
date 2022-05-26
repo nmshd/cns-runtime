@@ -1,24 +1,22 @@
 import { Result } from "@js-soft/ts-utils";
-import { ConsumptionAttribute, ConsumptionAttributesController } from "@nmshd/consumption";
-import { IAttribute } from "@nmshd/content";
-import { AccountController, CoreDate } from "@nmshd/transport";
+import { ConsumptionAttributesController, ConsumptionIds, ISucceedConsumptionAttributeParams } from "@nmshd/consumption";
+import { AccountController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
-import { DateValidator, RuntimeValidator, UseCase } from "../../common";
+import { DateValidator, IdValidator, RuntimeValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface SucceedAttributeRequest {
-    attribute: IAttribute;
-    validFrom?: string;
+    params: ISucceedConsumptionAttributeParams;
 }
 
 class SucceedAttributeRequestValidator extends RuntimeValidator<SucceedAttributeRequest> {
     public constructor() {
         super();
 
-        this.validateIf((x) => x.validFrom).fulfills(DateValidator.optional());
-        this.validateIf((x) => x.attribute).isDefined();
-        this.validateIf((x) => x.attribute.name).isNotEmpty();
+        this.validateIf((x) => x.params.successorContent.validFrom?.toString()).fulfills(DateValidator.optional());
+        this.validateIf((x) => x.params.successorContent.value).isDefined();
+        this.validateIf((x) => x.params.succeeds.toString()).fulfills(IdValidator.required(ConsumptionIds.attribute));
     }
 }
 
@@ -32,8 +30,7 @@ export class SucceedAttributeUseCase extends UseCase<SucceedAttributeRequest, Co
     }
 
     protected async executeInternal(request: SucceedAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
-        const attribute = await ConsumptionAttribute.fromAttribute(request.attribute);
-        const successor = await this.attributeController.succeedAttribute(attribute, request.validFrom ? CoreDate.from(request.validFrom) : undefined);
+        const successor = await this.attributeController.succeedConsumptionAttribute(request.params);
 
         await this.accountController.syncDatawallet();
 

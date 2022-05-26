@@ -25,7 +25,7 @@ export class GetAttributeUseCase extends UseCase<GetAttributeRequest, Consumptio
     }
 
     protected async executeInternal(request: GetAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
-        const attribute = await this.attributeController.getAttribute(CoreId.from(request.id));
+        const attribute = await this.attributeController.getConsumptionAttribute(CoreId.from(request.id));
         if (!attribute) {
             return Result.fail(RuntimeErrors.general.recordNotFound(Attribute));
         }
