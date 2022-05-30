@@ -1,2 +1,2 @@
 export * from "./CreateChallenge";
-export * from "./ValidateChallange";
+export * from "./ValidateChallenge";

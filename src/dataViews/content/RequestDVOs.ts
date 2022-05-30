@@ -1,7 +1,7 @@
 import { MatchedAttributesDVO } from "../consumption/MatchedAttributesDVO";
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "../transport/IdentityDVO";
-import { AttributeDVO } from "./AttributeDVO";
+import { ConsumptionAttributeDVO } from "./ConsumptionAttributeDVO";
 
 export interface RequestDVO extends DataViewObject {
     // from RequestJSON
@@ -38,7 +38,7 @@ export interface AttributesChangeRequestDVO extends RequestDVO {
     /**
      * The array of new attribute values which should be stored for the identity.
      */
-    newAttributes: AttributeDVO[];
+    newAttributes: ConsumptionAttributeDVO[];
     newAttributeCount: number;
 
     /**
@@ -52,7 +52,7 @@ export interface AttributesChangeRequestDVO extends RequestDVO {
 
 export interface AttributeChange {
     oldAttribute: MatchedAttributesDVO;
-    newAttribute: AttributeDVO;
+    newAttribute: ConsumptionAttributeDVO;
 }
 
 export interface AttributesRequestDVO extends RequestDVO {

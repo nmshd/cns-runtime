@@ -1,5 +1,12 @@
 import { EventBus, sleep, SubscriptionTarget } from "@js-soft/ts-utils";
-import { RelationshipCreationChangeRequestBodyJSON, RelationshipTemplateBodyJSON } from "@nmshd/content";
+import {
+    IRelationshipCreationChangeRequestBody,
+    IRelationshipTemplateBody,
+    RelationshipCreationChangeRequestBody,
+    RelationshipCreationChangeRequestBodyJSON,
+    RelationshipTemplateBody,
+    RelationshipTemplateBodyJSON
+} from "@nmshd/content";
 import fs from "fs";
 import { DateTime } from "luxon";
 import {
@@ -90,7 +97,7 @@ export async function makeUploadRequest(values: object = {}): Promise<UploadOwnF
 
 export async function createTemplate(
     transportServices: TransportServices,
-    body: RelationshipTemplateBodyJSON = {
+    body: RelationshipTemplateBodyJSON | RelationshipTemplateBody | IRelationshipTemplateBody = {
         "@type": "RelationshipTemplateBody",
         onNewRelationship: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
     }
@@ -98,7 +105,7 @@ export async function createTemplate(
     const response = await transportServices.relationshipTemplates.createOwnRelationshipTemplate({
         maxNumberOfRelationships: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
-        content: body
+        content: RelationshipTemplateBody.from(body)
     });
 
     expect(response).toBeSuccessful();
@@ -108,7 +115,7 @@ export async function createTemplate(
 
 export async function getTemplateToken(
     transportServices: TransportServices,
-    body: RelationshipTemplateBodyJSON = {
+    body: RelationshipTemplateBodyJSON | RelationshipTemplateBody | IRelationshipTemplateBody = {
         "@type": "RelationshipTemplateBody",
         onNewRelationship: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
     }
@@ -133,7 +140,7 @@ export async function getFileToken(transportServices: TransportServices): Promis
 export async function exchangeTemplate(
     transportServicesCreator: TransportServices,
     transportServicesRecipient: TransportServices,
-    body: RelationshipTemplateBodyJSON = {
+    body: RelationshipTemplateBodyJSON | IRelationshipTemplateBody | RelationshipTemplateBody = {
         "@type": "RelationshipTemplateBody",
         onNewRelationship: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
     }
@@ -232,8 +239,8 @@ export async function establishRelationship(transportServices1: TransportService
 export async function establishRelationshipWithBodys(
     transportServices1: TransportServices,
     transportServices2: TransportServices,
-    templateBody: RelationshipTemplateBodyJSON,
-    requestBody: RelationshipCreationChangeRequestBodyJSON
+    templateBody: RelationshipTemplateBodyJSON | RelationshipTemplateBody | IRelationshipTemplateBody,
+    requestBody: RelationshipCreationChangeRequestBodyJSON | RelationshipCreationChangeRequestBody | IRelationshipCreationChangeRequestBody
 ): Promise<void> {
     const template = await exchangeTemplate(transportServices1, transportServices2, templateBody);
 

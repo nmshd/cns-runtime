@@ -14,8 +14,6 @@ export interface GetMessagesRequest {
 class GetMessagesRequestValidator extends RuntimeValidator<GetMessagesRequest> {
     public constructor() {
         super();
-
-        // TODO: JSSNMSHDD-2470 (add validation)
     }
 }
 

@@ -40,17 +40,6 @@ export const LoadPeerTokenAnonymousByTruncatedReferenceRequest: any = {
     }
 }
 
-export const GetAttributesByNamesRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetAttributesByNamesRequest",
-    "definitions": {
-        "GetAttributesByNamesRequest": {
-            "type": "object",
-            "additionalProperties": false
-        }
-    }
-}
-
 export const CreateAttributeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateAttributeRequest",
@@ -58,32 +47,71 @@ export const CreateAttributeRequest: any = {
         "CreateAttributeRequest": {
             "type": "object",
             "properties": {
-                "attribute": {
-                    "$ref": "#/definitions/IAttribute"
+                "params": {
+                    "$ref": "#/definitions/ICreateConsumptionAttributeParams"
                 }
             },
             "required": [
-                "attribute"
+                "params"
             ],
             "additionalProperties": false
         },
-        "IAttribute": {
+        "ICreateConsumptionAttributeParams": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
+                "content": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IIdentityAttribute"
+                        },
+                        {
+                            "$ref": "#/definitions/IRelationshipAttribute"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "content"
+            ],
+            "additionalProperties": false
+        },
+        "IIdentityAttribute": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "$ref": "#/definitions/ICoreAddress"
                 },
-                "value": {},
                 "validFrom": {
                     "$ref": "#/definitions/ICoreDate"
                 },
                 "validTo": {
                     "$ref": "#/definitions/ICoreDate"
+                },
+                "value": {
+                    "$ref": "#/definitions/IAbstractAttributeValue"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             },
             "required": [
-                "name",
+                "owner",
                 "value"
+            ],
+            "additionalProperties": false
+        },
+        "ICoreAddress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "address"
             ],
             "additionalProperties": false
         },
@@ -96,6 +124,115 @@ export const CreateAttributeRequest: any = {
             },
             "required": [
                 "date"
+            ],
+            "additionalProperties": false
+        },
+        "IAbstractAttributeValue": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+        },
+        "IRelationshipAttribute": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "$ref": "#/definitions/ICoreAddress"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "value": {
+                    "$ref": "#/definitions/IAbstractAttributeValue"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "confidentiality",
+                "key",
+                "owner",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "RelationshipAttributeConfidentiality": {
+            "type": "string",
+            "enum": [
+                "public",
+                "private",
+                "protected"
+            ]
+        }
+    }
+}
+
+export const CreateShareAttributeCopyRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateShareAttributeCopyRequest",
+    "definitions": {
+        "CreateShareAttributeCopyRequest": {
+            "type": "object",
+            "properties": {
+                "params": {
+                    "$ref": "#/definitions/ICreateSharedConsumptionAttributeCopyParams"
+                }
+            },
+            "required": [
+                "params"
+            ],
+            "additionalProperties": false
+        },
+        "ICreateSharedConsumptionAttributeCopyParams": {
+            "type": "object",
+            "properties": {
+                "attributeId": {
+                    "$ref": "#/definitions/ICoreId"
+                },
+                "peer": {
+                    "$ref": "#/definitions/ICoreAddress"
+                },
+                "requestReference": {
+                    "$ref": "#/definitions/ICoreId"
+                }
+            },
+            "required": [
+                "attributeId",
+                "peer",
+                "requestReference"
+            ],
+            "additionalProperties": false
+        },
+        "ICoreId": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "additionalProperties": false
+        },
+        "ICoreAddress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "address"
             ],
             "additionalProperties": false
         }
@@ -121,25 +258,6 @@ export const DeleteAttributeRequest: any = {
     }
 }
 
-export const DeleteAttributeByNameRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/DeleteAttributeByNameRequest",
-    "definitions": {
-        "DeleteAttributeByNameRequest": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
 export const GetAttributeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributeRequest",
@@ -159,51 +277,101 @@ export const GetAttributeRequest: any = {
     }
 }
 
-export const GetAttributeByNameRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetAttributeByNameRequest",
-    "definitions": {
-        "GetAttributeByNameRequest": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
 export const GetAttributesRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributesRequest",
     "definitions": {
         "GetAttributesRequest": {
             "type": "object",
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetHistoryByNameRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetHistoryByNameRequest",
-    "definitions": {
-        "GetHistoryByNameRequest": {
-            "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
+                "query": {
+                    "$ref": "#/definitions/ConsumptionAttributeQuery"
                 }
             },
             "required": [
-                "name"
+                "query"
             ],
             "additionalProperties": false
+        },
+        "ConsumptionAttributeQuery": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "object",
+                    "properties": {
+                        "@type": {
+                            "type": "string"
+                        },
+                        "tags": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "owner": {
+                            "type": "string"
+                        },
+                        "validFrom": {
+                            "type": "string"
+                        },
+                        "validTo": {
+                            "type": "string"
+                        },
+                        "key": {
+                            "type": "string"
+                        },
+                        "isTechnical": {
+                            "type": "boolean"
+                        },
+                        "confidenttiality": {
+                            "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                        },
+                        "value": {
+                            "type": "object",
+                            "properties": {
+                                "@type": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "succeeds": {
+                    "type": "string"
+                },
+                "succeededBy": {
+                    "type": "string"
+                },
+                "shareInfo": {
+                    "type": "object",
+                    "properties": {
+                        "requestReference": {
+                            "type": "string"
+                        },
+                        "peer": {
+                            "type": "string"
+                        },
+                        "sourceAttribute": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": {}
+        },
+        "RelationshipAttributeConfidentiality": {
+            "type": "string",
+            "enum": [
+                "public",
+                "private",
+                "protected"
+            ]
         }
     }
 }
@@ -215,35 +383,75 @@ export const SucceedAttributeRequest: any = {
         "SucceedAttributeRequest": {
             "type": "object",
             "properties": {
-                "attribute": {
-                    "$ref": "#/definitions/IAttribute"
-                },
-                "validFrom": {
-                    "type": "string"
+                "params": {
+                    "$ref": "#/definitions/ISucceedConsumptionAttributeParams"
                 }
             },
             "required": [
-                "attribute"
+                "params"
             ],
             "additionalProperties": false
         },
-        "IAttribute": {
+        "ISucceedConsumptionAttributeParams": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
+                "successorContent": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IIdentityAttribute"
+                        },
+                        {
+                            "$ref": "#/definitions/IRelationshipAttribute"
+                        }
+                    ]
                 },
-                "value": {},
+                "succeeds": {
+                    "$ref": "#/definitions/ICoreId"
+                }
+            },
+            "required": [
+                "successorContent",
+                "succeeds"
+            ],
+            "additionalProperties": false
+        },
+        "IIdentityAttribute": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "$ref": "#/definitions/ICoreAddress"
+                },
                 "validFrom": {
                     "$ref": "#/definitions/ICoreDate"
                 },
                 "validTo": {
                     "$ref": "#/definitions/ICoreDate"
+                },
+                "value": {
+                    "$ref": "#/definitions/IAbstractAttributeValue"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             },
             "required": [
-                "name",
+                "owner",
                 "value"
+            ],
+            "additionalProperties": false
+        },
+        "ICoreAddress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "address"
             ],
             "additionalProperties": false
         },
@@ -256,6 +464,64 @@ export const SucceedAttributeRequest: any = {
             },
             "required": [
                 "date"
+            ],
+            "additionalProperties": false
+        },
+        "IAbstractAttributeValue": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+        },
+        "IRelationshipAttribute": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "$ref": "#/definitions/ICoreAddress"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "value": {
+                    "$ref": "#/definitions/IAbstractAttributeValue"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "confidentiality",
+                "key",
+                "owner",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "RelationshipAttributeConfidentiality": {
+            "type": "string",
+            "enum": [
+                "public",
+                "private",
+                "protected"
+            ]
+        },
+        "ICoreId": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
             ],
             "additionalProperties": false
         }
@@ -269,50 +535,143 @@ export const UpdateAttributeRequest: any = {
         "UpdateAttributeRequest": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "attribute": {
-                    "$ref": "#/definitions/IAttribute"
+                "params": {
+                    "$ref": "#/definitions/UpdateConsumptionAttributeParams"
                 }
             },
             "required": [
-                "id",
-                "attribute"
+                "params"
             ],
             "additionalProperties": false
         },
-        "IAttribute": {
+        "UpdateConsumptionAttributeParams": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
+                "id": {
+                    "$ref": "#/definitions/CoreId"
                 },
-                "value": {},
-                "validFrom": {
-                    "$ref": "#/definitions/ICoreDate"
-                },
-                "validTo": {
-                    "$ref": "#/definitions/ICoreDate"
+                "content": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IdentityAttribute"
+                        },
+                        {
+                            "$ref": "#/definitions/RelationshipAttribute"
+                        }
+                    ]
                 }
             },
             "required": [
-                "name",
+                "content",
+                "id"
+            ],
+            "additionalProperties": false
+        },
+        "CoreId": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "additionalProperties": false,
+            "description": "A CoreId is any kind of identifier we have in the system."
+        },
+        "IdentityAttribute": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "$ref": "#/definitions/CoreAddress"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/CoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/CoreDate"
+                },
+                "value": {
+                    "$ref": "#/definitions/AbstractAttributeValue"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "owner",
                 "value"
             ],
             "additionalProperties": false
         },
-        "ICoreDate": {
+        "CoreAddress": {
             "type": "object",
             "properties": {
-                "date": {
+                "address": {
                     "type": "string"
                 }
             },
             "required": [
-                "date"
+                "address"
+            ],
+            "additionalProperties": false,
+            "description": "A CoreAddress is the primariy technical identitier of an account."
+        },
+        "CoreDate": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+        },
+        "AbstractAttributeValue": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+        },
+        "RelationshipAttribute": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "$ref": "#/definitions/CoreAddress"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/CoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/CoreDate"
+                },
+                "value": {
+                    "$ref": "#/definitions/AbstractAttributeValue"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "confidentiality",
+                "isTechnical",
+                "key",
+                "owner",
+                "value"
             ],
             "additionalProperties": false
+        },
+        "RelationshipAttributeConfidentiality": {
+            "type": "string",
+            "enum": [
+                "public",
+                "private",
+                "protected"
+            ]
         }
     }
 }
@@ -559,6 +918,19 @@ export const CreateOutgoingRequestRequest: any = {
                             ],
                             "description": "The items of the Request. Can be either a single  {@link  RequestItemJSON RequestItem }  or a  {@link  RequestItemGroupJSON RequestItemGroup } , which itself can contain further  {@link  RequestItemJSON RequestItems } ."
                         },
+                        "responseMetadata": {
+                            "anyOf": [
+                                {
+                                    "type": "object",
+                                    "description": "This property can be used to add some arbitrary metadata to this request. The content of this property will be copied into the response on the side of the recipient."
+                                },
+                                {
+                                    "type": "object",
+                                    "description": "This property can be used to add some arbitrary metadata to this request. The content of this property will be copied into the response on the side of the recipient."
+                                }
+                            ],
+                            "description": "This property can be used to add some arbitrary metadata to this request. The content of this property will be copied into the response on the side of the recipient."
+                        },
                         "@context": {
                             "type": "string"
                         }
@@ -617,7 +989,7 @@ export const CreateOutgoingRequestRequest: any = {
                 },
                 "responseMetadata": {
                     "type": "object",
-                    "description": "This propertycan be used to add some arbitrary metadata to this group. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                    "description": "This property can be used to add some arbitrary metadata to this group. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
                 "items": {
                     "type": "array",
@@ -657,7 +1029,7 @@ export const CreateOutgoingRequestRequest: any = {
                 },
                 "responseMetadata": {
                     "type": "object",
-                    "description": "This propertycan be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
                 "mustBeAccepted": {
                     "type": "boolean",
@@ -687,7 +1059,7 @@ export const CreateOutgoingRequestRequest: any = {
                 },
                 "responseMetadata": {
                     "type": "object",
-                    "description": "This propertycan be used to add some arbitrary metadata to this group. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                    "description": "This property can be used to add some arbitrary metadata to this group. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
                 "items": {
                     "type": "array",
@@ -717,7 +1089,7 @@ export const CreateOutgoingRequestRequest: any = {
                 },
                 "responseMetadata": {
                     "type": "object",
-                    "description": "This propertycan be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
                 "mustBeAccepted": {
                     "type": "boolean",
@@ -923,6 +1295,9 @@ export const CompleteOutgoingRequestRequest: any = {
                             }
                         ]
                     }
+                },
+                "metadata": {
+                    "type": "object"
                 }
             },
             "required": [
@@ -1348,6 +1723,10 @@ export const ReceivedIncomingRequestRequest: any = {
                         ]
                     },
                     "description": "The items of the Request. Can be either a single  {@link  RequestItemJSON RequestItem }  or a  {@link  RequestItemGroupJSON RequestItemGroup } , which itself can contain further  {@link  RequestItemJSON RequestItems } ."
+                },
+                "responseMetadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this request. The content of this property will be copied into the response on the side of the recipient."
                 }
             },
             "required": [
@@ -1382,7 +1761,7 @@ export const ReceivedIncomingRequestRequest: any = {
                 },
                 "responseMetadata": {
                     "type": "object",
-                    "description": "This propertycan be used to add some arbitrary metadata to this group. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                    "description": "This property can be used to add some arbitrary metadata to this group. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
                 "items": {
                     "type": "array",
@@ -1422,7 +1801,7 @@ export const ReceivedIncomingRequestRequest: any = {
                 },
                 "responseMetadata": {
                     "type": "object",
-                    "description": "This propertycan be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
                 "mustBeAccepted": {
                     "type": "boolean",

@@ -26,7 +26,7 @@ export class DeleteAttributeUseCase extends UseCase<DeleteAttributeRequest, void
     }
 
     protected async executeInternal(request: DeleteAttributeRequest): Promise<Result<void>> {
-        const attribute = await this.attributeController.getAttribute(CoreId.from(request.id));
+        const attribute = await this.attributeController.getConsumptionAttribute(CoreId.from(request.id));
         if (!attribute) {
             return Result.fail(RuntimeErrors.general.recordNotFound(ConsumptionAttribute));
         }

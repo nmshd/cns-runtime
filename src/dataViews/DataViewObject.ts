@@ -8,7 +8,7 @@ export interface DataViewObject {
     image?: string;
     type: string;
     date?: string;
-    items?: DataViewObject[];
+    items?: any[];
 
     errorCount?: number;
     errors?: Error[];

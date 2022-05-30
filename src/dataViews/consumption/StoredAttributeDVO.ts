@@ -1,6 +1,6 @@
-import { AttributeDVO } from "../content/AttributeDVO";
+import { ConsumptionAttributeDVO } from "../content/ConsumptionAttributeDVO";
 
-export interface StoredAttributeDVO extends Omit<AttributeDVO, "type"> {
+export interface StoredAttributeDVO extends Omit<ConsumptionAttributeDVO, "type"> {
     type: "StoredAttributeDVO";
     sharedItems: string[];
     sharedItemCount: number;

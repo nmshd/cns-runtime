@@ -1,4 +1,4 @@
-import { AttributeJSON, AttributesChangeRequestJSON, AttributesRequestJSON, AttributesShareRequestJSON, MailJSON, RequestMailJSON } from "@nmshd/content";
+import { IdentityAttributeJSON, MailJSON, RelationshipAttributeJSON, RenderHintsEditType, RenderHintsTechnicalType, RequestJSON, RequestMailJSON } from "@nmshd/content";
 import { CoreAddress, IdentityController, Realm, Relationship, RelationshipStatus } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { FileDVO, IdentityDVO } from "..";
@@ -16,13 +16,9 @@ import {
     RelationshipInfoDTO
 } from "../types";
 import { RuntimeErrors } from "../useCases";
-import { Error } from "./common/Error";
-import { Warning } from "./common/Warning";
-import { MatchedAttributesDVO } from "./consumption/MatchedAttributesDVO";
-import { StoredAttributeDVO } from "./consumption/StoredAttributeDVO";
-import { AttributeDVO } from "./content/AttributeDVO";
+import { DraftAttributeDVO, RepositoryAttributeDVO } from "./content";
 import { MailDVO, RequestMailDVO } from "./content/MailDVOs";
-import { AttributeChange, AttributesChangeRequestDVO, AttributesRequestDVO, AttributesShareRequestDVO, RequestDVO } from "./content/RequestDVOs";
+import { RequestDVO } from "./content/RequestDVOs";
 import { DataViewObject } from "./DataViewObject";
 import { DataViewTranslateable } from "./DataViewTranslateable";
 import { MessageDVO, MessageStatus, RecipientDVO } from "./transport/MessageDVO";
@@ -58,40 +54,12 @@ export class DataViewExpander {
 
                 return await this.expandMessageDTO(content as MessageDTO);
 
-            case "AttributesRequest":
-                if (content instanceof Array) {
-                    return await this.expandUnknownRequests(content as AttributesRequestJSON[]);
-                }
-
-                return await this.expandUnknownRequest(content as AttributesRequestJSON);
-
-            case "AttributesShareRequest":
-                if (content instanceof Array) {
-                    return await this.expandAttributesShareRequests(content as AttributesShareRequestJSON[]);
-                }
-
-                return await this.expandAttributesShareRequest(content as AttributesShareRequestJSON);
-
-            case "AttributesChangeRequest":
-                if (content instanceof Array) {
-                    return await this.expandAttributesChangeRequests(content as AttributesChangeRequestJSON[]);
-                }
-
-                return await this.expandAttributesChangeRequest(content as AttributesChangeRequestJSON);
-
             case "Attribute":
                 if (content instanceof Array) {
-                    return await this.expandAttributes(content as AttributeJSON[]);
+                    return await this.expandAttributes(content);
                 }
 
-                return this.expandAttribute(content as AttributeJSON);
-
-            case "AttributeName":
-                if (content instanceof Array) {
-                    return await this.expandAttributeNames(content as string[]);
-                }
-
-                return await this.expandAttributeName(content as string);
+                return await this.expandAttribute(content);
 
             case "Address":
                 if (content instanceof Array) {
@@ -133,7 +101,7 @@ export class DataViewExpander {
                     return await this.expandConsumptionAttributes(content as ConsumptionAttributeDTO[]);
                 }
 
-                return this.expandConsumptionAttribute(content as ConsumptionAttributeDTO);
+                return await this.expandConsumptionAttribute(content as ConsumptionAttributeDTO);
             default:
                 throw RuntimeErrors.general.notImplemented();
         }
@@ -219,7 +187,7 @@ export class DataViewExpander {
                     ...mailDVO,
                     type: "RequestMailDVO",
                     name: requestMailContent.subject ? requestMailContent.subject : DataViewTranslateable.consumption.mails.requestMailSubjectFallback,
-                    requests: await this.expandUnknownRequests(requestMailContent.requests),
+                    requests: [], // await this.expandUnknownRequests(requestMailContent.requests),
                     requestCount: requestMailContent.requests.length
                 };
 
@@ -237,19 +205,11 @@ export class DataViewExpander {
         return await Promise.all(messagePromises);
     }
 
-    public async expandUnknownRequest(request: AttributesChangeRequestJSON | AttributesShareRequestJSON | AttributesRequestJSON): Promise<RequestDVO> {
-        switch (request["@type"]) {
-            case "AttributesRequest":
-                return await this.expandAttributesRequest(request as AttributesRequestJSON);
-            case "AttributesShareRequest":
-                return await this.expandAttributesShareRequest(request as AttributesShareRequestJSON);
-            case "AttributesChangeRequest":
-                return await this.expandAttributesChangeRequest(request as AttributesChangeRequestJSON);
-        }
+    public expandRequest(request: RequestJSON): RequestDVO {
+        const id = request.id ? request.id : "";
         return {
-            id: request.id ? request.id : "",
-            name: `${request["@type"]} ${request.key}`,
-            description: "i18n://dvo.request.unknownType",
+            id: id,
+            name: `${request["@type"]} ${id}`,
             type: "RequestDVO",
             date: request.expiresAt,
 
@@ -257,218 +217,56 @@ export class DataViewExpander {
         };
     }
 
-    public expandRequest(request: AttributesChangeRequestJSON | AttributesShareRequestJSON | AttributesRequestJSON): RequestDVO {
+    public async expandConsumptionAttribute(attribute: ConsumptionAttributeDTO): Promise<RepositoryAttributeDVO> {
+        const valueType = attribute.content.value["@type"];
         return {
-            id: request.id ? request.id : "",
-            name: `${request["@type"]} ${request.key}`,
-            type: "RequestDVO",
-            date: request.expiresAt,
-
-            ...request
-        };
-    }
-
-    public async expandUnknownRequests(requests: (AttributesRequestJSON | AttributesChangeRequestJSON | AttributesShareRequestJSON)[]): Promise<RequestDVO[]> {
-        const requestsPromise = requests.map((request) => this.expandUnknownRequest(request));
-        return await Promise.all(requestsPromise);
-    }
-
-    public async expandAttributesShareRequest(attributesShareRequest: AttributesShareRequestJSON): Promise<AttributesShareRequestDVO> {
-        const request = this.expandRequest(attributesShareRequest);
-
-        const recipientObjects = [];
-        let possibleRecipientCount = 0;
-        for (const recipient of attributesShareRequest.recipients) {
-            if (this.identityController.isMe(CoreAddress.from(recipient))) {
-                continue;
-            }
-
-            const identity = await this.expandIdentityForAddress(recipient);
-            if (identity.hasRelationship) {
-                recipientObjects.push(identity);
-                possibleRecipientCount++;
-            }
-        }
-
-        if (recipientObjects.length === 0) {
-            request.errorCount = (request.errorCount ?? 0) + 1;
-            const error: Error = {
-                code: "error.dvo.request.AttributeShareRequest.noRelationship",
-                message: "There are no relationships to any of the recipients of this request."
-            };
-
-            if (!request.errors) {
-                request.errors = [];
-            }
-            request.errors.push(error);
-        } else if (recipientObjects.length !== possibleRecipientCount) {
-            request.warningCount = (request.warningCount ?? 0) + 1;
-            const warning: Warning = {
-                code: "warning.dvo.request.AttributeShareRequest.onlyRelationships",
-                message: "Not to every recipient of this request exist a relationship."
-            };
-
-            if (!request.warnings) {
-                request.warnings = [];
-            }
-            request.warnings.push(warning);
-        }
-
-        const attributesObjects: MatchedAttributesDVO[] = [];
-        for (const attributeName of attributesShareRequest.attributes) {
-            const attributeDVO = await this.expandAttributeName(attributeName);
-            attributesObjects.push(attributeDVO);
-        }
-
-        let name: string;
-
-        if (attributesObjects.length > 1) {
-            name = DataViewTranslateable.consumption.requests.attributesShareRequestNamePlural;
-        } else {
-            name = DataViewTranslateable.consumption.requests.attributesShareRequestName;
-        }
-
-        return {
-            ...request,
-            name,
-            type: "AttributesShareRequestDVO",
-            attributes: attributesObjects,
-            attributeCount: attributesObjects.length,
-            recipients: recipientObjects,
-            recipientCount: recipientObjects.length,
-            possibleRecipientCount
-        };
-    }
-
-    public expandConsumptionAttribute(attribute: ConsumptionAttributeDTO): StoredAttributeDVO {
-        return {
-            type: "StoredAttributeDVO",
+            type: "RepositoryAttributeDVO",
             id: attribute.id,
-            name: attribute.content.name,
-            value: attribute.content.value,
+            name: `i18n://attribute.title.${valueType}`,
+            content: attribute.content,
             date: attribute.createdAt,
+            owner: await this.expandAddress(attribute.content.owner),
+            renderHints: {
+                "@type": "RenderHints",
+                technicalType: RenderHintsTechnicalType.Object,
+                editType: RenderHintsEditType.InputLike
+            },
+            valueHints: {
+                "@type": "ValueHints"
+            },
+            isValid: true,
+            createdAt: attribute.createdAt,
             isOwn: true,
-            sharedItems: [],
-            sharedItemCount: 0
+            sharedWith: []
         };
     }
 
-    public async expandConsumptionAttributes(attributes: ConsumptionAttributeDTO[]): Promise<StoredAttributeDVO[]> {
+    public async expandConsumptionAttributes(attributes: ConsumptionAttributeDTO[]): Promise<RepositoryAttributeDVO[]> {
         const attributesPromise = attributes.map((attribute) => this.expandConsumptionAttribute(attribute));
         return await Promise.all(attributesPromise);
     }
 
-    public async expandAttributeName(name: string): Promise<MatchedAttributesDVO> {
-        const consumptionAttribute = await this.consumption.attributes.getAttributeByName({ name: name });
-        let matchedAttributes: StoredAttributeDVO[] = [];
-        if (consumptionAttribute.isSuccess) {
-            matchedAttributes = [this.expandConsumptionAttribute(consumptionAttribute.value)];
-        }
-        let bestMatch: StoredAttributeDVO | undefined;
-        if (matchedAttributes.length > 0) {
-            bestMatch = matchedAttributes[0];
-        }
-
+    public async expandAttribute(attribute: IdentityAttributeJSON | RelationshipAttributeJSON): Promise<DraftAttributeDVO> {
         return {
-            type: "MatchedAttributesDVO",
-            id: name,
-            name: name,
-            matches: matchedAttributes,
-            matchCount: matchedAttributes.length,
-            bestMatch: bestMatch
+            type: "DraftAttributeDVO",
+            content: attribute,
+            name: "DraftAttribute",
+            id: "",
+            owner: await this.expandAddress(attribute.owner),
+            renderHints: {
+                "@type": "RenderHints",
+                technicalType: RenderHintsTechnicalType.Object,
+                editType: RenderHintsEditType.InputLike
+            },
+            valueHints: {
+                "@type": "ValueHints"
+            }
         };
     }
 
-    public async expandAttributeNames(names: string[]): Promise<MatchedAttributesDVO[]> {
-        const namesPromise = names.map((name) => this.expandAttributeName(name));
-        return await Promise.all(namesPromise);
-    }
-
-    public expandAttribute(attribute: AttributeJSON): AttributeDVO {
-        return {
-            type: "AttributeDVO",
-            id: attribute.name,
-            name: attribute.name,
-            value: attribute.value,
-            isOwn: false
-        };
-    }
-
-    public async expandAttributes(attributes: AttributeJSON[]): Promise<AttributeDVO[]> {
+    public async expandAttributes(attributes: (IdentityAttributeJSON | RelationshipAttributeJSON)[]): Promise<DraftAttributeDVO[]> {
         const attributesPromise = attributes.map((attribute) => this.expandAttribute(attribute));
         return await Promise.all(attributesPromise);
-    }
-
-    public async expandAttributesChangeRequest(attributesChangeRequest: AttributesChangeRequestJSON): Promise<AttributesChangeRequestDVO> {
-        const request = this.expandRequest(attributesChangeRequest);
-
-        let applyToObject;
-        if (attributesChangeRequest.applyTo) {
-            applyToObject = await this.expandIdentityForAddress(attributesChangeRequest.applyTo);
-        } else {
-            applyToObject = this.expandSelf();
-        }
-
-        let name: string;
-
-        const attributesObjects: AttributeDVO[] = [];
-        for (const attribute of attributesChangeRequest.attributes) {
-            const attributeDVO = this.expandAttribute(attribute);
-            attributesObjects.push(attributeDVO);
-        }
-        const oldAttributesObjects = await this.expandAttributeNames(attributesObjects.map((item) => item.id));
-
-        if (attributesObjects.length > 1) {
-            name = DataViewTranslateable.consumption.requests.attributesChangeRequestNamePlural;
-        } else {
-            name = DataViewTranslateable.consumption.requests.attributesChangeRequestName;
-        }
-
-        const changes: AttributeChange[] = [];
-        attributesObjects.forEach((attribute, index) => {
-            changes.push({
-                oldAttribute: oldAttributesObjects[index],
-                newAttribute: attribute
-            });
-        });
-
-        return {
-            ...request,
-            type: "AttributesChangeRequestDVO",
-            name: name,
-            newAttributes: attributesObjects,
-            newAttributeCount: attributesObjects.length,
-            oldAttributes: oldAttributesObjects,
-            oldAttributeCount: oldAttributesObjects.length,
-            applyTo: applyToObject,
-            changes: changes,
-            changeCount: changes.length
-        };
-    }
-
-    public async expandAttributesRequest(attributesRequest: AttributesRequestJSON): Promise<AttributesRequestDVO> {
-        const request = this.expandRequest(attributesRequest);
-
-        let name: string;
-
-        const attributesObjects = await this.expandAttributeNames(attributesRequest.names);
-
-        if (attributesObjects.length > 1) {
-            name = DataViewTranslateable.consumption.requests.attributesChangeRequestNamePlural;
-        } else {
-            name = DataViewTranslateable.consumption.requests.attributesChangeRequestName;
-        }
-
-        return {
-            ...request,
-            type: "AttributesRequestDVO",
-            names: attributesRequest.names,
-            nameCount: attributesRequest.names.length,
-            name: name,
-            attributes: attributesObjects,
-            attributeCount: attributesObjects.length,
-            required: attributesRequest.required
-        };
     }
 
     public expandSelf(): IdentityDVO {
@@ -501,16 +299,6 @@ export class DataViewExpander {
             isSelf: false,
             hasRelationship: false
         };
-    }
-
-    public async expandAttributesShareRequests(requests: AttributesShareRequestJSON[]): Promise<AttributesShareRequestDVO[]> {
-        const requestsPromise = requests.map((request) => this.expandAttributesShareRequest(request));
-        return await Promise.all(requestsPromise);
-    }
-
-    public async expandAttributesChangeRequests(requests: AttributesChangeRequestJSON[]): Promise<AttributesChangeRequestDVO[]> {
-        const requestsPromise = requests.map((request) => this.expandAttributesChangeRequest(request));
-        return await Promise.all(requestsPromise);
     }
 
     public async expandAddress(address: string): Promise<IdentityDVO> {
