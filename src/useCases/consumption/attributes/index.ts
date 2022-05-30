@@ -2,6 +2,8 @@ export * from "./AttributeMapper";
 export * from "./CreateAttribute";
 export * from "./CreateShareAttributeCopy";
 export * from "./DeleteAttribute";
+export * from "./ExecuteIdentityAttributeQuery";
+export * from "./ExecuteRelationshipAttributeQuery";
 export * from "./GetAllValid";
 export * from "./GetAttribute";
 export * from "./GetAttributes";

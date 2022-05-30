@@ -18,6 +18,8 @@ import {
     UpdateAttributeRequest,
     UpdateAttributeUseCase
 } from "../../../useCases";
+import { ExecuteIdentityAttributeQueryRequest, ExecuteIdentityAttributeQueryUseCase } from "../../../useCases/consumption/attributes/ExecuteIdentityAttributeQuery";
+import { ExecuteRelationshipAttributeQueryRequest, ExecuteRelationshipAttributeQueryUseCase } from "../../../useCases/consumption/attributes/ExecuteRelationshipAttributeQuery";
 
 export class AttributesFacade {
     public constructor(
@@ -28,7 +30,9 @@ export class AttributesFacade {
         @Inject private readonly getAttributeUseCase: GetAttributeUseCase,
         @Inject private readonly getAttributesUseCase: GetAttributesUseCase,
         @Inject private readonly succeedAttributeUseCase: SucceedAttributeUseCase,
-        @Inject private readonly updateAttributeUseCase: UpdateAttributeUseCase
+        @Inject private readonly updateAttributeUseCase: UpdateAttributeUseCase,
+        @Inject private readonly executeIdentityAttributeQueryUseCase: ExecuteIdentityAttributeQueryUseCase,
+        @Inject private readonly executeRelationshipAttributeQueryUseCase: ExecuteRelationshipAttributeQueryUseCase
     ) {}
 
     public async createAttribute(request: CreateAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
@@ -53,6 +57,14 @@ export class AttributesFacade {
 
     public async getAttributes(request: GetAttributesRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
         return await this.getAttributesUseCase.execute(request);
+    }
+
+    public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
+        return await this.executeIdentityAttributeQueryUseCase.execute(request);
+    }
+
+    public async executeRelationshipAttributeQuery(request: ExecuteRelationshipAttributeQueryRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
+        return await this.executeRelationshipAttributeQueryUseCase.execute(request);
     }
 
     public async succeedAttribute(request: SucceedAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
