@@ -1,4 +1,4 @@
-import { DataViewExpander, TransportServices } from "../../src";
+import { DataViewExpander, TransportServices } from "@nmshd/runtime";
 import { RuntimeServiceProvider } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
@@ -13,24 +13,24 @@ beforeAll(async () => {
     transportServices2 = runtimeServices[1].transport;
     expander1 = runtimeServices[0].expander;
     expander2 = runtimeServices[1].expander;
-    // await establishRelationshipWithBodys(
-    //     transportServices1,
-    //     transportServices2
-    //     {
-    //         "@type": "RelationshipTemplateBody",
-    //         sharedAttributes: [
-    //             { "@type": "Attribute", name: "Person.givenName", value: "Jürgen" },
-    //             { "@type": "Attribute", name: "Person.familyName", value: "Becker" }
-    //         ]
-    //     },
-    //     {
-    //         "@type": "RelationshipCreationChangeRequestBody",
-    //         sharedAttributes: [
-    //             { "@type": "Attribute", name: "Person.gender", value: "f" },
-    //             { "@type": "Attribute", name: "Person.familyName", value: "Sèzanné" }
-    //         ]
-    //     }
-    // );
+    await establishRelationshipWithBodys(
+        transportServices1,
+        transportServices2
+        {
+            "@type": "RelationshipTemplateBody",
+            sharedAttributes: [
+                { "@type": "Attribute", name: "Person.givenName", value: "Jürgen" },
+                { "@type": "Attribute", name: "Person.familyName", value: "Becker" }
+            ]
+        },
+        {
+            "@type": "RelationshipCreationChangeRequestBody",
+            sharedAttributes: [
+                { "@type": "Attribute", name: "Person.gender", value: "f" },
+                { "@type": "Attribute", name: "Person.familyName", value: "Sèzanné" }
+            ]
+        }
+    );
 }, 30000);
 
 afterAll(() => serviceProvider.stop());
@@ -41,7 +41,6 @@ describe.skip("RelationshipDVO", () => {
     test("check the relationship dvo for the templator", async () => {
         const dtos = (await transportServices1.relationships.getRelationships({})).value;
         const dvos = await expander1.expandRelationshipDTOs(dtos);
-
         const dto = dtos[0];
         const dvo = dvos[0];
         expect(dvo).toBeDefined();
@@ -74,11 +73,9 @@ describe.skip("RelationshipDVO", () => {
         expect(change.response!.content).toBe(dto.changes[0].response!.content);
         expect(change.date).toBe(dto.changes[0].response!.createdAt);
     });
-
     test("check the relationship dvo for the requestor", async () => {
         const dtos = (await transportServices2.relationships.getRelationships({})).value;
         const dvos = await expander2.expandRelationshipDTOs(dtos);
-
         const dto = dtos[0];
         const dvo = dvos[0];
         expect(dvo).toBeDefined();
