@@ -1,5 +1,9 @@
-import { ICreateConsumptionAttributeParams, ICreateSharedConsumptionAttributeCopyParams, ISucceedConsumptionAttributeParams } from "@nmshd/consumption";
-import { UpdateConsumptionAttributeParams } from "@nmshd/consumption/dist/modules/attributes/UpdateConsumptionAttributeParams";
+import {
+    ICreateConsumptionAttributeParams,
+    ICreateSharedConsumptionAttributeCopyParams,
+    ISucceedConsumptionAttributeParams,
+    UpdateConsumptionAttributeParams
+} from "@nmshd/consumption";
 import { IdentityAttribute } from "@nmshd/content";
 import { CoreAddress, CoreDate, CoreId } from "@nmshd/transport";
 import { DateTime } from "luxon";

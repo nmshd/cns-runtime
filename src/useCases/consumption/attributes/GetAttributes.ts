@@ -1,7 +1,6 @@
 import { QueryTranslator } from "@js-soft/docdb-querytranslator";
 import { Result } from "@js-soft/ts-utils";
-import { ConsumptionAttribute, ConsumptionAttributesController } from "@nmshd/consumption";
-import { ConsumptionAttributeShareInfoJSON } from "@nmshd/consumption/dist/modules/attributes/local/ConsumptionAttributeShareInfo";
+import { ConsumptionAttribute, ConsumptionAttributesController, ConsumptionAttributeShareInfoJSON } from "@nmshd/consumption";
 import {
     AbstractAttributeJSON,
     AbstractAttributeValueJSON,

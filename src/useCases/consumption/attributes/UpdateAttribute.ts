@@ -1,6 +1,5 @@
 import { Result } from "@js-soft/ts-utils";
-import { ConsumptionAttribute, ConsumptionAttributesController, ConsumptionIds } from "@nmshd/consumption";
-import { UpdateConsumptionAttributeParams } from "@nmshd/consumption/dist/modules/attributes/UpdateConsumptionAttributeParams";
+import { ConsumptionAttribute, ConsumptionAttributesController, ConsumptionIds, UpdateConsumptionAttributeParams } from "@nmshd/consumption";
 import { AccountController, CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";

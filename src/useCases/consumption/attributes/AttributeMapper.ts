@@ -1,5 +1,4 @@
-import { ConsumptionAttribute } from "@nmshd/consumption";
-import { ConsumptionAttributeShareInfoJSON } from "@nmshd/consumption/dist/modules/attributes/local/ConsumptionAttributeShareInfo";
+import { ConsumptionAttribute, ConsumptionAttributeShareInfoJSON } from "@nmshd/consumption";
 import { IdentityAttribute, IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content";
 import { ConsumptionAttributeDTO } from "../../../types";
 
