@@ -13,6 +13,16 @@ export interface ConsumptionAttributeDVO extends DataViewObject {
     succeeds?: string;
     succeededBy?: string;
 }
+
+export interface DraftAttributeDVO extends DataViewObject {
+    type: "DraftAttributeDVO";
+    content: IdentityAttributeJSON | RelationshipAttributeJSON;
+    owner: IdentityDVO;
+    renderHints: RenderHintsJSON;
+    valueHints: ValueHintsJSON;
+    succeeds?: string;
+    succeededBy?: string;
+}
 export interface RepositoryAttributeDVO extends ConsumptionAttributeDVO {
     type: "RepositoryAttributeDVO";
     sharedWith: SharedToPeerAttributeDVO[];
