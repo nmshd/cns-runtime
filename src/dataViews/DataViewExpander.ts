@@ -227,11 +227,12 @@ export class DataViewExpander {
             date: attribute.createdAt,
             owner: await this.expandAddress(attribute.content.owner),
             renderHints: {
+                "@type": "RenderHints",
                 technicalType: RenderHintsTechnicalType.Object,
                 editType: RenderHintsEditType.InputLike
             },
             valueHints: {
-                "@type": "dummy"
+                "@type": "ValueHints"
             },
             isValid: true,
             createdAt: attribute.createdAt,
@@ -253,11 +254,12 @@ export class DataViewExpander {
             id: "",
             owner: await this.expandAddress(attribute.owner),
             renderHints: {
+                "@type": "RenderHints",
                 technicalType: RenderHintsTechnicalType.Object,
                 editType: RenderHintsEditType.InputLike
             },
             valueHints: {
-                "@type": "dummy"
+                "@type": "ValueHints"
             }
         };
     }
