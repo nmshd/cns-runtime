@@ -12,6 +12,7 @@ export interface ConsumptionAttributeDVO extends DataViewObject {
     createdAt: string;
     succeeds?: string;
     succeededBy?: string;
+    value: any;
 }
 
 export interface DraftAttributeDVO extends DataViewObject {
