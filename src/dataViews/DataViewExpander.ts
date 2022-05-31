@@ -594,16 +594,18 @@ export class DataViewExpander {
 
         // const name = relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title;
         // let description = relationshipInfo.userDescription ? relationshipInfo.userDescription : relationshipInfo.description;
-        const name = "";
-        const description = "";
+        const name = relationship.peer.substring(3, 9);
 
         const initials = (name.match(/\b\w/g) ?? []).join("");
 
         const relationshipDVO = await this.createRelationshipDVO(relationship);
+        const description = relationshipDVO.statusText;
         // TODO: re-enable when we can query relationship info
-        // if (!description) {
-        //     description = relationshipDVO.statusText;
-        // }
+        /*
+        if (!description) {
+            description = relationshipDVO.statusText;
+        }
+        */
 
         return {
             type: "IdentityDVO",
