@@ -196,7 +196,7 @@ export const CreateShareAttributeCopyRequest: any = {
                 },
                 "peer": {
                     "type": "string",
-                    "pattern": "[a-zA-Z1-9]{35}|[a-zA-Z1-9]{36}"
+                    "pattern": "[a-zA-Z1-9]{35,36}"
                 },
                 "requestReference": {
                     "type": "string",
