@@ -47,18 +47,6 @@ export const CreateAttributeRequest: any = {
         "CreateAttributeRequest": {
             "type": "object",
             "properties": {
-                "params": {
-                    "$ref": "#/definitions/ICreateConsumptionAttributeParams"
-                }
-            },
-            "required": [
-                "params"
-            ],
-            "additionalProperties": false
-        },
-        "ICreateConsumptionAttributeParams": {
-            "type": "object",
-            "properties": {
                 "content": {
                     "anyOf": [
                         {
@@ -183,56 +171,20 @@ export const CreateShareAttributeCopyRequest: any = {
         "CreateShareAttributeCopyRequest": {
             "type": "object",
             "properties": {
-                "params": {
-                    "$ref": "#/definitions/ICreateSharedConsumptionAttributeCopyParams"
-                }
-            },
-            "required": [
-                "params"
-            ],
-            "additionalProperties": false
-        },
-        "ICreateSharedConsumptionAttributeCopyParams": {
-            "type": "object",
-            "properties": {
                 "attributeId": {
-                    "$ref": "#/definitions/ICoreId"
+                    "type": "string"
                 },
                 "peer": {
-                    "$ref": "#/definitions/ICoreAddress"
+                    "type": "string"
                 },
                 "requestReference": {
-                    "$ref": "#/definitions/ICoreId"
+                    "type": "string"
                 }
             },
             "required": [
                 "attributeId",
                 "peer",
                 "requestReference"
-            ],
-            "additionalProperties": false
-        },
-        "ICoreId": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
-        },
-        "ICoreAddress": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "address"
             ],
             "additionalProperties": false
         }
@@ -383,18 +335,6 @@ export const SucceedAttributeRequest: any = {
         "SucceedAttributeRequest": {
             "type": "object",
             "properties": {
-                "params": {
-                    "$ref": "#/definitions/ISucceedConsumptionAttributeParams"
-                }
-            },
-            "required": [
-                "params"
-            ],
-            "additionalProperties": false
-        },
-        "ISucceedConsumptionAttributeParams": {
-            "type": "object",
-            "properties": {
                 "successorContent": {
                     "anyOf": [
                         {
@@ -406,7 +346,7 @@ export const SucceedAttributeRequest: any = {
                     ]
                 },
                 "succeeds": {
-                    "$ref": "#/definitions/ICoreId"
+                    "type": "string"
                 }
             },
             "required": [
@@ -512,18 +452,6 @@ export const SucceedAttributeRequest: any = {
                 "private",
                 "protected"
             ]
-        },
-        "ICoreId": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
         }
     }
 }
@@ -535,65 +463,40 @@ export const UpdateAttributeRequest: any = {
         "UpdateAttributeRequest": {
             "type": "object",
             "properties": {
-                "params": {
-                    "$ref": "#/definitions/UpdateConsumptionAttributeParams"
-                }
-            },
-            "required": [
-                "params"
-            ],
-            "additionalProperties": false
-        },
-        "UpdateConsumptionAttributeParams": {
-            "type": "object",
-            "properties": {
                 "id": {
-                    "$ref": "#/definitions/CoreId"
+                    "type": "string"
                 },
                 "content": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/IdentityAttribute"
+                            "$ref": "#/definitions/IIdentityAttribute"
                         },
                         {
-                            "$ref": "#/definitions/RelationshipAttribute"
+                            "$ref": "#/definitions/IRelationshipAttribute"
                         }
                     ]
                 }
             },
             "required": [
-                "content",
-                "id"
+                "id",
+                "content"
             ],
             "additionalProperties": false
         },
-        "CoreId": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false,
-            "description": "A CoreId is any kind of identifier we have in the system."
-        },
-        "IdentityAttribute": {
+        "IIdentityAttribute": {
             "type": "object",
             "properties": {
                 "owner": {
-                    "$ref": "#/definitions/CoreAddress"
+                    "$ref": "#/definitions/ICoreAddress"
                 },
                 "validFrom": {
-                    "$ref": "#/definitions/CoreDate"
+                    "$ref": "#/definitions/ICoreDate"
                 },
                 "validTo": {
-                    "$ref": "#/definitions/CoreDate"
+                    "$ref": "#/definitions/ICoreDate"
                 },
                 "value": {
-                    "$ref": "#/definitions/AbstractAttributeValue"
+                    "$ref": "#/definitions/IAbstractAttributeValue"
                 },
                 "tags": {
                     "type": "array",
@@ -608,7 +511,7 @@ export const UpdateAttributeRequest: any = {
             ],
             "additionalProperties": false
         },
-        "CoreAddress": {
+        "ICoreAddress": {
             "type": "object",
             "properties": {
                 "address": {
@@ -618,33 +521,39 @@ export const UpdateAttributeRequest: any = {
             "required": [
                 "address"
             ],
-            "additionalProperties": false,
-            "description": "A CoreAddress is the primariy technical identitier of an account."
+            "additionalProperties": false
         },
-        "CoreDate": {
+        "ICoreDate": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "date"
+            ],
+            "additionalProperties": false
+        },
+        "IAbstractAttributeValue": {
             "type": "object",
             "additionalProperties": false,
             "properties": {}
         },
-        "AbstractAttributeValue": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {}
-        },
-        "RelationshipAttribute": {
+        "IRelationshipAttribute": {
             "type": "object",
             "properties": {
                 "owner": {
-                    "$ref": "#/definitions/CoreAddress"
+                    "$ref": "#/definitions/ICoreAddress"
                 },
                 "validFrom": {
-                    "$ref": "#/definitions/CoreDate"
+                    "$ref": "#/definitions/ICoreDate"
                 },
                 "validTo": {
-                    "$ref": "#/definitions/CoreDate"
+                    "$ref": "#/definitions/ICoreDate"
                 },
                 "value": {
-                    "$ref": "#/definitions/AbstractAttributeValue"
+                    "$ref": "#/definitions/IAbstractAttributeValue"
                 },
                 "key": {
                     "type": "string"
@@ -658,7 +567,6 @@ export const UpdateAttributeRequest: any = {
             },
             "required": [
                 "confidentiality",
-                "isTechnical",
                 "key",
                 "owner",
                 "value"

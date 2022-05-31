@@ -1,13 +1,8 @@
-import {
-    ICreateConsumptionAttributeParams,
-    ICreateSharedConsumptionAttributeCopyParams,
-    ISucceedConsumptionAttributeParams,
-    UpdateConsumptionAttributeParams
-} from "@nmshd/consumption";
+import { ICreateSharedConsumptionAttributeCopyParams, ISucceedConsumptionAttributeParams, UpdateConsumptionAttributeParams } from "@nmshd/consumption";
 import { IdentityAttribute } from "@nmshd/content";
 import { CoreAddress, CoreDate, CoreId } from "@nmshd/transport";
 import { DateTime } from "luxon";
-import { ConsumptionServices } from "../../src";
+import { ConsumptionServices, CreateAttributeRequest } from "../../src";
 import { RuntimeServiceProvider } from "../lib/RuntimeServiceProvider";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
@@ -19,9 +14,9 @@ beforeAll(async () => {
 }, 30000);
 afterAll(async () => await runtimeServiceProvider.stop());
 
-describe("Attributes", () => {
+describe.only("Attributes", () => {
     beforeEach(async function () {
-        const surnameParams: ICreateConsumptionAttributeParams = {
+        const surnameParams: CreateAttributeRequest = {
             content: IdentityAttribute.from({
                 value: {
                     "@type": "Surname",
@@ -31,7 +26,7 @@ describe("Attributes", () => {
             })
         };
 
-        const givenNamesParams: ICreateConsumptionAttributeParams = {
+        const givenNamesParams: CreateAttributeRequest = {
             content: IdentityAttribute.from({
                 value: {
                     "@type": "GivenName",
@@ -40,8 +35,8 @@ describe("Attributes", () => {
                 owner: CoreAddress.from("address")
             })
         };
-        await consumptionServices.attributes.createAttribute({ params: surnameParams });
-        await consumptionServices.attributes.createAttribute({ params: givenNamesParams });
+        await consumptionServices.attributes.createAttribute(surnameParams);
+        await consumptionServices.attributes.createAttribute(givenNamesParams);
     });
 
     afterEach(async function () {
@@ -56,12 +51,12 @@ describe("Attributes", () => {
         expect(attributes.value).toHaveLength(2);
     });
 
-    test("should allow to create new attributes", async () => {
+    test.only("should allow to create new attributes", async () => {
         const attributesBeforeCreate = await consumptionServices.attributes.getAttributes({ query: {} });
         const nrAttributesBeforeCreate = attributesBeforeCreate.value.length;
 
         const timestamp = DateTime.utc().toString();
-        const addressParams: ICreateConsumptionAttributeParams = {
+        const addressParams: CreateAttributeRequest = {
             content: IdentityAttribute.from({
                 value: {
                     "@type": "StreetAddress",
@@ -77,7 +72,7 @@ describe("Attributes", () => {
             })
         };
 
-        const birthDateParams: ICreateConsumptionAttributeParams = {
+        const birthDateParams: CreateAttributeRequest = {
             content: IdentityAttribute.from({
                 value: {
                     "@type": "BirthDate",
@@ -89,13 +84,13 @@ describe("Attributes", () => {
             })
         };
 
-        const address = await consumptionServices.attributes.createAttribute({ params: addressParams });
+        const address = await consumptionServices.attributes.createAttribute(addressParams);
         expect(address).toBeSuccessful();
         const addressAttribute = address.value;
         expect(addressAttribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
         expect(IdentityAttribute.from(addressAttribute.content)).toMatchObject(addressParams.content);
 
-        const birthDate = await consumptionServices.attributes.createAttribute({ params: birthDateParams });
+        const birthDate = await consumptionServices.attributes.createAttribute(birthDateParams);
         expect(birthDate).toBeSuccessful();
         const birthDateAttribute = birthDate.value;
         expect(birthDateAttribute.createdAt.substring(0, 10)).toStrictEqual(timestamp.substring(0, 10));
@@ -120,7 +115,7 @@ describe("Attributes", () => {
     });
 
     test("should allow to succeed an attribute", async () => {
-        const displayNameParams: ICreateConsumptionAttributeParams = {
+        const displayNameParams: CreateAttributeRequest = {
             content: IdentityAttribute.from({
                 value: {
                     "@type": "DisplayName",
@@ -140,7 +135,7 @@ describe("Attributes", () => {
             validFrom: successorDate
         });
 
-        const attribute = await consumptionServices.attributes.createAttribute({ params: displayNameParams });
+        const attribute = await consumptionServices.attributes.createAttribute(displayNameParams);
         const attributeId = attribute.value.id;
         const createSuccessorParams: ISucceedConsumptionAttributeParams = {
             successorContent: displayNameSuccessor,
@@ -165,7 +160,7 @@ describe("Attributes", () => {
     });
 
     test("should allow to create a share copy", async function () {
-        const nationalityParams: ICreateConsumptionAttributeParams = {
+        const nationalityParams: CreateAttributeRequest = {
             content: IdentityAttribute.from({
                 value: {
                     "@type": "Nationality",
@@ -174,7 +169,7 @@ describe("Attributes", () => {
                 owner: CoreAddress.from("address")
             })
         };
-        const nationalityAttribute = await consumptionServices.attributes.createAttribute({ params: nationalityParams });
+        const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
 
         const peer = CoreAddress.from("address");
         const createSharedAttributesParams: ICreateSharedConsumptionAttributeCopyParams = {
@@ -191,7 +186,7 @@ describe("Attributes", () => {
     });
 
     test("should allow to update an attribute", async () => {
-        const addressParams: ICreateConsumptionAttributeParams = {
+        const addressParams: CreateAttributeRequest = {
             content: IdentityAttribute.from({
                 value: {
                     "@type": "StreetAddress",
@@ -221,7 +216,7 @@ describe("Attributes", () => {
             owner: CoreAddress.from("address")
         });
 
-        const address = await consumptionServices.attributes.createAttribute({ params: addressParams });
+        const address = await consumptionServices.attributes.createAttribute(addressParams);
         const updateParams = UpdateConsumptionAttributeParams.from({ id: CoreId.from(address.value.id), content: newAddressContent });
         const newAddress = await consumptionServices.attributes.updateAttribute({ params: updateParams });
         expect(newAddress).toBeSuccessful();
@@ -230,7 +225,7 @@ describe("Attributes", () => {
     });
 
     test("should allow to get an attribute by id", async function () {
-        const nationalityParams: ICreateConsumptionAttributeParams = {
+        const nationalityParams: CreateAttributeRequest = {
             content: IdentityAttribute.from({
                 value: {
                     "@type": "Nationality",
@@ -239,7 +234,7 @@ describe("Attributes", () => {
                 owner: CoreAddress.from("address")
             })
         };
-        const nationalityAttribute = await consumptionServices.attributes.createAttribute({ params: nationalityParams });
+        const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
         const receivedAttribute = await consumptionServices.attributes.getAttribute({ id: nationalityAttribute.value.id });
         expect(receivedAttribute).toBeSuccessful();
         expect(receivedAttribute).toStrictEqual(nationalityAttribute);

@@ -1,26 +1,26 @@
 import { Result } from "@js-soft/ts-utils";
-import { ConsumptionAttribute, ConsumptionAttributesController, ConsumptionIds } from "@nmshd/consumption";
+import { ConsumptionAttribute, ConsumptionAttributesController } from "@nmshd/consumption";
 import { AccountController, CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 
 export interface DeleteAttributeRequest {
+    /**
+     * @pattern ATT[A-Za-z0-9]{17}
+     */
     id: string;
 }
 
-class DeleteAttributeRequestValidator extends RuntimeValidator<DeleteAttributeRequest> {
-    public constructor() {
-        super();
-
-        this.validateIfString((x) => x.id).fulfills(IdValidator.required(ConsumptionIds.attribute));
+class Validator extends SchemaValidator<DeleteAttributeRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("DeleteAttributeRequest"));
     }
 }
-
 export class DeleteAttributeUseCase extends UseCase<DeleteAttributeRequest, void> {
     public constructor(
         @Inject private readonly attributeController: ConsumptionAttributesController,
         @Inject private readonly accountController: AccountController,
-        @Inject validator: DeleteAttributeRequestValidator
+        @Inject validator: Validator
     ) {
         super(validator);
     }

@@ -13,7 +13,7 @@ import { DateTime } from "luxon";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
-import { RuntimeValidator, UseCase } from "../../common";
+import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { flattenObject } from "../requests/flattenObject";
 import { AttributeMapper } from "./AttributeMapper";
 
@@ -46,9 +46,9 @@ export interface ConsumptionAttributeQuery {
     [key: string]: unknown;
 }
 
-class GetAttributesRequestValidator extends RuntimeValidator<GetAttributesRequest> {
-    public constructor() {
-        super();
+class Validator extends SchemaValidator<GetAttributesRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("GetAttributesRequest"));
     }
 }
 
@@ -162,7 +162,7 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
         }
     });
 
-    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController, @Inject validator: GetAttributesRequestValidator) {
+    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController, @Inject validator: Validator) {
         super(validator);
     }
 
