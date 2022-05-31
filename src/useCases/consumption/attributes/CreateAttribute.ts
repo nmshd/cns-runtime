@@ -1,14 +1,14 @@
 import { Result } from "@js-soft/ts-utils";
 import { ConsumptionAttributesController, CreateConsumptionAttributeParams } from "@nmshd/consumption";
-import { IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content";
 import { AccountController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
+import { ExtendedIdentityAttributeJSON, ExtendedRelationshipAttributeJSON } from "./ExtendedAttributeValue";
 
 export interface CreateAttributeRequest {
-    content: IdentityAttributeJSON | RelationshipAttributeJSON;
+    content: ExtendedIdentityAttributeJSON | ExtendedRelationshipAttributeJSON;
 }
 
 class Validator extends SchemaValidator<CreateAttributeRequest> {

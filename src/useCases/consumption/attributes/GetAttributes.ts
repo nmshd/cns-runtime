@@ -17,9 +17,7 @@ import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { flattenObject } from "../requests/flattenObject";
 import { AttributeMapper } from "./AttributeMapper";
 
-export interface GetAttributesRequest {
-    query: ConsumptionAttributeQuery;
-}
+export interface GetAttributesRequest extends ConsumptionAttributeQuery {}
 
 export interface ConsumptionAttributeQuery {
     createdAt?: string;

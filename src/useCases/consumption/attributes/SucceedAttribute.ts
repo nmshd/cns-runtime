@@ -1,14 +1,14 @@
 import { Result } from "@js-soft/ts-utils";
 import { ConsumptionAttributesController, SucceedConsumptionAttributeParams } from "@nmshd/consumption";
-import { IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content";
-import { AccountController, CoreId } from "@nmshd/transport";
+import { AccountController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
+import { ExtendedIdentityAttributeJSON, ExtendedRelationshipAttributeJSON } from "./ExtendedAttributeValue";
 
 export interface SucceedAttributeRequest {
-    successorContent: IdentityAttributeJSON | RelationshipAttributeJSON;
+    successorContent: ExtendedIdentityAttributeJSON | ExtendedRelationshipAttributeJSON;
     /**
      * @pattern ATT[A-Za-z0-9]{17}
      */
@@ -32,7 +32,7 @@ export class SucceedAttributeUseCase extends UseCase<SucceedAttributeRequest, Co
     protected async executeInternal(request: SucceedAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
         const params = SucceedConsumptionAttributeParams.from({
             successorContent: request.successorContent,
-            succeeds: CoreId.from(request.succeeds)
+            succeeds: request.succeeds
         });
         const successor = await this.attributeController.succeedConsumptionAttribute(params);
 

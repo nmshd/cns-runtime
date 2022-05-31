@@ -1,18 +1,18 @@
 import { Result } from "@js-soft/ts-utils";
-import { ConsumptionAttributesController } from "@nmshd/consumption";
-import { IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content";
-import { AccountController, CoreId } from "@nmshd/transport";
+import { ConsumptionAttributesController, UpdateConsumptionAttributeParams } from "@nmshd/consumption";
+import { AccountController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
+import { ExtendedIdentityAttributeJSON, ExtendedRelationshipAttributeJSON } from "./ExtendedAttributeValue";
 
 export interface UpdateAttributeRequest {
     /**
      * @pattern ATT[A-Za-z0-9]{17}
      */
     id: string;
-    content: IdentityAttributeJSON | RelationshipAttributeJSON;
+    content: ExtendedIdentityAttributeJSON | ExtendedRelationshipAttributeJSON;
 }
 
 class Validator extends SchemaValidator<UpdateAttributeRequest> {
@@ -31,7 +31,11 @@ export class UpdateAttributeUseCase extends UseCase<UpdateAttributeRequest, Cons
     }
 
     protected async executeInternal(request: UpdateAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
-        const updated = await this.attributeController.updateConsumptionAttribute({ id: CoreId.from(request.id), content: request.content });
+        const params = UpdateConsumptionAttributeParams.from({
+            id: request.id,
+            content: request.content
+        });
+        const updated = await this.attributeController.updateConsumptionAttribute(params);
         await this.accountController.syncDatawallet();
         return Result.ok(AttributeMapper.toAttributeDTO(updated));
     }
