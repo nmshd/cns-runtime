@@ -1,14 +1,21 @@
-import { Serializable } from "@js-soft/ts-serval";
+import { Serializable, SerializableBase } from "@js-soft/ts-serval";
 import { ConsumptionController } from "@nmshd/consumption";
 import {
     IdentityAttribute,
     IdentityAttributeJSON,
+    IdentityAttributeQuery,
+    IdentityAttributeQueryJSON,
     MailJSON,
     RelationshipAttribute,
     RelationshipAttributeJSON,
+    RenderHints,
+    RenderHintsEditType,
     RenderHintsJSON,
+    RenderHintsTechnicalType,
     RequestJSON,
-    RequestMailJSON
+    RequestMailJSON,
+    ValueHints,
+    ValueHintsJSON
 } from "@nmshd/content";
 import { CoreAddress, CoreId, IdentityController, Realm, Relationship, RelationshipStatus } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
@@ -17,6 +24,8 @@ import { TransportServices } from "../extensibility";
 import { ConsumptionServices } from "../extensibility/ConsumptionServices";
 import {
     ConsumptionAttributeDTO,
+    ConsumptionRequestDTO,
+    ConsumptionResponseDTO,
     FileDTO,
     IdentityDTO,
     MessageDTO,
@@ -26,8 +35,16 @@ import {
     RelationshipDTO,
     RelationshipInfoDTO
 } from "../types";
-import { RuntimeErrors } from "../useCases";
-import { DraftAttributeDVO, PeerAttributeDVO, RepositoryAttributeDVO, SharedToPeerAttributeDVO } from "./content";
+import { AttributeMapper, RuntimeErrors } from "../useCases";
+import {
+    ConsumptionRequestDVO,
+    ConsumptionResponseDVO,
+    DraftAttributeDVO,
+    IdentityAttributeQueryExpanded,
+    PeerAttributeDVO,
+    RepositoryAttributeDVO,
+    SharedToPeerAttributeDVO
+} from "./consumption";
 import { MailDVO, RequestMailDVO } from "./content/MailDVOs";
 import { RequestDVO } from "./content/RequestDVOs";
 import { DataViewObject } from "./DataViewObject";
@@ -229,6 +246,29 @@ export class DataViewExpander {
         };
     }
 
+    public async expandConsumptionRequest(request: ConsumptionRequestDTO): Promise<ConsumptionRequestDVO> {
+        const id = request.id ? request.id : "";
+        return {
+            ...request,
+            id,
+            name: "i18n://dvo.request.name.response",
+            type: "ConsumptionRequestDVO",
+            date: request.createdAt,
+            peer: await this.expandAddress(request.peer),
+            response: request.response ? this.expandConsumptionResponse(request.response) : undefined
+        };
+    }
+
+    public expandConsumptionResponse(response: ConsumptionResponseDTO): ConsumptionResponseDVO {
+        return {
+            ...response,
+            id: "",
+            name: "i18n://dvo.request.name.response",
+            type: "ConsumptionResponseDVO",
+            date: response.createdAt
+        };
+    }
+
     public async expandConsumptionAttribute(attribute: ConsumptionAttributeDTO): Promise<RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO> {
         const valueType = attribute.content.value["@type"];
         const consumptionAttribute = await this.consumptionController.attributes.getConsumptionAttribute(CoreId.from(attribute.id));
@@ -318,6 +358,48 @@ export class DataViewExpander {
         return await Promise.all(attributesPromise);
     }
 
+    public async expandIdentityAttributeQuery(query: IdentityAttributeQueryJSON): Promise<IdentityAttributeQueryExpanded> {
+        const queryInstance = IdentityAttributeQuery.from(query);
+        const matchedAttributes = await this.consumptionController.attributes.executeIdentityAttributeQuery({ query: queryInstance });
+        const matchedAttributeDTOs = AttributeMapper.toAttributeDTOList(matchedAttributes);
+        const matchedAttributeDVOs = await this.expandConsumptionAttributes(matchedAttributeDTOs);
+        const valueType = query.valueType!;
+        const name = `i18n://dvo.attribute.name.${valueType}`;
+        const description = `i18n://dvo.attribute.description.${valueType}`;
+
+        const valueTypeClass = SerializableBase.getModule(valueType, 1);
+        if (!valueTypeClass) {
+            throw new Error(`No class implementation found for ${valueType}`);
+        }
+        let renderHints: RenderHintsJSON = {
+            "@type": "RenderHints",
+            editType: RenderHintsEditType.InputLike,
+            technicalType: RenderHintsTechnicalType.String
+        };
+        let valueHints: ValueHintsJSON = {
+            "@type": "ValueHints",
+            max: 200
+        };
+        if (valueTypeClass.renderHints && valueTypeClass.renderHints instanceof RenderHints) {
+            renderHints = valueTypeClass.renderHints.toJSON();
+        }
+        if (valueTypeClass.valueHints && valueTypeClass.valueHints instanceof ValueHints) {
+            valueHints = valueTypeClass.valueHints.toJSON();
+        }
+
+        return {
+            type: "IdentityAttributeQueryExpanded",
+            name,
+            description,
+            valueType,
+            validFrom: query.validFrom,
+            validTo: query.validTo,
+            results: matchedAttributeDVOs,
+            renderHints,
+            valueHints
+        };
+    }
+
     public async expandAttribute(attribute: IdentityAttributeJSON | RelationshipAttributeJSON): Promise<DraftAttributeDVO> {
         const attributeInstance = Serializable.fromAny(attribute) as IdentityAttribute | RelationshipAttribute;
         const valueType = attribute.value["@type"];
@@ -339,7 +421,8 @@ export class DataViewExpander {
             id: "",
             owner: owner,
             renderHints,
-            valueHints
+            valueHints,
+            value: attribute.value
         };
     }
 
