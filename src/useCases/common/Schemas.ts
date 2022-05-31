@@ -260,6 +260,9 @@ export const GetAttributesRequest: any = {
         "GetAttributesRequest": {
             "type": "object",
             "properties": {
+                "attributeType": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
