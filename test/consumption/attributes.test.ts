@@ -1,7 +1,7 @@
 import { CoreDate } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import { ExtendedIdentityAttributeJSON } from "src/useCases/consumption/attributes/ExtendedAttributeValue";
-import { ConsumptionServices, CreateAttributeRequest, CreateShareAttributeCopyRequest, SucceedAttributeRequest, UpdateAttributeRequest } from "../../src";
+import { ConsumptionServices, CreateAttributeRequest, CreateShareAttributeCopyRequest, GetAttributesRequest, SucceedAttributeRequest, UpdateAttributeRequest } from "../../src";
 import { RuntimeServiceProvider } from "../lib/RuntimeServiceProvider";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
@@ -256,5 +256,27 @@ describe("Attributes", () => {
         const receivedAttribute = await consumptionServices.attributes.getAttribute({ id: nationalityAttribute.value.id });
         expect(receivedAttribute).toBeSuccessful();
         expect(receivedAttribute).toStrictEqual(nationalityAttribute);
+    });
+
+    test("should allow to get an attribute by type", async function () {
+        const nationalityContent: ExtendedIdentityAttributeJSON = {
+            "@type": "IdentityAttribute",
+            value: {
+                "@type": "EMailAddress",
+                value: "a.mailaddress@provider.com"
+            },
+            owner: "address"
+        };
+        const nationalityParams: CreateAttributeRequest = {
+            content: nationalityContent
+        };
+        const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
+        const query: GetAttributesRequest = {
+            content: { value: { "@type": "EMailAddress" } }
+        };
+        const receivedAttribute = await consumptionServices.attributes.getAttributes(query);
+        expect(receivedAttribute).toBeSuccessful();
+        expect(receivedAttribute.value).toHaveLength(1);
+        expect(receivedAttribute.value[0]).toStrictEqual(nationalityAttribute.value);
     });
 });
