@@ -1,10 +1,12 @@
 import {
     ICreateConsumptionAttributeParams,
     ICreateSharedConsumptionAttributeCopyParams,
+    IGetIdentityAttributesParams,
+    IGetRelationshipAttributesParams,
     ISucceedConsumptionAttributeParams,
     UpdateConsumptionAttributeParams
 } from "@nmshd/consumption";
-import { IdentityAttribute } from "@nmshd/content";
+import { IdentityAttribute, RelationshipAttribute, RelationshipAttributeConfidentiality } from "@nmshd/content";
 import { CoreAddress, CoreDate, CoreId } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import { ConsumptionServices } from "../../src";
@@ -19,7 +21,7 @@ beforeAll(async () => {
 }, 30000);
 afterAll(async () => await runtimeServiceProvider.stop());
 
-describe("Attributes", () => {
+describe.only("Attributes", () => {
     beforeEach(async function () {
         const surnameParams: ICreateConsumptionAttributeParams = {
             content: IdentityAttribute.from({
@@ -243,5 +245,84 @@ describe("Attributes", () => {
         const receivedAttribute = await consumptionServices.attributes.getAttribute({ id: nationalityAttribute.value.id });
         expect(receivedAttribute).toBeSuccessful();
         expect(receivedAttribute).toStrictEqual(nationalityAttribute);
+    });
+
+    test("should allow to execute identity attribute queries", async function () {
+        const identityAttributeParams: ICreateConsumptionAttributeParams = {
+            content: IdentityAttribute.from({
+                value: {
+                    "@type": "Nationality",
+                    value: "DE"
+                },
+                owner: CoreAddress.from("address")
+            })
+        };
+        const identityAttribute = await consumptionServices.attributes.createAttribute({ params: identityAttributeParams });
+
+        const relationshipAttributeParams: ICreateConsumptionAttributeParams = {
+            content: RelationshipAttribute.from({
+                key: "nationality",
+                value: {
+                    "@type": "Nationality",
+                    value: "DE"
+                },
+                owner: CoreAddress.from("address"),
+                confidentiality: "public" as RelationshipAttributeConfidentiality
+            })
+        };
+        const relationshipAttribute = await consumptionServices.attributes.createAttribute({ params: relationshipAttributeParams });
+
+        const query: IGetIdentityAttributesParams = {
+            query: {
+                valueType: "Nationality"
+            }
+        };
+
+        const attributes = await consumptionServices.attributes.executeIdentityAttributeQuery({ params: query });
+        const attributesId = attributes.value.map((v) => v.id);
+        expect(attributesId).not.toContain(relationshipAttribute.value.id);
+        expect(attributesId).toContain(identityAttribute.value.id);
+    });
+
+    test("should allow to execute relationship attribute queries", async function () {
+        const identityAttributeParams: ICreateConsumptionAttributeParams = {
+            content: IdentityAttribute.from({
+                value: {
+                    "@type": "Nationality",
+                    value: "DE"
+                },
+                owner: CoreAddress.from("address")
+            })
+        };
+        const identityAttribute = await consumptionServices.attributes.createAttribute({ params: identityAttributeParams });
+
+        const relationshipAttributeParams: ICreateConsumptionAttributeParams = {
+            content: RelationshipAttribute.from({
+                key: "nationality",
+                value: {
+                    "@type": "Nationality",
+                    value: "DE"
+                },
+                owner: CoreAddress.from("address"),
+                confidentiality: "public" as RelationshipAttributeConfidentiality
+            })
+        };
+        const relationshipAttribute = await consumptionServices.attributes.createAttribute({ params: relationshipAttributeParams });
+
+        const query: IGetRelationshipAttributesParams = {
+            query: {
+                key: "nationality",
+                owner: CoreAddress.from("address"),
+                attributeHints: {
+                    title: "someHintTitle",
+                    confidentiality: "public" as RelationshipAttributeConfidentiality
+                }
+            }
+        };
+
+        const attributes = await consumptionServices.attributes.executeRelationshipAttributeQuery({ params: query });
+        const attributesId = attributes.value.map((v) => v.id);
+        expect(attributesId).toContain(relationshipAttribute.value.id);
+        expect(attributesId).not.toContain(identityAttribute.value.id);
     });
 });
