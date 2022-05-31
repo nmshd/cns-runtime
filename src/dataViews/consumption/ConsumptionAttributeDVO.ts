@@ -23,6 +23,7 @@ export interface DraftAttributeDVO extends DataViewObject {
     valueHints: ValueHintsJSON;
     succeeds?: string;
     succeededBy?: string;
+    value: any;
 }
 export interface RepositoryAttributeDVO extends ConsumptionAttributeDVO {
     type: "RepositoryAttributeDVO";
