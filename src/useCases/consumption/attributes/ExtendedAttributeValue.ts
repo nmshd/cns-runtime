@@ -1,10 +1,10 @@
 import { AbstractAttributeValueJSON, IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content";
 
-interface ExtendedValue extends AbstractAttributeValueJSON, Record<string, unknown> {}
+interface ExtendedAttributeValue extends AbstractAttributeValueJSON, Record<string, unknown> {}
 
 export interface ExtendedIdentityAttributeJSON extends IdentityAttributeJSON {
-    value: ExtendedValue;
+    value: ExtendedAttributeValue;
 }
 export interface ExtendedRelationshipAttributeJSON extends RelationshipAttributeJSON {
-    value: ExtendedValue;
+    value: ExtendedAttributeValue;
 }

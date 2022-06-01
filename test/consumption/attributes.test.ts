@@ -1,7 +1,14 @@
 import { CoreDate } from "@nmshd/transport";
 import { DateTime } from "luxon";
-import { ExtendedIdentityAttributeJSON } from "src/useCases/consumption/attributes/ExtendedAttributeValue";
-import { ConsumptionServices, CreateAttributeRequest, CreateShareAttributeCopyRequest, GetAttributesRequest, SucceedAttributeRequest, UpdateAttributeRequest } from "../../src";
+import {
+    ConsumptionAttributeQuery,
+    ConsumptionServices,
+    CreateAttributeRequest,
+    CreateShareAttributeCopyRequest,
+    GetAttributesRequest,
+    SucceedAttributeRequest,
+    UpdateAttributeRequest
+} from "../../src";
 import { RuntimeServiceProvider } from "../lib/RuntimeServiceProvider";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
@@ -15,28 +22,26 @@ afterAll(async () => await runtimeServiceProvider.stop());
 
 describe("Attributes", () => {
     beforeEach(async function () {
-        const surnameContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "Surname",
-                value: "ASurname"
-            },
-            owner: "address"
-        };
         const surnameParams: CreateAttributeRequest = {
-            content: surnameContent
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "Surname",
+                    value: "ASurname"
+                },
+                owner: "address"
+            }
         };
 
-        const givenNameContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "GivenName",
-                value: "AGivenName"
-            },
-            owner: "address"
-        };
         const givenNameParams: CreateAttributeRequest = {
-            content: givenNameContent
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "GivenName",
+                    value: "AGivenName"
+                },
+                owner: "address"
+            }
         };
         await consumptionServices.attributes.createAttribute(surnameParams);
         await consumptionServices.attributes.createAttribute(givenNameParams);
@@ -59,36 +64,34 @@ describe("Attributes", () => {
         const nrAttributesBeforeCreate = attributesBeforeCreate.value.length;
 
         const timestamp = DateTime.utc().toString();
-        const addressContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "StreetAddress",
-                recipient: "ARecipient",
-                street: "AStreet",
-                houseNo: "AHouseNo",
-                zipCode: "AZipCode",
-                city: "ACity",
-                country: "DE"
-            },
-            validTo: CoreDate.utc().toString(),
-            owner: "address"
-        };
         const addressParams: CreateAttributeRequest = {
-            content: addressContent
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "StreetAddress",
+                    recipient: "ARecipient",
+                    street: "AStreet",
+                    houseNo: "AHouseNo",
+                    zipCode: "AZipCode",
+                    city: "ACity",
+                    country: "DE"
+                },
+                validTo: CoreDate.utc().toString(),
+                owner: "address"
+            }
         };
 
-        const birthDateContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "BirthDate",
-                day: 22,
-                month: 2,
-                year: 2022
-            },
-            owner: "address"
-        };
         const birthDateParams: CreateAttributeRequest = {
-            content: birthDateContent
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "BirthDate",
+                    day: 22,
+                    month: 2,
+                    year: 2022
+                },
+                owner: "address"
+            }
         };
 
         const address = await consumptionServices.attributes.createAttribute(addressParams);
@@ -122,33 +125,31 @@ describe("Attributes", () => {
     });
 
     test("should allow to succeed an attribute", async () => {
-        const displayNameContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "DisplayName",
-                value: "ADisplayName"
-            },
-            owner: "address"
-        };
         const displayNameParams: CreateAttributeRequest = {
-            content: displayNameContent
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "DisplayName",
+                    value: "ADisplayName"
+                },
+                owner: "address"
+            }
         };
 
         const successorDate = CoreDate.utc();
-        const displayNameSuccessorContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "DisplayName",
-                value: "ANewDisplayName"
-            },
-            owner: "address",
-            validFrom: successorDate.toString()
-        };
 
         const attribute = await consumptionServices.attributes.createAttribute(displayNameParams);
         const attributeId = attribute.value.id;
         const createSuccessorParams: SucceedAttributeRequest = {
-            successorContent: displayNameSuccessorContent,
+            successorContent: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "DisplayName",
+                    value: "ANewDisplayName"
+                },
+                owner: "address",
+                validFrom: successorDate.toString()
+            },
             succeeds: attributeId
         };
         const successor = await consumptionServices.attributes.succeedAttribute(createSuccessorParams);
@@ -170,16 +171,15 @@ describe("Attributes", () => {
     });
 
     test("should allow to create a share copy", async function () {
-        const nationalityContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "Nationality",
-                value: "DE"
-            },
-            owner: "address"
-        };
         const nationalityParams: CreateAttributeRequest = {
-            content: nationalityContent
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "Nationality",
+                    value: "DE"
+                },
+                owner: "address"
+            }
         };
         const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
 
@@ -199,58 +199,57 @@ describe("Attributes", () => {
     });
 
     test("should allow to update an attribute", async () => {
-        const addressContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "StreetAddress",
-                recipient: "ARecipient",
-                street: "AStreet",
-                houseNo: "AHouseNo",
-                zipCode: "AZipCode",
-                city: "ACity",
-                country: "DE"
-            },
-            validTo: CoreDate.utc().toString(),
-            owner: "address"
-        };
         const addressParams: CreateAttributeRequest = {
-            content: addressContent
-        };
-
-        const newAddressContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "StreetAddress",
-                recipient: "ANewRecipient",
-                street: "ANewStreet",
-                houseNo: "ANewHouseNo",
-                zipCode: "ANewZipCode",
-                city: "ANewCity",
-                country: "DE"
-            },
-            validTo: CoreDate.utc().toString(),
-            owner: "address"
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "StreetAddress",
+                    recipient: "ARecipient",
+                    street: "AStreet",
+                    houseNo: "AHouseNo",
+                    zipCode: "AZipCode",
+                    city: "ACity",
+                    country: "DE"
+                },
+                validTo: CoreDate.utc().toString(),
+                owner: "address"
+            }
         };
 
         const address = await consumptionServices.attributes.createAttribute(addressParams);
-        const updateParams: UpdateAttributeRequest = { id: address.value.id, content: newAddressContent };
+        const updateParams: UpdateAttributeRequest = {
+            id: address.value.id,
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "StreetAddress",
+                    recipient: "ANewRecipient",
+                    street: "ANewStreet",
+                    houseNo: "ANewHouseNo",
+                    zipCode: "ANewZipCode",
+                    city: "ANewCity",
+                    country: "DE"
+                },
+                validTo: CoreDate.utc().toString(),
+                owner: "address"
+            }
+        };
         const newAddress = await consumptionServices.attributes.updateAttribute(updateParams);
         expect(newAddress).toBeSuccessful();
         const newAddressAttribute = newAddress.value;
-        expect(newAddressAttribute.content).toMatchObject(newAddressContent);
+        expect(newAddressAttribute.content).toMatchObject(updateParams.content);
     });
 
     test("should allow to get an attribute by id", async function () {
-        const nationalityContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "Nationality",
-                value: "DE"
-            },
-            owner: "address"
-        };
         const nationalityParams: CreateAttributeRequest = {
-            content: nationalityContent
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "Nationality",
+                    value: "DE"
+                },
+                owner: "address"
+            }
         };
         const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
         const receivedAttribute = await consumptionServices.attributes.getAttribute({ id: nationalityAttribute.value.id });
@@ -259,22 +258,24 @@ describe("Attributes", () => {
     });
 
     test("should allow to get an attribute by type", async function () {
-        const nationalityContent: ExtendedIdentityAttributeJSON = {
-            "@type": "IdentityAttribute",
-            value: {
-                "@type": "EMailAddress",
-                value: "a.mailaddress@provider.com"
-            },
-            owner: "address"
-        };
         const nationalityParams: CreateAttributeRequest = {
-            content: nationalityContent
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "EMailAddress",
+                    value: "a.mailaddress@provider.com"
+                },
+                owner: "address"
+            }
         };
         const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
-        const query: GetAttributesRequest = {
+        const query: ConsumptionAttributeQuery = {
             content: { value: { "@type": "EMailAddress" } }
         };
-        const receivedAttribute = await consumptionServices.attributes.getAttributes(query);
+        const queryRequest: GetAttributesRequest = {
+            query: query
+        };
+        const receivedAttribute = await consumptionServices.attributes.getAttributes(queryRequest);
         expect(receivedAttribute).toBeSuccessful();
         expect(receivedAttribute.value).toHaveLength(1);
         expect(receivedAttribute.value[0]).toStrictEqual(nationalityAttribute.value);

@@ -6,11 +6,13 @@ import { DateTime } from "luxon";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
-import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
+import { UseCase } from "../../common";
 import { flattenObject } from "../requests/flattenObject";
 import { AttributeMapper } from "./AttributeMapper";
 
-export interface GetAttributesRequest extends ConsumptionAttributeQuery {}
+export interface GetAttributesRequest {
+    query?: ConsumptionAttributeQuery;
+}
 
 export interface ConsumptionAttributeQuery {
     attributeType?: string;
@@ -36,12 +38,6 @@ export interface ConsumptionAttributeQuery {
         sourceAttribute?: string;
     };
     [key: string]: unknown;
-}
-
-class Validator extends SchemaValidator<GetAttributesRequest> {
-    public constructor(@Inject schemaRepository: SchemaRepository) {
-        super(schemaRepository.getSchema("GetAttributesRequest"));
-    }
 }
 
 export class GetAttributesUseCase extends UseCase<GetAttributesRequest, ConsumptionAttributeDTO[]> {
@@ -151,12 +147,12 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
         }
     });
 
-    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController, @Inject validator: Validator) {
-        super(validator);
+    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController) {
+        super();
     }
 
     protected async executeInternal(request: GetAttributesRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
-        const flattenedQuery = flattenObject(request);
+        const flattenedQuery = flattenObject(request.query);
         const dbQuery = GetAttributesUseCase.queryTranslator.parse(flattenedQuery);
         const fetched = await this.attributeController.getConsumptionAttributes(dbQuery);
         return Result.ok(AttributeMapper.toAttributeDTOList(fetched));

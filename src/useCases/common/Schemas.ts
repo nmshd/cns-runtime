@@ -260,6 +260,15 @@ export const GetAttributesRequest: any = {
         "GetAttributesRequest": {
             "type": "object",
             "properties": {
+                "query": {
+                    "$ref": "#/definitions/ConsumptionAttributeQuery"
+                }
+            },
+            "additionalProperties": false
+        },
+        "ConsumptionAttributeQuery": {
+            "type": "object",
+            "properties": {
                 "attributeType": {
                     "type": "string"
                 },
@@ -329,7 +338,8 @@ export const GetAttributesRequest: any = {
                     },
                     "additionalProperties": false
                 }
-            }
+            },
+            "additionalProperties": {}
         },
         "RelationshipAttributeConfidentiality": {
             "type": "string",
