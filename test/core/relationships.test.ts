@@ -134,10 +134,11 @@ describe("Attributes for the relationship", () => {
             })
         ).value;
 
+        const fakeRequestReference = "REQ00000000000000000";
         await consumptionServices1.attributes.createSharedAttributeCopy({
             attributeId: attribute.id,
             peer: relationship.peer,
-            requestReference: "REQ00000000000000000"
+            requestReference: fakeRequestReference
         });
 
         await consumptionServices1.attributes.createAttribute({
