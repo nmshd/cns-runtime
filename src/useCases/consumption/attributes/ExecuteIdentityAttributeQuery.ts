@@ -3,22 +3,16 @@ import { ConsumptionAttributesController, IGetIdentityAttributesParams } from "@
 import { IIdentityAttributeQuery } from "@nmshd/content";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
-import { RuntimeValidator, UseCase } from "../../common";
+import { UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface ExecuteIdentityAttributeQueryRequest {
     query: IIdentityAttributeQuery;
 }
 
-class ExecuteIdentityAttributeQueryValidator extends RuntimeValidator<ExecuteIdentityAttributeQueryRequest> {
-    public constructor() {
-        super();
-    }
-}
-
 export class ExecuteIdentityAttributeQueryUseCase extends UseCase<ExecuteIdentityAttributeQueryRequest, ConsumptionAttributeDTO[]> {
     public constructor(@Inject private readonly attributeController: ConsumptionAttributesController, @Inject validator: ExecuteIdentityAttributeQueryValidator) {
-        super(validator);
+        super();
     }
 
     protected async executeInternal(request: ExecuteIdentityAttributeQueryRequest): Promise<Result<ConsumptionAttributeDTO[]>> {

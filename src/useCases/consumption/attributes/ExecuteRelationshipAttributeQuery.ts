@@ -3,22 +3,16 @@ import { ConsumptionAttributesController, GetRelationshipAttributesParams } from
 import { IRelationshipAttributeQuery } from "@nmshd/content";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
-import { RuntimeValidator, UseCase } from "../../common";
+import { UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface ExecuteRelationshipAttributeQueryRequest {
     query: IRelationshipAttributeQuery;
 }
 
-class ExecuteRelationshipAttributeQueryValidator extends RuntimeValidator<ExecuteRelationshipAttributeQueryRequest> {
-    public constructor() {
-        super();
-    }
-}
-
 export class ExecuteRelationshipAttributeQueryUseCase extends UseCase<ExecuteRelationshipAttributeQueryRequest, ConsumptionAttributeDTO[]> {
     public constructor(@Inject private readonly attributeController: ConsumptionAttributesController, @Inject validator: ExecuteRelationshipAttributeQueryValidator) {
-        super(validator);
+        super();
     }
 
     protected async executeInternal(request: ExecuteRelationshipAttributeQueryRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
