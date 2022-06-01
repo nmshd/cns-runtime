@@ -1,13 +1,13 @@
 import { Result } from "@js-soft/ts-utils";
 import { ConsumptionAttributesController, IGetIdentityAttributesParams } from "@nmshd/consumption";
-import { Attribute } from "@nmshd/content";
+import { IIdentityAttributeQuery } from "@nmshd/content";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
-import { RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { RuntimeValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface ExecuteIdentityAttributeQueryRequest {
-    params: IGetIdentityAttributesParams;
+    query: IIdentityAttributeQuery;
 }
 
 class ExecuteIdentityAttributeQueryValidator extends RuntimeValidator<ExecuteIdentityAttributeQueryRequest> {
@@ -22,11 +22,10 @@ export class ExecuteIdentityAttributeQueryUseCase extends UseCase<ExecuteIdentit
     }
 
     protected async executeInternal(request: ExecuteIdentityAttributeQueryRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
-        const attributes = await this.attributeController.executeIdentityAttributeQuery(request.params);
-        if (!attributes) {
-            return Result.fail(RuntimeErrors.general.recordNotFound(Attribute));
-        }
-
+        const params: IGetIdentityAttributesParams = {
+            query: request.query
+        };
+        const attributes = await this.attributeController.executeIdentityAttributeQuery(params);
         return Result.ok(AttributeMapper.toAttributeDTOList(attributes));
     }
 }

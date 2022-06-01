@@ -1,3 +1,4 @@
+import { RelationshipAttributeConfidentiality } from "@nmshd/content";
 import { CoreDate } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import {
@@ -5,6 +6,7 @@ import {
     ConsumptionServices,
     CreateAttributeRequest,
     CreateShareAttributeCopyRequest,
+    ExecuteIdentityAttributeQueryRequest,
     GetAttributesRequest,
     SucceedAttributeRequest,
     UpdateAttributeRequest
@@ -20,7 +22,7 @@ beforeAll(async () => {
 }, 30000);
 afterAll(async () => await runtimeServiceProvider.stop());
 
-describe.only("Attributes", () => {
+describe("Attributes", () => {
     beforeEach(async function () {
         const surnameParams: CreateAttributeRequest = {
             content: {
@@ -275,9 +277,48 @@ describe.only("Attributes", () => {
         const queryRequest: GetAttributesRequest = {
             query: query
         };
-        const receivedAttribute = await consumptionServices.attributes.getAttributes(queryRequest);
-        expect(receivedAttribute).toBeSuccessful();
-        expect(receivedAttribute.value).toHaveLength(1);
-        expect(receivedAttribute.value[0]).toStrictEqual(nationalityAttribute.value);
+        const receivedAttributes = await consumptionServices.attributes.getAttributes(queryRequest);
+        expect(receivedAttributes).toBeSuccessful();
+        expect(receivedAttributes.value).toHaveLength(1);
+        expect(receivedAttributes.value[0]).toStrictEqual(nationalityAttribute.value);
+    });
+
+    test("should allow to execute an identityAttributeQuery", async function () {
+        const identityAttributeRequest: CreateAttributeRequest = {
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "Phone",
+                    value: "012345678910"
+                },
+                owner: "address"
+            }
+        };
+        const identityAttribute = await consumptionServices.attributes.createAttribute(identityAttributeRequest);
+        const relationshipAttributeRequest: CreateAttributeRequest = {
+            content: {
+                "@type": "RelationshipAttribute",
+                value: {
+                    "@type": "Phone",
+                    value: "012345678910"
+                },
+                key: "phone",
+                confidentiality: "protected" as RelationshipAttributeConfidentiality,
+                owner: "address"
+            }
+        };
+        const relationshiptAttribute = await consumptionServices.attributes.createAttribute(relationshipAttributeRequest);
+        const identityQueryRequest: ExecuteIdentityAttributeQueryRequest = {
+            query: {
+                valueType: "Phone"
+            }
+        };
+        const receivedAttributes = await consumptionServices.attributes.executeIdentityAttributeQuery(identityQueryRequest);
+        expect(receivedAttributes).toBeSuccessful();
+        expect(receivedAttributes.value).toHaveLength(1);
+        const currentAttributesJSON = receivedAttributes.value.map((v) => v.id);
+        expect(currentAttributesJSON).not.toContain(relationshiptAttribute.value.id);
+        expect(currentAttributesJSON).toContain(identityAttribute.value.id);
+        expect(receivedAttributes.value[0]).toStrictEqual(identityAttribute.value);
     });
 });

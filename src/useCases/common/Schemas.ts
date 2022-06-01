@@ -233,6 +233,217 @@ export const DeleteAttributeRequest: any = {
     }
 }
 
+export const ExecuteIdentityAttributeQueryRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/ExecuteIdentityAttributeQueryRequest",
+    "definitions": {
+        "ExecuteIdentityAttributeQueryRequest": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "$ref": "#/definitions/IIdentityAttributeQuery"
+                }
+            },
+            "required": [
+                "query"
+            ],
+            "additionalProperties": false
+        },
+        "IIdentityAttributeQuery": {
+            "type": "object",
+            "properties": {
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "ICoreDate": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "date"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const ExecuteRelationshipAttributeQueryRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/ExecuteRelationshipAttributeQueryRequest",
+    "definitions": {
+        "ExecuteRelationshipAttributeQueryRequest": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "$ref": "#/definitions/IRelationshipAttributeQuery"
+                }
+            },
+            "required": [
+                "query"
+            ],
+            "additionalProperties": false
+        },
+        "IRelationshipAttributeQuery": {
+            "type": "object",
+            "properties": {
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "owner": {
+                    "$ref": "#/definitions/ICoreAddress"
+                },
+                "attributeHints": {
+                    "$ref": "#/definitions/IRelationshipAttributeHints"
+                },
+                "thirdParty": {
+                    "$ref": "#/definitions/ICoreAddress"
+                }
+            },
+            "required": [
+                "key",
+                "owner",
+                "attributeHints"
+            ],
+            "additionalProperties": false
+        },
+        "ICoreDate": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "date"
+            ],
+            "additionalProperties": false
+        },
+        "ICoreAddress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "address"
+            ],
+            "additionalProperties": false
+        },
+        "IRelationshipAttributeHints": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "valueHints": {
+                    "$ref": "#/definitions/IValueHints"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "title",
+                "confidentiality"
+            ],
+            "additionalProperties": false
+        },
+        "IValueHints": {
+            "type": "object",
+            "properties": {
+                "editHelp": {
+                    "type": "string"
+                },
+                "min": {
+                    "type": "number"
+                },
+                "max": {
+                    "type": "number"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/IValueHintsValue"
+                    }
+                },
+                "defaultValue": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
+        "IValueHintsValue": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                },
+                "displayName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "key",
+                "displayName"
+            ],
+            "additionalProperties": false
+        },
+        "RelationshipAttributeConfidentiality": {
+            "type": "string",
+            "enum": [
+                "public",
+                "private",
+                "protected"
+            ]
+        }
+    }
+}
+
 export const GetAttributeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributeRequest",
@@ -269,9 +480,6 @@ export const GetAttributesRequest: any = {
         "ConsumptionAttributeQuery": {
             "type": "object",
             "properties": {
-                "attributeType": {
-                    "type": "string"
-                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -302,7 +510,7 @@ export const GetAttributesRequest: any = {
                         "isTechnical": {
                             "type": "boolean"
                         },
-                        "confidenttiality": {
+                        "confidentiality": {
                             "$ref": "#/definitions/RelationshipAttributeConfidentiality"
                         },
                         "value": {
@@ -2740,6 +2948,25 @@ export const CreateRelationshipChangeRequest: any = {
     }
 }
 
+export const GetAttributesForRelationshipRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/GetAttributesForRelationshipRequest",
+    "definitions": {
+        "GetAttributesForRelationshipRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const GetRelationshipRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipRequest",
@@ -3087,25 +3314,6 @@ export const LoadPeerTokenRequest: any = {
             },
             "required": [
                 "ephemeral"
-            ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const GetAttributesForRelationshipRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/GetAttributesForRelationshipRequest",
-    "definitions": {
-        "GetAttributesForRelationshipRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
             ],
             "additionalProperties": false
         }
