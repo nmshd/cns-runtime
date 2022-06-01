@@ -1,24 +1,17 @@
 import { QueryTranslator } from "@js-soft/docdb-querytranslator";
 import { Result } from "@js-soft/ts-utils";
 import { ConsumptionAttribute, ConsumptionAttributesController, ConsumptionAttributeShareInfoJSON } from "@nmshd/consumption";
-import {
-    AbstractAttributeJSON,
-    AbstractAttributeValueJSON,
-    IdentityAttribute,
-    IdentityAttributeJSON,
-    RelationshipAttributeConfidentiality,
-    RelationshipAttributeJSON
-} from "@nmshd/content";
+import { AbstractAttributeJSON, IdentityAttribute, IdentityAttributeJSON, RelationshipAttributeConfidentiality, RelationshipAttributeJSON } from "@nmshd/content";
 import { DateTime } from "luxon";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
-import { RuntimeValidator, UseCase } from "../../common";
+import { UseCase } from "../../common";
 import { flattenObject } from "../requests/flattenObject";
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface GetAttributesRequest {
-    query: ConsumptionAttributeQuery;
+    query?: ConsumptionAttributeQuery;
 }
 
 export interface ConsumptionAttributeQuery {
@@ -46,12 +39,6 @@ export interface ConsumptionAttributeQuery {
     [key: string]: unknown;
 }
 
-class GetAttributesRequestValidator extends RuntimeValidator<GetAttributesRequest> {
-    public constructor() {
-        super();
-    }
-}
-
 export class GetAttributesUseCase extends UseCase<GetAttributesRequest, ConsumptionAttributeDTO[]> {
     private static readonly queryTranslator = new QueryTranslator({
         whitelist: {
@@ -63,12 +50,11 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`]: true,
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`]: true,
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.owner)}`]: true,
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x["@type"])}`]: true,
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.@type`]: true,
 
             // content.identityAttribute
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.tags)}`]: true,
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.value)}.${nameof<AbstractAttributeValueJSON>((x) => x["@type"])}`]:
-                true,
+            [`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.value)}.@type`]: true,
 
             // content.relationshipAttribute
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.key)}`]: true,
@@ -95,16 +81,14 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.owner)}`]: [
                 `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.owner)}`
             ],
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x["@type"])}`]: [
-                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x["@type"])}`
-            ],
+            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.@type`]: [`${nameof<ConsumptionAttribute>((x) => x.content)}.@type`],
 
             // content.identityAttribute
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.tags)}`]: [
                 `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.tags)}`
             ],
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.value)}.${nameof<AbstractAttributeValueJSON>((x) => x["@type"])}`]: [
-                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.value)}.${nameof<AbstractAttributeValueJSON>((x) => x["@type"])}`
+            [`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.value)}.@type`]: [
+                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<IdentityAttributeJSON>((x) => x.value)}.@type`
             ],
 
             // content.relationshipAttribute
@@ -162,8 +146,8 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
         }
     });
 
-    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController, @Inject validator: GetAttributesRequestValidator) {
-        super(validator);
+    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController) {
+        super();
     }
 
     protected async executeInternal(request: GetAttributesRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
