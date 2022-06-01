@@ -15,7 +15,6 @@ export interface GetAttributesRequest {
 }
 
 export interface ConsumptionAttributeQuery {
-    attributeType?: string;
     createdAt?: string;
     content?: {
         "@type"?: string;
