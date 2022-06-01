@@ -1,11 +1,31 @@
-import { IdentityAttributeJSON, MailJSON, RelationshipAttributeJSON, RenderHintsEditType, RenderHintsTechnicalType, RequestJSON, RequestMailJSON } from "@nmshd/content";
-import { CoreAddress, IdentityController, Realm, Relationship, RelationshipStatus } from "@nmshd/transport";
+import { Serializable, SerializableBase } from "@js-soft/ts-serval";
+import { ConsumptionController } from "@nmshd/consumption";
+import {
+    IdentityAttribute,
+    IdentityAttributeJSON,
+    IdentityAttributeQuery,
+    IdentityAttributeQueryJSON,
+    MailJSON,
+    RelationshipAttribute,
+    RelationshipAttributeJSON,
+    RenderHints,
+    RenderHintsEditType,
+    RenderHintsJSON,
+    RenderHintsTechnicalType,
+    RequestJSON,
+    RequestMailJSON,
+    ValueHints,
+    ValueHintsJSON
+} from "@nmshd/content";
+import { CoreAddress, CoreId, IdentityController, Realm, Relationship, RelationshipStatus } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { FileDVO, IdentityDVO } from "..";
 import { TransportServices } from "../extensibility";
 import { ConsumptionServices } from "../extensibility/ConsumptionServices";
 import {
     ConsumptionAttributeDTO,
+    ConsumptionRequestDTO,
+    ConsumptionResponseDTO,
     FileDTO,
     IdentityDTO,
     MessageDTO,
@@ -15,8 +35,16 @@ import {
     RelationshipDTO,
     RelationshipInfoDTO
 } from "../types";
-import { RuntimeErrors } from "../useCases";
-import { DraftAttributeDVO, RepositoryAttributeDVO } from "./content";
+import { AttributeMapper, RuntimeErrors } from "../useCases";
+import {
+    ConsumptionRequestDVO,
+    ConsumptionResponseDVO,
+    DraftAttributeDVO,
+    IdentityAttributeQueryExpanded,
+    PeerAttributeDVO,
+    RepositoryAttributeDVO,
+    SharedToPeerAttributeDVO
+} from "./consumption";
 import { MailDVO, RequestMailDVO } from "./content/MailDVOs";
 import { RequestDVO } from "./content/RequestDVOs";
 import { DataViewObject } from "./DataViewObject";
@@ -28,6 +56,7 @@ export class DataViewExpander {
     public constructor(
         @Inject private readonly transport: TransportServices,
         @Inject private readonly consumption: ConsumptionServices,
+        @Inject private readonly consumptionController: ConsumptionController,
         @Inject private readonly identityController: IdentityController
     ) {}
 
@@ -217,50 +246,181 @@ export class DataViewExpander {
         };
     }
 
-    public async expandConsumptionAttribute(attribute: ConsumptionAttributeDTO): Promise<RepositoryAttributeDVO> {
-        const valueType = attribute.content.value["@type"];
+    public async expandConsumptionRequest(request: ConsumptionRequestDTO): Promise<ConsumptionRequestDVO> {
         return {
-            type: "RepositoryAttributeDVO",
-            id: attribute.id,
-            name: `i18n://attribute.title.${valueType}`,
-            content: attribute.content,
-            date: attribute.createdAt,
-            owner: await this.expandAddress(attribute.content.owner),
-            renderHints: {
-                "@type": "RenderHints",
-                technicalType: RenderHintsTechnicalType.Object,
-                editType: RenderHintsEditType.InputLike
-            },
-            valueHints: {
-                "@type": "ValueHints"
-            },
-            isValid: true,
-            createdAt: attribute.createdAt,
-            isOwn: true,
-            sharedWith: []
+            ...request,
+            id: request.id,
+            name: "i18n://dvo.request.name.response",
+            type: "ConsumptionRequestDVO",
+            date: request.createdAt,
+            peer: await this.expandAddress(request.peer),
+            response: request.response ? this.expandConsumptionResponse(request.response) : undefined
         };
     }
 
-    public async expandConsumptionAttributes(attributes: ConsumptionAttributeDTO[]): Promise<RepositoryAttributeDVO[]> {
+    public expandConsumptionResponse(response: ConsumptionResponseDTO): ConsumptionResponseDVO {
+        return {
+            ...response,
+            id: "",
+            name: "i18n://dvo.request.name.response",
+            type: "ConsumptionResponseDVO",
+            date: response.createdAt
+        };
+    }
+
+    public async expandConsumptionAttribute(attribute: ConsumptionAttributeDTO): Promise<RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO> {
+        const valueType = attribute.content.value["@type"];
+        const consumptionAttribute = await this.consumptionController.attributes.getConsumptionAttribute(CoreId.from(attribute.id));
+        if (!consumptionAttribute) {
+            throw new Error("Attribute not found");
+        }
+        const owner = await this.expandAddress(attribute.content.owner);
+
+        let name = `i18n://dvo.attribute.name.${valueType}`;
+        let description = `i18n://dvo.attribute.description.${valueType}`;
+        if (consumptionAttribute.content instanceof RelationshipAttribute) {
+            name = "";
+            description = "";
+        }
+        const renderHints = consumptionAttribute.content.value.renderHints.toJSON() as RenderHintsJSON;
+        const valueHints = consumptionAttribute.content.value.valueHints.toJSON();
+
+        if (consumptionAttribute.shareInfo) {
+            const peer = await this.expandAddress(consumptionAttribute.shareInfo.peer.toString());
+            if (consumptionAttribute.shareInfo.sourceAttribute) {
+                // Own Shared Attribute
+                return {
+                    type: "SharedToPeerAttributeDVO",
+                    id: attribute.id,
+                    name,
+                    description,
+                    content: attribute.content,
+                    value: attribute.content.value,
+                    date: attribute.createdAt,
+                    owner: owner,
+                    renderHints,
+                    valueHints,
+                    isValid: true,
+                    createdAt: attribute.createdAt,
+                    isOwn: true,
+                    peer: peer,
+                    requestReference: consumptionAttribute.shareInfo.requestReference.toString(),
+                    sourceAttribute: consumptionAttribute.shareInfo.sourceAttribute.toString()
+                };
+            }
+
+            // Peer Attribute
+            return {
+                type: "PeerAttributeDVO",
+                id: attribute.id,
+                name,
+                description,
+                content: attribute.content,
+                value: attribute.content.value,
+                date: attribute.createdAt,
+                owner: owner,
+                renderHints,
+                valueHints,
+                isValid: true,
+                createdAt: attribute.createdAt,
+                isOwn: false,
+                peer: peer,
+                requestReference: consumptionAttribute.shareInfo.requestReference.toString()
+            };
+        }
+
+        const sharedToPeerAttributes = await this.consumption.attributes.getAttributes({ query: { shareInfo: { sourceAttribute: attribute.id } } });
+        const sharedToPeerDVOs = await this.expandConsumptionAttributes(sharedToPeerAttributes.value);
+
+        // Own Source Attribute
+        return {
+            type: "RepositoryAttributeDVO",
+            id: attribute.id,
+            name,
+            description,
+            content: attribute.content,
+            value: attribute.content.value,
+            date: attribute.createdAt,
+            owner: owner,
+            renderHints,
+            valueHints,
+            isValid: true,
+            createdAt: attribute.createdAt,
+            isOwn: true,
+            sharedWith: sharedToPeerDVOs as SharedToPeerAttributeDVO[]
+        };
+    }
+
+    public async expandConsumptionAttributes(attributes: ConsumptionAttributeDTO[]): Promise<(RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO)[]> {
         const attributesPromise = attributes.map((attribute) => this.expandConsumptionAttribute(attribute));
         return await Promise.all(attributesPromise);
     }
 
+    public async expandIdentityAttributeQuery(query: IdentityAttributeQueryJSON): Promise<IdentityAttributeQueryExpanded> {
+        const queryInstance = IdentityAttributeQuery.from(query);
+        const matchedAttributes = await this.consumptionController.attributes.executeIdentityAttributeQuery({ query: queryInstance });
+        const matchedAttributeDTOs = AttributeMapper.toAttributeDTOList(matchedAttributes);
+        const matchedAttributeDVOs = await this.expandConsumptionAttributes(matchedAttributeDTOs);
+        const valueType = query.valueType!;
+        const name = `i18n://dvo.attribute.name.${valueType}`;
+        const description = `i18n://dvo.attribute.description.${valueType}`;
+
+        const valueTypeClass = SerializableBase.getModule(valueType, 1);
+        if (!valueTypeClass) {
+            throw new Error(`No class implementation found for ${valueType}`);
+        }
+        let renderHints: RenderHintsJSON = {
+            "@type": "RenderHints",
+            editType: RenderHintsEditType.InputLike,
+            technicalType: RenderHintsTechnicalType.String
+        };
+        let valueHints: ValueHintsJSON = {
+            "@type": "ValueHints",
+            max: 200
+        };
+        if (valueTypeClass.renderHints && valueTypeClass.renderHints instanceof RenderHints) {
+            renderHints = valueTypeClass.renderHints.toJSON();
+        }
+        if (valueTypeClass.valueHints && valueTypeClass.valueHints instanceof ValueHints) {
+            valueHints = valueTypeClass.valueHints.toJSON();
+        }
+
+        return {
+            type: "IdentityAttributeQueryExpanded",
+            name,
+            description,
+            valueType,
+            validFrom: query.validFrom,
+            validTo: query.validTo,
+            results: matchedAttributeDVOs,
+            renderHints,
+            valueHints
+        };
+    }
+
     public async expandAttribute(attribute: IdentityAttributeJSON | RelationshipAttributeJSON): Promise<DraftAttributeDVO> {
+        const attributeInstance = Serializable.fromAny(attribute) as IdentityAttribute | RelationshipAttribute;
+        const valueType = attribute.value["@type"];
+        let name = `i18n://dvo.attribute.name.${valueType}`;
+        let description = `i18n://dvo.attribute.description.${valueType}`;
+        const renderHints = attributeInstance.value.renderHints.toJSON() as RenderHintsJSON;
+        const valueHints = attributeInstance.value.valueHints.toJSON();
+        if (attributeInstance instanceof RelationshipAttribute) {
+            name = ""; // attributeInstance.value.title;
+            description = ""; // attributeInstance.value.description;
+        }
+
+        const owner = await this.expandAddress(attribute.owner);
         return {
             type: "DraftAttributeDVO",
             content: attribute,
-            name: "DraftAttribute",
+            name,
+            description,
             id: "",
-            owner: await this.expandAddress(attribute.owner),
-            renderHints: {
-                "@type": "RenderHints",
-                technicalType: RenderHintsTechnicalType.Object,
-                editType: RenderHintsEditType.InputLike
-            },
-            valueHints: {
-                "@type": "ValueHints"
-            }
+            owner: owner,
+            renderHints,
+            valueHints,
+            value: attribute.value
         };
     }
 
@@ -290,7 +450,7 @@ export class DataViewExpander {
         const initials = (name.match(/\b\w/g) ?? []).join("");
 
         return {
-            id: this.identityController.address.toString(),
+            id: address,
             type: "IdentityDVO",
             name: name,
             initials: initials,
@@ -432,16 +592,18 @@ export class DataViewExpander {
 
         // const name = relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title;
         // let description = relationshipInfo.userDescription ? relationshipInfo.userDescription : relationshipInfo.description;
-        const name = "";
-        const description = "";
+        const name = relationship.peer.substring(3, 9);
 
         const initials = (name.match(/\b\w/g) ?? []).join("");
 
         const relationshipDVO = await this.createRelationshipDVO(relationship);
+        const description = relationshipDVO.statusText;
         // TODO: re-enable when we can query relationship info
-        // if (!description) {
-        //     description = relationshipDVO.statusText;
-        // }
+        /*
+        if (!description) {
+            description = relationshipDVO.statusText;
+        }
+        */
 
         return {
             type: "IdentityDVO",

@@ -152,7 +152,7 @@ describe("MessageDVO", () => {
         const recipient = dvo.recipients[0];
         expect(recipient.type).toBe("RecipientDVO");
         expect(recipient.id).toStrictEqual(dto.recipients[0].address);
-        expect(recipient.name).toBe(""); // "Barbara"
+        expect(recipient.name).toBe(recipient.id.substring(3, 9)); // "Barbara"
         expect(recipient.isSelf).toBe(false);
         expect(dvo.status).toBe("Delivering");
     });
@@ -172,7 +172,7 @@ describe("MessageDVO", () => {
         expect(dvo.isOwn).toBe(false);
         expect(dvo.createdBy.type).toBe("IdentityDVO");
         expect(dvo.createdBy.id).toStrictEqual(dto.createdBy);
-        expect(dvo.createdBy.name).toBe(""); // "Jürgen"
+        expect(dvo.createdBy.name).toBe(dvo.createdBy.id.substring(3, 9)); // "Jürgen"
         expect(dvo.createdBy.isSelf).toBe(false);
         const recipient = dvo.recipients[0];
         expect(recipient.type).toBe("RecipientDVO");
@@ -208,14 +208,14 @@ describe("MessageDVO", () => {
         const recipient = dvo.recipients[0];
         expect(recipient.type).toBe("RecipientDVO");
         expect(recipient.id).toStrictEqual(dto.recipients[0].address);
-        expect(recipient.name).toBe(""); // "Barbara"
+        expect(recipient.name).toBe(recipient.id.substring(3, 9)); // "Barbara"
         expect(recipient.isSelf).toBe(false);
 
         expect(dvo.to).toHaveLength(1);
         const to = dvo.to[0];
         expect(to.type).toBe("RecipientDVO");
         expect(to.id).toStrictEqual(mail.to[0]);
-        expect(to.name).toBe(""); // "Barbara"
+        expect(to.name).toBe(to.id.substring(3, 9)); // "Barbara"
         expect(to.isSelf).toBe(false);
         expect(dvo.toCount).toStrictEqual(mail.to.length);
         expect(dvo.ccCount).toStrictEqual(mail.cc!.length);
@@ -240,7 +240,7 @@ describe("MessageDVO", () => {
         expect(dvo.isOwn).toBe(false);
         expect(dvo.createdBy.type).toBe("IdentityDVO");
         expect(dvo.createdBy.id).toStrictEqual(dto.createdBy);
-        expect(dvo.createdBy.name).toBe(""); // "Jürgen"
+        expect(dvo.createdBy.name).toBe(dvo.createdBy.id.substring(3, 9)); // "Jürgen"
         expect(dvo.createdBy.isSelf).toBe(false);
         const recipient = dvo.recipients[0];
         expect(recipient.type).toBe("RecipientDVO");

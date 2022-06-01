@@ -47,25 +47,13 @@ export const CreateAttributeRequest: any = {
         "CreateAttributeRequest": {
             "type": "object",
             "properties": {
-                "params": {
-                    "$ref": "#/definitions/ICreateConsumptionAttributeParams"
-                }
-            },
-            "required": [
-                "params"
-            ],
-            "additionalProperties": false
-        },
-        "ICreateConsumptionAttributeParams": {
-            "type": "object",
-            "properties": {
                 "content": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/IIdentityAttribute"
+                            "$ref": "#/definitions/ExtendedIdentityAttributeJSON"
                         },
                         {
-                            "$ref": "#/definitions/IRelationshipAttribute"
+                            "$ref": "#/definitions/ExtendedRelationshipAttributeJSON"
                         }
                     ]
                 }
@@ -75,20 +63,43 @@ export const CreateAttributeRequest: any = {
             ],
             "additionalProperties": false
         },
-        "IIdentityAttribute": {
+        "ExtendedIdentityAttributeJSON": {
             "type": "object",
             "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
                 "owner": {
-                    "$ref": "#/definitions/ICoreAddress"
+                    "type": "string"
                 },
                 "validFrom": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "type": "string"
                 },
                 "validTo": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "type": "string"
                 },
                 "value": {
-                    "$ref": "#/definitions/IAbstractAttributeValue"
+                    "type": "object",
+                    "properties": {
+                        "@type": {
+                            "type": "string"
+                        },
+                        "@context": {
+                            "type": "string"
+                        },
+                        "@version": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "@type"
+                    ]
                 },
                 "tags": {
                     "type": "array",
@@ -98,54 +109,49 @@ export const CreateAttributeRequest: any = {
                 }
             },
             "required": [
+                "@type",
                 "owner",
                 "value"
             ],
             "additionalProperties": false
         },
-        "ICoreAddress": {
+        "ExtendedRelationshipAttributeJSON": {
             "type": "object",
             "properties": {
-                "address": {
+                "@type": {
                     "type": "string"
-                }
-            },
-            "required": [
-                "address"
-            ],
-            "additionalProperties": false
-        },
-        "ICoreDate": {
-            "type": "object",
-            "properties": {
-                "date": {
+                },
+                "@context": {
                     "type": "string"
-                }
-            },
-            "required": [
-                "date"
-            ],
-            "additionalProperties": false
-        },
-        "IAbstractAttributeValue": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {}
-        },
-        "IRelationshipAttribute": {
-            "type": "object",
-            "properties": {
+                },
+                "@version": {
+                    "type": "string"
+                },
                 "owner": {
-                    "$ref": "#/definitions/ICoreAddress"
+                    "type": "string"
                 },
                 "validFrom": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "type": "string"
                 },
                 "validTo": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "type": "string"
                 },
                 "value": {
-                    "$ref": "#/definitions/IAbstractAttributeValue"
+                    "type": "object",
+                    "properties": {
+                        "@type": {
+                            "type": "string"
+                        },
+                        "@context": {
+                            "type": "string"
+                        },
+                        "@version": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "@type"
+                    ]
                 },
                 "key": {
                     "type": "string"
@@ -158,6 +164,7 @@ export const CreateAttributeRequest: any = {
                 }
             },
             "required": [
+                "@type",
                 "confidentiality",
                 "key",
                 "owner",
@@ -183,56 +190,23 @@ export const CreateShareAttributeCopyRequest: any = {
         "CreateShareAttributeCopyRequest": {
             "type": "object",
             "properties": {
-                "params": {
-                    "$ref": "#/definitions/ICreateSharedConsumptionAttributeCopyParams"
-                }
-            },
-            "required": [
-                "params"
-            ],
-            "additionalProperties": false
-        },
-        "ICreateSharedConsumptionAttributeCopyParams": {
-            "type": "object",
-            "properties": {
                 "attributeId": {
-                    "$ref": "#/definitions/ICoreId"
+                    "type": "string",
+                    "pattern": "ATT[A-Za-z0-9]{17}"
                 },
                 "peer": {
-                    "$ref": "#/definitions/ICoreAddress"
+                    "type": "string",
+                    "pattern": "[a-zA-Z1-9]{35,36}"
                 },
                 "requestReference": {
-                    "$ref": "#/definitions/ICoreId"
+                    "type": "string",
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 }
             },
             "required": [
                 "attributeId",
                 "peer",
                 "requestReference"
-            ],
-            "additionalProperties": false
-        },
-        "ICoreId": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
-        },
-        "ICoreAddress": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "address"
             ],
             "additionalProperties": false
         }
@@ -247,7 +221,8 @@ export const DeleteAttributeRequest: any = {
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "ATT[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -266,7 +241,8 @@ export const GetAttributeRequest: any = {
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "ATT[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -288,14 +264,14 @@ export const GetAttributesRequest: any = {
                     "$ref": "#/definitions/ConsumptionAttributeQuery"
                 }
             },
-            "required": [
-                "query"
-            ],
             "additionalProperties": false
         },
         "ConsumptionAttributeQuery": {
             "type": "object",
             "properties": {
+                "attributeType": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -383,30 +359,19 @@ export const SucceedAttributeRequest: any = {
         "SucceedAttributeRequest": {
             "type": "object",
             "properties": {
-                "params": {
-                    "$ref": "#/definitions/ISucceedConsumptionAttributeParams"
-                }
-            },
-            "required": [
-                "params"
-            ],
-            "additionalProperties": false
-        },
-        "ISucceedConsumptionAttributeParams": {
-            "type": "object",
-            "properties": {
                 "successorContent": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/IIdentityAttribute"
+                            "$ref": "#/definitions/ExtendedIdentityAttributeJSON"
                         },
                         {
-                            "$ref": "#/definitions/IRelationshipAttribute"
+                            "$ref": "#/definitions/ExtendedRelationshipAttributeJSON"
                         }
                     ]
                 },
                 "succeeds": {
-                    "$ref": "#/definitions/ICoreId"
+                    "type": "string",
+                    "pattern": "ATT[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -415,20 +380,43 @@ export const SucceedAttributeRequest: any = {
             ],
             "additionalProperties": false
         },
-        "IIdentityAttribute": {
+        "ExtendedIdentityAttributeJSON": {
             "type": "object",
             "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
                 "owner": {
-                    "$ref": "#/definitions/ICoreAddress"
+                    "type": "string"
                 },
                 "validFrom": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "type": "string"
                 },
                 "validTo": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "type": "string"
                 },
                 "value": {
-                    "$ref": "#/definitions/IAbstractAttributeValue"
+                    "type": "object",
+                    "properties": {
+                        "@type": {
+                            "type": "string"
+                        },
+                        "@context": {
+                            "type": "string"
+                        },
+                        "@version": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "@type"
+                    ]
                 },
                 "tags": {
                     "type": "array",
@@ -438,54 +426,49 @@ export const SucceedAttributeRequest: any = {
                 }
             },
             "required": [
+                "@type",
                 "owner",
                 "value"
             ],
             "additionalProperties": false
         },
-        "ICoreAddress": {
+        "ExtendedRelationshipAttributeJSON": {
             "type": "object",
             "properties": {
-                "address": {
+                "@type": {
                     "type": "string"
-                }
-            },
-            "required": [
-                "address"
-            ],
-            "additionalProperties": false
-        },
-        "ICoreDate": {
-            "type": "object",
-            "properties": {
-                "date": {
+                },
+                "@context": {
                     "type": "string"
-                }
-            },
-            "required": [
-                "date"
-            ],
-            "additionalProperties": false
-        },
-        "IAbstractAttributeValue": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {}
-        },
-        "IRelationshipAttribute": {
-            "type": "object",
-            "properties": {
+                },
+                "@version": {
+                    "type": "string"
+                },
                 "owner": {
-                    "$ref": "#/definitions/ICoreAddress"
+                    "type": "string"
                 },
                 "validFrom": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "type": "string"
                 },
                 "validTo": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "type": "string"
                 },
                 "value": {
-                    "$ref": "#/definitions/IAbstractAttributeValue"
+                    "type": "object",
+                    "properties": {
+                        "@type": {
+                            "type": "string"
+                        },
+                        "@context": {
+                            "type": "string"
+                        },
+                        "@version": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "@type"
+                    ]
                 },
                 "key": {
                     "type": "string"
@@ -498,6 +481,7 @@ export const SucceedAttributeRequest: any = {
                 }
             },
             "required": [
+                "@type",
                 "confidentiality",
                 "key",
                 "owner",
@@ -512,18 +496,6 @@ export const SucceedAttributeRequest: any = {
                 "private",
                 "protected"
             ]
-        },
-        "ICoreId": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false
         }
     }
 }
@@ -535,65 +507,64 @@ export const UpdateAttributeRequest: any = {
         "UpdateAttributeRequest": {
             "type": "object",
             "properties": {
-                "params": {
-                    "$ref": "#/definitions/UpdateConsumptionAttributeParams"
-                }
-            },
-            "required": [
-                "params"
-            ],
-            "additionalProperties": false
-        },
-        "UpdateConsumptionAttributeParams": {
-            "type": "object",
-            "properties": {
                 "id": {
-                    "$ref": "#/definitions/CoreId"
+                    "type": "string",
+                    "pattern": "ATT[A-Za-z0-9]{17}"
                 },
                 "content": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/IdentityAttribute"
+                            "$ref": "#/definitions/ExtendedIdentityAttributeJSON"
                         },
                         {
-                            "$ref": "#/definitions/RelationshipAttribute"
+                            "$ref": "#/definitions/ExtendedRelationshipAttributeJSON"
                         }
                     ]
                 }
             },
             "required": [
-                "content",
-                "id"
+                "id",
+                "content"
             ],
             "additionalProperties": false
         },
-        "CoreId": {
+        "ExtendedIdentityAttributeJSON": {
             "type": "object",
             "properties": {
-                "id": {
+                "@type": {
                     "type": "string"
-                }
-            },
-            "required": [
-                "id"
-            ],
-            "additionalProperties": false,
-            "description": "A CoreId is any kind of identifier we have in the system."
-        },
-        "IdentityAttribute": {
-            "type": "object",
-            "properties": {
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
                 "owner": {
-                    "$ref": "#/definitions/CoreAddress"
+                    "type": "string"
                 },
                 "validFrom": {
-                    "$ref": "#/definitions/CoreDate"
+                    "type": "string"
                 },
                 "validTo": {
-                    "$ref": "#/definitions/CoreDate"
+                    "type": "string"
                 },
                 "value": {
-                    "$ref": "#/definitions/AbstractAttributeValue"
+                    "type": "object",
+                    "properties": {
+                        "@type": {
+                            "type": "string"
+                        },
+                        "@context": {
+                            "type": "string"
+                        },
+                        "@version": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "@type"
+                    ]
                 },
                 "tags": {
                     "type": "array",
@@ -603,48 +574,49 @@ export const UpdateAttributeRequest: any = {
                 }
             },
             "required": [
+                "@type",
                 "owner",
                 "value"
             ],
             "additionalProperties": false
         },
-        "CoreAddress": {
+        "ExtendedRelationshipAttributeJSON": {
             "type": "object",
             "properties": {
-                "address": {
+                "@type": {
                     "type": "string"
-                }
-            },
-            "required": [
-                "address"
-            ],
-            "additionalProperties": false,
-            "description": "A CoreAddress is the primariy technical identitier of an account."
-        },
-        "CoreDate": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {}
-        },
-        "AbstractAttributeValue": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {}
-        },
-        "RelationshipAttribute": {
-            "type": "object",
-            "properties": {
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
                 "owner": {
-                    "$ref": "#/definitions/CoreAddress"
+                    "type": "string"
                 },
                 "validFrom": {
-                    "$ref": "#/definitions/CoreDate"
+                    "type": "string"
                 },
                 "validTo": {
-                    "$ref": "#/definitions/CoreDate"
+                    "type": "string"
                 },
                 "value": {
-                    "$ref": "#/definitions/AbstractAttributeValue"
+                    "type": "object",
+                    "properties": {
+                        "@type": {
+                            "type": "string"
+                        },
+                        "@context": {
+                            "type": "string"
+                        },
+                        "@version": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "@type"
+                    ]
                 },
                 "key": {
                     "type": "string"
@@ -657,8 +629,8 @@ export const UpdateAttributeRequest: any = {
                 }
             },
             "required": [
+                "@type",
                 "confidentiality",
-                "isTechnical",
                 "key",
                 "owner",
                 "value"
@@ -1203,7 +1175,7 @@ export const CheckPrerequisitesOfIncomingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -1223,7 +1195,7 @@ export const CompleteIncomingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 },
                 "responseSourceId": {
                     "type": "string",
@@ -1246,10 +1218,6 @@ export const CompleteOutgoingRequestRequest: any = {
         "CompleteOutgoingRequestRequest": {
             "type": "object",
             "properties": {
-                "requestId": {
-                    "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
-                },
                 "receivedResponse": {
                     "$ref": "#/definitions/ResponseJSON"
                 },
@@ -1259,7 +1227,6 @@ export const CompleteOutgoingRequestRequest: any = {
                 }
             },
             "required": [
-                "requestId",
                 "receivedResponse",
                 "messageId"
             ],
@@ -1413,7 +1380,7 @@ export const GetIncomingRequestRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -1545,7 +1512,7 @@ export const GetOutgoingRequestRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -1681,7 +1648,7 @@ export const ReceivedIncomingRequestRequest: any = {
                 "requestSourceId": {
                     "type": "string",
                     "description": "The id of the Message or RelationshipTemplate in which the Response was received.",
-                    "pattern": "(MSG|RLT)[A-Za-z0-9]{14}"
+                    "pattern": "(MSG|RLT)[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -1826,7 +1793,7 @@ export const RequireManualDecisionOfIncomingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -1846,7 +1813,7 @@ export const SentOutgoingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 },
                 "messageId": {
                     "type": "string",
@@ -3120,6 +3087,25 @@ export const LoadPeerTokenRequest: any = {
             },
             "required": [
                 "ephemeral"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const GetAttributesForRelationshipRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/GetAttributesForRelationshipRequest",
+    "definitions": {
+        "GetAttributesForRelationshipRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
             ],
             "additionalProperties": false
         }

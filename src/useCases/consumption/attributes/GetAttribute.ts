@@ -1,26 +1,26 @@
 import { Result } from "@js-soft/ts-utils";
-import { ConsumptionAttributesController, ConsumptionIds } from "@nmshd/consumption";
+import { ConsumptionAttributesController } from "@nmshd/consumption";
 import { Attribute } from "@nmshd/content";
 import { CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
-import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface GetAttributeRequest {
+    /**
+     * @pattern ATT[A-Za-z0-9]{17}
+     */
     id: string;
 }
 
-class GetAttributeRequestValidator extends RuntimeValidator<GetAttributeRequest> {
-    public constructor() {
-        super();
-
-        this.validateIf((x) => x.id).fulfills(IdValidator.required(ConsumptionIds.attribute));
+class Validator extends SchemaValidator<GetAttributeRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("GetAttributeRequest"));
     }
 }
-
 export class GetAttributeUseCase extends UseCase<GetAttributeRequest, ConsumptionAttributeDTO> {
-    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController, @Inject validator: GetAttributeRequestValidator) {
+    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController, @Inject validator: Validator) {
         super(validator);
     }
 

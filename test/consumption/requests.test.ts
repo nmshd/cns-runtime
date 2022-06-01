@@ -297,7 +297,6 @@ describe("Requests", () => {
             });
 
             const result = await sConsumptionServices.outgoingRequests.complete({
-                requestId: sConsumptionRequest.id,
                 messageId: sResponseMessage.id,
                 receivedResponse: sResponseMessage.content
             });

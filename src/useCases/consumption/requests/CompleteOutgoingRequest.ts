@@ -1,6 +1,6 @@
 import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
 import { ConsumptionRequestStatus, ICompleteOugoingRequestParameters, OutgoingRequestsController } from "@nmshd/consumption";
-import { ResponseJSON } from "@nmshd/content";
+import { Response, ResponseJSON } from "@nmshd/content";
 import { CoreId, Message, MessageController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { OutgoingRequestStatusChangedEvent } from "../../../events";
@@ -9,11 +9,6 @@ import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../..
 import { RequestMapper } from "./RequestMapper";
 
 export interface CompleteOutgoingRequestRequest {
-    /**
-     * @pattern REQ[A-Za-z0-9]{14}
-     */
-    requestId: string;
-
     receivedResponse: ResponseJSON;
 
     /**
@@ -46,9 +41,8 @@ export class CompleteOutgoingRequestUseCase extends UseCase<CompleteOutgoingRequ
         }
 
         const params: ICompleteOugoingRequestParameters = {
-            requestId: CoreId.from(request.requestId),
-            // @ts-expect-error // TODO: remove this as soon as the Type Definitions are correct
-            receivedResponse: request.receivedResponse,
+            requestId: CoreId.from(request.receivedResponse.requestId),
+            receivedResponse: Response.fromAny(request.receivedResponse),
             responseSourceObject: message
         };
 

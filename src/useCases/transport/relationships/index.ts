@@ -1,6 +1,7 @@
 export * from "./AcceptRelationshipChange";
 export * from "./CreateRelationship";
 export * from "./CreateRelationshipChange";
+export * from "./GetAttributesForRelationship";
 export * from "./GetRelationship";
 export * from "./GetRelationshipByAddress";
 export * from "./GetRelationships";
