@@ -38,18 +38,17 @@ export class GetAttributesForRelationshipUseCase extends UseCase<GetAttributesFo
             return Result.fail(RuntimeErrors.general.recordNotFound(Relationship));
         }
 
-        const attributes = await this.attributesController.getConsumptionAttributes({
+        const peerAddress = relationship.peer.address.toString();
+        const query = {
             $or: [
-                {
-                    // content.owner
-                    [`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.owner)}`]: relationship.peer
-                },
-                {
-                    // shareInfo.peer
-                    [`${nameof<ConsumptionAttribute>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfo>((x) => x.peer)}`]: relationship.peer
-                }
+                // content.owner
+                { [`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.owner)}`]: peerAddress },
+                // shareInfo.peer
+                { [`${nameof<ConsumptionAttribute>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfo>((x) => x.peer)}`]: peerAddress }
             ]
-        });
+        };
+        const attributes = await this.attributesController.getConsumptionAttributes(query);
+
         return Result.ok(AttributeMapper.toAttributeDTOList(attributes));
     }
 }
