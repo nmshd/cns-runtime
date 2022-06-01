@@ -11,7 +11,7 @@ export interface ExecuteIdentityAttributeQueryRequest {
 }
 
 export class ExecuteIdentityAttributeQueryUseCase extends UseCase<ExecuteIdentityAttributeQueryRequest, ConsumptionAttributeDTO[]> {
-    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController, @Inject validator: ExecuteIdentityAttributeQueryValidator) {
+    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController) {
         super();
     }
 

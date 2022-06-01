@@ -11,7 +11,7 @@ export interface ExecuteRelationshipAttributeQueryRequest {
 }
 
 export class ExecuteRelationshipAttributeQueryUseCase extends UseCase<ExecuteRelationshipAttributeQueryRequest, ConsumptionAttributeDTO[]> {
-    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController, @Inject validator: ExecuteRelationshipAttributeQueryValidator) {
+    public constructor(@Inject private readonly attributeController: ConsumptionAttributesController) {
         super();
     }
 
