@@ -140,11 +140,22 @@ describe("Attributes for the relationship", () => {
             peer: relationship.peer,
             requestReference: fakeRequestReference
         });
+
+        await consumptionServices1.attributes.createAttribute({
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "Surname",
+                    value: "APeerSurname"
+                },
+                owner: relationship.peer
+            }
+        });
     });
 
     test("get attributes", async () => {
         const response = await transportServices1.relationships.getAttributesForRelationship({ id: relationshipId });
         expect(response).toBeSuccessful();
-        expect(response.value).toHaveLength(1);
+        expect(response.value).toHaveLength(2);
     });
 });
