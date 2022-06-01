@@ -1203,7 +1203,7 @@ export const CheckPrerequisitesOfIncomingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -1223,7 +1223,7 @@ export const CompleteIncomingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 },
                 "responseSourceId": {
                     "type": "string",
@@ -1246,10 +1246,6 @@ export const CompleteOutgoingRequestRequest: any = {
         "CompleteOutgoingRequestRequest": {
             "type": "object",
             "properties": {
-                "requestId": {
-                    "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
-                },
                 "receivedResponse": {
                     "$ref": "#/definitions/ResponseJSON"
                 },
@@ -1259,7 +1255,6 @@ export const CompleteOutgoingRequestRequest: any = {
                 }
             },
             "required": [
-                "requestId",
                 "receivedResponse",
                 "messageId"
             ],
@@ -1413,7 +1408,7 @@ export const GetIncomingRequestRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -1545,7 +1540,7 @@ export const GetOutgoingRequestRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -1681,7 +1676,7 @@ export const ReceivedIncomingRequestRequest: any = {
                 "requestSourceId": {
                     "type": "string",
                     "description": "The id of the Message or RelationshipTemplate in which the Response was received.",
-                    "pattern": "(MSG|RLT)[A-Za-z0-9]{14}"
+                    "pattern": "(MSG|RLT)[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -1826,7 +1821,7 @@ export const RequireManualDecisionOfIncomingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -1846,7 +1841,7 @@ export const SentOutgoingRequestRequest: any = {
             "properties": {
                 "requestId": {
                     "type": "string",
-                    "pattern": "REQ[A-Za-z0-9]{14}"
+                    "pattern": "REQ[A-Za-z0-9]{17}"
                 },
                 "messageId": {
                     "type": "string",
@@ -3120,6 +3115,25 @@ export const LoadPeerTokenRequest: any = {
             },
             "required": [
                 "ephemeral"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const GetAttributesForRelationshipRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/GetAttributesForRelationshipRequest",
+    "definitions": {
+        "GetAttributesForRelationshipRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
             ],
             "additionalProperties": false
         }
