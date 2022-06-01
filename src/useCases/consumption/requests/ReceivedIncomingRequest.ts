@@ -13,7 +13,7 @@ export interface ReceivedIncomingRequestRequest {
 
     /**
      * The id of the Message or RelationshipTemplate in which the Response was received.
-     * @pattern (MSG|RLT)[A-Za-z0-9]{14}
+     * @pattern (MSG|RLT)[A-Za-z0-9]{17}
      */
     requestSourceId: string;
 }

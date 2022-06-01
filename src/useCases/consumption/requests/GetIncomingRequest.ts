@@ -8,7 +8,7 @@ import { RequestMapper } from "./RequestMapper";
 
 export interface GetIncomingRequestRequest {
     /**
-     * @pattern REQ[A-Za-z0-9]{14}
+     * @pattern REQ[A-Za-z0-9]{17}
      */
     id: string;
 }
