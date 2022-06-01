@@ -1,1 +1,2 @@
-export * from "./MatchedAttributesDVO";
+export * from "./ConsumptionAttributeDVO";
+export * from "./ConsumptionRequestDVO";

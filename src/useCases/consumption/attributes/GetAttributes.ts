@@ -24,7 +24,7 @@ export interface ConsumptionAttributeQuery {
         validTo?: string;
         key?: string;
         isTechnical?: boolean;
-        confidenttiality?: RelationshipAttributeConfidentiality;
+        confidentiality?: RelationshipAttributeConfidentiality;
         value?: {
             "@type"?: string;
         };

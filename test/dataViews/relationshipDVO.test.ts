@@ -63,8 +63,8 @@ describe("RelationshipDVO", () => {
         const dvo = dvos[0];
         expect(dvo).toBeDefined();
         expect(dvo.id).toBe(dto.peer);
-        expect(dvo.name).toBe("");
-        expect(dvo.description).toBe(""); // i18n://dvo.relationship.Active
+        expect(dvo.name).toBe(dto.peer.substring(3, 9));
+        expect(dvo.description).toBe("i18n://dvo.relationship.Active");
         expect(dvo.type).toBe("IdentityDVO");
         expect(dvo.date).toBe(dto.changes[0].request.createdAt);
         expect(dvo.isSelf).toBe(false);
@@ -98,8 +98,8 @@ describe("RelationshipDVO", () => {
         const dvo = dvos[0];
         expect(dvo).toBeDefined();
         expect(dvo.id).toBe(dto.peer);
-        expect(dvo.name).toBe("");
-        expect(dvo.description).toBe(""); // i18n://dvo.relationship.Active
+        expect(dvo.name).toBe(dto.peer.substring(3, 9));
+        expect(dvo.description).toBe("i18n://dvo.relationship.Active");
         expect(dvo.type).toBe("IdentityDVO");
         expect(dvo.date).toBe(dto.changes[0].request.createdAt);
         expect(dvo.isSelf).toBe(false);
