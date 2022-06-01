@@ -1,13 +1,15 @@
-import { TransportServices } from "../../src";
+import { ConsumptionServices, TransportServices } from "../../src";
 import { getRelationship, getTemplateToken, QueryParamConditions, RuntimeServiceProvider, syncUntilHasRelationships } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
+let consumptionServices1: ConsumptionServices;
 let transportServices2: TransportServices;
 
 beforeAll(async () => {
     const runtimeServices = await serviceProvider.launch(2);
     transportServices1 = runtimeServices[0].transport;
+    consumptionServices1 = runtimeServices[0].consumption;
     transportServices2 = runtimeServices[1].transport;
 }, 30000);
 afterAll(() => serviceProvider.stop());
@@ -109,5 +111,40 @@ describe("Relationships query", () => {
             // .addStringSet("status")
             .addStringSet("template.id");
         await conditions.executeTests((c, q) => c.relationships.getRelationships({ query: q }));
+    });
+});
+
+describe("Attributes for the relationship", () => {
+    let relationshipId: string;
+
+    beforeAll(async () => {
+        const relationship = await getRelationship(transportServices1);
+        relationshipId = relationship.id;
+
+        const attribute = (
+            await consumptionServices1.attributes.createAttribute({
+                content: {
+                    "@type": "IdentityAttribute",
+                    value: {
+                        "@type": "Surname",
+                        value: "ASurname"
+                    },
+                    owner: "address"
+                }
+            })
+        ).value;
+
+        const fakeRequestReference = "REQA15CharacterLongRef".padStart(17, "0");
+        await consumptionServices1.attributes.createSharedAttributeCopy({
+            attributeId: attribute.id,
+            peer: relationship.peer,
+            requestReference: fakeRequestReference
+        });
+    });
+
+    test("get attributes", async () => {
+        const response = await transportServices1.relationships.getAttributesForRelationship({ id: relationshipId });
+        expect(response).toBeSuccessful();
+        expect(response.value).toHaveLength(1);
     });
 });
