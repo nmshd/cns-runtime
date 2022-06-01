@@ -80,9 +80,9 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
     protected async login(accountController: AccountController, consumptionController: ConsumptionController): Promise<RuntimeServices> {
         this._accountController = accountController;
-        const transportServices = Container.get<TransportServices>(TransportServices);
-
         this._consumptionController = consumptionController;
+
+        const transportServices = Container.get<TransportServices>(TransportServices);
         const consumptionServices = Container.get<ConsumptionServices>(ConsumptionServices);
 
         const dataViewExpander = Container.get<DataViewExpander>(DataViewExpander);

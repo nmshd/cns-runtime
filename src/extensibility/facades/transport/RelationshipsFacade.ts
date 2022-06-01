@@ -8,6 +8,9 @@ import {
     CreateRelationshipChangeUseCase,
     CreateRelationshipRequest,
     CreateRelationshipUseCase,
+    GetAttributesForRelationshipRequest,
+    GetAttributesForRelationshipResponse,
+    GetAttributesForRelationshipUseCase,
     GetRelationshipByAddressRequest,
     GetRelationshipByAddressUseCase,
     GetRelationshipRequest,
@@ -29,7 +32,8 @@ export class RelationshipsFacade {
         @Inject private readonly createRelationshipChangeUseCase: CreateRelationshipChangeUseCase,
         @Inject private readonly acceptRelationshipChangeUseCase: AcceptRelationshipChangeUseCase,
         @Inject private readonly rejectRelationshipChangeUseCase: RejectRelationshipChangeUseCase,
-        @Inject private readonly revokeRelationshipChangeUseCase: RevokeRelationshipChangeUseCase
+        @Inject private readonly revokeRelationshipChangeUseCase: RevokeRelationshipChangeUseCase,
+        @Inject private readonly getAttributesForRelationshipUseCase: GetAttributesForRelationshipUseCase
     ) {}
 
     public async getRelationships(request: GetRelationshipsRequest): Promise<Result<RelationshipDTO[], ApplicationError>> {
@@ -62,5 +66,9 @@ export class RelationshipsFacade {
 
     public async revokeRelationshipChange(request: RevokeRelationshipChangeRequest): Promise<Result<RelationshipDTO, ApplicationError>> {
         return await this.revokeRelationshipChangeUseCase.execute(request);
+    }
+
+    public async getAttributesForRelationship(request: GetAttributesForRelationshipRequest): Promise<Result<GetAttributesForRelationshipResponse, ApplicationError>> {
+        return await this.getAttributesForRelationshipUseCase.execute(request);
     }
 }

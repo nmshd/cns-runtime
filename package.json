@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/runtime",
-    "version": "2.0.0-alpha.13",
+    "version": "2.0.0-alpha.14",
     "description": "The Enmeshed client runtime.",
     "homepage": "https://enmeshed.eu",
     "license": "MIT",
@@ -81,7 +81,7 @@
         "@types/jest-expect-message": "^1.0.3",
         "@types/json-stringify-safe": "^5.0.0",
         "@types/luxon": "^2.3.2",
-        "@types/node": "^17.0.36",
+        "@types/node": "^17.0.38",
         "@types/qrcode": "^1.4.2",
         "@types/qs": "^6.9.7",
         "eslint": "^8.16.0",
