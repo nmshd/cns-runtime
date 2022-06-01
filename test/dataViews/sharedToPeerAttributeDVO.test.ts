@@ -27,48 +27,40 @@ describe("SharedToPeerAttributeDVO", () => {
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<BirthYear>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: BirthYear.fromAny(2001)
-                        })
-                    }
+                    content: IdentityAttribute.from<BirthYear>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: BirthYear.fromAny(2001)
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<Sex>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: Sex.fromAny("male")
-                        })
-                    }
+                    content: IdentityAttribute.from<Sex>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: Sex.fromAny("male")
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<Nationality>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: Nationality.fromAny("DE")
-                        })
-                    }
+                    content: IdentityAttribute.from<Nationality>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: Nationality.fromAny("DE")
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<CommunicationLanguage>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: CommunicationLanguage.fromAny("de")
-                        })
-                    }
+                    content: IdentityAttribute.from<CommunicationLanguage>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: CommunicationLanguage.fromAny("de")
+                    }).toJSON() as any
                 })
             ).value
         );
@@ -77,7 +69,9 @@ describe("SharedToPeerAttributeDVO", () => {
             sharedAttributes.push(
                 (
                     await consumptionServices1.attributes.createSharedAttributeCopy({
-                        params: { attributeId: CoreId.from(attr.id), peer: CoreAddress.from("id123456789"), requestReference: await CoreId.generate() }
+                        attributeId: attr.id,
+                        peer: `${transportService1Address.substring(0, transportService1Address.length - 1)}a`,
+                        requestReference: (await CoreId.generate("REQ")).toString()
                     })
                 ).value
             );

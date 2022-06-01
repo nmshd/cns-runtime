@@ -26,96 +26,80 @@ describe("RepositoryAttributeDVO", () => {
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<GivenName>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: GivenName.fromAny("Hugo")
-                        })
-                    }
+                    content: IdentityAttribute.from<GivenName>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: GivenName.fromAny("Hugo")
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<Surname>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: Surname.fromAny("Becker")
-                        })
-                    }
+                    content: IdentityAttribute.from<Surname>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: Surname.fromAny("Becker")
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<BirthDay>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: BirthDay.fromAny(17)
-                        })
-                    }
+                    content: IdentityAttribute.from<BirthDay>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: BirthDay.fromAny(17)
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<BirthMonth>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: BirthMonth.fromAny(11)
-                        })
-                    }
+                    content: IdentityAttribute.from<BirthMonth>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: BirthMonth.fromAny(11)
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<BirthYear>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: BirthYear.fromAny(2001)
-                        })
-                    }
+                    content: IdentityAttribute.from<BirthYear>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: BirthYear.fromAny(2001)
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<Sex>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: Sex.fromAny("male")
-                        })
-                    }
+                    content: IdentityAttribute.from<Sex>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: Sex.fromAny("male")
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<Nationality>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: Nationality.fromAny("DE")
-                        })
-                    }
+                    content: IdentityAttribute.from<Nationality>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: Nationality.fromAny("DE")
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<CommunicationLanguage>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: CommunicationLanguage.fromAny("de")
-                        })
-                    }
+                    content: IdentityAttribute.from<CommunicationLanguage>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: CommunicationLanguage.fromAny("de")
+                    }).toJSON() as any
                 })
             ).value
         );

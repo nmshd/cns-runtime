@@ -26,24 +26,20 @@ describe("IdentityAttributeQueryExpanded", () => {
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<GivenName>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: GivenName.fromAny("Hugo")
-                        })
-                    }
+                    content: IdentityAttribute.from<GivenName>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: GivenName.fromAny("Hugo")
+                    }).toJSON() as any
                 })
             ).value
         );
         attributes.push(
             (
                 await consumptionServices1.attributes.createAttribute({
-                    params: {
-                        content: IdentityAttribute.from<GivenName>({
-                            owner: CoreAddress.from(transportService1Address),
-                            value: GivenName.fromAny("Egon")
-                        })
-                    }
+                    content: IdentityAttribute.from<GivenName>({
+                        owner: CoreAddress.from(transportService1Address),
+                        value: GivenName.fromAny("Egon")
+                    }).toJSON() as any
                 })
             ).value
         );
