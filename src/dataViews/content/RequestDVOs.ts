@@ -1,7 +1,21 @@
-import { MatchedAttributesDVO } from "../consumption/MatchedAttributesDVO";
+import { ConsumptionAttributeDVO } from "../consumption";
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "../transport/IdentityDVO";
-import { ConsumptionAttributeDVO } from "./ConsumptionAttributeDVO";
+
+export interface MatchedAttributesDVO extends DataViewObject {
+    type: "MatchedAttributesDVO";
+    // query: AttributeMetadata;
+    matches: StoredAttributeDVO[];
+    matchCount: number;
+    bestMatch?: StoredAttributeDVO;
+    // fallback: AttributeDVO;
+}
+
+export interface StoredAttributeDVO extends Omit<ConsumptionAttributeDVO, "type"> {
+    type: "StoredAttributeDVO";
+    sharedItems: string[];
+    sharedItemCount: number;
+}
 
 export interface RequestDVO extends DataViewObject {
     // from RequestJSON
@@ -66,26 +80,4 @@ export interface AttributesRequestDVO extends RequestDVO {
     // new
     attributes: MatchedAttributesDVO[];
     attributeCount: number;
-}
-
-export interface AuthorizationGrantRequestDVO extends RequestDVO {
-    type: "AuthorizationGrantRequestDVO";
-
-    // from AuthorizationGrantRequestJSON
-    authorizationCode: string;
-    authorizationDescription?: string;
-    authorizationTitle: string;
-    authorizationExpiresAt?: string;
-}
-
-export interface ChallengeRequestDVO extends RequestDVO {
-    type: "ChallengeRequestDVO";
-
-    // from ChallengeRequestJSON
-    expiresAt: string;
-    createdBy?: IdentityDVO;
-    createdByDevice?: string;
-
-    // override ChallengeRequestJSON
-    challengeType: string;
 }
