@@ -247,10 +247,9 @@ export class DataViewExpander {
     }
 
     public async expandConsumptionRequest(request: ConsumptionRequestDTO): Promise<ConsumptionRequestDVO> {
-        const id = request.id ? request.id : "";
         return {
             ...request,
-            id,
+            id: request.id,
             name: "i18n://dvo.request.name.response",
             type: "ConsumptionRequestDVO",
             date: request.createdAt,
@@ -331,7 +330,6 @@ export class DataViewExpander {
         }
 
         const sharedToPeerAttributes = await this.consumption.attributes.getAttributes({ query: { shareInfo: { sourceAttribute: attribute.id } } });
-        // .attributes.getConsumptionAttributes({ "shareInfo.sourceAttribute": consumptionAttribute.id.toString() });
         const sharedToPeerDVOs = await this.expandConsumptionAttributes(sharedToPeerAttributes.value);
 
         // Own Source Attribute
