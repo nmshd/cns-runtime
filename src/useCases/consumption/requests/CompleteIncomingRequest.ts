@@ -9,7 +9,7 @@ import { RequestMapper } from "./RequestMapper";
 
 export interface CompleteIncomingRequestRequest {
     /**
-     * @pattern REQ[A-Za-z0-9]{14}
+     * @pattern REQ[A-Za-z0-9]{17}
      */
     requestId: string;
 
