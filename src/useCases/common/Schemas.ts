@@ -233,6 +233,394 @@ export const DeleteAttributeRequest: any = {
     }
 }
 
+export const ExecuteIdentityAttributeQueryRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/ExecuteIdentityAttributeQueryRequest",
+    "definitions": {
+        "ExecuteIdentityAttributeQueryRequest": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IIdentityAttributeQuery"
+                        },
+                        {
+                            "$ref": "#/definitions/IdentityAttributeQueryJSON"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "query"
+            ],
+            "additionalProperties": false
+        },
+        "IIdentityAttributeQuery": {
+            "type": "object",
+            "properties": {
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "ICoreDate": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "date"
+            ],
+            "additionalProperties": false
+        },
+        "IdentityAttributeQueryJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "@type"
+            ]
+        }
+    }
+}
+
+export const ExecuteRelationshipAttributeQueryRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/ExecuteRelationshipAttributeQueryRequest",
+    "definitions": {
+        "ExecuteRelationshipAttributeQueryRequest": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IRelationshipAttributeQuery"
+                        },
+                        {
+                            "$ref": "#/definitions/RelationshipAttributeQueryJSON"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "query"
+            ],
+            "additionalProperties": false
+        },
+        "IRelationshipAttributeQuery": {
+            "type": "object",
+            "properties": {
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "owner": {
+                    "$ref": "#/definitions/ICoreAddress"
+                },
+                "attributeHints": {
+                    "$ref": "#/definitions/IRelationshipAttributeHints"
+                },
+                "thirdParty": {
+                    "$ref": "#/definitions/ICoreAddress"
+                }
+            },
+            "required": [
+                "key",
+                "owner",
+                "attributeHints"
+            ],
+            "additionalProperties": false
+        },
+        "ICoreDate": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "date"
+            ],
+            "additionalProperties": false
+        },
+        "ICoreAddress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "address"
+            ],
+            "additionalProperties": false
+        },
+        "IRelationshipAttributeHints": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "valueHints": {
+                    "$ref": "#/definitions/IValueHints"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "title",
+                "confidentiality"
+            ],
+            "additionalProperties": false
+        },
+        "IValueHints": {
+            "type": "object",
+            "properties": {
+                "editHelp": {
+                    "type": "string"
+                },
+                "min": {
+                    "type": "number"
+                },
+                "max": {
+                    "type": "number"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/IValueHintsValue"
+                    }
+                },
+                "defaultValue": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
+        "IValueHintsValue": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                },
+                "displayName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "key",
+                "displayName"
+            ],
+            "additionalProperties": false
+        },
+        "RelationshipAttributeConfidentiality": {
+            "type": "string",
+            "enum": [
+                "public",
+                "private",
+                "protected"
+            ]
+        },
+        "RelationshipAttributeQueryJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "attributeHints": {
+                    "$ref": "#/definitions/RelationshipAttributeHintsJSON"
+                },
+                "thirdParty": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type",
+                "attributeHints",
+                "key",
+                "owner"
+            ],
+            "additionalProperties": false
+        },
+        "RelationshipAttributeHintsJSON": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "valueHints": {
+                    "$ref": "#/definitions/ValueHintsJSON"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "title",
+                "confidentiality"
+            ],
+            "additionalProperties": false
+        },
+        "ValueHintsJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "editHelp": {
+                    "type": "string"
+                },
+                "min": {
+                    "type": "number"
+                },
+                "max": {
+                    "type": "number"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ValueHintsValueJSON"
+                    }
+                },
+                "defaultValue": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "@type"
+            ]
+        },
+        "ValueHintsValueJSON": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                },
+                "displayName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "key",
+                "displayName"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const GetAttributeRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetAttributeRequest",
