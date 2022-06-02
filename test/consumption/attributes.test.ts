@@ -1,4 +1,4 @@
-import { RelationshipAttributeConfidentiality } from "@nmshd/content";
+import { IdentityAttributeQueryJSON, RelationshipAttributeConfidentiality, RelationshipAttributeQueryJSON } from "@nmshd/content";
 import { CoreDate } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import {
@@ -7,6 +7,7 @@ import {
     CreateAttributeRequest,
     CreateShareAttributeCopyRequest,
     ExecuteIdentityAttributeQueryRequest,
+    ExecuteRelationshipAttributeQueryRequest,
     GetAttributesRequest,
     SucceedAttributeRequest,
     UpdateAttributeRequest
@@ -307,18 +308,59 @@ describe("Attributes", () => {
                 owner: "address"
             }
         };
-        const relationshiptAttribute = await consumptionServices.attributes.createAttribute(relationshipAttributeRequest);
+        const relationshipAttribute = await consumptionServices.attributes.createAttribute(relationshipAttributeRequest);
+        const identityQuery: IdentityAttributeQueryJSON = { "@type": "IdentityAttributeQuery", valueType: "Phone" };
         const identityQueryRequest: ExecuteIdentityAttributeQueryRequest = {
-            query: {
-                valueType: "Phone"
-            }
+            query: identityQuery
         };
         const receivedAttributes = await consumptionServices.attributes.executeIdentityAttributeQuery(identityQueryRequest);
         expect(receivedAttributes).toBeSuccessful();
         expect(receivedAttributes.value).toHaveLength(1);
         const currentAttributesJSON = receivedAttributes.value.map((v) => v.id);
-        expect(currentAttributesJSON).not.toContain(relationshiptAttribute.value.id);
+        expect(currentAttributesJSON).not.toContain(relationshipAttribute.value.id);
         expect(currentAttributesJSON).toContain(identityAttribute.value.id);
         expect(receivedAttributes.value[0]).toStrictEqual(identityAttribute.value);
+    });
+    test("should allow to execute a relationshipAttributeQuery", async function () {
+        const identityAttributeRequest: CreateAttributeRequest = {
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "Website",
+                    value: "AWebsiteAddress"
+                },
+                owner: "address"
+            }
+        };
+        const identityAttribute = await consumptionServices.attributes.createAttribute(identityAttributeRequest);
+        const relationshipAttributeRequest: CreateAttributeRequest = {
+            content: {
+                "@type": "RelationshipAttribute",
+                value: {
+                    "@type": "Website",
+                    value: "AWebsiteAddress"
+                },
+                key: "website",
+                confidentiality: "protected" as RelationshipAttributeConfidentiality,
+                owner: "address"
+            }
+        };
+        const relationshipAttribute = await consumptionServices.attributes.createAttribute(relationshipAttributeRequest);
+        const relationshipAttributeQuery: RelationshipAttributeQueryJSON = {
+            "@type": "RelationshipAttributeQuery",
+            key: "website",
+            owner: "address",
+            attributeHints: { title: "AnAttributeHint", confidentiality: "protected" as RelationshipAttributeConfidentiality }
+        };
+        const relationshipQueryRequest: ExecuteRelationshipAttributeQueryRequest = {
+            query: relationshipAttributeQuery
+        };
+        const receivedAttributes = await consumptionServices.attributes.executeRelationshipAttributeQuery(relationshipQueryRequest);
+        expect(receivedAttributes).toBeSuccessful();
+        expect(receivedAttributes.value).toHaveLength(1);
+        const currentAttributesJSON = receivedAttributes.value.map((v) => v.id);
+        expect(currentAttributesJSON).toContain(relationshipAttribute.value.id);
+        expect(currentAttributesJSON).not.toContain(identityAttribute.value.id);
+        expect(receivedAttributes.value[0]).toStrictEqual(relationshipAttribute.value);
     });
 });

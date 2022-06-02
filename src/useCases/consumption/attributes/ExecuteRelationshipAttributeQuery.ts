@@ -1,13 +1,13 @@
 import { Result } from "@js-soft/ts-utils";
-import { ConsumptionAttributesController, GetRelationshipAttributesParams } from "@nmshd/consumption";
-import { IRelationshipAttributeQuery } from "@nmshd/content";
+import { ConsumptionAttributesController, IGetRelationshipAttributesParams } from "@nmshd/consumption";
+import { IRelationshipAttributeQuery, RelationshipAttributeQueryJSON } from "@nmshd/content";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
 import { UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface ExecuteRelationshipAttributeQueryRequest {
-    query: IRelationshipAttributeQuery;
+    query: IRelationshipAttributeQuery | RelationshipAttributeQueryJSON;
 }
 
 export class ExecuteRelationshipAttributeQueryUseCase extends UseCase<ExecuteRelationshipAttributeQueryRequest, ConsumptionAttributeDTO[]> {
@@ -16,9 +16,9 @@ export class ExecuteRelationshipAttributeQueryUseCase extends UseCase<ExecuteRel
     }
 
     protected async executeInternal(request: ExecuteRelationshipAttributeQueryRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
-        const params = GetRelationshipAttributesParams.from({
+        const params = {
             query: request.query
-        });
+        } as IGetRelationshipAttributesParams;
         const attributes = await this.attributeController.executeRelationshipAttributeQuery(params);
         return Result.ok(AttributeMapper.toAttributeDTOList(attributes));
     }

@@ -241,7 +241,7 @@ export const ExecuteIdentityAttributeQueryRequest: any = {
             "type": "object",
             "properties": {
                 "query": {
-                    "$ref": "#/definitions/IIdentityAttributeQuery"
+                    "$ref": "#/definitions/IdentityAttributeQuery"
                 }
             },
             "required": [
@@ -249,17 +249,17 @@ export const ExecuteIdentityAttributeQueryRequest: any = {
             ],
             "additionalProperties": false
         },
-        "IIdentityAttributeQuery": {
+        "IdentityAttributeQuery": {
             "type": "object",
             "properties": {
                 "valueType": {
                     "type": "string"
                 },
                 "validFrom": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "$ref": "#/definitions/CoreDate"
                 },
                 "validTo": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "$ref": "#/definitions/CoreDate"
                 },
                 "tags": {
                     "type": "array",
@@ -270,17 +270,10 @@ export const ExecuteIdentityAttributeQueryRequest: any = {
             },
             "additionalProperties": false
         },
-        "ICoreDate": {
+        "CoreDate": {
             "type": "object",
-            "properties": {
-                "date": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "date"
-            ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "properties": {}
         }
     }
 }
@@ -293,7 +286,7 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
             "type": "object",
             "properties": {
                 "query": {
-                    "$ref": "#/definitions/IRelationshipAttributeQuery"
+                    "$ref": "#/definitions/RelationshipAttributeQuery"
                 }
             },
             "required": [
@@ -301,51 +294,44 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
             ],
             "additionalProperties": false
         },
-        "IRelationshipAttributeQuery": {
+        "RelationshipAttributeQuery": {
             "type": "object",
             "properties": {
                 "valueType": {
                     "type": "string"
                 },
                 "validFrom": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "$ref": "#/definitions/CoreDate"
                 },
                 "validTo": {
-                    "$ref": "#/definitions/ICoreDate"
+                    "$ref": "#/definitions/CoreDate"
                 },
                 "key": {
                     "type": "string"
                 },
                 "owner": {
-                    "$ref": "#/definitions/ICoreAddress"
+                    "$ref": "#/definitions/CoreAddress"
                 },
                 "attributeHints": {
-                    "$ref": "#/definitions/IRelationshipAttributeHints"
+                    "$ref": "#/definitions/RelationshipAttributeHints"
                 },
                 "thirdParty": {
-                    "$ref": "#/definitions/ICoreAddress"
+                    "$ref": "#/definitions/CoreAddress"
                 }
             },
             "required": [
+                "attributeHints",
                 "key",
-                "owner",
-                "attributeHints"
+                "owner"
             ],
             "additionalProperties": false
         },
-        "ICoreDate": {
+        "CoreDate": {
             "type": "object",
-            "properties": {
-                "date": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "date"
-            ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "properties": {}
         },
-        "ICoreAddress": {
+        "CoreAddress": {
             "type": "object",
             "properties": {
                 "address": {
@@ -355,9 +341,10 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
             "required": [
                 "address"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "A CoreAddress is the primariy technical identitier of an account."
         },
-        "IRelationshipAttributeHints": {
+        "RelationshipAttributeHints": {
             "type": "object",
             "properties": {
                 "title": {
@@ -367,7 +354,7 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
                     "type": "string"
                 },
                 "valueHints": {
-                    "$ref": "#/definitions/IValueHints"
+                    "$ref": "#/definitions/ValueHints"
                 },
                 "isTechnical": {
                     "type": "boolean"
@@ -377,12 +364,14 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
                 }
             },
             "required": [
-                "title",
-                "confidentiality"
+                "confidentiality",
+                "isTechnical",
+                "title"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "AttributeHints are rendering hints with a `title` and a possible `description` set. They are primarily used within `RelationshipAttributeQuery` to define the metadata of a proprietary Attribute, even without such an Attribute existent."
         },
-        "IValueHints": {
+        "ValueHints": {
             "type": "object",
             "properties": {
                 "editHelp": {
@@ -400,20 +389,20 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
                 "values": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/IValueHintsValue"
+                        "$ref": "#/definitions/ValueHintsValue"
                     }
                 },
                 "defaultValue": {
                     "type": [
-                        "string",
                         "number",
+                        "string",
                         "boolean"
                     ]
                 }
             },
             "additionalProperties": false
         },
-        "IValueHintsValue": {
+        "ValueHintsValue": {
             "type": "object",
             "properties": {
                 "key": {
@@ -428,8 +417,8 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
                 }
             },
             "required": [
-                "key",
-                "displayName"
+                "displayName",
+                "key"
             ],
             "additionalProperties": false
         },
