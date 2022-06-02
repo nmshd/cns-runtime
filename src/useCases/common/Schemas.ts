@@ -649,12 +649,12 @@ export const GetAttributesRequest: any = {
             "type": "object",
             "properties": {
                 "query": {
-                    "$ref": "#/definitions/ConsumptionAttributeQuery"
+                    "$ref": "#/definitions/GetAttributesRequestQuery"
                 }
             },
             "additionalProperties": false
         },
-        "ConsumptionAttributeQuery": {
+        "GetAttributesRequestQuery": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -679,6 +679,93 @@ export const GetAttributesRequest: any = {
                             "type": "string"
                         },
                         "validTo": {
+                            "type": "string"
+                        },
+                        "key": {
+                            "type": "string"
+                        },
+                        "isTechnical": {
+                            "type": "boolean"
+                        },
+                        "confidentiality": {
+                            "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                        },
+                        "value": {
+                            "type": "object",
+                            "properties": {
+                                "@type": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "succeeds": {
+                    "type": "string"
+                },
+                "succeededBy": {
+                    "type": "string"
+                },
+                "shareInfo": {
+                    "type": "object",
+                    "properties": {
+                        "requestReference": {
+                            "type": "string"
+                        },
+                        "peer": {
+                            "type": "string"
+                        },
+                        "sourceAttribute": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": {}
+        },
+        "RelationshipAttributeConfidentiality": {
+            "type": "string",
+            "enum": [
+                "public",
+                "private",
+                "protected"
+            ]
+        }
+    }
+}
+
+export const GetValidAttributesRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/GetValidAttributesRequest",
+    "definitions": {
+        "GetValidAttributesRequest": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "$ref": "#/definitions/GetValidAttributesRequestQuery"
+                }
+            },
+            "additionalProperties": false
+        },
+        "GetValidAttributesRequestQuery": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "object",
+                    "properties": {
+                        "@type": {
+                            "type": "string"
+                        },
+                        "tags": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "owner": {
                             "type": "string"
                         },
                         "key": {
@@ -1784,12 +1871,12 @@ export const GetIncomingRequestsRequest: any = {
             "type": "object",
             "properties": {
                 "query": {
-                    "$ref": "#/definitions/GetIncomingRequestsRequestsQuery"
+                    "$ref": "#/definitions/GetIncomingRequestsRequestQuery"
                 }
             },
             "additionalProperties": false
         },
-        "GetIncomingRequestsRequestsQuery": {
+        "GetIncomingRequestsRequestQuery": {
             "type": "object",
             "properties": {
                 "id": {

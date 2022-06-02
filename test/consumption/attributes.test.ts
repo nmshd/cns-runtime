@@ -2,7 +2,6 @@ import { IdentityAttributeQueryJSON, RelationshipAttributeConfidentiality, Relat
 import { CoreDate } from "@nmshd/transport";
 import { DateTime } from "luxon";
 import {
-    ConsumptionAttributeQuery,
     ConsumptionServices,
     CreateAttributeRequest,
     CreateShareAttributeCopyRequest,
@@ -167,7 +166,7 @@ describe("Attributes", () => {
         const allAttributesJSON = allAttributes.value.map((v) => v.id);
         expect(allAttributesJSON).toContain(succeededAttribute.value.id);
 
-        const currentAttributes = await consumptionServices.attributes.getAllValid();
+        const currentAttributes = await consumptionServices.attributes.getValidAttributes({});
         const currentAttributesJSON = currentAttributes.value.map((v) => v.id);
         expect(currentAttributesJSON).not.toContain(succeededAttribute.value.id);
         expect(currentAttributesJSON).toContain(succeessorAttribute.value.id);
@@ -272,11 +271,10 @@ describe("Attributes", () => {
             }
         };
         const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
-        const query: ConsumptionAttributeQuery = {
-            content: { value: { "@type": "EMailAddress" } }
-        };
         const queryRequest: GetAttributesRequest = {
-            query: query
+            query: {
+                content: { value: { "@type": "EMailAddress" } }
+            }
         };
         const receivedAttributes = await consumptionServices.attributes.getAttributes(queryRequest);
         expect(receivedAttributes).toBeSuccessful();

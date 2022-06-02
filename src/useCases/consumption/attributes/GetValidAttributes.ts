@@ -2,7 +2,6 @@ import { QueryTranslator } from "@js-soft/docdb-querytranslator";
 import { Result } from "@js-soft/ts-utils";
 import { ConsumptionAttribute, ConsumptionAttributesController, ConsumptionAttributeShareInfoJSON } from "@nmshd/consumption";
 import { AbstractAttributeJSON, IdentityAttribute, IdentityAttributeJSON, RelationshipAttributeConfidentiality, RelationshipAttributeJSON } from "@nmshd/content";
-import { DateTime } from "luxon";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
 import { ConsumptionAttributeDTO } from "../../../types";
@@ -10,18 +9,15 @@ import { UseCase } from "../../common";
 import { flattenObject } from "../requests/flattenObject";
 import { AttributeMapper } from "./AttributeMapper";
 
-export interface GetAttributesRequest {
-    query?: GetAttributesRequestQuery;
+export interface GetValidAttributesRequest {
+    query?: GetValidAttributesRequestQuery;
 }
 
-export interface GetAttributesRequestQuery {
-    createdAt?: string;
+export interface GetValidAttributesRequestQuery {
     content?: {
         "@type"?: string;
         tags?: string[];
         owner?: string;
-        validFrom?: string;
-        validTo?: string;
         key?: string;
         isTechnical?: boolean;
         confidentiality?: RelationshipAttributeConfidentiality;
@@ -39,16 +35,13 @@ export interface GetAttributesRequestQuery {
     [key: string]: unknown;
 }
 
-export class GetAttributesUseCase extends UseCase<GetAttributesRequest, ConsumptionAttributeDTO[]> {
+export class GetValidAttributesUseCase extends UseCase<GetValidAttributesRequest, ConsumptionAttributeDTO[]> {
     private static readonly queryTranslator = new QueryTranslator({
         whitelist: {
-            [nameof<ConsumptionAttributeDTO>((x) => x.createdAt)]: true,
             [nameof<ConsumptionAttributeDTO>((x) => x.succeeds)]: true,
             [nameof<ConsumptionAttributeDTO>((x) => x.succeededBy)]: true,
 
             // content.abstractAttribute
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`]: true,
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`]: true,
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.owner)}`]: true,
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.@type`]: true,
 
@@ -67,17 +60,10 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
             [`${nameof<ConsumptionAttributeDTO>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfoJSON>((x) => x.sourceAttribute)}`]: true
         },
         alias: {
-            [nameof<ConsumptionAttributeDTO>((x) => x.createdAt)]: [nameof<ConsumptionAttribute>((x) => x.createdAt)],
             [nameof<ConsumptionAttributeDTO>((x) => x.succeeds)]: [nameof<ConsumptionAttribute>((x) => x.succeeds)],
             [nameof<ConsumptionAttributeDTO>((x) => x.succeededBy)]: [nameof<ConsumptionAttribute>((x) => x.succeededBy)],
 
             // content.abstractAttribute
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`]: [
-                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`
-            ],
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`]: [
-                `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`
-            ],
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.owner)}`]: [
                 `${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.owner)}`
             ],
@@ -114,26 +100,6 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
             ]
         },
         custom: {
-            // content.validFrom
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`]: (query: any, input: any) => {
-                if (!input) {
-                    return;
-                }
-                const validFromUtcString = DateTime.fromISO(input).toUTC().toString();
-                query[`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validFrom)}`] = {
-                    $gte: validFromUtcString
-                };
-            },
-            // content.validTo
-            [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`]: (query: any, input: any) => {
-                if (!input) {
-                    return;
-                }
-                const validToUtcString = DateTime.fromISO(input).toUTC().toString();
-                query[`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttributeJSON>((x) => x.validTo)}`] = {
-                    $lte: validToUtcString
-                };
-            },
             // content.tags
             [`${nameof<ConsumptionAttributeDTO>((x) => x.content)}.${nameof<IdentityAttribute>((x) => x.tags)}`]: (query: any, input: any) => {
                 const allowedTags = [];
@@ -150,10 +116,10 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
         super();
     }
 
-    protected async executeInternal(request: GetAttributesRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
+    protected async executeInternal(request: GetValidAttributesRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
         const flattenedQuery = flattenObject(request.query);
-        const dbQuery = GetAttributesUseCase.queryTranslator.parse(flattenedQuery);
-        const attributes = await this.attributeController.getConsumptionAttributes(dbQuery);
+        const dbQuery = GetValidAttributesUseCase.queryTranslator.parse(flattenedQuery);
+        const attributes = await this.attributeController.getValidConsumptionAttributes(dbQuery);
         return Result.ok(AttributeMapper.toAttributeDTOList(attributes));
     }
 }
