@@ -8,11 +8,12 @@ import {
     CreateSharedAttributeCopyUseCase,
     DeleteAttributeRequest,
     DeleteAttributeUseCase,
-    GetAllValidUseCase,
     GetAttributeRequest,
     GetAttributesRequest,
     GetAttributesUseCase,
     GetAttributeUseCase,
+    GetValidAttributesRequest,
+    GetValidAttributesUseCase,
     SucceedAttributeRequest,
     SucceedAttributeUseCase,
     UpdateAttributeRequest,
@@ -24,7 +25,7 @@ export class AttributesFacade {
         @Inject private readonly createAttributeUseCase: CreateAttributeUseCase,
         @Inject private readonly createSharedAttributeCopyUseCase: CreateSharedAttributeCopyUseCase,
         @Inject private readonly deleteAttributeUseCase: DeleteAttributeUseCase,
-        @Inject private readonly getAllValidUseCase: GetAllValidUseCase,
+        @Inject private readonly getValidAttributesUseCase: GetValidAttributesUseCase,
         @Inject private readonly getAttributeUseCase: GetAttributeUseCase,
         @Inject private readonly getAttributesUseCase: GetAttributesUseCase,
         @Inject private readonly succeedAttributeUseCase: SucceedAttributeUseCase,
@@ -43,8 +44,8 @@ export class AttributesFacade {
         return await this.deleteAttributeUseCase.execute(request);
     }
 
-    public async getAllValid(): Promise<Result<ConsumptionAttributeDTO[]>> {
-        return await this.getAllValidUseCase.execute();
+    public async getValidAttributes(request: GetValidAttributesRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
+        return await this.getValidAttributesUseCase.execute(request);
     }
 
     public async getAttribute(request: GetAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
