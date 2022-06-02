@@ -11,10 +11,10 @@ import { flattenObject } from "../requests/flattenObject";
 import { AttributeMapper } from "./AttributeMapper";
 
 export interface GetAttributesRequest {
-    query?: ConsumptionAttributeQuery;
+    query?: GetAttributesRequestQuery;
 }
 
-export interface ConsumptionAttributeQuery {
+export interface GetAttributesRequestQuery {
     createdAt?: string;
     content?: {
         "@type"?: string;
@@ -153,7 +153,7 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, Consumpt
     protected async executeInternal(request: GetAttributesRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
         const flattenedQuery = flattenObject(request.query);
         const dbQuery = GetAttributesUseCase.queryTranslator.parse(flattenedQuery);
-        const fetched = await this.attributeController.getConsumptionAttributes(dbQuery);
-        return Result.ok(AttributeMapper.toAttributeDTOList(fetched));
+        const attributes = await this.attributeController.getConsumptionAttributes(dbQuery);
+        return Result.ok(AttributeMapper.toAttributeDTOList(attributes));
     }
 }
