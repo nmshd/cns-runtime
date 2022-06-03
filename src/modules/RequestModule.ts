@@ -1,5 +1,5 @@
 import { ConsumptionRequestStatus } from "@nmshd/consumption";
-import { RelationshipCreationChangeRequestBody, RelationshipTemplateBodyJSON, RequestJSON } from "@nmshd/content";
+import { RelationshipCreationChangeRequestBody, RelationshipTemplateBodyJSON, RequestJSON, ResponseJSON } from "@nmshd/content";
 import { IncomingRequestStatusChangedEvent, MessageReceivedEvent, PeerRelationshipTemplateLoadedEvent, RelationshipChangedEvent } from "../events";
 import { RuntimeModule } from "../extensibility/modules/RuntimeModule";
 import { RuntimeServices } from "../Runtime";
@@ -28,14 +28,18 @@ export class RequestModule extends RuntimeModule {
     }
 
     private async handleMessageReceivedEvent(event: MessageReceivedEvent) {
-        if (event.data.content["@type"] !== "Request") return;
-        // TODO: JSSNMSHDD-2896 (handle response)
-
-        const request = event.data.content as RequestJSON;
-
         const services = this.runtime.getServices(event.eventTargetAddress);
 
-        await this.createIncomingRequest(services, request, event.data.id);
+        const messageContentType = event.data.content["@type"];
+        switch (messageContentType) {
+            case "Request":
+                await this.createIncomingRequest(services, event.data.content as RequestJSON, event.data.id);
+                break;
+            case "Response":
+                const receivedResponse = event.data.content as ResponseJSON;
+                await services.consumptionServices.outgoingRequests.complete({ receivedResponse, messageId: event.data.id });
+                break;
+        }
     }
 
     private async createIncomingRequest(services: RuntimeServices, request: RequestJSON, requestSourceId: string) {
@@ -58,6 +62,9 @@ export class RequestModule extends RuntimeModule {
         switch (event.data.request.source!.type) {
             case "RelationshipTemplate":
                 await this.handleIncomingRequestDecidedForRelationship(event);
+                break;
+            case "Message":
+                await this.handleIncomingRequestDecidedForMessage(event);
                 break;
             default:
                 throw new Error(`Cannot handle source.type '${event.data.request.source!.type}'.`);
@@ -99,6 +106,32 @@ export class RequestModule extends RuntimeModule {
         const completeRequestResult = await services.consumptionServices.incomingRequests.complete({
             requestId,
             responseSourceId: createRelationshipResult.value.changes[0].id
+        });
+        if (completeRequestResult.isError) {
+            this.logger.error(`Could not complete the request '${requestId}'.`);
+            return;
+        }
+    }
+
+    private async handleIncomingRequestDecidedForMessage(event: IncomingRequestStatusChangedEvent) {
+        const request = event.data.request;
+        const requestId = request.id;
+
+        const services = this.runtime.getServices(event.eventTargetAddress);
+
+        const sendMessageResult = await services.transportServices.messages.sendMessage({
+            recipients: [request.peer],
+            content: request.response
+        });
+        if (sendMessageResult.isError) {
+            this.logger.error(`Could not send message to answer the request '${requestId}'.`);
+            // TODO: error state
+            return;
+        }
+
+        const completeRequestResult = await services.consumptionServices.incomingRequests.complete({
+            requestId,
+            responseSourceId: sendMessageResult.value.id
         });
         if (completeRequestResult.isError) {
             this.logger.error(`Could not complete the request '${requestId}'.`);
