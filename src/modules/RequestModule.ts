@@ -1,6 +1,6 @@
 import { ConsumptionRequestStatus } from "@nmshd/consumption";
 import { RelationshipCreationChangeRequestBody, RelationshipTemplateBodyJSON, RequestJSON, ResponseJSON } from "@nmshd/content";
-import { IncomingRequestStatusChangedEvent, MessageReceivedEvent, PeerRelationshipTemplateLoadedEvent, RelationshipChangedEvent } from "../events";
+import { IncomingRequestStatusChangedEvent, MessageReceivedEvent, MessageSentEvent, PeerRelationshipTemplateLoadedEvent, RelationshipChangedEvent } from "../events";
 import { RuntimeModule } from "../extensibility/modules/RuntimeModule";
 import { RuntimeServices } from "../Runtime";
 import { RelationshipStatus } from "../types";
@@ -13,6 +13,7 @@ export class RequestModule extends RuntimeModule {
     public start(): void | Promise<void> {
         this.subscribeToEvent(PeerRelationshipTemplateLoadedEvent, this.handlePeerRelationshipTemplateLoaded.bind(this));
         this.subscribeToEvent(MessageReceivedEvent, this.handleMessageReceivedEvent.bind(this));
+        this.subscribeToEvent(MessageSentEvent, this.handleMessageSentEvent.bind(this));
         this.subscribeToEvent(IncomingRequestStatusChangedEvent, this.handleIncomingRequestStatusChanged.bind(this));
         this.subscribeToEvent(RelationshipChangedEvent, this.handleRelationshipChangedEvent.bind(this));
     }
@@ -39,6 +40,20 @@ export class RequestModule extends RuntimeModule {
                 const receivedResponse = event.data.content as ResponseJSON;
                 await services.consumptionServices.outgoingRequests.complete({ receivedResponse, messageId: event.data.id });
                 break;
+        }
+    }
+
+    private async handleMessageSentEvent(event: MessageSentEvent) {
+        const message = event.data;
+        if (message.content["@type"] !== "Request") return;
+
+        const services = this.runtime.getServices(event.eventTargetAddress);
+        const request = message.content as RequestJSON;
+
+        const requestResult = await services.consumptionServices.outgoingRequests.sent({ requestId: request.id!, messageId: message.id });
+        if (requestResult.isError) {
+            this.logger.error(`Could not mark request '${request.id}' as sent using message '${message.id}'.`);
+            return;
         }
     }
 
