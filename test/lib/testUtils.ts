@@ -176,10 +176,10 @@ export async function exchangeToken(transportServicesCreator: TransportServices,
     return response.value;
 }
 
-export async function sendMessage(transportServices: TransportServices, recipient: string): Promise<MessageDTO> {
+export async function sendMessage(transportServices: TransportServices, recipient: string, content?: any): Promise<MessageDTO> {
     const response = await transportServices.messages.sendMessage({
         recipients: [recipient],
-        content: {
+        content: content ?? {
             "@type": "Mail",
             subject: "This is the mail subject",
             body: "This is the mail body",
