@@ -339,16 +339,17 @@ describe("Attributes", () => {
                     value: "AWebsiteAddress"
                 },
                 key: "website",
-                confidentiality: "protected" as RelationshipAttributeConfidentiality,
+                confidentiality: RelationshipAttributeConfidentiality.Protected,
                 owner: "address"
             }
         };
         const relationshipAttribute = await consumptionServices.attributes.createAttribute(relationshipAttributeRequest);
         const relationshipAttributeQuery: RelationshipAttributeQueryJSON = {
             "@type": "RelationshipAttributeQuery",
+            valueType: "Website",
             key: "website",
             owner: "address",
-            attributeHints: { title: "AnAttributeHint", confidentiality: "protected" as RelationshipAttributeConfidentiality }
+            attributeCreationHints: { title: "AnAttributeHint", confidentiality: "protected" as RelationshipAttributeConfidentiality }
         };
         const relationshipQueryRequest: ExecuteRelationshipAttributeQueryRequest = {
             query: relationshipAttributeQuery
