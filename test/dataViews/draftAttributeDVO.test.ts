@@ -36,43 +36,43 @@ describe("DraftAttributeDVO", () => {
             IdentityAttribute.from<GivenName>({
                 owner: transportService1Address,
                 value: GivenName.fromAny("Hugo")
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<BirthDay>({
                 owner: transportService1Address,
                 value: BirthDay.fromAny(17)
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<BirthMonth>({
                 owner: transportService1Address,
                 value: BirthMonth.fromAny(11)
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<BirthYear>({
                 owner: transportService1Address,
                 value: BirthYear.fromAny(2001)
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<Sex>({
                 owner: transportService1Address,
                 value: Sex.fromAny("male")
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<Nationality>({
                 owner: transportService1Address,
                 value: Nationality.fromAny("DE")
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<CommunicationLanguage>({
                 owner: transportService1Address,
                 value: CommunicationLanguage.fromAny("de")
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
     });
 

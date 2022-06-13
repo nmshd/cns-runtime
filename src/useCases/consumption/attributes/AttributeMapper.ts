@@ -1,13 +1,11 @@
 import { ConsumptionAttribute, ConsumptionAttributeShareInfoJSON } from "@nmshd/consumption";
-import { IdentityAttribute, IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content";
 import { ConsumptionAttributeDTO } from "../../../types";
 
 export class AttributeMapper {
     public static toAttributeDTO(attribute: ConsumptionAttribute): ConsumptionAttributeDTO {
         return {
             id: attribute.id.toString(),
-            content:
-                attribute.content instanceof IdentityAttribute ? (attribute.content.toJSON() as IdentityAttributeJSON) : (attribute.content.toJSON() as RelationshipAttributeJSON),
+            content: attribute.content.toJSON(),
             createdAt: attribute.createdAt.toString(),
             succeeds: attribute.succeeds?.toString(),
             succeededBy: attribute.succeededBy?.toString(),
