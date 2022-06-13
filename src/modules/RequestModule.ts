@@ -121,7 +121,7 @@ export class RequestModule extends RuntimeModule {
 
         const sendMessageResult = await services.transportServices.messages.sendMessage({
             recipients: [request.peer],
-            content: request.response
+            content: request.response!.content
         });
         if (sendMessageResult.isError) {
             this.logger.error(`Could not send message to answer the request '${requestId}'.`);
