@@ -47,7 +47,7 @@ export class SentOutgoingRequestUseCase extends UseCase<SentOutgoingRequestReque
         this.eventBus.publish(
             new OutgoingRequestStatusChangedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, {
                 request: dto,
-                oldStatus: ConsumptionRequestStatus.Decided,
+                oldStatus: ConsumptionRequestStatus.Draft,
                 newStatus: dto.status
             })
         );
