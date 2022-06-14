@@ -190,7 +190,7 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.owner.isSelf).toBe(true);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("Integer");
-        expect(dvo.renderHints.editType).toBe("ButtonLike");
+        expect(dvo.renderHints.editType).toBe("SelectLike");
         expect(dvo.renderHints.dataType).toBe("Day");
         expect(dvo.valueHints["@type"]).toBe("ValueHints");
         expect(dvo.valueHints.min).toBe(1);
@@ -222,7 +222,7 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.owner.isSelf).toBe(true);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("Integer");
-        expect(dvo.renderHints.editType).toBe("ButtonLike");
+        expect(dvo.renderHints.editType).toBe("SelectLike");
         expect(dvo.renderHints.dataType).toBe("Month");
         expect(dvo.valueHints["@type"]).toBe("ValueHints");
         expect(dvo.valueHints.min).toBe(1);
@@ -254,7 +254,7 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.owner.isSelf).toBe(true);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("Integer");
-        expect(dvo.renderHints.editType).toBe("ButtonLike");
+        expect(dvo.renderHints.editType).toBe("SelectLike");
         expect(dvo.renderHints.dataType).toBe("Year");
         expect(dvo.valueHints["@type"]).toBe("ValueHints");
         expect(dvo.valueHints.min).toBe(1);
@@ -286,24 +286,13 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.owner.isSelf).toBe(true);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("String");
-        // TODO: Uncomment after content has been upgraded
-        // expect(dvo.renderHints.editType).toBe("ButtonLike");
-        expect(dvo.renderHints.editType).toBe("InputLike");
+        expect(dvo.renderHints.editType).toBe("ButtonLike");
         expect(dvo.valueHints["@type"]).toBe("ValueHints");
 
-        // TODO: Uncomment after content has been upgraded
-        /*
         expect(dvo.valueHints.values).toStrictEqual([
             { key: "male", displayName: "i18n://attributes.values.sex.male" },
             { key: "female", displayName: "i18n://attributes.values.sex.female" },
             { key: "intersex", displayName: "i18n://attributes.values.sex.intersex" }
-        ]);
-        */
-
-        expect(dvo.valueHints.values).toStrictEqual([
-            { key: "M", displayName: "i18n://attributes.values.sex.M" },
-            { key: "F", displayName: "i18n://attributes.values.sex.F" },
-            { key: "X", displayName: "i18n://attributes.values.sex.X" }
         ]);
     });
 
