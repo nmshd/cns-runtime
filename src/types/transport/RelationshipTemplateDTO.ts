@@ -6,5 +6,6 @@ export interface RelationshipTemplateDTO {
     createdAt: string;
     content: any;
     expiresAt?: string;
+    maxNumberOfAllocations?: number;
     maxNumberOfRelationships?: number;
 }

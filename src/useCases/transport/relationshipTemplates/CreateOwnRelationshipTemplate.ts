@@ -9,6 +9,12 @@ import { RelationshipTemplateMapper } from "./RelationshipTemplateMapper";
 export interface CreateOwnRelationshipTemplateRequest {
     expiresAt: string;
     content: any;
+    maxNumberOfAllocations?: number;
+
+    /**
+     * @deprecated use `maxNumberOfAllocations` instead
+     * @see maxNumberOfAllocations
+     */
     maxNumberOfRelationships?: number;
 }
 
@@ -23,6 +29,10 @@ class CreateOwnRelationshipTemplateRequestValidator extends RuntimeValidator<Cre
 
         this.validateIfAny((x) => x.content).isNotNull();
         this.validateIfNumber((x) => x.maxNumberOfRelationships)
+            .isGreaterThanOrEqual(1)
+            .whenNotNull();
+
+        this.validateIfNumber((x) => x.maxNumberOfAllocations)
             .isGreaterThanOrEqual(1)
             .whenNotNull();
     }
@@ -41,6 +51,7 @@ export class CreateOwnRelationshipTemplateUseCase extends UseCase<CreateOwnRelat
         const relationshipTemplate = await this.templateController.sendRelationshipTemplate({
             content: request.content,
             expiresAt: CoreDate.from(request.expiresAt),
+            maxNumberOfAllocations: request.maxNumberOfAllocations,
             maxNumberOfRelationships: request.maxNumberOfRelationships
         });
 

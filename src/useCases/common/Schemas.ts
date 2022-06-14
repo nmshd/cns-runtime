@@ -275,7 +275,10 @@ export const ExecuteIdentityAttributeQueryRequest: any = {
                     }
                 }
             },
-            "additionalProperties": false
+            "additionalProperties": false,
+            "required": [
+                "valueType"
+            ]
         },
         "ICoreDate": {
             "type": "object",
@@ -319,7 +322,8 @@ export const ExecuteIdentityAttributeQueryRequest: any = {
             },
             "additionalProperties": false,
             "required": [
-                "@type"
+                "@type",
+                "valueType"
             ]
         }
     }
@@ -366,17 +370,18 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
                 "owner": {
                     "$ref": "#/definitions/ICoreAddress"
                 },
-                "attributeHints": {
-                    "$ref": "#/definitions/IRelationshipAttributeHints"
-                },
                 "thirdParty": {
                     "$ref": "#/definitions/ICoreAddress"
+                },
+                "attributeCreationHints": {
+                    "$ref": "#/definitions/IRelationshipAttributeCreationHints"
                 }
             },
             "required": [
+                "attributeCreationHints",
                 "key",
                 "owner",
-                "attributeHints"
+                "valueType"
             ],
             "additionalProperties": false
         },
@@ -404,7 +409,7 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
             ],
             "additionalProperties": false
         },
-        "IRelationshipAttributeHints": {
+        "IRelationshipAttributeCreationHints": {
             "type": "object",
             "properties": {
                 "title": {
@@ -515,22 +520,23 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
                 "owner": {
                     "type": "string"
                 },
-                "attributeHints": {
-                    "$ref": "#/definitions/RelationshipAttributeHintsJSON"
-                },
                 "thirdParty": {
                     "type": "string"
+                },
+                "attributeCreationHints": {
+                    "$ref": "#/definitions/RelationshipAttributeCreationHintsJSON"
                 }
             },
             "required": [
                 "@type",
-                "attributeHints",
+                "attributeCreationHints",
                 "key",
-                "owner"
+                "owner",
+                "valueType"
             ],
             "additionalProperties": false
         },
-        "RelationshipAttributeHintsJSON": {
+        "RelationshipAttributeCreationHintsJSON": {
             "type": "object",
             "properties": {
                 "title": {
@@ -3344,8 +3350,12 @@ export const CreateOwnRelationshipTemplateRequest: any = {
                     "type": "string"
                 },
                 "content": {},
-                "maxNumberOfRelationships": {
+                "maxNumberOfAllocations": {
                     "type": "number"
+                },
+                "maxNumberOfRelationships": {
+                    "type": "number",
+                    "deprecated": "use `maxNumberOfAllocations` instead"
                 }
             },
             "required": [

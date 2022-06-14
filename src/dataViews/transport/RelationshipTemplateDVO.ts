@@ -7,6 +7,7 @@ export interface RelationshipTemplateDVO extends DataViewObject {
     createdByDevice: string;
     createdAt: string;
     expiresAt?: string;
+    maxNumberOfAllocations?: number;
     maxNumberOfRelationships?: number;
 
     content: any;
