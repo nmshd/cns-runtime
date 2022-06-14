@@ -339,7 +339,7 @@ describe("Attributes", () => {
                     value: "AWebsiteAddress"
                 },
                 key: "website",
-                confidentiality: "protected" as RelationshipAttributeConfidentiality,
+                confidentiality: RelationshipAttributeConfidentiality.Protected,
                 owner: "address"
             }
         };
@@ -348,7 +348,8 @@ describe("Attributes", () => {
             "@type": "RelationshipAttributeQuery",
             key: "website",
             owner: "address",
-            attributeHints: { title: "AnAttributeHint", confidentiality: "protected" as RelationshipAttributeConfidentiality }
+            valueType: "Website",
+            attributeCreationHints: { title: "AnAttributeHint", confidentiality: RelationshipAttributeConfidentiality.Protected }
         };
         const relationshipQueryRequest: ExecuteRelationshipAttributeQueryRequest = {
             query: relationshipAttributeQuery
