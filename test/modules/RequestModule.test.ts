@@ -127,7 +127,13 @@ describe("RequestModule", () => {
 
         beforeAll(async () => {
             const relationships = (await sTransportServices.relationships.getRelationships({})).value;
-            if (relationships.length === 0) await establishRelationship(sTransportServices, rTransportServices);
+            if (relationships.length === 0) {
+                await establishRelationship(sTransportServices, rTransportServices);
+            } else if (relationships[0].status === RelationshipStatus.Pending) {
+                const relationship = relationships[0];
+                await sTransportServices.relationships.acceptRelationshipChange({ relationshipId: relationship.id, changeId: relationship.changes[0].id, content: {} });
+                await rTransportServices.account.syncEverything();
+            }
 
             recipientAddress = (await sTransportServices.relationships.getRelationships({})).value[0].peer;
         });
