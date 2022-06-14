@@ -282,7 +282,7 @@ export class DataViewExpander {
             name = "";
             description = "";
         }
-        const renderHints = consumptionAttribute.content.value.renderHints.toJSON() as RenderHintsJSON;
+        const renderHints = consumptionAttribute.content.value.renderHints.toJSON();
         const valueHints = consumptionAttribute.content.value.valueHints.toJSON();
 
         if (consumptionAttribute.shareInfo) {
@@ -361,7 +361,7 @@ export class DataViewExpander {
         const matchedAttributes = await this.consumptionController.attributes.executeIdentityAttributeQuery({ query: queryInstance });
         const matchedAttributeDTOs = AttributeMapper.toAttributeDTOList(matchedAttributes);
         const matchedAttributeDVOs = await this.expandConsumptionAttributes(matchedAttributeDTOs);
-        const valueType = query.valueType!;
+        const valueType = query.valueType;
         const name = `i18n://dvo.attribute.name.${valueType}`;
         const description = `i18n://dvo.attribute.description.${valueType}`;
 
@@ -403,7 +403,7 @@ export class DataViewExpander {
         const valueType = attribute.value["@type"];
         let name = `i18n://dvo.attribute.name.${valueType}`;
         let description = `i18n://dvo.attribute.description.${valueType}`;
-        const renderHints = attributeInstance.value.renderHints.toJSON() as RenderHintsJSON;
+        const renderHints = attributeInstance.value.renderHints.toJSON();
         const valueHints = attributeInstance.value.valueHints.toJSON();
         if (attributeInstance instanceof RelationshipAttribute) {
             name = ""; // attributeInstance.value.title;
