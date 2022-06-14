@@ -1,6 +1,6 @@
-import {IdentityAttributeQueryJSON, RelationshipAttributeConfidentiality, RelationshipAttributeQueryJSON} from "@nmshd/content";
-import {CoreDate} from "@nmshd/transport";
-import {DateTime} from "luxon";
+import { IdentityAttributeQueryJSON, RelationshipAttributeConfidentiality, RelationshipAttributeQueryJSON } from "@nmshd/content";
+import { CoreDate } from "@nmshd/transport";
+import { DateTime } from "luxon";
 import {
     ConsumptionServices,
     CreateAttributeRequest,
@@ -11,7 +11,7 @@ import {
     SucceedAttributeRequest,
     UpdateAttributeRequest
 } from "../../src";
-import {RuntimeServiceProvider} from "../lib/RuntimeServiceProvider";
+import { RuntimeServiceProvider } from "../lib/RuntimeServiceProvider";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
 let consumptionServices: ConsumptionServices;
