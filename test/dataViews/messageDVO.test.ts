@@ -129,7 +129,10 @@ describe("MessageDVO", () => {
         // });
         // changeAttributeMailId = changeAttributeMailResult.value.id;
 
-        await syncUntilHasMessages(transportServices2, 3);
+        const messages = await syncUntilHasMessages(transportServices2, 2);
+        if (messages.length < 2) {
+            throw new Error("Not enough messages synced");
+        }
     });
 
     test("check the message dvo for the sender", async () => {
