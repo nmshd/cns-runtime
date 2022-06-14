@@ -36,43 +36,43 @@ describe("DraftAttributeDVO", () => {
             IdentityAttribute.from<GivenName>({
                 owner: transportService1Address,
                 value: GivenName.fromAny("Hugo")
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<BirthDay>({
                 owner: transportService1Address,
                 value: BirthDay.fromAny(17)
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<BirthMonth>({
                 owner: transportService1Address,
                 value: BirthMonth.fromAny(11)
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<BirthYear>({
                 owner: transportService1Address,
                 value: BirthYear.fromAny(2001)
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<Sex>({
                 owner: transportService1Address,
                 value: Sex.fromAny("male")
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<Nationality>({
                 owner: transportService1Address,
                 value: Nationality.fromAny("DE")
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
         attributes.push(
             IdentityAttribute.from<CommunicationLanguage>({
                 owner: transportService1Address,
                 value: CommunicationLanguage.fromAny("de")
-            }).toJSON() as IdentityAttributeJSON
+            }).toJSON()
         );
     });
 
@@ -117,7 +117,7 @@ describe("DraftAttributeDVO", () => {
         expect(dvo.owner.isSelf).toBe(true);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("Integer");
-        expect(dvo.renderHints.editType).toBe("ButtonLike");
+        expect(dvo.renderHints.editType).toBe("SelectLike");
         expect(dvo.renderHints.dataType).toBe("Day");
         expect(dvo.valueHints["@type"]).toBe("ValueHints");
         expect(dvo.valueHints.min).toBe(1);
@@ -142,7 +142,7 @@ describe("DraftAttributeDVO", () => {
         expect(dvo.owner.isSelf).toBe(true);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("Integer");
-        expect(dvo.renderHints.editType).toBe("ButtonLike");
+        expect(dvo.renderHints.editType).toBe("SelectLike");
         expect(dvo.renderHints.dataType).toBe("Month");
         expect(dvo.valueHints["@type"]).toBe("ValueHints");
         expect(dvo.valueHints.min).toBe(1);
@@ -167,7 +167,7 @@ describe("DraftAttributeDVO", () => {
         expect(dvo.owner.isSelf).toBe(true);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("Integer");
-        expect(dvo.renderHints.editType).toBe("ButtonLike");
+        expect(dvo.renderHints.editType).toBe("SelectLike");
         expect(dvo.renderHints.dataType).toBe("Year");
         expect(dvo.valueHints["@type"]).toBe("ValueHints");
         expect(dvo.valueHints.min).toBe(1);
@@ -192,22 +192,12 @@ describe("DraftAttributeDVO", () => {
         expect(dvo.owner.isSelf).toBe(true);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("String");
-        // TODO: Uncomment after content has been upgraded
-        // expect(dvo.renderHints.editType).toBe("ButtonLike");
-        expect(dvo.renderHints.editType).toBe("InputLike");
+        expect(dvo.renderHints.editType).toBe("ButtonLike");
         expect(dvo.valueHints["@type"]).toBe("ValueHints");
-        /*
-        // TODO: Uncomment after content has been upgraded
         expect(dvo.valueHints.values).toStrictEqual([
             { key: "male", displayName: "i18n://attributes.values.sex.male" },
             { key: "female", displayName: "i18n://attributes.values.sex.female" },
             { key: "intersex", displayName: "i18n://attributes.values.sex.intersex" }
-        ]);
-        */
-        expect(dvo.valueHints.values).toStrictEqual([
-            { key: "M", displayName: "i18n://attributes.values.sex.M" },
-            { key: "F", displayName: "i18n://attributes.values.sex.F" },
-            { key: "X", displayName: "i18n://attributes.values.sex.X" }
         ]);
     });
 

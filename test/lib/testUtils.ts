@@ -103,7 +103,7 @@ export async function createTemplate(
     }
 ): Promise<RelationshipTemplateDTO> {
     const response = await transportServices.relationshipTemplates.createOwnRelationshipTemplate({
-        maxNumberOfRelationships: 1,
+        maxNumberOfAllocations: 1,
         expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
         content: RelationshipTemplateBody.from(body)
     });

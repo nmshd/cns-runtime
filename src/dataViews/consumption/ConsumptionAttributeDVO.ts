@@ -1,4 +1,4 @@
-import { IdentityAttributeJSON, RelationshipAttributeHintsJSON, RelationshipAttributeJSON, RenderHintsJSON, ValueHintsJSON } from "@nmshd/content";
+import { IdentityAttributeJSON, RelationshipAttributeCreationHintsJSON, RelationshipAttributeJSON, RenderHintsJSON, ValueHintsJSON } from "@nmshd/content";
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "../transport";
 
@@ -62,6 +62,6 @@ export interface RelationshipAttributeQueryExpanded extends AttributeQueryExpand
     type: "RelationshipAttributeQueryExpanded";
     key: string;
     owner: IdentityDVO;
-    attributeHints: RelationshipAttributeHintsJSON;
     thirdParty?: IdentityDVO;
+    attributeCreationHints: RelationshipAttributeCreationHintsJSON;
 }

@@ -20,6 +20,7 @@ export class GetRelationshipTemplatesUseCase extends UseCase<GetRelationshipTemp
             [nameof<RelationshipTemplateDTO>((r) => r.expiresAt)]: true,
             [nameof<RelationshipTemplateDTO>((r) => r.createdBy)]: true,
             [nameof<RelationshipTemplateDTO>((r) => r.createdByDevice)]: true,
+            [nameof<RelationshipTemplateDTO>((r) => r.maxNumberOfAllocations)]: true,
             [nameof<RelationshipTemplateDTO>((r) => r.maxNumberOfRelationships)]: true
         },
         alias: {
@@ -29,6 +30,9 @@ export class GetRelationshipTemplatesUseCase extends UseCase<GetRelationshipTemp
             [nameof<RelationshipTemplateDTO>((r) => r.createdBy)]: `${nameof<RelationshipTemplate>((r) => r.cache)}.${nameof<CachedRelationshipTemplate>((t) => t.createdBy)}`,
             [nameof<RelationshipTemplateDTO>((r) => r.createdByDevice)]: `${nameof<RelationshipTemplate>((r) => r.cache)}.${nameof<CachedRelationshipTemplate>(
                 (t) => t.createdByDevice
+            )}`,
+            [nameof<RelationshipTemplateDTO>((r) => r.maxNumberOfAllocations)]: `${nameof<RelationshipTemplate>((r) => r.cache)}.${nameof<CachedRelationshipTemplate>(
+                (t) => t.maxNumberOfAllocations
             )}`,
             [nameof<RelationshipTemplateDTO>((r) => r.maxNumberOfRelationships)]: `${nameof<RelationshipTemplate>((r) => r.cache)}.${nameof<CachedRelationshipTemplate>(
                 (t) => t.maxNumberOfRelationships
