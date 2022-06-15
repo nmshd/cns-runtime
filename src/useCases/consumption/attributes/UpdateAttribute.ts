@@ -1,7 +1,8 @@
-import { Result } from "@js-soft/ts-utils";
+import { EventBus, Result } from "@js-soft/ts-utils";
 import { ConsumptionAttributesController, UpdateConsumptionAttributeParams } from "@nmshd/consumption";
-import { AccountController } from "@nmshd/transport";
+import { AccountController, IdentityController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
+import { AttributeUpdatedEvent } from "../../../events";
 import { ConsumptionAttributeDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
@@ -25,6 +26,10 @@ export class UpdateAttributeUseCase extends UseCase<UpdateAttributeRequest, Cons
     public constructor(
         @Inject private readonly attributeController: ConsumptionAttributesController,
         @Inject private readonly accountController: AccountController,
+
+        @Inject private readonly identityController: IdentityController,
+        @Inject private readonly eventBus: EventBus,
+
         @Inject validator: Validator
     ) {
         super(validator);
@@ -37,6 +42,9 @@ export class UpdateAttributeUseCase extends UseCase<UpdateAttributeRequest, Cons
         });
         const updated = await this.attributeController.updateConsumptionAttribute(params);
         await this.accountController.syncDatawallet();
-        return Result.ok(AttributeMapper.toAttributeDTO(updated));
+
+        const attributeDTO = AttributeMapper.toAttributeDTO(updated);
+        this.eventBus.publish(new AttributeUpdatedEvent(this.identityController.identity.address.toString(), attributeDTO));
+        return Result.ok(attributeDTO);
     }
 }

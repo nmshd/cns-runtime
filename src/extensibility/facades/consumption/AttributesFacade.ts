@@ -4,10 +4,14 @@ import { ConsumptionAttributeDTO } from "../../../types";
 import {
     CreateAttributeRequest,
     CreateAttributeUseCase,
-    CreateShareAttributeCopyRequest,
+    CreateSharedAttributeCopyRequest,
     CreateSharedAttributeCopyUseCase,
     DeleteAttributeRequest,
     DeleteAttributeUseCase,
+    ExecuteIdentityAttributeQueryRequest,
+    ExecuteIdentityAttributeQueryUseCase,
+    ExecuteRelationshipAttributeQueryRequest,
+    ExecuteRelationshipAttributeQueryUseCase,
     GetAttributeRequest,
     GetAttributesRequest,
     GetAttributesUseCase,
@@ -19,8 +23,6 @@ import {
     UpdateAttributeRequest,
     UpdateAttributeUseCase
 } from "../../../useCases";
-import { ExecuteIdentityAttributeQueryRequest, ExecuteIdentityAttributeQueryUseCase } from "../../../useCases/consumption/attributes/ExecuteIdentityAttributeQuery";
-import { ExecuteRelationshipAttributeQueryRequest, ExecuteRelationshipAttributeQueryUseCase } from "../../../useCases/consumption/attributes/ExecuteRelationshipAttributeQuery";
 
 export class AttributesFacade {
     public constructor(
@@ -40,7 +42,7 @@ export class AttributesFacade {
         return await this.createAttributeUseCase.execute(request);
     }
 
-    public async createSharedAttributeCopy(request: CreateShareAttributeCopyRequest): Promise<Result<ConsumptionAttributeDTO>> {
+    public async createSharedAttributeCopy(request: CreateSharedAttributeCopyRequest): Promise<Result<ConsumptionAttributeDTO>> {
         return await this.createSharedAttributeCopyUseCase.execute(request);
     }
 
