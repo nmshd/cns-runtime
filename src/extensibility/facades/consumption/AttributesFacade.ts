@@ -8,6 +8,10 @@ import {
     CreateSharedAttributeCopyUseCase,
     DeleteAttributeRequest,
     DeleteAttributeUseCase,
+    ExecuteIdentityAttributeQueryRequest,
+    ExecuteIdentityAttributeQueryUseCase,
+    ExecuteRelationshipAttributeQueryRequest,
+    ExecuteRelationshipAttributeQueryUseCase,
     GetAttributeRequest,
     GetAttributesRequest,
     GetAttributesUseCase,
@@ -19,8 +23,6 @@ import {
     UpdateAttributeRequest,
     UpdateAttributeUseCase
 } from "../../../useCases";
-import { ExecuteIdentityAttributeQueryRequest, ExecuteIdentityAttributeQueryUseCase } from "../../../useCases/consumption/attributes/ExecuteIdentityAttributeQuery";
-import { ExecuteRelationshipAttributeQueryRequest, ExecuteRelationshipAttributeQueryUseCase } from "../../../useCases/consumption/attributes/ExecuteRelationshipAttributeQuery";
 
 export class AttributesFacade {
     public constructor(
