@@ -4,7 +4,7 @@ import { DateTime } from "luxon";
 import {
     ConsumptionServices,
     CreateAttributeRequest,
-    CreateShareAttributeCopyRequest,
+    CreateSharedAttributeCopyRequest,
     ExecuteIdentityAttributeQueryRequest,
     ExecuteRelationshipAttributeQueryRequest,
     GetAttributesRequest,
@@ -187,7 +187,7 @@ describe("Attributes", () => {
 
         const peer = "A35characterLongAddress".padStart(35, "1");
         const requestReference = "REQA15CharacterLongRef".padStart(17, "0");
-        const createSharedAttributesParams: CreateShareAttributeCopyRequest = {
+        const createSharedAttributesParams: CreateSharedAttributeCopyRequest = {
             attributeId: nationalityAttribute.value.id,
             peer: peer,
             requestReference: requestReference
