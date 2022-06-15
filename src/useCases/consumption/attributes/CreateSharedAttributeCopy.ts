@@ -1,7 +1,8 @@
-import { Result } from "@js-soft/ts-utils";
+import { EventBus, Result } from "@js-soft/ts-utils";
 import { ConsumptionAttributesController, CreateSharedConsumptionAttributeCopyParams } from "@nmshd/consumption";
-import { AccountController, CoreAddress, CoreId } from "@nmshd/transport";
+import { AccountController, CoreAddress, CoreId, IdentityController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
+import { SharedAttributeCopyCreatedEvent } from "../../../events";
 import { ConsumptionAttributeDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
@@ -31,6 +32,10 @@ export class CreateSharedAttributeCopyUseCase extends UseCase<CreateSharedAttrib
     public constructor(
         @Inject private readonly attributeController: ConsumptionAttributesController,
         @Inject private readonly accountController: AccountController,
+
+        @Inject private readonly identityController: IdentityController,
+        @Inject private readonly eventBus: EventBus,
+
         @Inject validator: Validator
     ) {
         super(validator);
@@ -44,6 +49,9 @@ export class CreateSharedAttributeCopyUseCase extends UseCase<CreateSharedAttrib
         });
         const successor = await this.attributeController.createSharedConsumptionAttributeCopy(params);
         await this.accountController.syncDatawallet();
-        return Result.ok(AttributeMapper.toAttributeDTO(successor));
+
+        const attributeDTO = AttributeMapper.toAttributeDTO(successor);
+        this.eventBus.publish(new SharedAttributeCopyCreatedEvent(this.identityController.identity.address.toString(), attributeDTO));
+        return Result.ok(attributeDTO);
     }
 }
