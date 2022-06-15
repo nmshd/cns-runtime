@@ -183,11 +183,11 @@ export const CreateAttributeRequest: any = {
     }
 }
 
-export const CreateShareAttributeCopyRequest: any = {
+export const CreateSharedAttributeCopyRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/CreateShareAttributeCopyRequest",
+    "$ref": "#/definitions/CreateSharedAttributeCopyRequest",
     "definitions": {
-        "CreateShareAttributeCopyRequest": {
+        "CreateSharedAttributeCopyRequest": {
             "type": "object",
             "properties": {
                 "attributeId": {
