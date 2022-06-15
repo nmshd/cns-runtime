@@ -4,7 +4,7 @@ import { ConsumptionAttributeDTO } from "../../../types";
 import {
     CreateAttributeRequest,
     CreateAttributeUseCase,
-    CreateShareAttributeCopyRequest,
+    CreateSharedAttributeCopyRequest,
     CreateSharedAttributeCopyUseCase,
     DeleteAttributeRequest,
     DeleteAttributeUseCase,
@@ -40,7 +40,7 @@ export class AttributesFacade {
         return await this.createAttributeUseCase.execute(request);
     }
 
-    public async createSharedAttributeCopy(request: CreateShareAttributeCopyRequest): Promise<Result<ConsumptionAttributeDTO>> {
+    public async createSharedAttributeCopy(request: CreateSharedAttributeCopyRequest): Promise<Result<ConsumptionAttributeDTO>> {
         return await this.createSharedAttributeCopyUseCase.execute(request);
     }
 

@@ -6,7 +6,7 @@ import { ConsumptionAttributeDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 
-export interface CreateShareAttributeCopyRequest {
+export interface CreateSharedAttributeCopyRequest {
     /**
      * @pattern ATT[A-Za-z0-9]{17}
      */
@@ -21,13 +21,13 @@ export interface CreateShareAttributeCopyRequest {
     requestReference: string;
 }
 
-class Validator extends SchemaValidator<CreateShareAttributeCopyRequest> {
+class Validator extends SchemaValidator<CreateSharedAttributeCopyRequest> {
     public constructor(@Inject schemaRepository: SchemaRepository) {
-        super(schemaRepository.getSchema("CreateShareAttributeCopyRequest"));
+        super(schemaRepository.getSchema("CreateSharedAttributeCopyRequest"));
     }
 }
 
-export class CreateSharedAttributeCopyUseCase extends UseCase<CreateShareAttributeCopyRequest, ConsumptionAttributeDTO> {
+export class CreateSharedAttributeCopyUseCase extends UseCase<CreateSharedAttributeCopyRequest, ConsumptionAttributeDTO> {
     public constructor(
         @Inject private readonly attributeController: ConsumptionAttributesController,
         @Inject private readonly accountController: AccountController,
@@ -36,7 +36,7 @@ export class CreateSharedAttributeCopyUseCase extends UseCase<CreateShareAttribu
         super(validator);
     }
 
-    protected async executeInternal(request: CreateShareAttributeCopyRequest): Promise<Result<ConsumptionAttributeDTO>> {
+    protected async executeInternal(request: CreateSharedAttributeCopyRequest): Promise<Result<ConsumptionAttributeDTO>> {
         const params = CreateSharedConsumptionAttributeCopyParams.from({
             attributeId: CoreId.from(request.attributeId),
             peer: CoreAddress.from(request.peer),
