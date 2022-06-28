@@ -87,7 +87,6 @@
         "eslint": "^8.17.0",
         "jest": "^28.1.1",
         "madge": "^5.0.1",
-        "nodemon": "^2.0.16",
         "prettier": "^2.7.0",
         "ts-jest": "^28.0.5",
         "ts-json-schema-generator": "^1.0.0",
