@@ -46,9 +46,9 @@ export class CompleteOutgoingRequestUseCase extends UseCase<CompleteOutgoingRequ
             responseSourceObject: message
         };
 
-        const consumptionRequest = await this.outgoingRequestsController.complete(params);
+        const localRequest = await this.outgoingRequestsController.complete(params);
 
-        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(
             new OutgoingRequestStatusChangedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, {

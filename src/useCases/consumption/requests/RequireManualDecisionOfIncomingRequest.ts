@@ -20,11 +20,11 @@ export class RequireManualDecisionOfIncomingRequestUseCase extends UseCase<Requi
     }
 
     protected async executeInternal(request: RequireManualDecisionOfIncomingRequestRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
-        const consumptionRequest = await this.incomingRequestsController.requireManualDecision({
+        const localRequest = await this.incomingRequestsController.requireManualDecision({
             requestId: CoreId.from(request.requestId)
         });
 
-        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(
             new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {

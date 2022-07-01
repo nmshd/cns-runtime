@@ -15,17 +15,17 @@ export class RejectIncomingRequestUseCase extends UseCase<RejectIncomingRequestR
     }
 
     protected async executeInternal(request: RejectIncomingRequestRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
-        let consumptionRequest = await this.incomingRequestsController.getIncomingRequest(CoreId.from(request.requestId));
+        let localRequest = await this.incomingRequestsController.getIncomingRequest(CoreId.from(request.requestId));
 
-        if (!consumptionRequest) {
+        if (!localRequest) {
             return Result.fail(RuntimeErrors.general.recordNotFound(LocalRequest));
         }
 
-        const oldStatus = consumptionRequest.status;
+        const oldStatus = localRequest.status;
 
-        consumptionRequest = await this.incomingRequestsController.reject(request);
+        localRequest = await this.incomingRequestsController.reject(request);
 
-        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(
             new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {

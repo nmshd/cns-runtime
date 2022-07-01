@@ -40,9 +40,9 @@ export class SentOutgoingRequestUseCase extends UseCase<SentOutgoingRequestReque
             requestSourceObject: message
         };
 
-        const consumptionRequest = await this.outgoingRequestsController.sent(params);
+        const localRequest = await this.outgoingRequestsController.sent(params);
 
-        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(
             new OutgoingRequestStatusChangedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, {

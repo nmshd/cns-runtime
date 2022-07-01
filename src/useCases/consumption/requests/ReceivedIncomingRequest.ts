@@ -45,13 +45,13 @@ export class ReceivedIncomingRequestUseCase extends UseCase<ReceivedIncomingRequ
             }
         }
 
-        const consumptionRequest = await this.incomingRequestsController.received({
+        const localRequest = await this.incomingRequestsController.received({
             // @ts-expect-error // TODO: remove this as soon as the Type Definitions are correct
             receivedRequest: request.receivedRequest,
             requestSourceObject
         });
 
-        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(new IncomingRequestReceivedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, dto));
 

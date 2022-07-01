@@ -270,24 +270,24 @@ export class DataViewExpander {
 
     public async expandLocalAttribute(attribute: LocalAttributeDTO): Promise<RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO> {
         const valueType = attribute.content.value["@type"];
-        const consumptionAttribute = await this.consumptionController.attributes.getLocalAttribute(CoreId.from(attribute.id));
-        if (!consumptionAttribute) {
+        const localAttribute = await this.consumptionController.attributes.getLocalAttribute(CoreId.from(attribute.id));
+        if (!localAttribute) {
             throw new Error("Attribute not found");
         }
         const owner = await this.expandAddress(attribute.content.owner);
 
         let name = `i18n://dvo.attribute.name.${valueType}`;
         let description = `i18n://dvo.attribute.description.${valueType}`;
-        if (consumptionAttribute.content instanceof RelationshipAttribute) {
+        if (localAttribute.content instanceof RelationshipAttribute) {
             name = "";
             description = "";
         }
-        const renderHints = consumptionAttribute.content.value.renderHints.toJSON();
-        const valueHints = consumptionAttribute.content.value.valueHints.toJSON();
+        const renderHints = localAttribute.content.value.renderHints.toJSON();
+        const valueHints = localAttribute.content.value.valueHints.toJSON();
 
-        if (consumptionAttribute.shareInfo) {
-            const peer = await this.expandAddress(consumptionAttribute.shareInfo.peer.toString());
-            if (consumptionAttribute.shareInfo.sourceAttribute) {
+        if (localAttribute.shareInfo) {
+            const peer = await this.expandAddress(localAttribute.shareInfo.peer.toString());
+            if (localAttribute.shareInfo.sourceAttribute) {
                 // Own Shared Attribute
                 return {
                     type: "SharedToPeerAttributeDVO",
@@ -304,8 +304,8 @@ export class DataViewExpander {
                     createdAt: attribute.createdAt,
                     isOwn: true,
                     peer: peer,
-                    requestReference: consumptionAttribute.shareInfo.requestReference.toString(),
-                    sourceAttribute: consumptionAttribute.shareInfo.sourceAttribute.toString()
+                    requestReference: localAttribute.shareInfo.requestReference.toString(),
+                    sourceAttribute: localAttribute.shareInfo.sourceAttribute.toString()
                 };
             }
 
@@ -325,7 +325,7 @@ export class DataViewExpander {
                 createdAt: attribute.createdAt,
                 isOwn: false,
                 peer: peer,
-                requestReference: consumptionAttribute.shareInfo.requestReference.toString()
+                requestReference: localAttribute.shareInfo.requestReference.toString()
             };
         }
 

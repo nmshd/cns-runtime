@@ -26,13 +26,13 @@ export class CheckPrerequisitesOfIncomingRequestUseCase extends UseCase<CheckPre
     }
 
     protected async executeInternal(request: CheckPrerequisitesOfIncomingRequestRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
-        const consumptionRequest = await this.incomingRequestsController.checkPrerequisites({
+        const localRequest = await this.incomingRequestsController.checkPrerequisites({
             requestId: CoreId.from(request.requestId)
         });
 
-        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
-        if (consumptionRequest.status === LocalRequestStatus.DecisionRequired) {
+        if (localRequest.status === LocalRequestStatus.DecisionRequired) {
             this.eventBus.publish(
                 new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
                     request: dto,

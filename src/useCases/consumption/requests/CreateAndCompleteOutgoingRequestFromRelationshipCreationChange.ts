@@ -48,9 +48,9 @@ export class CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCa
             creationChange: relationship.cache!.creationChange
         };
 
-        const consumptionRequest = await this.outgoingRequestsController.createFromRelationshipCreationChange(params);
+        const localRequest = await this.outgoingRequestsController.createFromRelationshipCreationChange(params);
 
-        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(
             new OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, dto)

@@ -28,9 +28,9 @@ export class CreateOutgoingRequestUseCase extends UseCase<CreateOutgoingRequestR
             peer: CoreAddress.from(request.peer)
         };
 
-        const consumptionRequest = await this.outgoingRequestsController.create(params);
+        const localRequest = await this.outgoingRequestsController.create(params);
 
-        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(new OutgoingRequestCreatedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, dto));
 

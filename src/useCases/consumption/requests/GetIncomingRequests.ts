@@ -182,9 +182,9 @@ export class GetIncomingRequestsUseCase extends UseCase<GetIncomingRequestsReque
     protected async executeInternal(request: GetIncomingRequestsRequest): Promise<Result<LocalRequestDTO[], ApplicationError>> {
         const flattenedQuery = flattenObject(request.query);
         const dbQuery = GetIncomingRequestsUseCase.queryTranslator.parse(flattenedQuery);
-        const consumptionRequests = await this.incomingRequestsController.getIncomingRequests(dbQuery);
+        const localRequest = await this.incomingRequestsController.getIncomingRequests(dbQuery);
 
-        const dtos = RequestMapper.toLocalRequestDTOList(consumptionRequests);
+        const dtos = RequestMapper.toLocalRequestDTOList(localRequest);
 
         return Result.ok(dtos);
     }
