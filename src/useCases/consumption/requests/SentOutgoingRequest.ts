@@ -1,9 +1,9 @@
 import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
-import { ConsumptionRequestStatus, ISentOutgoingRequestParameters, OutgoingRequestsController } from "@nmshd/consumption";
+import { ISentOutgoingRequestParameters, LocalRequestStatus, OutgoingRequestsController } from "@nmshd/consumption";
 import { CoreId, Message, MessageController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { OutgoingRequestStatusChangedEvent } from "../../../events";
-import { ConsumptionRequestDTO } from "../../../types";
+import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
@@ -19,7 +19,7 @@ export interface SentOutgoingRequestRequest {
     messageId: string;
 }
 
-export class SentOutgoingRequestUseCase extends UseCase<SentOutgoingRequestRequest, ConsumptionRequestDTO> {
+export class SentOutgoingRequestUseCase extends UseCase<SentOutgoingRequestRequest, LocalRequestDTO> {
     public constructor(
         @Inject private readonly outgoingRequestsController: OutgoingRequestsController,
         @Inject private readonly messageController: MessageController,
@@ -28,7 +28,7 @@ export class SentOutgoingRequestUseCase extends UseCase<SentOutgoingRequestReque
         super();
     }
 
-    protected async executeInternal(request: SentOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
+    protected async executeInternal(request: SentOutgoingRequestRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
         const message = await this.messageController.getMessage(CoreId.from(request.messageId));
 
         if (!message) {
@@ -40,14 +40,14 @@ export class SentOutgoingRequestUseCase extends UseCase<SentOutgoingRequestReque
             requestSourceObject: message
         };
 
-        const consumptionRequest = await this.outgoingRequestsController.sent(params);
+        const localRequest = await this.outgoingRequestsController.sent(params);
 
-        const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(
             new OutgoingRequestStatusChangedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, {
                 request: dto,
-                oldStatus: ConsumptionRequestStatus.Draft,
+                oldStatus: LocalRequestStatus.Draft,
                 newStatus: dto.status
             })
         );

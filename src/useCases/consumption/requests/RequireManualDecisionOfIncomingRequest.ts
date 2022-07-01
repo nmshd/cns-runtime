@@ -1,9 +1,9 @@
 import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
-import { ConsumptionRequestStatus, IncomingRequestsController } from "@nmshd/consumption";
+import { IncomingRequestsController, LocalRequestStatus } from "@nmshd/consumption";
 import { CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { IncomingRequestStatusChangedEvent } from "../../../events/consumption/IncomingRequestStatusChangedEvent";
-import { ConsumptionRequestDTO } from "../../../types";
+import { LocalRequestDTO } from "../../../types";
 import { UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
@@ -14,22 +14,22 @@ export interface RequireManualDecisionOfIncomingRequestRequest {
     requestId: string;
 }
 
-export class RequireManualDecisionOfIncomingRequestUseCase extends UseCase<RequireManualDecisionOfIncomingRequestRequest, ConsumptionRequestDTO> {
+export class RequireManualDecisionOfIncomingRequestUseCase extends UseCase<RequireManualDecisionOfIncomingRequestRequest, LocalRequestDTO> {
     public constructor(@Inject private readonly incomingRequestsController: IncomingRequestsController, @Inject private readonly eventBus: EventBus) {
         super();
     }
 
-    protected async executeInternal(request: RequireManualDecisionOfIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
-        const consumptionRequest = await this.incomingRequestsController.requireManualDecision({
+    protected async executeInternal(request: RequireManualDecisionOfIncomingRequestRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
+        const localRequest = await this.incomingRequestsController.requireManualDecision({
             requestId: CoreId.from(request.requestId)
         });
 
-        const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(
             new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
                 request: dto,
-                oldStatus: ConsumptionRequestStatus.DecisionRequired,
+                oldStatus: LocalRequestStatus.DecisionRequired,
                 newStatus: dto.status
             })
         );

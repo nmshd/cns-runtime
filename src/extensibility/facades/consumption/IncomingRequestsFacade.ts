@@ -1,6 +1,6 @@
 import { Result } from "@js-soft/ts-utils";
 import { Inject } from "typescript-ioc";
-import { ConsumptionRequestDTO, RequestValidationResultDTO } from "../../../types";
+import { LocalRequestDTO, RequestValidationResultDTO } from "../../../types";
 import {
     AcceptIncomingRequestRequest,
     AcceptIncomingRequestUseCase,
@@ -36,15 +36,15 @@ export class IncomingRequestsFacade {
         @Inject private readonly getRequestsUseCase: GetIncomingRequestsUseCase
     ) {}
 
-    public async received(request: ReceivedIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async received(request: ReceivedIncomingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.receivedUseCase.execute(request);
     }
 
-    public async checkPrerequisites(request: CheckPrerequisitesOfIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async checkPrerequisites(request: CheckPrerequisitesOfIncomingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.checkPrerequisitesUseCase.execute(request);
     }
 
-    public async requireManualDecision(request: RequireManualDecisionOfIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async requireManualDecision(request: RequireManualDecisionOfIncomingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.requireManualDecisionUseCase.execute(request);
     }
 
@@ -52,7 +52,7 @@ export class IncomingRequestsFacade {
         return await this.canAcceptUseCase.execute(request);
     }
 
-    public async accept(request: AcceptIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async accept(request: AcceptIncomingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.acceptUseCase.execute(request);
     }
 
@@ -60,19 +60,19 @@ export class IncomingRequestsFacade {
         return await this.canRejectUseCase.execute(request);
     }
 
-    public async reject(request: RejectIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async reject(request: RejectIncomingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.rejectUseCase.execute(request);
     }
 
-    public async complete(request: CompleteIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async complete(request: CompleteIncomingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.completeUseCase.execute(request);
     }
 
-    public async getRequest(request: GetIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async getRequest(request: GetIncomingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.getRequestUseCase.execute(request);
     }
 
-    public async getRequests(request: GetIncomingRequestsRequest): Promise<Result<ConsumptionRequestDTO[]>> {
+    public async getRequests(request: GetIncomingRequestsRequest): Promise<Result<LocalRequestDTO[]>> {
         return await this.getRequestsUseCase.execute(request);
     }
 }

@@ -1,31 +1,31 @@
 import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
-import { ConsumptionRequest, DecideRequestParametersJSON, IncomingRequestsController } from "@nmshd/consumption";
+import { DecideRequestParametersJSON, IncomingRequestsController, LocalRequest } from "@nmshd/consumption";
 import { CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { IncomingRequestStatusChangedEvent } from "../../../events/consumption/IncomingRequestStatusChangedEvent";
-import { ConsumptionRequestDTO } from "../../../types";
+import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
 export interface AcceptIncomingRequestRequest extends DecideRequestParametersJSON {}
 
-export class AcceptIncomingRequestUseCase extends UseCase<AcceptIncomingRequestRequest, ConsumptionRequestDTO> {
+export class AcceptIncomingRequestUseCase extends UseCase<AcceptIncomingRequestRequest, LocalRequestDTO> {
     public constructor(@Inject private readonly incomingRequestsController: IncomingRequestsController, @Inject private readonly eventBus: EventBus) {
         super();
     }
 
-    protected async executeInternal(request: AcceptIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
-        let consumptionRequest = await this.incomingRequestsController.getIncomingRequest(CoreId.from(request.requestId));
+    protected async executeInternal(request: AcceptIncomingRequestRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
+        let localRequest = await this.incomingRequestsController.getIncomingRequest(CoreId.from(request.requestId));
 
-        if (!consumptionRequest) {
-            return Result.fail(RuntimeErrors.general.recordNotFound(ConsumptionRequest));
+        if (!localRequest) {
+            return Result.fail(RuntimeErrors.general.recordNotFound(LocalRequest));
         }
 
-        const oldStatus = consumptionRequest.status;
+        const oldStatus = localRequest.status;
 
-        consumptionRequest = await this.incomingRequestsController.accept(request);
+        localRequest = await this.incomingRequestsController.accept(request);
 
-        const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(
             new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {

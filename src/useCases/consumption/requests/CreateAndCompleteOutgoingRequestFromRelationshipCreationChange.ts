@@ -3,7 +3,7 @@ import { ICreateOutgoingRequestFromRelationshipCreationChangeParameters, Outgoin
 import { CoreId, RelationshipChange, RelationshipsController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent } from "../../../events/consumption/OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent";
-import { ConsumptionRequestDTO } from "../../../types";
+import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
@@ -20,7 +20,7 @@ export interface CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeR
 
 export class CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCase extends UseCase<
     CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest,
-    ConsumptionRequestDTO
+    LocalRequestDTO
 > {
     public constructor(
         @Inject private readonly outgoingRequestsController: OutgoingRequestsController,
@@ -31,7 +31,7 @@ export class CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCa
         super();
     }
 
-    protected async executeInternal(request: CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
+    protected async executeInternal(request: CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
         const template = await this.relationshipTemplateController.getRelationshipTemplate(CoreId.from(request.templateId));
         if (!template) {
             return Result.fail(RuntimeErrors.general.recordNotFound(RelationshipTemplate));
@@ -48,9 +48,9 @@ export class CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCa
             creationChange: relationship.cache!.creationChange
         };
 
-        const consumptionRequest = await this.outgoingRequestsController.createFromRelationshipCreationChange(params);
+        const localRequest = await this.outgoingRequestsController.createFromRelationshipCreationChange(params);
 
-        const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(localRequest);
 
         this.eventBus.publish(
             new OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, dto)

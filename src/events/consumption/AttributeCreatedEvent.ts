@@ -1,10 +1,10 @@
-import { ConsumptionAttributeDTO } from "../../types";
+import { LocalAttributeDTO } from "../../types";
 import { DataEvent } from "../DataEvent";
 
-export class AttributeCreatedEvent extends DataEvent<ConsumptionAttributeDTO> {
+export class AttributeCreatedEvent extends DataEvent<LocalAttributeDTO> {
     public static readonly namespace = "consumption.attributeCreated";
 
-    public constructor(eventTargetAddress: string, data: ConsumptionAttributeDTO) {
+    public constructor(eventTargetAddress: string, data: LocalAttributeDTO) {
         super(AttributeCreatedEvent.namespace, eventTargetAddress, data);
     }
 }

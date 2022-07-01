@@ -1,9 +1,9 @@
 import { EventBus, Result } from "@js-soft/ts-utils";
-import { ConsumptionAttributesController, CreateConsumptionAttributeParams } from "@nmshd/consumption";
+import { CreateLocalAttributeParams, LocalAttributesController } from "@nmshd/consumption";
 import { AccountController, IdentityController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { AttributeCreatedEvent } from "../../../events";
-import { ConsumptionAttributeDTO } from "../../../types";
+import { LocalAttributeDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 import { ExtendedIdentityAttributeJSON, ExtendedRelationshipAttributeJSON } from "./ExtendedAttributeValue";
@@ -18,9 +18,9 @@ class Validator extends SchemaValidator<CreateAttributeRequest> {
     }
 }
 
-export class CreateAttributeUseCase extends UseCase<CreateAttributeRequest, ConsumptionAttributeDTO> {
+export class CreateAttributeUseCase extends UseCase<CreateAttributeRequest, LocalAttributeDTO> {
     public constructor(
-        @Inject private readonly attributeController: ConsumptionAttributesController,
+        @Inject private readonly attributeController: LocalAttributesController,
         @Inject private readonly accountController: AccountController,
 
         @Inject private readonly identityController: IdentityController,
@@ -31,11 +31,11 @@ export class CreateAttributeUseCase extends UseCase<CreateAttributeRequest, Cons
         super(validator);
     }
 
-    protected async executeInternal(request: CreateAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
-        const params = CreateConsumptionAttributeParams.from({
+    protected async executeInternal(request: CreateAttributeRequest): Promise<Result<LocalAttributeDTO>> {
+        const params = CreateLocalAttributeParams.from({
             content: request.content
         });
-        const createdAttribute = await this.attributeController.createConsumptionAttribute(params);
+        const createdAttribute = await this.attributeController.createLocalAttribute(params);
         await this.accountController.syncDatawallet();
 
         const attributeDTO = AttributeMapper.toAttributeDTO(createdAttribute);

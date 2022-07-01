@@ -1,14 +1,7 @@
 import { IDatabaseConnection } from "@js-soft/docdb-access-abstractions";
 import { ILogger, ILoggerFactory } from "@js-soft/logging-abstractions";
 import { EventBus, EventEmitter2EventBus } from "@js-soft/ts-utils";
-import {
-    ConsumptionAttributesController,
-    ConsumptionController,
-    DraftsController,
-    IncomingRequestsController,
-    OutgoingRequestsController,
-    SettingsController
-} from "@nmshd/consumption";
+import { ConsumptionController, DraftsController, IncomingRequestsController, LocalAttributesController, OutgoingRequestsController, SettingsController } from "@nmshd/consumption";
 import {
     AccountController,
     AnonymousTokenController,
@@ -229,7 +222,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
             .factory(() => this.getConsumptionController())
             .scope(Scope.Request);
 
-        Container.bind(ConsumptionAttributesController)
+        Container.bind(LocalAttributesController)
             .factory(() => this.getConsumptionController().attributes)
             .scope(Scope.Request);
 

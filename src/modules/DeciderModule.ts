@@ -1,4 +1,4 @@
-import { ConsumptionRequestStatus } from "@nmshd/consumption";
+import { LocalRequestStatus } from "@nmshd/consumption";
 import { IncomingRequestStatusChangedEvent } from "../events";
 import { RuntimeModule } from "../extensibility";
 
@@ -12,7 +12,7 @@ export class DeciderModule extends RuntimeModule {
     }
 
     private async handleIncomingRequestStatusChanged(event: IncomingRequestStatusChangedEvent) {
-        if (event.data.newStatus !== ConsumptionRequestStatus.DecisionRequired) return;
+        if (event.data.newStatus !== LocalRequestStatus.DecisionRequired) return;
 
         const services = this.runtime.getServices(event.eventTargetAddress);
         const requireManualDecisionResult = await services.consumptionServices.incomingRequests.requireManualDecision({ requestId: event.data.request.id });

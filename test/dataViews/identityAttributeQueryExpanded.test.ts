@@ -1,6 +1,6 @@
 import { GivenName, IdentityAttribute, IdentityAttributeQueryJSON } from "@nmshd/content";
 import { CoreAddress } from "@nmshd/transport";
-import { ConsumptionAttributeDTO, ConsumptionServices, DataViewExpander, RepositoryAttributeDVO, TransportServices } from "../../src";
+import { ConsumptionServices, DataViewExpander, LocalAttributeDTO, RepositoryAttributeDVO, TransportServices } from "../../src";
 import { RuntimeServiceProvider } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
@@ -19,7 +19,7 @@ afterAll(() => serviceProvider.stop());
 
 describe("IdentityAttributeQueryExpanded", () => {
     let transportService1Address: CoreAddress;
-    const attributes: ConsumptionAttributeDTO[] = [];
+    const attributes: LocalAttributeDTO[] = [];
 
     beforeAll(async () => {
         transportService1Address = CoreAddress.from((await transportServices1.account.getIdentityInfo()).value.address);

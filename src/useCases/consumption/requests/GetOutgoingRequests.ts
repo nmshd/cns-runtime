@@ -1,10 +1,10 @@
 import { QueryTranslator } from "@js-soft/docdb-querytranslator";
 import { ApplicationError, Result } from "@js-soft/ts-utils";
-import { ConsumptionRequest, ConsumptionRequestSource, ConsumptionResponse, ConsumptionResponseSource, OutgoingRequestsController } from "@nmshd/consumption";
+import { LocalRequest, LocalRequestSource, LocalResponse, LocalResponseSource, OutgoingRequestsController } from "@nmshd/consumption";
 import { RequestItemGroupJSON, RequestItemJSON, RequestJSON, ResponseItemGroupJSON, ResponseItemJSON, ResponseJSON } from "@nmshd/content";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
-import { ConsumptionRequestDTO, ConsumptionRequestSourceDTO, ConsumptionResponseDTO, ConsumptionResponseSourceDTO } from "../../../types";
+import { LocalRequestDTO, LocalRequestSourceDTO, LocalResponseDTO, LocalResponseSourceDTO } from "../../../types";
 import { UseCase } from "../../common";
 import { flattenObject } from "./flattenObject";
 import { RequestMapper } from "./RequestMapper";
@@ -47,135 +47,131 @@ export interface GetOutgoingRequestsRequestQuery {
     [key: string]: unknown;
 }
 
-export class GetOutgoingRequestsUseCase extends UseCase<GetOutgoingRequestsRequest, ConsumptionRequestDTO[]> {
+export class GetOutgoingRequestsUseCase extends UseCase<GetOutgoingRequestsRequest, LocalRequestDTO[]> {
     private static readonly queryTranslator = new QueryTranslator({
         whitelist: {
             // id
-            [nameof<ConsumptionRequestDTO>((x) => x.id)]: true,
+            [nameof<LocalRequestDTO>((x) => x.id)]: true,
 
             // peer
-            [nameof<ConsumptionRequestDTO>((x) => x.peer)]: true,
+            [nameof<LocalRequestDTO>((x) => x.peer)]: true,
 
             // createdAt
-            [nameof<ConsumptionRequestDTO>((x) => x.createdAt)]: true,
+            [nameof<LocalRequestDTO>((x) => x.createdAt)]: true,
 
             // status
-            [nameof<ConsumptionRequestDTO>((x) => x.status)]: true,
+            [nameof<LocalRequestDTO>((x) => x.status)]: true,
 
             // content.expiresAt
-            [`${nameof<ConsumptionRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.expiresAt)}`]: true,
+            [`${nameof<LocalRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.expiresAt)}`]: true,
 
             // content.items.@type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemJSON>((x) => x["@type"])}`]: true,
+            [`${nameof<LocalRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemJSON>((x) => x["@type"])}`]: true,
 
             // content.items.items.@type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemGroupJSON>((x) => x.items)}.${nameof<RequestItemJSON>(
+            [`${nameof<LocalRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemGroupJSON>((x) => x.items)}.${nameof<RequestItemJSON>(
                 (x) => x["@type"]
             )}`]: true,
 
             // source.type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.source)}.${nameof<ConsumptionRequestSourceDTO>((x) => x.type)}`]: true,
+            [`${nameof<LocalRequestDTO>((x) => x.source)}.${nameof<LocalRequestSourceDTO>((x) => x.type)}`]: true,
 
             // source.reference
-            [`${nameof<ConsumptionRequestDTO>((x) => x.source)}.${nameof<ConsumptionRequestSourceDTO>((x) => x.reference)}`]: true,
+            [`${nameof<LocalRequestDTO>((x) => x.source)}.${nameof<LocalRequestSourceDTO>((x) => x.reference)}`]: true,
 
             // response.createdAt
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.createdAt)}`]: true,
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.createdAt)}`]: true,
 
             // response.source.type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.source)}.${nameof<ConsumptionResponseSourceDTO>((x) => x.type)}`]: true,
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.source)}.${nameof<LocalResponseSourceDTO>((x) => x.type)}`]: true,
 
             // response.source.reference
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.source)}.${nameof<ConsumptionResponseSourceDTO>((x) => x.reference)}`]:
-                true,
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.source)}.${nameof<LocalResponseSourceDTO>((x) => x.reference)}`]: true,
 
             // response.content.result
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.result)}`]: true,
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.result)}`]: true,
 
             // response.content.items.@type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>(
-                (x) => x.items
-            )}.${nameof<ResponseItemJSON>((x) => x["@type"])}`]: true,
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.items)}.${nameof<ResponseItemJSON>(
+                (x) => x["@type"]
+            )}`]: true,
 
             // response.content.items.items.@type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>(
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.items)}.${nameof<ResponseItemGroupJSON>(
                 (x) => x.items
-            )}.${nameof<ResponseItemGroupJSON>((x) => x.items)}.${nameof<ResponseItemJSON>((x) => x["@type"])}`]: true
+            )}.${nameof<ResponseItemJSON>((x) => x["@type"])}`]: true
         },
         alias: {
             // id
-            [nameof<ConsumptionRequestDTO>((x) => x.id)]: nameof<ConsumptionRequest>((x) => x.id),
+            [nameof<LocalRequestDTO>((x) => x.id)]: nameof<LocalRequest>((x) => x.id),
 
             // peer
-            [nameof<ConsumptionRequestDTO>((x) => x.peer)]: nameof<ConsumptionRequest>((x) => x.peer),
+            [nameof<LocalRequestDTO>((x) => x.peer)]: nameof<LocalRequest>((x) => x.peer),
 
             // createdAt
-            [nameof<ConsumptionRequestDTO>((x) => x.createdAt)]: nameof<ConsumptionRequest>((x) => x.createdAt),
+            [nameof<LocalRequestDTO>((x) => x.createdAt)]: nameof<LocalRequest>((x) => x.createdAt),
 
             // status
-            [nameof<ConsumptionRequestDTO>((x) => x.status)]: nameof<ConsumptionRequest>((x) => x.status),
+            [nameof<LocalRequestDTO>((x) => x.status)]: nameof<LocalRequest>((x) => x.status),
 
             // content.expiresAt
-            [`${nameof<ConsumptionRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.expiresAt)}`]: `${nameof<ConsumptionRequest>(
-                (x) => x.content
-            )}.${nameof<RequestJSON>((x) => x.expiresAt)}`,
+            [`${nameof<LocalRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.expiresAt)}`]: `${nameof<LocalRequest>((x) => x.content)}.${nameof<RequestJSON>(
+                (x) => x.expiresAt
+            )}`,
 
             // content.items.@type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemJSON>(
-                (x) => x["@type"]
-            )}`]: `${nameof<ConsumptionRequest>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemJSON>((x) => x["@type"])}`,
+            [`${nameof<LocalRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemJSON>((x) => x["@type"])}`]: `${nameof<LocalRequest>(
+                (x) => x.content
+            )}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemJSON>((x) => x["@type"])}`,
 
             // content.items.items.@type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemGroupJSON>((x) => x.items)}.${nameof<RequestItemJSON>(
+            [`${nameof<LocalRequestDTO>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemGroupJSON>((x) => x.items)}.${nameof<RequestItemJSON>(
                 (x) => x["@type"]
-            )}`]: `${nameof<ConsumptionRequest>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemGroupJSON>((x) => x.items)}.${nameof<RequestItemJSON>(
+            )}`]: `${nameof<LocalRequest>((x) => x.content)}.${nameof<RequestJSON>((x) => x.items)}.${nameof<RequestItemGroupJSON>((x) => x.items)}.${nameof<RequestItemJSON>(
                 (x) => x["@type"]
             )}`,
 
             // source.type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.source)}.${nameof<ConsumptionRequestSourceDTO>((x) => x.type)}`]: `${nameof<ConsumptionRequest>(
-                (x) => x.source
-            )}.${nameof<ConsumptionRequestSource>((x) => x.type)}`,
+            [`${nameof<LocalRequestDTO>((x) => x.source)}.${nameof<LocalRequestSourceDTO>((x) => x.type)}`]: `${nameof<LocalRequest>((x) => x.source)}.${nameof<LocalRequestSource>(
+                (x) => x.type
+            )}`,
 
             // source.reference
-            [`${nameof<ConsumptionRequestDTO>((x) => x.source)}.${nameof<ConsumptionRequestSourceDTO>((x) => x.reference)}`]: `${nameof<ConsumptionRequest>(
+            [`${nameof<LocalRequestDTO>((x) => x.source)}.${nameof<LocalRequestSourceDTO>((x) => x.reference)}`]: `${nameof<LocalRequest>(
                 (x) => x.source
-            )}.${nameof<ConsumptionRequestSource>((x) => x.reference)}`,
+            )}.${nameof<LocalRequestSource>((x) => x.reference)}`,
 
             // response.createdAt
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.createdAt)}`]: `${nameof<ConsumptionRequest>(
-                (x) => x.response
-            )}.${nameof<ConsumptionResponse>((x) => x.createdAt)}`,
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.createdAt)}`]: `${nameof<LocalRequest>((x) => x.response)}.${nameof<LocalResponse>(
+                (x) => x.createdAt
+            )}`,
 
             // response.source.type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.source)}.${nameof<ConsumptionResponseSourceDTO>(
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.source)}.${nameof<LocalResponseSourceDTO>(
                 (x) => x.type
-            )}`]: `${nameof<ConsumptionRequest>((x) => x.response)}.${nameof<ConsumptionResponse>((x) => x.source)}.${nameof<ConsumptionResponseSource>((x) => x.type)}`,
+            )}`]: `${nameof<LocalRequest>((x) => x.response)}.${nameof<LocalResponse>((x) => x.source)}.${nameof<LocalResponseSource>((x) => x.type)}`,
 
             // response.source.reference
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.source)}.${nameof<ConsumptionResponseSourceDTO>((x) => x.reference)}`]:
-                true,
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.source)}.${nameof<LocalResponseSourceDTO>((x) => x.reference)}`]: true,
 
             // response.content.result
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>(
-                (x) => x.result
-            )}`]: `${nameof<ConsumptionRequest>((x) => x.response)}.${nameof<ConsumptionResponse>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.result)}`,
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.result)}`]: `${nameof<LocalRequest>(
+                (x) => x.response
+            )}.${nameof<LocalResponse>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.result)}`,
 
             // response.content.items.@type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>(
-                (x) => x.items
-            )}.${nameof<ResponseItemJSON>((x) => x["@type"])}`]: `${nameof<ConsumptionRequest>((x) => x.response)}.${nameof<ConsumptionResponse>(
-                (x) => x.content
-            )}.${nameof<ResponseJSON>((x) => x.items)}.${nameof<ResponseItemJSON>((x) => x["@type"])}`,
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.items)}.${nameof<ResponseItemJSON>(
+                (x) => x["@type"]
+            )}`]: `${nameof<LocalRequest>((x) => x.response)}.${nameof<LocalResponse>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.items)}.${nameof<ResponseItemJSON>(
+                (x) => x["@type"]
+            )}`,
 
             // response.content.items.items.@type
-            [`${nameof<ConsumptionRequestDTO>((x) => x.response)}.${nameof<ConsumptionResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>(
+            [`${nameof<LocalRequestDTO>((x) => x.response)}.${nameof<LocalResponseDTO>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.items)}.${nameof<ResponseItemGroupJSON>(
                 (x) => x.items
-            )}.${nameof<ResponseItemGroupJSON>((x) => x.items)}.${nameof<ResponseItemJSON>((x) => x["@type"])}`]: `${nameof<ConsumptionRequest>(
-                (x) => x.response
-            )}.${nameof<ConsumptionResponse>((x) => x.content)}.${nameof<ResponseJSON>((x) => x.items)}.${nameof<ResponseItemGroupJSON>((x) => x.items)}.${nameof<ResponseItemJSON>(
-                (x) => x["@type"]
-            )}`
+            )}.${nameof<ResponseItemJSON>((x) => x["@type"])}`]: `${nameof<LocalRequest>((x) => x.response)}.${nameof<LocalResponse>((x) => x.content)}.${nameof<ResponseJSON>(
+                (x) => x.items
+            )}.${nameof<ResponseItemGroupJSON>((x) => x.items)}.${nameof<ResponseItemJSON>((x) => x["@type"])}`
         }
     });
 
@@ -183,12 +179,12 @@ export class GetOutgoingRequestsUseCase extends UseCase<GetOutgoingRequestsReque
         super();
     }
 
-    protected async executeInternal(request: GetOutgoingRequestsRequest): Promise<Result<ConsumptionRequestDTO[], ApplicationError>> {
+    protected async executeInternal(request: GetOutgoingRequestsRequest): Promise<Result<LocalRequestDTO[], ApplicationError>> {
         const flattenedQuery = flattenObject(request.query);
         const dbQuery = GetOutgoingRequestsUseCase.queryTranslator.parse(flattenedQuery);
-        const consumptionRequests = await this.outgoingRequestsController.getOutgoingRequests(dbQuery);
+        const localRequest = await this.outgoingRequestsController.getOutgoingRequests(dbQuery);
 
-        const dtos = RequestMapper.toConsumptionRequestDTOList(consumptionRequests);
+        const dtos = RequestMapper.toLocalRequestDTOList(localRequest);
 
         return Result.ok(dtos);
     }

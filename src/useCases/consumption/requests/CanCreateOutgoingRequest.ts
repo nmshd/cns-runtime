@@ -19,9 +19,9 @@ export class CanCreateOutgoingRequestUseCase extends UseCase<CreateOutgoingReque
             peer: CoreAddress.from(request.peer)
         };
 
-        const consumptionRequest = await this.outgoingRequestsController.canCreate(params);
+        const validationResult = await this.outgoingRequestsController.canCreate(params);
 
-        const dto = RequestValidationResultMapper.toRequestValidationResultDTO(consumptionRequest);
+        const dto = RequestValidationResultMapper.toRequestValidationResultDTO(validationResult);
 
         return Result.ok(dto);
     }
