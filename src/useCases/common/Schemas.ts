@@ -2907,7 +2907,7 @@ export const LoadPeerFileViaSecretRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "FIL[A-Za-z0-9]{17}1"
+                    "pattern": "FIL[A-Za-z0-9]{17}"
                 },
                 "secretKey": {
                     "type": "string",
@@ -2963,7 +2963,7 @@ export const LoadPeerFileRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "FIL[A-Za-z0-9]{17}1"
+                    "pattern": "FIL[A-Za-z0-9]{17}"
                 },
                 "secretKey": {
                     "type": "string",
