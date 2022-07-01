@@ -1,3 +1,4 @@
+export * from "./CreateQrCodeForFile";
 export * from "./CreateTokenForFile";
 export * from "./CreateTokenQrCodeForFile";
 export * from "./DownloadFile";
