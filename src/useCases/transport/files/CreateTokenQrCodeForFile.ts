@@ -49,7 +49,7 @@ export class CreateTokenQrCodeForFileUseCase extends UseCase<CreateTokenQrCodeFo
             ephemeral: true
         });
 
-        const qrCode = await QRCode.from(token.truncate());
+        const qrCode = await QRCode.forTruncateable(token);
         return Result.ok({ qrCodeBytes: qrCode.asBase64() });
     }
 }

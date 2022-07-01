@@ -31,7 +31,7 @@ export class GetQRCodeForTokenUseCase extends UseCase<GetQRCodeForTokenRequest, 
             return Result.fail(RuntimeErrors.general.recordNotFound(Token));
         }
 
-        const qrCode = await QRCode.from(token.truncate());
+        const qrCode = await QRCode.forTruncateable(token);
         return Result.ok({ qrCodeBytes: qrCode.asBase64() });
     }
 }

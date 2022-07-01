@@ -32,7 +32,7 @@ export class CreateQrCodeForFileUseCase extends UseCase<CreateQrCodeForFileReque
             return Result.fail(RuntimeErrors.general.recordNotFound(File));
         }
 
-        const qrCode = await QRCode.forFile(file);
+        const qrCode = await QRCode.forTruncateable(file);
         return Result.ok({ qrCodeBytes: qrCode.asBase64() });
     }
 }

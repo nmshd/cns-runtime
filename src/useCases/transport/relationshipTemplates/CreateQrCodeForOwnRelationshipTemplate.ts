@@ -35,7 +35,7 @@ export class CreateQrCodeForOwnTemplateUseCase extends UseCase<CreateQrCodeForOw
             return Result.fail(RuntimeErrors.relationshipTemplates.cannotCreateQRCodeForPeerTemplate());
         }
 
-        const qrCode = await QRCode.from(template.truncate());
+        const qrCode = await QRCode.forTruncateable(template);
         return Result.ok({ qrCodeBytes: qrCode.asBase64() });
     }
 }
