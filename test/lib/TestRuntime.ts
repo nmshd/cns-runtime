@@ -71,12 +71,9 @@ export class TestRuntime extends Runtime {
         const db = await this.transport.createDatabase(`acc-${randomAccountName}`);
 
         const accountController = await new AccountController(this.transport, db, this.transport.config).init();
-        const consumptionController = await new ConsumptionController(this.transport, accountController).init([
-            {
-                itemConstructor: TestRequestItem,
-                processorConstructor: GenericRequestItemProcessor
-            }
-        ]);
+
+        const requestItemProcessorOverrides = new Map([[TestRequestItem, GenericRequestItemProcessor]]);
+        const consumptionController = await new ConsumptionController(this.transport, accountController).init(requestItemProcessorOverrides);
 
         ({
             transportServices: this._transportServices,
