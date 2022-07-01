@@ -54,7 +54,7 @@ export class CreateTokenQrCodeForOwnTemplateUseCase extends UseCase<CreateTokenQ
             ephemeral: true
         });
 
-        const qrCode = await QRCode.from(token.truncate());
+        const qrCode = await QRCode.forTruncateable(token);
         return Result.ok({ qrCodeBytes: qrCode.asBase64() });
     }
 }

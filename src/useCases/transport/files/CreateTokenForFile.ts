@@ -7,7 +7,7 @@ import { TokenMapper } from "../tokens/TokenMapper";
 
 export interface CreateTokenForFileRequest {
     /**
-     * @pattern FIL[A-z0-9]{17}
+     * @pattern FIL[A-Za-z0-9]{17}
      */
     fileId: string;
     /**

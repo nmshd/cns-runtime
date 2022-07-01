@@ -5,7 +5,7 @@ import { QRCode, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } fro
 
 export interface CreateTokenQrCodeForFileRequest {
     /**
-     * @pattern FIL[A-z0-9]{17}
+     * @pattern FIL[A-Za-z0-9]{17}
      */
     fileId: string;
     /**
@@ -49,7 +49,7 @@ export class CreateTokenQrCodeForFileUseCase extends UseCase<CreateTokenQrCodeFo
             ephemeral: true
         });
 
-        const qrCode = await QRCode.from(token.truncate());
+        const qrCode = await QRCode.forTruncateable(token);
         return Result.ok({ qrCodeBytes: qrCode.asBase64() });
     }
 }

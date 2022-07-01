@@ -4,12 +4,12 @@ import { AccountController, CoreId, FileController, Token, TokenContentFile, Tok
 import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
-import { JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
+import { Base64ForIdPrefix, JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
 
 export interface LoadPeerFileViaSecretRequest {
     /**
-     * @pattern FIL[A-z0-9]{17}
+     * @pattern FIL[A-Za-z0-9]{17}
      */
     id: string;
     /**
@@ -19,11 +19,11 @@ export interface LoadPeerFileViaSecretRequest {
 }
 
 /**
- * @errorMessage token reference invalid
+ * @errorMessage token / file reference invalid
  */
 export interface LoadPeerFileViaReferenceRequest {
     /**
-     * @pattern VE9L.{84}
+     * @pattern (VE9L|RklM).{84}
      */
     reference: string;
 }
@@ -78,23 +78,41 @@ export class LoadPeerFileUseCase extends UseCase<LoadPeerFileRequest, FileDTO> {
     }
 
     protected async executeInternal(request: LoadPeerFileRequest): Promise<Result<FileDTO>> {
-        let createdFile: Result<FileDTO>;
+        let createdFileResult: Result<FileDTO>;
 
         if (isLoadPeerFileViaSecret(request)) {
             const key = CryptoSecretKey.fromBase64(request.secretKey);
-            createdFile = await this.loadFile(CoreId.from(request.id), key);
+            createdFileResult = await this.loadFile(CoreId.from(request.id), key);
         } else if (isLoadPeerFileViaReference(request)) {
-            createdFile = await this.createFileFromTokenReferenceRequest(request.reference);
+            createdFileResult = await this.loadFileFromReference(request.reference);
         } else {
             throw new Error("Invalid request format.");
         }
 
         await this.accountController.syncDatawallet();
-        return createdFile;
+
+        return createdFileResult;
     }
 
-    private async createFileFromTokenReferenceRequest(reference: string): Promise<Result<FileDTO>> {
-        const token = await this.tokenController.loadPeerTokenByTruncated(reference, true);
+    private async loadFileFromReference(reference: string): Promise<Result<FileDTO>> {
+        if (reference.startsWith(Base64ForIdPrefix.File)) {
+            return await this.loadFileFromFileReference(reference);
+        }
+
+        if (reference.startsWith(Base64ForIdPrefix.Token)) {
+            return await this.loadFileFromTokenReference(reference);
+        }
+
+        throw RuntimeErrors.files.invalidReference(reference);
+    }
+
+    private async loadFileFromFileReference(truncatedReference: string): Promise<Result<FileDTO>> {
+        const file = await this.fileController.loadPeerFileByTruncated(truncatedReference);
+        return Result.ok(FileMapper.toFileDTO(file));
+    }
+
+    private async loadFileFromTokenReference(truncatedReference: string): Promise<Result<FileDTO>> {
+        const token = await this.tokenController.loadPeerTokenByTruncated(truncatedReference, true);
 
         if (!token.cache) {
             throw RuntimeErrors.general.cacheEmpty(Token, token.id.toString());

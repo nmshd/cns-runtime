@@ -36,7 +36,8 @@ export class FileMapper {
             description: file.cache.description,
             deletedAt: file.cache.deletedAt?.toString(),
             deletedBy: file.cache.deletedBy?.toString(),
-            deletedByDevice: file.cache.deletedByDevice?.toString()
+            deletedByDevice: file.cache.deletedByDevice?.toString(),
+            truncatedReference: file.truncate()
         };
     }
 

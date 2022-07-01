@@ -22,9 +22,7 @@ describe("Create Relationship", () => {
     test("load relationship Template in connector 2", async () => {
         const template = await createTemplate(transportServices1);
 
-        const response = await transportServices2.relationshipTemplates.loadPeerRelationshipTemplate({
-            relationshipTemplateReference: template.truncatedReference
-        });
+        const response = await transportServices2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: template.truncatedReference });
         expect(response).toBeSuccessful();
         templateId = response.value.id;
     });

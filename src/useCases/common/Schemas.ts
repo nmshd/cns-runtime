@@ -2460,7 +2460,7 @@ export const DownloadFileRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "FIL[A-z0-9]{17}"
+                    "pattern": "FIL[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -2518,7 +2518,7 @@ export const CreateRelationshipChallengeRequest: any = {
                 },
                 "relationship": {
                     "type": "string",
-                    "pattern": "REL[A-z0-9]{17}"
+                    "pattern": "REL[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -2596,7 +2596,7 @@ export const CreateChallengeRequest: any = {
                 },
                 "relationship": {
                     "type": "string",
-                    "pattern": "REL[A-z0-9]{17}"
+                    "pattern": "REL[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -2783,6 +2783,26 @@ export const UpdateDeviceRequest: any = {
     }
 }
 
+export const CreateQrCodeForFileRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateQrCodeForFileRequest",
+    "definitions": {
+        "CreateQrCodeForFileRequest": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string",
+                    "pattern": "FIL[A-Za-z0-9]{17}"
+                }
+            },
+            "required": [
+                "fileId"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const CreateTokenForFileRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateTokenForFileRequest",
@@ -2792,7 +2812,7 @@ export const CreateTokenForFileRequest: any = {
             "properties": {
                 "fileId": {
                     "type": "string",
-                    "pattern": "FIL[A-z0-9]{17}"
+                    "pattern": "FIL[A-Za-z0-9]{17}"
                 },
                 "expiresAt": {
                     "type": "string",
@@ -2819,7 +2839,7 @@ export const CreateTokenQrCodeForFileRequest: any = {
             "properties": {
                 "fileId": {
                     "type": "string",
-                    "pattern": "FIL[A-z0-9]{17}"
+                    "pattern": "FIL[A-Za-z0-9]{17}"
                 },
                 "expiresAt": {
                     "type": "string",
@@ -2843,7 +2863,7 @@ export const GetFileRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "FIL[A-z0-9]{17}"
+                    "pattern": "FIL[A-Za-z0-9]{17}"
                 }
             },
             "required": [
@@ -2887,7 +2907,7 @@ export const LoadPeerFileViaSecretRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "FIL[A-z0-9]{17}"
+                    "pattern": "FIL[A-Za-z0-9]{17}"
                 },
                 "secretKey": {
                     "type": "string",
@@ -2912,14 +2932,14 @@ export const LoadPeerFileViaReferenceRequest: any = {
             "properties": {
                 "reference": {
                     "type": "string",
-                    "pattern": "VE9L.{84}"
+                    "pattern": "(VE9L|RklM).{84}"
                 }
             },
             "required": [
                 "reference"
             ],
             "additionalProperties": false,
-            "errorMessage": "token reference invalid"
+            "errorMessage": "token / file reference invalid"
         }
     }
 }
@@ -2943,7 +2963,7 @@ export const LoadPeerFileRequest: any = {
             "properties": {
                 "id": {
                     "type": "string",
-                    "pattern": "FIL[A-z0-9]{17}"
+                    "pattern": "FIL[A-Za-z0-9]{17}"
                 },
                 "secretKey": {
                     "type": "string",
@@ -2961,14 +2981,14 @@ export const LoadPeerFileRequest: any = {
             "properties": {
                 "reference": {
                     "type": "string",
-                    "pattern": "VE9L.{84}"
+                    "pattern": "(VE9L|RklM).{84}"
                 }
             },
             "required": [
                 "reference"
             ],
             "additionalProperties": false,
-            "errorMessage": "token reference invalid"
+            "errorMessage": "token / file reference invalid"
         }
     }
 }
@@ -3476,11 +3496,11 @@ export const GetRelationshipTemplatesRequest: any = {
     }
 }
 
-export const LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest: any = {
+export const LoadPeerRelationshipTemplateViaSecretRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest",
+    "$ref": "#/definitions/LoadPeerRelationshipTemplateViaSecretRequest",
     "definitions": {
-        "LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest": {
+        "LoadPeerRelationshipTemplateViaSecretRequest": {
             "type": "object",
             "properties": {
                 "id": {
@@ -3488,7 +3508,8 @@ export const LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest: any = {
                     "pattern": "RLT[A-Za-z0-9]{17}"
                 },
                 "secretKey": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 100
                 }
             },
             "required": [
@@ -3500,40 +3521,23 @@ export const LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest: any = {
     }
 }
 
-export const LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest: any = {
+export const LoadPeerRelationshipTemplateViaReferenceRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest",
+    "$ref": "#/definitions/LoadPeerRelationshipTemplateViaReferenceRequest",
     "definitions": {
-        "LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest": {
+        "LoadPeerRelationshipTemplateViaReferenceRequest": {
             "type": "object",
             "properties": {
-                "tokenReference": {
-                    "type": "string"
+                "reference": {
+                    "type": "string",
+                    "pattern": "(VE9L|UkxU).{84}"
                 }
             },
             "required": [
-                "tokenReference"
+                "reference"
             ],
-            "additionalProperties": false
-        }
-    }
-}
-
-export const LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest: any = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest",
-    "definitions": {
-        "LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest": {
-            "type": "object",
-            "properties": {
-                "relationshipTemplateReference": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "relationshipTemplateReference"
-            ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "errorMessage": "token / relationship template reference invalid"
         }
     }
 }
@@ -3545,17 +3549,14 @@ export const LoadPeerRelationshipTemplateRequest: any = {
         "LoadPeerRelationshipTemplateRequest": {
             "anyOf": [
                 {
-                    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest"
+                    "$ref": "#/definitions/LoadPeerRelationshipTemplateViaSecretRequest"
                 },
                 {
-                    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest"
-                },
-                {
-                    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest"
+                    "$ref": "#/definitions/LoadPeerRelationshipTemplateViaReferenceRequest"
                 }
             ]
         },
-        "LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest": {
+        "LoadPeerRelationshipTemplateViaSecretRequest": {
             "type": "object",
             "properties": {
                 "id": {
@@ -3563,7 +3564,8 @@ export const LoadPeerRelationshipTemplateRequest: any = {
                     "pattern": "RLT[A-Za-z0-9]{17}"
                 },
                 "secretKey": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 100
                 }
             },
             "required": [
@@ -3572,29 +3574,19 @@ export const LoadPeerRelationshipTemplateRequest: any = {
             ],
             "additionalProperties": false
         },
-        "LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest": {
+        "LoadPeerRelationshipTemplateViaReferenceRequest": {
             "type": "object",
             "properties": {
-                "tokenReference": {
-                    "type": "string"
+                "reference": {
+                    "type": "string",
+                    "pattern": "(VE9L|UkxU).{84}"
                 }
             },
             "required": [
-                "tokenReference"
+                "reference"
             ],
-            "additionalProperties": false
-        },
-        "LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest": {
-            "type": "object",
-            "properties": {
-                "relationshipTemplateReference": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "relationshipTemplateReference"
-            ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "errorMessage": "token / relationship template reference invalid"
         }
     }
 }

@@ -2,6 +2,9 @@ import { Result } from "@js-soft/ts-utils";
 import { Inject } from "typescript-ioc";
 import { FileDTO, TokenDTO } from "../../../types";
 import {
+    CreateQrCodeForFileRequest,
+    CreateQrCodeForFileResponse,
+    CreateQrCodeForFileUseCase,
     CreateTokenForFileRequest,
     CreateTokenForFileUseCase,
     CreateTokenQrCodeForFileRequest,
@@ -27,6 +30,7 @@ export class FilesFacade {
         @Inject private readonly getFilesUseCase: GetFilesUseCase,
         @Inject private readonly downloadFileUseCase: DownloadFileUseCase,
         @Inject private readonly getFileUseCase: GetFileUseCase,
+        @Inject private readonly createQrCodeForFileUseCase: CreateQrCodeForFileUseCase,
         @Inject private readonly createTokenForFileUseCase: CreateTokenForFileUseCase,
         @Inject private readonly createTokenQrCodeForFileUseCase: CreateTokenQrCodeForFileUseCase
     ) {}
@@ -49,6 +53,10 @@ export class FilesFacade {
 
     public async uploadOwnFile(request: UploadOwnFileRequest): Promise<Result<FileDTO>> {
         return await this.uploadOwnFileUseCase.execute(request);
+    }
+
+    public async createQrCodeForFile(request: CreateQrCodeForFileRequest): Promise<Result<CreateQrCodeForFileResponse>> {
+        return await this.createQrCodeForFileUseCase.execute(request);
     }
 
     public async createTokenForFile(request: CreateTokenForFileRequest): Promise<Result<TokenDTO>> {
