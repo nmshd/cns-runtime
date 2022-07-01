@@ -3386,6 +3386,53 @@ export const CreateQrCodeForOwnTemplateRequest: any = {
     }
 }
 
+export const CreateTokenForOwnTemplateRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateTokenForOwnTemplateRequest",
+    "definitions": {
+        "CreateTokenForOwnTemplateRequest": {
+            "type": "object",
+            "properties": {
+                "templateId": {
+                    "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string"
+                },
+                "ephemeral": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "templateId"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const CreateTokenQrCodeForOwnTemplateRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateTokenQrCodeForOwnTemplateRequest",
+    "definitions": {
+        "CreateTokenQrCodeForOwnTemplateRequest": {
+            "type": "object",
+            "properties": {
+                "templateId": {
+                    "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "templateId"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const GetRelationshipTemplateRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/GetRelationshipTemplateRequest",
