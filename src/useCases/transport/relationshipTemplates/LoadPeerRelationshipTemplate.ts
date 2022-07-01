@@ -1,52 +1,36 @@
 import { EventBus, Result } from "@js-soft/ts-utils";
 import { CryptoSecretKey } from "@nmshd/crypto";
-import { AccountController, BackboneIds, CoreId, RelationshipTemplateController, Token, TokenContentRelationshipTemplate, TokenController } from "@nmshd/transport";
+import { AccountController, CoreId, RelationshipTemplateController, Token, TokenContentRelationshipTemplate, TokenController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { PeerRelationshipTemplateLoadedEvent } from "../../../events";
 import { RelationshipTemplateDTO } from "../../../types";
-import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
+import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RelationshipTemplateMapper } from "./RelationshipTemplateMapper";
 
-export interface LoadPeerRelationshipTemplateRequest {
-    id?: string;
-    secretKey?: string;
-    reference?: string;
+export interface LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest {
+    /**
+     * @pattern RLT[A-Za-z0-9]{17}
+     */
+    id: string;
+    secretKey: string;
 }
 
-class LoadPeerRelationshipTemplateRequestValidator extends RuntimeValidator<LoadPeerRelationshipTemplateRequest> {
-    public constructor() {
-        super();
+export interface LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest {
+    tokenReference: string;
+}
 
-        this.validateIf((x) => x)
-            .fulfills((x) => this.isCreateRelationshipTemplateFromIdAndKeyRequest(x) || this.isCreateRelationshipTemplateFromTokenReferenceRequest(x))
-            .withFailureCode(RuntimeErrors.general.invalidPayload().code)
-            .withFailureMessage(RuntimeErrors.general.invalidPayload().message);
+export interface LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest {
+    relationshipTemplateReference: string;
+}
 
-        this.setupRulesForCreateRelationshipTemplateFromIdAndKeyRequest();
-        this.setupRulesForCreateRelationshipTemplateFromTokenReferenceRequest();
-    }
+export type LoadPeerRelationshipTemplateRequest =
+    | LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest
+    | LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest
+    | LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest;
 
-    private setupRulesForCreateRelationshipTemplateFromIdAndKeyRequest() {
-        this.validateIfString((x) => x.id)
-            .fulfills(IdValidator.required(BackboneIds.relationshipTemplate))
-            .when(this.isCreateRelationshipTemplateFromIdAndKeyRequest);
-
-        this.validateIfString((x) => x.secretKey)
-            .isNotNull()
-            .when(this.isCreateRelationshipTemplateFromIdAndKeyRequest);
-    }
-
-    private setupRulesForCreateRelationshipTemplateFromTokenReferenceRequest() {
-        this.validateIfString((x) => x.reference)
-            .isNotNull()
-            .when(this.isCreateRelationshipTemplateFromTokenReferenceRequest);
-    }
-    private isCreateRelationshipTemplateFromIdAndKeyRequest(x: LoadPeerRelationshipTemplateRequest): boolean {
-        return !!x.id && !!x.secretKey;
-    }
-
-    private isCreateRelationshipTemplateFromTokenReferenceRequest(x: LoadPeerRelationshipTemplateRequest): boolean {
-        return !!x.reference;
+class Validator extends SchemaValidator<LoadPeerRelationshipTemplateRequest> {
+    public constructor(@Inject schemaRepository: SchemaRepository) {
+        super(schemaRepository.getSchema("LoadPeerRelationshipTemplateRequest"));
     }
 }
 
@@ -56,7 +40,7 @@ export class LoadPeerRelationshipTemplateUseCase extends UseCase<LoadPeerRelatio
         @Inject private readonly tokenController: TokenController,
         @Inject private readonly accountController: AccountController,
         @Inject private readonly eventBus: EventBus,
-        @Inject validator: LoadPeerRelationshipTemplateRequestValidator
+        @Inject validator: Validator
     ) {
         super(validator);
     }
@@ -64,11 +48,13 @@ export class LoadPeerRelationshipTemplateUseCase extends UseCase<LoadPeerRelatio
     protected async executeInternal(request: LoadPeerRelationshipTemplateRequest): Promise<Result<RelationshipTemplateDTO>> {
         let createdTemplateResult: Result<RelationshipTemplateDTO>;
 
-        if (request.id && request.secretKey) {
+        if (isLoadPeerRelationshipTemplateRequestFromIdAndKeyRequest(request)) {
             const key = CryptoSecretKey.fromBase64(request.secretKey);
             createdTemplateResult = await this.loadTemplate(CoreId.from(request.id), key);
-        } else if (request.reference) {
-            createdTemplateResult = await this.createRelationshipTemplateFromTokenReferenceRequest(request.reference);
+        } else if (isLoadPeerRelationshipTemplateRequestFromTokenReferenceRequest(request)) {
+            createdTemplateResult = await this.loadRelationshipTemplateFromTokenReference(request.tokenReference);
+        } else if (isLoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest(request)) {
+            createdTemplateResult = await this.loadRelationshipTemplateFromRelationshipTemplateReference(request.relationshipTemplateReference);
         } else {
             throw new Error("Invalid request format.");
         }
@@ -83,7 +69,7 @@ export class LoadPeerRelationshipTemplateUseCase extends UseCase<LoadPeerRelatio
         return createdTemplateResult;
     }
 
-    private async createRelationshipTemplateFromTokenReferenceRequest(reference: string): Promise<Result<RelationshipTemplateDTO>> {
+    private async loadRelationshipTemplateFromTokenReference(reference: string): Promise<Result<RelationshipTemplateDTO>> {
         const token = await this.tokenController.loadPeerTokenByTruncated(reference, true);
 
         if (!token.cache) {
@@ -98,8 +84,25 @@ export class LoadPeerRelationshipTemplateUseCase extends UseCase<LoadPeerRelatio
         return await this.loadTemplate(content.templateId, content.secretKey);
     }
 
+    private async loadRelationshipTemplateFromRelationshipTemplateReference(relationshipTemplateReference: string) {
+        const template = await this.templateController.loadPeerRelationshipTemplateByTruncated(relationshipTemplateReference);
+        return Result.ok(RelationshipTemplateMapper.toRelationshipTemplateDTO(template));
+    }
+
     private async loadTemplate(id: CoreId, key: CryptoSecretKey) {
         const template = await this.templateController.loadPeerRelationshipTemplate(id, key);
         return Result.ok(RelationshipTemplateMapper.toRelationshipTemplateDTO(template));
     }
+}
+
+function isLoadPeerRelationshipTemplateRequestFromIdAndKeyRequest(x: any): x is LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest {
+    return !!x.id && !!x.secretKey;
+}
+
+function isLoadPeerRelationshipTemplateRequestFromTokenReferenceRequest(x: any): x is LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest {
+    return !!x.tokenReference;
+}
+
+function isLoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest(x: any): x is LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest {
+    return !!x.relationshipTemplateReference;
 }

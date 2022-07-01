@@ -8,4 +8,5 @@ export interface RelationshipTemplateDTO {
     expiresAt?: string;
     maxNumberOfAllocations?: number;
     maxNumberOfRelationships?: number;
+    truncatedReference: string;
 }

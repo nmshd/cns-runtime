@@ -17,7 +17,8 @@ export class RelationshipTemplateMapper {
             content: template.cache.content.toJSON(),
             expiresAt: template.cache.expiresAt?.toString(),
             maxNumberOfAllocations: template.cache.maxNumberOfAllocations,
-            maxNumberOfRelationships: template.cache.maxNumberOfRelationships
+            maxNumberOfRelationships: template.cache.maxNumberOfRelationships,
+            truncatedReference: template.truncate()
         };
     }
 
