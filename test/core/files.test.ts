@@ -120,6 +120,25 @@ describe("Get file", () => {
     });
 });
 
+describe("File exchange", () => {
+    test("exchange a file via a FileReference", async () => {
+        const uploadedFile = await uploadFile(transportServices1);
+
+        const fileResult = transportServices2.files.loadPeerFile({ reference: uploadedFile.truncatedReference });
+        expect(fileResult).toBeSuccessful();
+    });
+
+    test("exchange a file via a FileReference with a token", async () => {
+        const uploadedFile = await uploadFile(transportServices1);
+
+        const tokenResult = await transportServices1.files.createTokenForFile({ fileId: uploadedFile.id });
+        expect(tokenResult).toBeSuccessful();
+
+        const fileResult = transportServices2.files.loadPeerFile({ reference: tokenResult.value.truncatedReference });
+        expect(fileResult).toBeSuccessful();
+    });
+});
+
 describe("Upload big files", () => {
     test("can not upload a file that is bigger than 10MB", async () => {
         const file = await fs.promises.readFile(`${__dirname}/../__assets__/upload-10+mb.bin`);
