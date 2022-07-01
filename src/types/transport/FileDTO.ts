@@ -14,4 +14,5 @@ export interface FileDTO {
     deletedAt?: string;
     deletedBy?: string;
     deletedByDevice?: string;
+    truncatedReference: string;
 }
