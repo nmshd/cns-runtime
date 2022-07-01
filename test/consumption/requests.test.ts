@@ -377,7 +377,7 @@ describe("Requests", () => {
         });
 
         test("recipient: load the Relationship Template with the Request", async () => {
-            const result = await rTransportServices.relationshipTemplates.loadPeerRelationshipTemplate({ relationshipTemplateReference: sRelationshipTemplate.truncatedReference });
+            const result = await rTransportServices.relationshipTemplates.loadPeerRelationshipTemplate({ reference: sRelationshipTemplate.truncatedReference });
 
             expect(result).toBeSuccessful();
 

@@ -132,9 +132,7 @@ export async function exchangeTemplate(
 ): Promise<RelationshipTemplateDTO> {
     const template = await createTemplate(transportServicesCreator, body);
 
-    const response = await transportServicesRecipient.relationshipTemplates.loadPeerRelationshipTemplate({
-        relationshipTemplateReference: template.truncatedReference
-    });
+    const response = await transportServicesRecipient.relationshipTemplates.loadPeerRelationshipTemplate({ reference: template.truncatedReference });
     expect(response).toBeSuccessful();
 
     return response.value;
