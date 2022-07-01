@@ -76,13 +76,29 @@ class Serval {
     }
 }
 
+class Files {
+    public invalidReference(reference: string): ApplicationError {
+        return new ApplicationError(
+            "error.runtime.files.invalidReference",
+            `The reference for a file must start with 'VE9L' or 'RklM'. The given reference '${reference}' is not valid.`
+        );
+    }
+}
+
 class RelationshipTemplates {
     public cannotCreateTokenForPeerTemplate(): ApplicationError {
-        return new ApplicationError("error.runtime.relationshipRequests.cannotCreateTokenForPeerTemplate", "You cannot create a token for a peer template.");
+        return new ApplicationError("error.runtime.relationshipTemplates.cannotCreateTokenForPeerTemplate", "You cannot create a token for a peer template.");
     }
 
     public cannotCreateQRCodeForPeerTemplate(): ApplicationError {
-        return new ApplicationError("error.runtime.relationshipRequests.cannotCreateQRCodeForPeerTemplate", "You cannot create a QRCode for a peer template.");
+        return new ApplicationError("error.runtime.relationshipTemplates.cannotCreateQRCodeForPeerTemplate", "You cannot create a QRCode for a peer template.");
+    }
+
+    public invalidReference(reference: string): ApplicationError {
+        return new ApplicationError(
+            "error.runtime.relationshipTemplates.invalidReference",
+            `The reference for a relationship template must start with 'VE9L' or 'UkxU'. The given reference '${reference}' is not valid.`
+        );
     }
 }
 
@@ -163,6 +179,7 @@ export class RuntimeErrors {
     public static readonly serval = new Serval();
     public static readonly startup = new Startup();
     public static readonly database = new Database();
+    public static readonly files = new Files();
     public static readonly relationshipTemplates = new RelationshipTemplates();
     public static readonly messages = new Messages();
     public static readonly relationshipInfo = new RelationshipInfo();
