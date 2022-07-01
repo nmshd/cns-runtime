@@ -1,5 +1,5 @@
 import { ConsumptionServices, TransportServices } from "../../src";
-import { getRelationship, getTemplateToken, QueryParamConditions, RuntimeServiceProvider, syncUntilHasRelationships } from "../lib";
+import { createTemplate, getRelationship, QueryParamConditions, RuntimeServiceProvider, syncUntilHasRelationships } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -20,10 +20,10 @@ describe("Create Relationship", () => {
     let relationshipChangeId: string;
 
     test("load relationship Template in connector 2", async () => {
-        const token = await getTemplateToken(transportServices1);
+        const template = await createTemplate(transportServices1);
 
         const response = await transportServices2.relationshipTemplates.loadPeerRelationshipTemplate({
-            reference: token.truncatedReference
+            relationshipTemplateReference: template.truncatedReference
         });
         expect(response).toBeSuccessful();
         templateId = response.value.id;

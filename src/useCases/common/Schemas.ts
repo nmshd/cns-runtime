@@ -3367,6 +3367,25 @@ export const CreateOwnRelationshipTemplateRequest: any = {
     }
 }
 
+export const CreateQrCodeForOwnTemplateRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/CreateQrCodeForOwnTemplateRequest",
+    "definitions": {
+        "CreateQrCodeForOwnTemplateRequest": {
+            "type": "object",
+            "properties": {
+                "templateId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "templateId"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const CreateTokenForOwnTemplateRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/CreateTokenForOwnTemplateRequest",
@@ -3457,23 +3476,124 @@ export const GetRelationshipTemplatesRequest: any = {
     }
 }
 
+export const LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest",
+    "definitions": {
+        "LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "RLT[A-Za-z0-9]{17}"
+                },
+                "secretKey": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "secretKey"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest",
+    "definitions": {
+        "LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest": {
+            "type": "object",
+            "properties": {
+                "tokenReference": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tokenReference"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
+export const LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest: any = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest",
+    "definitions": {
+        "LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest": {
+            "type": "object",
+            "properties": {
+                "relationshipTemplateReference": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "relationshipTemplateReference"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+
 export const LoadPeerRelationshipTemplateRequest: any = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$ref": "#/definitions/LoadPeerRelationshipTemplateRequest",
     "definitions": {
         "LoadPeerRelationshipTemplateRequest": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest"
+                },
+                {
+                    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest"
+                },
+                {
+                    "$ref": "#/definitions/LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest"
+                }
+            ]
+        },
+        "LoadPeerRelationshipTemplateRequestFromIdAndKeyRequest": {
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "RLT[A-Za-z0-9]{17}"
                 },
                 "secretKey": {
                     "type": "string"
-                },
-                "reference": {
+                }
+            },
+            "required": [
+                "id",
+                "secretKey"
+            ],
+            "additionalProperties": false
+        },
+        "LoadPeerRelationshipTemplateRequestFromTokenReferenceRequest": {
+            "type": "object",
+            "properties": {
+                "tokenReference": {
                     "type": "string"
                 }
             },
+            "required": [
+                "tokenReference"
+            ],
+            "additionalProperties": false
+        },
+        "LoadPeerRelationshipTemplateRequestFromRelationshipTemplateReferenceRequest": {
+            "type": "object",
+            "properties": {
+                "relationshipTemplateReference": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "relationshipTemplateReference"
+            ],
             "additionalProperties": false
         }
     }

@@ -4,6 +4,9 @@ import { RelationshipTemplateDTO, TokenDTO } from "../../../types";
 import {
     CreateOwnRelationshipTemplateRequest,
     CreateOwnRelationshipTemplateUseCase,
+    CreateQrCodeForOwnTemplateRequest,
+    CreateQrCodeForOwnTemplateResponse,
+    CreateQrCodeForOwnTemplateUseCase,
     CreateTokenForOwnTemplateRequest,
     CreateTokenForOwnTemplateUseCase,
     CreateTokenQrCodeForOwnTemplateRequest,
@@ -23,6 +26,7 @@ export class RelationshipTemplatesFacade {
         @Inject private readonly loadPeerRelationshipTemplateUseCase: LoadPeerRelationshipTemplateUseCase,
         @Inject private readonly getRealtionshipTemplatesUseCase: GetRelationshipTemplatesUseCase,
         @Inject private readonly getRelationshipTemplateUseCase: GetRelationshipTemplateUseCase,
+        @Inject private readonly createQrCodeForOwnTemplateUseCase: CreateQrCodeForOwnTemplateUseCase,
         @Inject private readonly createTokenQrCodeForOwnTemplateUseCase: CreateTokenQrCodeForOwnTemplateUseCase,
         @Inject private readonly createTokenForOwnTemplateUseCase: CreateTokenForOwnTemplateUseCase
     ) {}
@@ -41,6 +45,10 @@ export class RelationshipTemplatesFacade {
 
     public async getRelationshipTemplate(request: GetRelationshipTemplateRequest): Promise<Result<RelationshipTemplateDTO>> {
         return await this.getRelationshipTemplateUseCase.execute(request);
+    }
+
+    public async createQrCodeForOwnTemplate(request: CreateQrCodeForOwnTemplateRequest): Promise<Result<CreateQrCodeForOwnTemplateResponse>> {
+        return await this.createQrCodeForOwnTemplateUseCase.execute(request);
     }
 
     public async createTokenQrCodeForOwnTemplate(request: CreateTokenQrCodeForOwnTemplateRequest): Promise<Result<CreateTokenQrCodeForOwnTemplateResponse>> {

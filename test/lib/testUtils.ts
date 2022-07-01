@@ -113,21 +113,6 @@ export async function createTemplate(
     return response.value;
 }
 
-export async function getTemplateToken(
-    transportServices: TransportServices,
-    body: RelationshipTemplateBodyJSON | RelationshipTemplateBody | IRelationshipTemplateBody = {
-        "@type": "RelationshipTemplateBody",
-        onNewRelationship: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
-    }
-): Promise<TokenDTO> {
-    const template = await createTemplate(transportServices, body);
-
-    const response = await transportServices.relationshipTemplates.createTokenForOwnTemplate({ templateId: template.id });
-    expect(response).toBeSuccessful();
-
-    return response.value;
-}
-
 export async function getFileToken(transportServices: TransportServices): Promise<TokenDTO> {
     const file = await uploadFile(transportServices);
 
@@ -145,10 +130,10 @@ export async function exchangeTemplate(
         onNewRelationship: { "@type": "Request", items: [{ "@type": "TestRequestItem", mustBeAccepted: false }] }
     }
 ): Promise<RelationshipTemplateDTO> {
-    const templateToken = await getTemplateToken(transportServicesCreator, body);
+    const template = await createTemplate(transportServicesCreator, body);
 
     const response = await transportServicesRecipient.relationshipTemplates.loadPeerRelationshipTemplate({
-        reference: templateToken.truncatedReference
+        relationshipTemplateReference: template.truncatedReference
     });
     expect(response).toBeSuccessful();
 

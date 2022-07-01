@@ -1,4 +1,5 @@
 export * from "./CreateOwnRelationshipTemplate";
+export * from "./CreateQrCodeForOwnRelationshipTemplate";
 export * from "./CreateTokenForOwnRelationshipTemplate";
 export * from "./CreateTokenQrCodeForOwnRelationshipTemplate";
 export * from "./GetRelationshipTemplate";
