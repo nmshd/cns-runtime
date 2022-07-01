@@ -1,6 +1,6 @@
 import { Result } from "@js-soft/ts-utils";
 import { Inject } from "typescript-ioc";
-import { ConsumptionAttributeDTO } from "../../../types";
+import { LocalAttributeDTO } from "../../../types";
 import {
     CreateAttributeRequest,
     CreateAttributeUseCase,
@@ -38,11 +38,11 @@ export class AttributesFacade {
         @Inject private readonly executeRelationshipAttributeQueryUseCase: ExecuteRelationshipAttributeQueryUseCase
     ) {}
 
-    public async createAttribute(request: CreateAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
+    public async createAttribute(request: CreateAttributeRequest): Promise<Result<LocalAttributeDTO>> {
         return await this.createAttributeUseCase.execute(request);
     }
 
-    public async createSharedAttributeCopy(request: CreateSharedAttributeCopyRequest): Promise<Result<ConsumptionAttributeDTO>> {
+    public async createSharedAttributeCopy(request: CreateSharedAttributeCopyRequest): Promise<Result<LocalAttributeDTO>> {
         return await this.createSharedAttributeCopyUseCase.execute(request);
     }
 
@@ -50,31 +50,31 @@ export class AttributesFacade {
         return await this.deleteAttributeUseCase.execute(request);
     }
 
-    public async getValidAttributes(request: GetValidAttributesRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
+    public async getValidAttributes(request: GetValidAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
         return await this.getValidAttributesUseCase.execute(request);
     }
 
-    public async getAttribute(request: GetAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
+    public async getAttribute(request: GetAttributeRequest): Promise<Result<LocalAttributeDTO>> {
         return await this.getAttributeUseCase.execute(request);
     }
 
-    public async getAttributes(request: GetAttributesRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
+    public async getAttributes(request: GetAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
         return await this.getAttributesUseCase.execute(request);
     }
 
-    public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
+    public async executeIdentityAttributeQuery(request: ExecuteIdentityAttributeQueryRequest): Promise<Result<LocalAttributeDTO[]>> {
         return await this.executeIdentityAttributeQueryUseCase.execute(request);
     }
 
-    public async executeRelationshipAttributeQuery(request: ExecuteRelationshipAttributeQueryRequest): Promise<Result<ConsumptionAttributeDTO[]>> {
+    public async executeRelationshipAttributeQuery(request: ExecuteRelationshipAttributeQueryRequest): Promise<Result<LocalAttributeDTO[]>> {
         return await this.executeRelationshipAttributeQueryUseCase.execute(request);
     }
 
-    public async succeedAttribute(request: SucceedAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
+    public async succeedAttribute(request: SucceedAttributeRequest): Promise<Result<LocalAttributeDTO>> {
         return await this.succeedAttributeUseCase.execute(request);
     }
 
-    public async updateAttribute(request: UpdateAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
+    public async updateAttribute(request: UpdateAttributeRequest): Promise<Result<LocalAttributeDTO>> {
         return await this.updateAttributeUseCase.execute(request);
     }
 }

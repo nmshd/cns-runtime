@@ -1,5 +1,5 @@
 import { EventBus } from "@js-soft/ts-utils";
-import { ConsumptionRequestStatus } from "@nmshd/consumption";
+import { LocalRequestStatus } from "@nmshd/consumption";
 import { RelationshipCreationChangeRequestBodyJSON, RelationshipTemplateBodyJSON, ResponseItemJSON, ResponseItemResult } from "@nmshd/content";
 import {
     ConsumptionServices,
@@ -45,7 +45,7 @@ describe("RequestModule", () => {
                 rEventBus,
                 IncomingRequestStatusChangedEvent,
                 4000,
-                (event) => event.data.newStatus === ConsumptionRequestStatus.DecisionRequired
+                (event) => event.data.newStatus === LocalRequestStatus.DecisionRequired
             );
 
             const templateBody: RelationshipTemplateBodyJSON = {
@@ -57,10 +57,10 @@ describe("RequestModule", () => {
             await exchangeTemplate(sTransportServices, rTransportServices, templateBody);
 
             const waitedForIncomingRequestReceived = await waitForIncomingRequestReceived;
-            expect(waitedForIncomingRequestReceived.data.status).toBe(ConsumptionRequestStatus.Open);
+            expect(waitedForIncomingRequestReceived.data.status).toBe(LocalRequestStatus.Open);
 
             const waitedForIncomingRequestDecisionRequired = await waitForIncomingRequestDecisionRequired;
-            expect(waitedForIncomingRequestDecisionRequired.data.newStatus).toBe(ConsumptionRequestStatus.DecisionRequired);
+            expect(waitedForIncomingRequestDecisionRequired.data.newStatus).toBe(LocalRequestStatus.DecisionRequired);
 
             const requestsResult = await rConsumptionServices.incomingRequests.getRequests({});
             expect(requestsResult).toBeSuccessful();
@@ -74,14 +74,14 @@ describe("RequestModule", () => {
                 rEventBus,
                 IncomingRequestStatusChangedEvent,
                 5000,
-                (event) => event.data.newStatus === ConsumptionRequestStatus.Completed
+                (event) => event.data.newStatus === LocalRequestStatus.Completed
             );
 
             const acceptRequestResult = await rConsumptionServices.incomingRequests.accept({ requestId, items: [{ accept: true }] });
             expect(acceptRequestResult).toBeSuccessful();
 
             const waitedForIncomingRequestCompleted = await waitForIncomingRequestCompleted;
-            expect(waitedForIncomingRequestCompleted.data.newStatus).toBe(ConsumptionRequestStatus.Completed);
+            expect(waitedForIncomingRequestCompleted.data.newStatus).toBe(LocalRequestStatus.Completed);
 
             const getRelationshipsResult = await rTransportServices.relationships.getRelationships({});
             expect(getRelationshipsResult).toBeSuccessful();
@@ -146,12 +146,12 @@ describe("RequestModule", () => {
 
             requestId = createRequestResult.value.id;
 
-            const waitForOutgoingRequestOpen = waitForEvent(sEventBus, OutgoingRequestStatusChangedEvent, 4000, (event) => event.data.newStatus === ConsumptionRequestStatus.Open);
+            const waitForOutgoingRequestOpen = waitForEvent(sEventBus, OutgoingRequestStatusChangedEvent, 4000, (event) => event.data.newStatus === LocalRequestStatus.Open);
 
             await sendMessage(sTransportServices, recipientAddress, createRequestResult.value.content);
 
             const waitedForOutgoingRequestOpen = await waitForOutgoingRequestOpen;
-            expect(waitedForOutgoingRequestOpen.data.newStatus).toBe(ConsumptionRequestStatus.Open);
+            expect(waitedForOutgoingRequestOpen.data.newStatus).toBe(LocalRequestStatus.Open);
         });
 
         test("the incoming request should be created and moved to status DecisionRequired", async () => {
@@ -160,7 +160,7 @@ describe("RequestModule", () => {
                 rEventBus,
                 IncomingRequestStatusChangedEvent,
                 4000,
-                (event) => event.data.newStatus === ConsumptionRequestStatus.DecisionRequired
+                (event) => event.data.newStatus === LocalRequestStatus.DecisionRequired
             );
 
             const messages = await syncUntilHasMessages(rTransportServices, 1);
@@ -171,7 +171,7 @@ describe("RequestModule", () => {
             expect(request.id).toBe(requestId);
 
             const waitedForIncomingRequestDecisionRequired = await waitForIncomingRequestDecisionRequired;
-            expect(waitedForIncomingRequestDecisionRequired.data.newStatus).toBe(ConsumptionRequestStatus.DecisionRequired);
+            expect(waitedForIncomingRequestDecisionRequired.data.newStatus).toBe(LocalRequestStatus.DecisionRequired);
 
             const requestsResult = await rConsumptionServices.incomingRequests.getRequest({ id: requestId });
             expect(requestsResult).toBeSuccessful();
@@ -182,7 +182,7 @@ describe("RequestModule", () => {
                 rEventBus,
                 IncomingRequestStatusChangedEvent,
                 5000,
-                (event) => event.data.newStatus === ConsumptionRequestStatus.Completed
+                (event) => event.data.newStatus === LocalRequestStatus.Completed
             );
             const waitForMessageSent = waitForEvent(rEventBus, MessageSentEvent, 5000);
 
@@ -190,25 +190,20 @@ describe("RequestModule", () => {
             expect(acceptRequestResult).toBeSuccessful();
 
             const waitedForIncomingRequestCompleted = await waitForIncomingRequestCompleted;
-            expect(waitedForIncomingRequestCompleted.data.newStatus).toBe(ConsumptionRequestStatus.Completed);
+            expect(waitedForIncomingRequestCompleted.data.newStatus).toBe(LocalRequestStatus.Completed);
 
             const waitedForMessageSent = await waitForMessageSent;
             expect(waitedForMessageSent.data.content["@type"]).toBe("Response");
         });
 
         test("the request module of the sender should process the response", async () => {
-            const waitForRequestStatusChanged = waitForEvent(
-                sEventBus,
-                OutgoingRequestStatusChangedEvent,
-                5000,
-                (event) => event.data.newStatus === ConsumptionRequestStatus.Completed
-            );
+            const waitForRequestStatusChanged = waitForEvent(sEventBus, OutgoingRequestStatusChangedEvent, 5000, (event) => event.data.newStatus === LocalRequestStatus.Completed);
 
             const messages = await syncUntilHasMessages(sTransportServices, 1);
             expect(messages).toHaveLength(1);
 
             const waitedForRequestStatusChanged = await waitForRequestStatusChanged;
-            expect(waitedForRequestStatusChanged.data.newStatus).toBe(ConsumptionRequestStatus.Completed);
+            expect(waitedForRequestStatusChanged.data.newStatus).toBe(LocalRequestStatus.Completed);
         });
     });
 });

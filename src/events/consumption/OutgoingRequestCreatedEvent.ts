@@ -1,10 +1,10 @@
-import { ConsumptionRequestDTO } from "../../types";
+import { LocalRequestDTO } from "../../types";
 import { DataEvent } from "../DataEvent";
 
-export class OutgoingRequestCreatedEvent extends DataEvent<ConsumptionRequestDTO> {
+export class OutgoingRequestCreatedEvent extends DataEvent<LocalRequestDTO> {
     public static readonly namespace = "consumption.outgoingRquestCreated";
 
-    public constructor(eventTargetAddress: string, data: ConsumptionRequestDTO) {
+    public constructor(eventTargetAddress: string, data: LocalRequestDTO) {
         super(OutgoingRequestCreatedEvent.namespace, eventTargetAddress, data);
 
         if (!data.isOwn) throw new Error("Cannot create this event for an incoming Request");

@@ -1,9 +1,9 @@
-import { ConsumptionRequest } from "@nmshd/consumption";
+import { LocalRequest } from "@nmshd/consumption";
 import { RequestJSON, ResponseJSON } from "@nmshd/content";
-import { ConsumptionRequestDTO } from "../../../types";
+import { LocalRequestDTO } from "../../../types";
 
 export class RequestMapper {
-    public static toConsumptionRequestDTO(request: ConsumptionRequest): ConsumptionRequestDTO {
+    public static toLocalRequestDTO(request: LocalRequest): LocalRequestDTO {
         return {
             id: request.id.toString(),
             isOwn: request.isOwn,
@@ -32,7 +32,7 @@ export class RequestMapper {
         };
     }
 
-    public static toConsumptionRequestDTOList(requests: ConsumptionRequest[]): ConsumptionRequestDTO[] {
-        return requests.map((request) => this.toConsumptionRequestDTO(request));
+    public static toLocalRequestDTOList(requests: LocalRequest[]): LocalRequestDTO[] {
+        return requests.map((request) => this.toLocalRequestDTO(request));
     }
 }

@@ -1,4 +1,4 @@
-import { ConsumptionAttributeDVO } from "../consumption";
+import { LocalAttributeDVO } from "../consumption";
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "../transport/IdentityDVO";
 
@@ -11,7 +11,7 @@ export interface MatchedAttributesDVO extends DataViewObject {
     // fallback: AttributeDVO;
 }
 
-export interface StoredAttributeDVO extends Omit<ConsumptionAttributeDVO, "type"> {
+export interface StoredAttributeDVO extends Omit<LocalAttributeDVO, "type"> {
     type: "StoredAttributeDVO";
     sharedItems: string[];
     sharedItemCount: number;
@@ -52,7 +52,7 @@ export interface AttributesChangeRequestDVO extends RequestDVO {
     /**
      * The array of new attribute values which should be stored for the identity.
      */
-    newAttributes: ConsumptionAttributeDVO[];
+    newAttributes: LocalAttributeDVO[];
     newAttributeCount: number;
 
     /**
@@ -66,7 +66,7 @@ export interface AttributesChangeRequestDVO extends RequestDVO {
 
 export interface AttributeChange {
     oldAttribute: MatchedAttributesDVO;
-    newAttribute: ConsumptionAttributeDVO;
+    newAttribute: LocalAttributeDVO;
 }
 
 export interface AttributesRequestDVO extends RequestDVO {

@@ -1,11 +1,11 @@
-import { ConsumptionRequestStatus } from "@nmshd/consumption";
-import { ConsumptionRequestDTO } from "../../types";
+import { LocalRequestStatus } from "@nmshd/consumption";
+import { LocalRequestDTO } from "../../types";
 import { DataEvent } from "../DataEvent";
 
 export interface OutgoingRequestStatusChangedEventData {
-    request: ConsumptionRequestDTO;
-    oldStatus: ConsumptionRequestStatus;
-    newStatus: ConsumptionRequestStatus;
+    request: LocalRequestDTO;
+    oldStatus: LocalRequestStatus;
+    newStatus: LocalRequestStatus;
 }
 
 export class OutgoingRequestStatusChangedEvent extends DataEvent<OutgoingRequestStatusChangedEventData> {

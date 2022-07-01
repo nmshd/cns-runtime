@@ -23,11 +23,11 @@ import { FileDVO, IdentityDVO } from "..";
 import { TransportServices } from "../extensibility";
 import { ConsumptionServices } from "../extensibility/ConsumptionServices";
 import {
-    ConsumptionAttributeDTO,
-    ConsumptionRequestDTO,
-    ConsumptionResponseDTO,
     FileDTO,
     IdentityDTO,
+    LocalAttributeDTO,
+    LocalRequestDTO,
+    LocalResponseDTO,
     MessageDTO,
     MessageWithAttachmentsDTO,
     RecipientDTO,
@@ -37,10 +37,10 @@ import {
 } from "../types";
 import { AttributeMapper, RuntimeErrors } from "../useCases";
 import {
-    ConsumptionRequestDVO,
-    ConsumptionResponseDVO,
     DraftAttributeDVO,
     IdentityAttributeQueryExpanded,
+    LocalRequestDVO,
+    LocalResponseDVO,
     PeerAttributeDVO,
     RepositoryAttributeDVO,
     SharedToPeerAttributeDVO
@@ -125,12 +125,12 @@ export class DataViewExpander {
 
                 return await this.expandRelationshipDTO(content as RelationshipDTO);
 
-            case "ConsumptionAttribute":
+            case "LocalAttribute":
                 if (content instanceof Array) {
-                    return await this.expandConsumptionAttributes(content as ConsumptionAttributeDTO[]);
+                    return await this.expandLocalAttributes(content as LocalAttributeDTO[]);
                 }
 
-                return await this.expandConsumptionAttribute(content as ConsumptionAttributeDTO);
+                return await this.expandLocalAttribute(content as LocalAttributeDTO);
             default:
                 throw RuntimeErrors.general.notImplemented();
         }
@@ -246,31 +246,31 @@ export class DataViewExpander {
         };
     }
 
-    public async expandConsumptionRequest(request: ConsumptionRequestDTO): Promise<ConsumptionRequestDVO> {
+    public async expandLocalRequest(request: LocalRequestDTO): Promise<LocalRequestDVO> {
         return {
             ...request,
             id: request.id,
             name: "i18n://dvo.request.name.response",
-            type: "ConsumptionRequestDVO",
+            type: "LocalRequestDVO",
             date: request.createdAt,
             peer: await this.expandAddress(request.peer),
-            response: request.response ? this.expandConsumptionResponse(request.response) : undefined
+            response: request.response ? this.expandLocalResponse(request.response) : undefined
         };
     }
 
-    public expandConsumptionResponse(response: ConsumptionResponseDTO): ConsumptionResponseDVO {
+    public expandLocalResponse(response: LocalResponseDTO): LocalResponseDVO {
         return {
             ...response,
             id: "",
             name: "i18n://dvo.request.name.response",
-            type: "ConsumptionResponseDVO",
+            type: "LocalResponseDVO",
             date: response.createdAt
         };
     }
 
-    public async expandConsumptionAttribute(attribute: ConsumptionAttributeDTO): Promise<RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO> {
+    public async expandLocalAttribute(attribute: LocalAttributeDTO): Promise<RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO> {
         const valueType = attribute.content.value["@type"];
-        const consumptionAttribute = await this.consumptionController.attributes.getConsumptionAttribute(CoreId.from(attribute.id));
+        const consumptionAttribute = await this.consumptionController.attributes.getLocalAttribute(CoreId.from(attribute.id));
         if (!consumptionAttribute) {
             throw new Error("Attribute not found");
         }
@@ -330,7 +330,7 @@ export class DataViewExpander {
         }
 
         const sharedToPeerAttributes = await this.consumption.attributes.getAttributes({ query: { shareInfo: { sourceAttribute: attribute.id } } });
-        const sharedToPeerDVOs = await this.expandConsumptionAttributes(sharedToPeerAttributes.value);
+        const sharedToPeerDVOs = await this.expandLocalAttributes(sharedToPeerAttributes.value);
 
         // Own Source Attribute
         return {
@@ -351,8 +351,8 @@ export class DataViewExpander {
         };
     }
 
-    public async expandConsumptionAttributes(attributes: ConsumptionAttributeDTO[]): Promise<(RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO)[]> {
-        const attributesPromise = attributes.map((attribute) => this.expandConsumptionAttribute(attribute));
+    public async expandLocalAttributes(attributes: LocalAttributeDTO[]): Promise<(RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO)[]> {
+        const attributesPromise = attributes.map((attribute) => this.expandLocalAttribute(attribute));
         return await Promise.all(attributesPromise);
     }
 
@@ -360,7 +360,7 @@ export class DataViewExpander {
         const queryInstance = IdentityAttributeQuery.from(query);
         const matchedAttributes = await this.consumptionController.attributes.executeIdentityAttributeQuery({ query: queryInstance });
         const matchedAttributeDTOs = AttributeMapper.toAttributeDTOList(matchedAttributes);
-        const matchedAttributeDVOs = await this.expandConsumptionAttributes(matchedAttributeDTOs);
+        const matchedAttributeDVOs = await this.expandLocalAttributes(matchedAttributeDTOs);
         const valueType = query.valueType;
         const name = `i18n://dvo.attribute.name.${valueType}`;
         const description = `i18n://dvo.attribute.description.${valueType}`;

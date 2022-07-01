@@ -4,7 +4,7 @@ import { RequestJSON } from "@nmshd/content";
 import { CoreId, Message, MessageController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { IncomingRequestReceivedEvent } from "../../../events/consumption/IncomingRequestReceivedEvent";
-import { ConsumptionRequestDTO } from "../../../types";
+import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
@@ -18,7 +18,7 @@ export interface ReceivedIncomingRequestRequest {
     requestSourceId: string;
 }
 
-export class ReceivedIncomingRequestUseCase extends UseCase<ReceivedIncomingRequestRequest, ConsumptionRequestDTO> {
+export class ReceivedIncomingRequestUseCase extends UseCase<ReceivedIncomingRequestRequest, LocalRequestDTO> {
     public constructor(
         @Inject private readonly incomingRequestsController: IncomingRequestsController,
         @Inject private readonly messageController: MessageController,
@@ -28,7 +28,7 @@ export class ReceivedIncomingRequestUseCase extends UseCase<ReceivedIncomingRequ
         super();
     }
 
-    protected async executeInternal(request: ReceivedIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
+    protected async executeInternal(request: ReceivedIncomingRequestRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
         let requestSourceObject: Message | RelationshipTemplate | undefined;
 
         if (request.requestSourceId.startsWith("MSG")) {
@@ -51,7 +51,7 @@ export class ReceivedIncomingRequestUseCase extends UseCase<ReceivedIncomingRequ
             requestSourceObject
         });
 
-        const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
 
         this.eventBus.publish(new IncomingRequestReceivedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, dto));
 

@@ -1,4 +1,4 @@
-import { ConsumptionRequestStatus } from "@nmshd/consumption";
+import { LocalRequestStatus } from "@nmshd/consumption";
 import { RelationshipCreationChangeRequestBody, RelationshipTemplateBodyJSON, RequestJSON, ResponseJSON } from "@nmshd/content";
 import { IncomingRequestStatusChangedEvent, MessageReceivedEvent, MessageSentEvent, PeerRelationshipTemplateLoadedEvent, RelationshipChangedEvent } from "../events";
 import { RuntimeModule } from "../extensibility/modules/RuntimeModule";
@@ -72,7 +72,7 @@ export class RequestModule extends RuntimeModule {
     }
 
     private async handleIncomingRequestStatusChanged(event: IncomingRequestStatusChangedEvent) {
-        if (event.data.newStatus !== ConsumptionRequestStatus.Decided) return;
+        if (event.data.newStatus !== LocalRequestStatus.Decided) return;
 
         switch (event.data.request.source!.type) {
             case "RelationshipTemplate":

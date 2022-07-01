@@ -1,9 +1,9 @@
 import { EventBus, Result } from "@js-soft/ts-utils";
-import { ConsumptionAttributesController, SucceedConsumptionAttributeParams } from "@nmshd/consumption";
+import { LocalAttributesController, SucceedLocalAttributeParams } from "@nmshd/consumption";
 import { AccountController, IdentityController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { AttributeSucceededEvent } from "../../../events";
-import { ConsumptionAttributeDTO } from "../../../types";
+import { LocalAttributeDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 import { ExtendedIdentityAttributeJSON, ExtendedRelationshipAttributeJSON } from "./ExtendedAttributeValue";
@@ -21,9 +21,9 @@ class Validator extends SchemaValidator<SucceedAttributeRequest> {
         super(schemaRepository.getSchema("SucceedAttributeRequest"));
     }
 }
-export class SucceedAttributeUseCase extends UseCase<SucceedAttributeRequest, ConsumptionAttributeDTO> {
+export class SucceedAttributeUseCase extends UseCase<SucceedAttributeRequest, LocalAttributeDTO> {
     public constructor(
-        @Inject private readonly attributeController: ConsumptionAttributesController,
+        @Inject private readonly attributeController: LocalAttributesController,
         @Inject private readonly accountController: AccountController,
 
         @Inject private readonly identityController: IdentityController,
@@ -34,12 +34,12 @@ export class SucceedAttributeUseCase extends UseCase<SucceedAttributeRequest, Co
         super(validator);
     }
 
-    protected async executeInternal(request: SucceedAttributeRequest): Promise<Result<ConsumptionAttributeDTO>> {
-        const params = SucceedConsumptionAttributeParams.from({
+    protected async executeInternal(request: SucceedAttributeRequest): Promise<Result<LocalAttributeDTO>> {
+        const params = SucceedLocalAttributeParams.from({
             successorContent: request.successorContent,
             succeeds: request.succeeds
         });
-        const successor = await this.attributeController.succeedConsumptionAttribute(params);
+        const successor = await this.attributeController.succeedLocalAttribute(params);
 
         await this.accountController.syncDatawallet();
 

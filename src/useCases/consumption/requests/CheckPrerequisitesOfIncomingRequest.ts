@@ -1,9 +1,9 @@
 import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
-import { ConsumptionRequestStatus, IncomingRequestsController } from "@nmshd/consumption";
+import { IncomingRequestsController, LocalRequestStatus } from "@nmshd/consumption";
 import { CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { IncomingRequestStatusChangedEvent } from "../../../events/consumption/IncomingRequestStatusChangedEvent";
-import { ConsumptionRequestDTO } from "../../../types";
+import { LocalRequestDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
@@ -20,23 +20,23 @@ class Validator extends SchemaValidator<CheckPrerequisitesOfIncomingRequestReque
     }
 }
 
-export class CheckPrerequisitesOfIncomingRequestUseCase extends UseCase<CheckPrerequisitesOfIncomingRequestRequest, ConsumptionRequestDTO> {
+export class CheckPrerequisitesOfIncomingRequestUseCase extends UseCase<CheckPrerequisitesOfIncomingRequestRequest, LocalRequestDTO> {
     public constructor(@Inject validator: Validator, @Inject private readonly incomingRequestsController: IncomingRequestsController, @Inject private readonly eventBus: EventBus) {
         super(validator);
     }
 
-    protected async executeInternal(request: CheckPrerequisitesOfIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
+    protected async executeInternal(request: CheckPrerequisitesOfIncomingRequestRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
         const consumptionRequest = await this.incomingRequestsController.checkPrerequisites({
             requestId: CoreId.from(request.requestId)
         });
 
-        const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
 
-        if (consumptionRequest.status === ConsumptionRequestStatus.DecisionRequired) {
+        if (consumptionRequest.status === LocalRequestStatus.DecisionRequired) {
             this.eventBus.publish(
                 new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
                     request: dto,
-                    oldStatus: ConsumptionRequestStatus.Open,
+                    oldStatus: LocalRequestStatus.Open,
                     newStatus: dto.status
                 })
             );

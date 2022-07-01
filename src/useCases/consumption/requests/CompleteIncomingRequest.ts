@@ -1,9 +1,9 @@
 import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
-import { ConsumptionRequestStatus, IncomingRequestsController } from "@nmshd/consumption";
+import { IncomingRequestsController, LocalRequestStatus } from "@nmshd/consumption";
 import { CoreId, IMessage, IRelationshipChange, Message, MessageController, RelationshipChange, RelationshipsController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { IncomingRequestStatusChangedEvent } from "../../../events/consumption/IncomingRequestStatusChangedEvent";
-import { ConsumptionRequestDTO } from "../../../types";
+import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
@@ -25,7 +25,7 @@ class Validator extends SchemaValidator<CompleteIncomingRequestRequest> {
     }
 }
 
-export class CompleteIncomingRequestUseCase extends UseCase<CompleteIncomingRequestRequest, ConsumptionRequestDTO> {
+export class CompleteIncomingRequestUseCase extends UseCase<CompleteIncomingRequestRequest, LocalRequestDTO> {
     public constructor(
         @Inject validator: Validator,
         @Inject private readonly incomingRequestsController: IncomingRequestsController,
@@ -36,7 +36,7 @@ export class CompleteIncomingRequestUseCase extends UseCase<CompleteIncomingRequ
         super(validator);
     }
 
-    protected async executeInternal(request: CompleteIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
+    protected async executeInternal(request: CompleteIncomingRequestRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
         let responseSourceObject: IMessage | IRelationshipChange;
 
         if (request.responseSourceId.startsWith("MSG")) {
@@ -61,12 +61,12 @@ export class CompleteIncomingRequestUseCase extends UseCase<CompleteIncomingRequ
             responseSourceObject
         });
 
-        const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
 
         this.eventBus.publish(
             new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
                 request: dto,
-                oldStatus: ConsumptionRequestStatus.Decided,
+                oldStatus: LocalRequestStatus.Decided,
                 newStatus: dto.status
             })
         );

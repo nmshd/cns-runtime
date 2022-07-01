@@ -1,10 +1,10 @@
 import { Result } from "@js-soft/ts-utils";
-import { ConsumptionAttribute, ConsumptionAttributesController, ConsumptionAttributeShareInfo } from "@nmshd/consumption";
+import { LocalAttribute, LocalAttributesController, LocalAttributeShareInfo } from "@nmshd/consumption";
 import { AbstractAttribute } from "@nmshd/content";
 import { CoreId, Relationship, RelationshipsController } from "@nmshd/transport";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
-import { ConsumptionAttributeDTO } from "../../../types";
+import { LocalAttributeDTO } from "../../../types";
 import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "../../consumption";
 
@@ -15,7 +15,7 @@ export interface GetAttributesForRelationshipRequest {
     id: string;
 }
 
-export interface GetAttributesForRelationshipResponse extends Array<ConsumptionAttributeDTO> {}
+export interface GetAttributesForRelationshipResponse extends Array<LocalAttributeDTO> {}
 
 class Validator extends SchemaValidator<GetAttributesForRelationshipRequest> {
     public constructor(@Inject schemaRepository: SchemaRepository) {
@@ -26,7 +26,7 @@ class Validator extends SchemaValidator<GetAttributesForRelationshipRequest> {
 export class GetAttributesForRelationshipUseCase extends UseCase<GetAttributesForRelationshipRequest, GetAttributesForRelationshipResponse> {
     public constructor(
         @Inject private readonly relationshipsController: RelationshipsController,
-        @Inject private readonly attributesController: ConsumptionAttributesController,
+        @Inject private readonly attributesController: LocalAttributesController,
         @Inject validator: Validator
     ) {
         super(validator);
@@ -42,12 +42,12 @@ export class GetAttributesForRelationshipUseCase extends UseCase<GetAttributesFo
         const query = {
             $or: [
                 // content.owner
-                { [`${nameof<ConsumptionAttribute>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.owner)}`]: peerAddress },
+                { [`${nameof<LocalAttribute>((x) => x.content)}.${nameof<AbstractAttribute>((x) => x.owner)}`]: peerAddress },
                 // shareInfo.peer
-                { [`${nameof<ConsumptionAttribute>((x) => x.shareInfo)}.${nameof<ConsumptionAttributeShareInfo>((x) => x.peer)}`]: peerAddress }
+                { [`${nameof<LocalAttribute>((x) => x.shareInfo)}.${nameof<LocalAttributeShareInfo>((x) => x.peer)}`]: peerAddress }
             ]
         };
-        const attributes = await this.attributesController.getConsumptionAttributes(query);
+        const attributes = await this.attributesController.getLocalAttributes(query);
 
         return Result.ok(AttributeMapper.toAttributeDTOList(attributes));
     }

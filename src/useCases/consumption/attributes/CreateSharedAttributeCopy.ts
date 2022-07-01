@@ -1,9 +1,9 @@
 import { EventBus, Result } from "@js-soft/ts-utils";
-import { ConsumptionAttributesController, CreateSharedConsumptionAttributeCopyParams } from "@nmshd/consumption";
+import { CreateSharedLocalAttributeCopyParams, LocalAttributesController } from "@nmshd/consumption";
 import { AccountController, CoreAddress, CoreId, IdentityController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { SharedAttributeCopyCreatedEvent } from "../../../events";
-import { ConsumptionAttributeDTO } from "../../../types";
+import { LocalAttributeDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
 
@@ -28,9 +28,9 @@ class Validator extends SchemaValidator<CreateSharedAttributeCopyRequest> {
     }
 }
 
-export class CreateSharedAttributeCopyUseCase extends UseCase<CreateSharedAttributeCopyRequest, ConsumptionAttributeDTO> {
+export class CreateSharedAttributeCopyUseCase extends UseCase<CreateSharedAttributeCopyRequest, LocalAttributeDTO> {
     public constructor(
-        @Inject private readonly attributeController: ConsumptionAttributesController,
+        @Inject private readonly attributeController: LocalAttributesController,
         @Inject private readonly accountController: AccountController,
 
         @Inject private readonly identityController: IdentityController,
@@ -41,13 +41,13 @@ export class CreateSharedAttributeCopyUseCase extends UseCase<CreateSharedAttrib
         super(validator);
     }
 
-    protected async executeInternal(request: CreateSharedAttributeCopyRequest): Promise<Result<ConsumptionAttributeDTO>> {
-        const params = CreateSharedConsumptionAttributeCopyParams.from({
+    protected async executeInternal(request: CreateSharedAttributeCopyRequest): Promise<Result<LocalAttributeDTO>> {
+        const params = CreateSharedLocalAttributeCopyParams.from({
             attributeId: CoreId.from(request.attributeId),
             peer: CoreAddress.from(request.peer),
             requestReference: CoreId.from(request.requestReference)
         });
-        const successor = await this.attributeController.createSharedConsumptionAttributeCopy(params);
+        const successor = await this.attributeController.createSharedLocalAttributeCopy(params);
         await this.accountController.syncDatawallet();
 
         const attributeDTO = AttributeMapper.toAttributeDTO(successor);

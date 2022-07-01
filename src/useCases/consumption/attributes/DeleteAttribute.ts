@@ -1,5 +1,5 @@
 import { EventBus, Result } from "@js-soft/ts-utils";
-import { ConsumptionAttribute, ConsumptionAttributesController } from "@nmshd/consumption";
+import { LocalAttribute, LocalAttributesController } from "@nmshd/consumption";
 import { AccountController, CoreId, IdentityController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
 import { AttributeDeletedEvent } from "../../../events";
@@ -20,7 +20,7 @@ class Validator extends SchemaValidator<DeleteAttributeRequest> {
 }
 export class DeleteAttributeUseCase extends UseCase<DeleteAttributeRequest, void> {
     public constructor(
-        @Inject private readonly attributeController: ConsumptionAttributesController,
+        @Inject private readonly attributeController: LocalAttributesController,
         @Inject private readonly accountController: AccountController,
 
         @Inject private readonly identityController: IdentityController,
@@ -32,9 +32,9 @@ export class DeleteAttributeUseCase extends UseCase<DeleteAttributeRequest, void
     }
 
     protected async executeInternal(request: DeleteAttributeRequest): Promise<Result<void>> {
-        const attribute = await this.attributeController.getConsumptionAttribute(CoreId.from(request.id));
+        const attribute = await this.attributeController.getLocalAttribute(CoreId.from(request.id));
         if (!attribute) {
-            return Result.fail(RuntimeErrors.general.recordNotFound(ConsumptionAttribute));
+            return Result.fail(RuntimeErrors.general.recordNotFound(LocalAttribute));
         }
 
         await this.attributeController.deleteAttribute(attribute);

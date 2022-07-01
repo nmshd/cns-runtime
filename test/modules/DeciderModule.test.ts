@@ -1,5 +1,5 @@
 import { EventBus } from "@js-soft/ts-utils";
-import { ConsumptionRequestStatus } from "@nmshd/consumption";
+import { LocalRequestStatus } from "@nmshd/consumption";
 import { ConsumptionServices, IncomingRequestStatusChangedEvent } from "../../src";
 import { establishRelationship, exchangeMessage, RuntimeServiceProvider, waitForEvent } from "../lib";
 
@@ -33,13 +33,13 @@ describe("DeciderModule", () => {
             rEventBus,
             IncomingRequestStatusChangedEvent,
             4000,
-            (event) => event.data.newStatus === ConsumptionRequestStatus.DecisionRequired && event.data.request.id === receivedRequestResult.value.id
+            (event) => event.data.newStatus === LocalRequestStatus.DecisionRequired && event.data.request.id === receivedRequestResult.value.id
         );
 
         const checkPrerequisitesResult = await rConsumptionServices.incomingRequests.checkPrerequisites({ requestId: receivedRequestResult.value.id });
         expect(checkPrerequisitesResult).toBeSuccessful();
 
         const event = await eventPromise;
-        expect(event.data.newStatus).toBe(ConsumptionRequestStatus.DecisionRequired);
+        expect(event.data.newStatus).toBe(LocalRequestStatus.DecisionRequired);
     });
 });

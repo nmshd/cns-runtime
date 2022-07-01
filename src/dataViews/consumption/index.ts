@@ -1,2 +1,2 @@
-export * from "./ConsumptionAttributeDVO";
-export * from "./ConsumptionRequestDVO";
+export * from "./LocalAttributeDVO";
+export * from "./LocalRequestDVO";

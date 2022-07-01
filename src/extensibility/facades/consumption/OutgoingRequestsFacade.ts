@@ -1,6 +1,6 @@
 import { Result } from "@js-soft/ts-utils";
 import { Inject } from "typescript-ioc";
-import { ConsumptionRequestDTO, RequestValidationResultDTO } from "../../../types";
+import { LocalRequestDTO, RequestValidationResultDTO } from "../../../types";
 import {
     CanCreateOutgoingRequestUseCase,
     CompleteOutgoingRequestRequest,
@@ -32,29 +32,27 @@ export class OutgoingRequestsFacade {
         return await this.canCreateUseCase.execute(request);
     }
 
-    public async create(request: CreateOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async create(request: CreateOutgoingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.createUseCase.execute(request);
     }
 
-    public async createAndCompleteFromRelationshipCreationChange(
-        request: CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest
-    ): Promise<Result<ConsumptionRequestDTO>> {
+    public async createAndCompleteFromRelationshipCreationChange(request: CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeRequest): Promise<Result<LocalRequestDTO>> {
         return await this.createAndCompleteFromRelationshipCreationChangeUseCase.execute(request);
     }
 
-    public async sent(request: SentOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async sent(request: SentOutgoingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.sentUseCase.execute(request);
     }
 
-    public async complete(request: CompleteOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async complete(request: CompleteOutgoingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.completeUseCase.execute(request);
     }
 
-    public async getRequest(request: GetOutgoingRequestRequest): Promise<Result<ConsumptionRequestDTO>> {
+    public async getRequest(request: GetOutgoingRequestRequest): Promise<Result<LocalRequestDTO>> {
         return await this.getRequestUseCase.execute(request);
     }
 
-    public async getRequests(request: GetOutgoingRequestsRequest): Promise<Result<ConsumptionRequestDTO[]>> {
+    public async getRequests(request: GetOutgoingRequestsRequest): Promise<Result<LocalRequestDTO[]>> {
         return await this.getRequestsUseCase.execute(request);
     }
 }

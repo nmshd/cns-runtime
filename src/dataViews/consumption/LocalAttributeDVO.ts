@@ -2,7 +2,7 @@ import { IdentityAttributeJSON, RelationshipAttributeCreationHintsJSON, Relation
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "../transport";
 
-export interface ConsumptionAttributeDVO extends DataViewObject {
+export interface LocalAttributeDVO extends DataViewObject {
     content: IdentityAttributeJSON | RelationshipAttributeJSON;
     owner: IdentityDVO;
     renderHints: RenderHintsJSON;
@@ -25,19 +25,19 @@ export interface DraftAttributeDVO extends DataViewObject {
     succeededBy?: string;
     value: any;
 }
-export interface RepositoryAttributeDVO extends ConsumptionAttributeDVO {
+export interface RepositoryAttributeDVO extends LocalAttributeDVO {
     type: "RepositoryAttributeDVO";
     sharedWith: SharedToPeerAttributeDVO[];
     isOwn: true;
 }
-export interface SharedToPeerAttributeDVO extends ConsumptionAttributeDVO {
+export interface SharedToPeerAttributeDVO extends LocalAttributeDVO {
     type: "SharedToPeerAttributeDVO";
     peer: IdentityDVO;
     requestReference: string;
     sourceAttribute: string;
     isOwn: true;
 }
-export interface PeerAttributeDVO extends ConsumptionAttributeDVO {
+export interface PeerAttributeDVO extends LocalAttributeDVO {
     type: "PeerAttributeDVO";
     peer: IdentityDVO;
     requestReference: string;
@@ -52,7 +52,7 @@ export interface AttributeQueryExpanded {
     validTo?: string;
     renderHints: RenderHintsJSON;
     valueHints: ValueHintsJSON;
-    results: ConsumptionAttributeDVO[];
+    results: LocalAttributeDVO[];
 }
 export interface IdentityAttributeQueryExpanded extends AttributeQueryExpanded {
     type: "IdentityAttributeQueryExpanded";

@@ -1,8 +1,8 @@
 import { ApplicationError, Result } from "@js-soft/ts-utils";
-import { ConsumptionRequest, IncomingRequestsController } from "@nmshd/consumption";
+import { IncomingRequestsController, LocalRequest } from "@nmshd/consumption";
 import { CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { ConsumptionRequestDTO } from "../../../types";
+import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
 
@@ -13,19 +13,19 @@ export interface GetIncomingRequestRequest {
     id: string;
 }
 
-export class GetIncomingRequestUseCase extends UseCase<GetIncomingRequestRequest, ConsumptionRequestDTO> {
+export class GetIncomingRequestUseCase extends UseCase<GetIncomingRequestRequest, LocalRequestDTO> {
     public constructor(@Inject private readonly incomingRequestsController: IncomingRequestsController) {
         super();
     }
 
-    protected async executeInternal(request: GetIncomingRequestRequest): Promise<Result<ConsumptionRequestDTO, ApplicationError>> {
+    protected async executeInternal(request: GetIncomingRequestRequest): Promise<Result<LocalRequestDTO, ApplicationError>> {
         const consumptionRequest = await this.incomingRequestsController.getIncomingRequest(CoreId.from(request.id));
 
         if (!consumptionRequest) {
-            return Result.fail(RuntimeErrors.general.recordNotFound(ConsumptionRequest));
+            return Result.fail(RuntimeErrors.general.recordNotFound(LocalRequest));
         }
 
-        const dto = RequestMapper.toConsumptionRequestDTO(consumptionRequest);
+        const dto = RequestMapper.toLocalRequestDTO(consumptionRequest);
 
         return Result.ok(dto);
     }
