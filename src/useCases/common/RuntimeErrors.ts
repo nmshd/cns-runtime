@@ -1,4 +1,5 @@
 import { ApplicationError } from "@js-soft/ts-utils";
+import { Base64ForIdPrefix } from "./Base64ForIdPrefix";
 
 class General {
     public unknown(message: string, data?: any) {
@@ -80,7 +81,7 @@ class Files {
     public invalidReference(reference: string): ApplicationError {
         return new ApplicationError(
             "error.runtime.files.invalidReference",
-            `The reference for a file must start with 'VE9L' or 'RklM'. The given reference '${reference}' is not valid.`
+            `The reference for a file must start with '${Base64ForIdPrefix.Token}' or '${Base64ForIdPrefix.File}'. The given reference '${reference}' is not valid.`
         );
     }
 }
@@ -97,7 +98,7 @@ class RelationshipTemplates {
     public invalidReference(reference: string): ApplicationError {
         return new ApplicationError(
             "error.runtime.relationshipTemplates.invalidReference",
-            `The reference for a relationship template must start with 'VE9L' or 'UkxU'. The given reference '${reference}' is not valid.`
+            `The reference for a relationship template must start with '${Base64ForIdPrefix.Token}' or '${Base64ForIdPrefix.RelationshipTemplate}'. The given reference '${reference}' is not valid.`
         );
     }
 }

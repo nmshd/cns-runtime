@@ -5,7 +5,7 @@ import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
 import { PeerRelationshipTemplateLoadedEvent } from "../../../events";
 import { RelationshipTemplateDTO } from "../../../types";
-import { JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
+import { Base64ForIdPrefix, JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RelationshipTemplateMapper } from "./RelationshipTemplateMapper";
 
 export interface LoadPeerRelationshipTemplateViaSecretRequest {
@@ -103,13 +103,11 @@ export class LoadPeerRelationshipTemplateUseCase extends UseCase<LoadPeerRelatio
     }
 
     private async loadRelationshipTemplateFromReference(reference: string): Promise<Result<RelationshipTemplateDTO>> {
-        // base64 for 'RLT'
-        if (reference.startsWith("UkxU")) {
+        if (reference.startsWith(Base64ForIdPrefix.RelationshipTemplate)) {
             return await this.loadRelationshipTemplateFromRelationshipTemplateReference(reference);
         }
 
-        // base64 for 'TOK'
-        if (reference.startsWith("VE9L")) {
+        if (reference.startsWith(Base64ForIdPrefix.Token)) {
             return await this.loadRelationshipTemplateFromTokenReference(reference);
         }
 

@@ -4,7 +4,7 @@ import { AccountController, CoreId, FileController, Token, TokenContentFile, Tok
 import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
 import { FileDTO } from "../../../types";
-import { JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
+import { Base64ForIdPrefix, JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
 
 export interface LoadPeerFileViaSecretRequest {
@@ -84,7 +84,7 @@ export class LoadPeerFileUseCase extends UseCase<LoadPeerFileRequest, FileDTO> {
             const key = CryptoSecretKey.fromBase64(request.secretKey);
             createdFileResult = await this.loadFile(CoreId.from(request.id), key);
         } else if (isLoadPeerFileViaReference(request)) {
-            createdFileResult = await this.loadRelationshipTemplateFromReference(request.reference);
+            createdFileResult = await this.loadFileFromReference(request.reference);
         } else {
             throw new Error("Invalid request format.");
         }
@@ -94,14 +94,12 @@ export class LoadPeerFileUseCase extends UseCase<LoadPeerFileRequest, FileDTO> {
         return createdFileResult;
     }
 
-    private async loadRelationshipTemplateFromReference(reference: string): Promise<Result<FileDTO>> {
-        // base64 for 'FIL'
-        if (reference.startsWith("RklM")) {
+    private async loadFileFromReference(reference: string): Promise<Result<FileDTO>> {
+        if (reference.startsWith(Base64ForIdPrefix.File)) {
             return await this.loadFileFromFileReference(reference);
         }
 
-        // base64 for 'TOK'
-        if (reference.startsWith("VE9L")) {
+        if (reference.startsWith(Base64ForIdPrefix.Token)) {
             return await this.loadFileFromTokenReference(reference);
         }
 

@@ -1,3 +1,4 @@
+export * from "./Base64ForIdPrefix";
 export * from "./OwnerRestriction";
 export * from "./QRCode";
 export * from "./RuntimeErrors";
