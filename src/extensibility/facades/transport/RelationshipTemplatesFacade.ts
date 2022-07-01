@@ -1,12 +1,17 @@
 import { Result } from "@js-soft/ts-utils";
 import { Inject } from "typescript-ioc";
-import { RelationshipTemplateDTO } from "../../../types";
+import { RelationshipTemplateDTO, TokenDTO } from "../../../types";
 import {
     CreateOwnRelationshipTemplateRequest,
     CreateOwnRelationshipTemplateUseCase,
     CreateQrCodeForOwnTemplateRequest,
     CreateQrCodeForOwnTemplateResponse,
     CreateQrCodeForOwnTemplateUseCase,
+    CreateTokenForOwnTemplateRequest,
+    CreateTokenForOwnTemplateUseCase,
+    CreateTokenQrCodeForOwnTemplateRequest,
+    CreateTokenQrCodeForOwnTemplateResponse,
+    CreateTokenQrCodeForOwnTemplateUseCase,
     GetRelationshipTemplateRequest,
     GetRelationshipTemplatesRequest,
     GetRelationshipTemplatesUseCase,
@@ -21,7 +26,9 @@ export class RelationshipTemplatesFacade {
         @Inject private readonly loadPeerRelationshipTemplateUseCase: LoadPeerRelationshipTemplateUseCase,
         @Inject private readonly getRealtionshipTemplatesUseCase: GetRelationshipTemplatesUseCase,
         @Inject private readonly getRelationshipTemplateUseCase: GetRelationshipTemplateUseCase,
-        @Inject private readonly createQrCodeForOwnTemplateUseCase: CreateQrCodeForOwnTemplateUseCase
+        @Inject private readonly createQrCodeForOwnTemplateUseCase: CreateQrCodeForOwnTemplateUseCase,
+        @Inject private readonly createTokenQrCodeForOwnTemplateUseCase: CreateTokenQrCodeForOwnTemplateUseCase,
+        @Inject private readonly createTokenForOwnTemplateUseCase: CreateTokenForOwnTemplateUseCase
     ) {}
 
     public async createOwnRelationshipTemplate(request: CreateOwnRelationshipTemplateRequest): Promise<Result<RelationshipTemplateDTO>> {
@@ -42,5 +49,13 @@ export class RelationshipTemplatesFacade {
 
     public async createQrCodeForOwnTemplate(request: CreateQrCodeForOwnTemplateRequest): Promise<Result<CreateQrCodeForOwnTemplateResponse>> {
         return await this.createQrCodeForOwnTemplateUseCase.execute(request);
+    }
+
+    public async createTokenQrCodeForOwnTemplate(request: CreateTokenQrCodeForOwnTemplateRequest): Promise<Result<CreateTokenQrCodeForOwnTemplateResponse>> {
+        return await this.createTokenQrCodeForOwnTemplateUseCase.execute(request);
+    }
+
+    public async createTokenForOwnTemplate(request: CreateTokenForOwnTemplateRequest): Promise<Result<TokenDTO>> {
+        return await this.createTokenForOwnTemplateUseCase.execute(request);
     }
 }

@@ -77,6 +77,10 @@ class Serval {
 }
 
 class RelationshipTemplates {
+    public cannotCreateTokenForPeerTemplate(): ApplicationError {
+        return new ApplicationError("error.runtime.relationshipRequests.cannotCreateTokenForPeerTemplate", "You cannot create a token for a peer template.");
+    }
+
     public cannotCreateQRCodeForPeerTemplate(): ApplicationError {
         return new ApplicationError("error.runtime.relationshipRequests.cannotCreateQRCodeForPeerTemplate", "You cannot create a QRCode for a peer template.");
     }
