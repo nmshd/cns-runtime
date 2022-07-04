@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/runtime",
-    "version": "2.0.0-alpha.24",
+    "version": "2.0.0-alpha.25",
     "description": "The Enmeshed client runtime.",
     "homepage": "https://enmeshed.eu",
     "license": "MIT",
