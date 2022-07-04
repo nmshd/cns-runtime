@@ -14,7 +14,7 @@ export interface LoadPeerRelationshipTemplateViaSecretRequest {
      */
     id: string;
     /**
-     * @minLength 100
+     * @minLength 10
      */
     secretKey: string;
 }

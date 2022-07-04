@@ -13,7 +13,7 @@ export interface LoadPeerFileViaSecretRequest {
      */
     id: string;
     /**
-     * @minLength 100
+     * @minLength 10
      */
     secretKey: string;
 }
