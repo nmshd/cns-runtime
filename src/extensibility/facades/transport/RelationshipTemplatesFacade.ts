@@ -24,7 +24,7 @@ export class RelationshipTemplatesFacade {
     public constructor(
         @Inject private readonly createOwnRelationshipTemplateUseCase: CreateOwnRelationshipTemplateUseCase,
         @Inject private readonly loadPeerRelationshipTemplateUseCase: LoadPeerRelationshipTemplateUseCase,
-        @Inject private readonly getRealtionshipTemplatesUseCase: GetRelationshipTemplatesUseCase,
+        @Inject private readonly getRelationshipTemplatesUseCase: GetRelationshipTemplatesUseCase,
         @Inject private readonly getRelationshipTemplateUseCase: GetRelationshipTemplateUseCase,
         @Inject private readonly createQrCodeForOwnTemplateUseCase: CreateQrCodeForOwnTemplateUseCase,
         @Inject private readonly createTokenQrCodeForOwnTemplateUseCase: CreateTokenQrCodeForOwnTemplateUseCase,
@@ -40,7 +40,7 @@ export class RelationshipTemplatesFacade {
     }
 
     public async getRelationshipTemplates(request: GetRelationshipTemplatesRequest): Promise<Result<RelationshipTemplateDTO[]>> {
-        return await this.getRealtionshipTemplatesUseCase.execute(request);
+        return await this.getRelationshipTemplatesUseCase.execute(request);
     }
 
     public async getRelationshipTemplate(request: GetRelationshipTemplateRequest): Promise<Result<RelationshipTemplateDTO>> {
