@@ -1,14 +1,10 @@
+import { LocalRequestDVO } from "../consumption";
 import { MessageDVO, RecipientDVO } from "../transport/MessageDVO";
-import { RequestDVO } from "./RequestDVOs";
 
-export interface RequestMailDVO extends Omit<MailDVO, "type"> {
-    type: "RequestMailDVO";
+export interface RequestMessageDVO extends Omit<MessageDVO, "type"> {
+    type: "RequestMessageDVO";
 
-    // overwrite DTO
-    requests: RequestDVO[];
-
-    // new
-    requestCount: number;
+    request: LocalRequestDVO;
 }
 
 export interface MailDVO extends Omit<MessageDVO, "type"> {

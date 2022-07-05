@@ -1,17 +1,21 @@
 import { LocalRequestStatus } from "@nmshd/consumption";
-import { RequestJSON, ResponseJSON } from "@nmshd/content";
+import { ResponseJSON } from "@nmshd/content";
+import { RequestDVO } from "../content";
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "../transport";
 
 export interface LocalRequestDVO extends DataViewObject {
     isOwn: boolean;
     createdAt: string;
-    content: RequestJSON;
+    content: RequestDVO;
     status: LocalRequestStatus;
-
+    statusText: string;
+    createdBy: IdentityDVO;
     peer: IdentityDVO;
     response?: LocalResponseDVO;
     source?: LocalRequestSourceDVO;
+    decider: IdentityDVO;
+    isDecidable: boolean;
 }
 
 export interface LocalRequestSourceDVO {

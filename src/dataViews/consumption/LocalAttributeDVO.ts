@@ -1,35 +1,34 @@
 import { IdentityAttributeJSON, RelationshipAttributeCreationHintsJSON, RelationshipAttributeJSON, RenderHintsJSON, ValueHintsJSON } from "@nmshd/content";
+import { AttributeQueryDVO } from "../content/AttributeDVOs";
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "../transport";
 
 export interface LocalAttributeDVO extends DataViewObject {
     content: IdentityAttributeJSON | RelationshipAttributeJSON;
     owner: IdentityDVO;
+
+    key?: string;
+    tags?: string[];
+    value: any;
+
     renderHints: RenderHintsJSON;
     valueHints: ValueHintsJSON;
+
+    isDraft: false;
     isOwn: boolean;
     isValid: boolean;
+
     createdAt: string;
     succeeds?: string;
     succeededBy?: string;
-    value: any;
 }
 
-export interface DraftAttributeDVO extends DataViewObject {
-    type: "DraftAttributeDVO";
-    content: IdentityAttributeJSON | RelationshipAttributeJSON;
-    owner: IdentityDVO;
-    renderHints: RenderHintsJSON;
-    valueHints: ValueHintsJSON;
-    succeeds?: string;
-    succeededBy?: string;
-    value: any;
-}
 export interface RepositoryAttributeDVO extends LocalAttributeDVO {
     type: "RepositoryAttributeDVO";
     sharedWith: SharedToPeerAttributeDVO[];
     isOwn: true;
 }
+
 export interface SharedToPeerAttributeDVO extends LocalAttributeDVO {
     type: "SharedToPeerAttributeDVO";
     peer: IdentityDVO;
@@ -43,23 +42,18 @@ export interface PeerAttributeDVO extends LocalAttributeDVO {
     requestReference: string;
     isOwn: false;
 }
-export interface AttributeQueryExpanded {
-    type: "IdentityAttributeQueryExpanded" | "RelationshipAttributeQueryExpanded";
-    name: string;
-    description?: string;
-    valueType: string;
-    validFrom?: string;
-    validTo?: string;
-    renderHints: RenderHintsJSON;
-    valueHints: ValueHintsJSON;
-    results: LocalAttributeDVO[];
+
+export interface ProcessedAttributeQueryDVO extends AttributeQueryDVO {
+    results: (RepositoryAttributeDVO | SharedToPeerAttributeDVO)[];
+    isProcessed: true;
 }
-export interface IdentityAttributeQueryExpanded extends AttributeQueryExpanded {
-    type: "IdentityAttributeQueryExpanded";
+
+export interface ProcessedIdentityAttributeQueryDVO extends ProcessedAttributeQueryDVO {
+    type: "ProcessedIdentityAttributeQueryDVO";
     tags?: string[];
 }
-export interface RelationshipAttributeQueryExpanded extends AttributeQueryExpanded {
-    type: "RelationshipAttributeQueryExpanded";
+export interface ProcessedRelationshipAttributeQueryDVO extends ProcessedAttributeQueryDVO {
+    type: "ProcessedRelationshipAttributeQueryDVO";
     key: string;
     owner: IdentityDVO;
     thirdParty?: IdentityDVO;

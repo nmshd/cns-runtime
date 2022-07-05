@@ -1,3 +1,4 @@
+import { RequestDVO } from "../content";
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "./IdentityDVO";
 
@@ -8,7 +9,9 @@ export interface RelationshipTemplateDVO extends DataViewObject {
     createdAt: string;
     expiresAt?: string;
     maxNumberOfAllocations?: number;
-    maxNumberOfRelationships?: number;
+
+    onNewRelationship?: RequestDVO;
+    onExistingRelationship?: RequestDVO;
 
     content: any;
 }
