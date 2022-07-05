@@ -1368,7 +1368,7 @@ export const CreateOutgoingRequestRequest: any = {
                             ],
                             "description": "The items of the Request. Can be either a single  {@link  RequestItemJSON RequestItem }  or a  {@link  RequestItemGroupJSON RequestItemGroup } , which itself can contain further  {@link  RequestItemJSON RequestItems } ."
                         },
-                        "responseMetadata": {
+                        "metadata": {
                             "anyOf": [
                                 {
                                     "type": "object",
@@ -1437,7 +1437,7 @@ export const CreateOutgoingRequestRequest: any = {
                     "type": "boolean",
                     "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not."
                 },
-                "responseMetadata": {
+                "metadata": {
                     "type": "object",
                     "description": "This property can be used to add some arbitrary metadata to this group. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
@@ -1477,7 +1477,7 @@ export const CreateOutgoingRequestRequest: any = {
                     "type": "string",
                     "description": "The human-readable description of this item."
                 },
-                "responseMetadata": {
+                "metadata": {
                     "type": "object",
                     "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
@@ -1507,7 +1507,7 @@ export const CreateOutgoingRequestRequest: any = {
                     "type": "boolean",
                     "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not."
                 },
-                "responseMetadata": {
+                "metadata": {
                     "type": "object",
                     "description": "This property can be used to add some arbitrary metadata to this group. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
@@ -1537,7 +1537,7 @@ export const CreateOutgoingRequestRequest: any = {
                     "type": "string",
                     "description": "The human-readable description of this item."
                 },
-                "responseMetadata": {
+                "metadata": {
                     "type": "object",
                     "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
@@ -1740,9 +1740,6 @@ export const CompleteOutgoingRequestRequest: any = {
                             }
                         ]
                     }
-                },
-                "metadata": {
-                    "type": "object"
                 }
             },
             "required": [
@@ -1777,9 +1774,6 @@ export const CompleteOutgoingRequestRequest: any = {
                     "items": {
                         "$ref": "#/definitions/ResponseItemJSON"
                     }
-                },
-                "metadata": {
-                    "type": "object"
                 }
             },
             "required": [
@@ -1802,9 +1796,6 @@ export const CompleteOutgoingRequestRequest: any = {
                 },
                 "result": {
                     "$ref": "#/definitions/ResponseItemResult"
-                },
-                "metadata": {
-                    "type": "object"
                 }
             },
             "required": [
@@ -2169,7 +2160,7 @@ export const ReceivedIncomingRequestRequest: any = {
                     },
                     "description": "The items of the Request. Can be either a single  {@link  RequestItemJSON RequestItem }  or a  {@link  RequestItemGroupJSON RequestItemGroup } , which itself can contain further  {@link  RequestItemJSON RequestItems } ."
                 },
-                "responseMetadata": {
+                "metadata": {
                     "type": "object",
                     "description": "This property can be used to add some arbitrary metadata to this request. The content of this property will be copied into the response on the side of the recipient."
                 }
@@ -2204,7 +2195,7 @@ export const ReceivedIncomingRequestRequest: any = {
                     "type": "boolean",
                     "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not."
                 },
-                "responseMetadata": {
+                "metadata": {
                     "type": "object",
                     "description": "This property can be used to add some arbitrary metadata to this group. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
@@ -2244,7 +2235,7 @@ export const ReceivedIncomingRequestRequest: any = {
                     "type": "string",
                     "description": "The human-readable description of this item."
                 },
-                "responseMetadata": {
+                "metadata": {
                     "type": "object",
                     "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
                 },
@@ -2911,7 +2902,7 @@ export const LoadPeerFileViaSecretRequest: any = {
                 },
                 "secretKey": {
                     "type": "string",
-                    "minLength": 100
+                    "minLength": 10
                 }
             },
             "required": [
@@ -2967,7 +2958,7 @@ export const LoadPeerFileRequest: any = {
                 },
                 "secretKey": {
                     "type": "string",
-                    "minLength": 100
+                    "minLength": 10
                 }
             },
             "required": [
@@ -3509,7 +3500,7 @@ export const LoadPeerRelationshipTemplateViaSecretRequest: any = {
                 },
                 "secretKey": {
                     "type": "string",
-                    "minLength": 100
+                    "minLength": 10
                 }
             },
             "required": [
@@ -3565,7 +3556,7 @@ export const LoadPeerRelationshipTemplateRequest: any = {
                 },
                 "secretKey": {
                     "type": "string",
-                    "minLength": 100
+                    "minLength": 10
                 }
             },
             "required": [
