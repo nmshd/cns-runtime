@@ -50,9 +50,9 @@ describe("IdentityAttributeQueryExpanded", () => {
             "@type": "IdentityAttributeQuery",
             valueType: "GivenName"
         };
-        const expandedQuery = await expander1.expandIdentityAttributeQuery(query);
+        const expandedQuery = await expander1.processIdentityAttributeQuery(query);
         expect(expandedQuery).toBeDefined();
-        expect(expandedQuery.type).toBe("IdentityAttributeQueryExpanded");
+        expect(expandedQuery.type).toBe("ProcessedIdentityAttributeQueryDVO");
         expect(expandedQuery.name).toBe("i18n://dvo.attribute.name.GivenName");
         expect(expandedQuery.description).toBe("i18n://dvo.attribute.description.GivenName");
         expect(expandedQuery.valueType).toBe("GivenName");

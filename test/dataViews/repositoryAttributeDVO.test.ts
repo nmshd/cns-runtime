@@ -108,7 +108,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the GivenName", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[0].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[0];
@@ -138,7 +138,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the Surname", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[1].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[1];
@@ -168,7 +168,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the BirthDay", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[2].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[2];
@@ -200,7 +200,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the BirthMonth", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[3].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[3];
@@ -232,7 +232,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the BirthYear", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[4].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[4];
@@ -264,7 +264,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the Sex", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[5].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[5];
@@ -299,7 +299,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the Nationality", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[6].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[6];
@@ -333,7 +333,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the CommunicationLanguage", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[7].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[7];
