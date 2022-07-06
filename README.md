@@ -11,7 +11,7 @@ Both the Enmeshed Connector and the official Enmeshed Apps implement this runtim
 
 ## Documentation
 
-The documentation for this project is currently under construction.
+You can find the documentation for Enmeshed on [enmeshed.eu](https://enmeshed.eu).
 
 ## Feedback
 
@@ -21,7 +21,7 @@ Share your feedback with the Enmeshed team by contributing to the [discussions](
 
 ## Contribute
 
-Currently contribution to this project is not possible. This will change soon.
+Contribution to this project is highly apprecicated. Head over to our [contribution guide](https://github.com/nmshd/.github/blob/main/CONTRIBUTING.md) to learn more.
 
 ## License
 
