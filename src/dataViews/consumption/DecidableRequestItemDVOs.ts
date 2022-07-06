@@ -1,6 +1,7 @@
 import { RequestItemDVO } from "../content";
 import { DraftAttributeDVO } from "../content/AttributeDVOs";
-import { ProcessedAttributeQueryDVO } from "./LocalAttributeDVO";
+import { IdentityDVO } from "../transport";
+import { ProcessedAttributeQueryDVO, RepositoryAttributeDVO, SharedToPeerAttributeDVO } from "./LocalAttributeDVO";
 
 export interface DecidableRequestItemGroupDVO {
     type: "RequestItemGroupDVO";
@@ -25,4 +26,11 @@ export interface DecidableCreateAttributeRequestItemDVO extends DecidableRequest
     type: "DecidableCreateAttributeRequestItemDVO";
     attribute: DraftAttributeDVO;
     sourceAttributeId?: string;
+}
+
+export interface DecidableShareAttributeRequestItemDVO extends DecidableRequestItemDVO {
+    type: "DecidableShareAttributeRequestItemDVO";
+    attributeId: string;
+    attribute: RepositoryAttributeDVO | SharedToPeerAttributeDVO;
+    shareWith: IdentityDVO;
 }

@@ -1,4 +1,6 @@
+import { RepositoryAttributeDVO, SharedToPeerAttributeDVO } from "../consumption";
 import { DataViewObject } from "../DataViewObject";
+import { IdentityDVO } from "../transport";
 import { AttributeQueryDVO, DraftAttributeDVO } from "./AttributeDVOs";
 
 export interface RequestItemGroupDVO {
@@ -26,4 +28,11 @@ export interface CreateAttributeRequestItemDVO extends RequestItemDVO {
     type: "CreateAttributeRequestItemDVO";
     attribute: DraftAttributeDVO;
     sourceAttributeId?: string;
+}
+
+export interface ShareAttributeRequestItemDVO extends RequestItemDVO {
+    type: "ShareAttributeRequestItemDVO";
+    attributeId: string;
+    attribute: RepositoryAttributeDVO | SharedToPeerAttributeDVO;
+    shareWith: IdentityDVO;
 }
