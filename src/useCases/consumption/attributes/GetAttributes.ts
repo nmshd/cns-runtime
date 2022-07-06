@@ -106,7 +106,7 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, LocalAtt
             ],
 
             // content.shareInfo
-            [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}`]: [`${nameof<LocalAttribute>((x) => x.shareInfo)}}`],
+            [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}`]: [`${nameof<LocalAttribute>((x) => x.shareInfo)}`],
             [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}.${nameof<LocalAttributeShareInfoJSON>((x) => x.peer)}`]: [
                 `${nameof<LocalAttribute>((x) => x.shareInfo)}.${nameof<LocalAttributeShareInfoJSON>((x) => x.peer)}`
             ],
