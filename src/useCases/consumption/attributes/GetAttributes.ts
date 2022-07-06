@@ -31,11 +31,13 @@ export interface GetAttributesRequestQuery {
     };
     succeeds?: string;
     succeededBy?: string;
-    shareInfo?: {
-        requestReference?: string;
-        peer?: string;
-        sourceAttribute?: string;
-    };
+    shareInfo?:
+        | {
+              requestReference?: string;
+              peer?: string;
+              sourceAttribute?: string;
+          }
+        | string;
     [key: string]: unknown;
 }
 
@@ -62,6 +64,7 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, LocalAtt
             [`${nameof<LocalAttributeDTO>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.confidentiality)}`]: true,
 
             // content.shareInfo
+            [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}`]: true,
             [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}.${nameof<LocalAttributeShareInfoJSON>((x) => x.peer)}`]: true,
             [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}.${nameof<LocalAttributeShareInfoJSON>((x) => x.requestReference)}`]: true,
             [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}.${nameof<LocalAttributeShareInfoJSON>((x) => x.sourceAttribute)}`]: true
@@ -103,6 +106,7 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, LocalAtt
             ],
 
             // content.shareInfo
+            [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}`]: [`${nameof<LocalAttribute>((x) => x.shareInfo)}}`],
             [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}.${nameof<LocalAttributeShareInfoJSON>((x) => x.peer)}`]: [
                 `${nameof<LocalAttribute>((x) => x.shareInfo)}.${nameof<LocalAttributeShareInfoJSON>((x) => x.peer)}`
             ],
