@@ -1,6 +1,6 @@
 import { Result } from "@js-soft/ts-utils";
-import { IGetRelationshipAttributesParams, LocalAttributesController } from "@nmshd/consumption";
-import { IRelationshipAttributeQuery, RelationshipAttributeQueryJSON } from "@nmshd/content";
+import { LocalAttributesController } from "@nmshd/consumption";
+import { IRelationshipAttributeQuery, RelationshipAttributeQuery, RelationshipAttributeQueryJSON } from "@nmshd/content";
 import { Inject } from "typescript-ioc";
 import { LocalAttributeDTO } from "../../../types";
 import { UseCase } from "../../common";
@@ -16,10 +16,7 @@ export class ExecuteRelationshipAttributeQueryUseCase extends UseCase<ExecuteRel
     }
 
     protected async executeInternal(request: ExecuteRelationshipAttributeQueryRequest): Promise<Result<LocalAttributeDTO[]>> {
-        const params = {
-            query: request.query
-        } as IGetRelationshipAttributesParams;
-        const attributes = await this.attributeController.executeRelationshipAttributeQuery(params);
+        const attributes = await this.attributeController.executeRelationshipAttributeQuery(RelationshipAttributeQuery.from(request.query));
         return Result.ok(AttributeMapper.toAttributeDTOList(attributes));
     }
 }

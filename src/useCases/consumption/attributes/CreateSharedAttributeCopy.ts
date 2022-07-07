@@ -43,7 +43,7 @@ export class CreateSharedAttributeCopyUseCase extends UseCase<CreateSharedAttrib
 
     protected async executeInternal(request: CreateSharedAttributeCopyRequest): Promise<Result<LocalAttributeDTO>> {
         const params = CreateSharedLocalAttributeCopyParams.from({
-            attributeId: CoreId.from(request.attributeId),
+            sourceAttributeId: CoreId.from(request.attributeId),
             peer: CoreAddress.from(request.peer),
             requestReference: CoreId.from(request.requestReference)
         });
