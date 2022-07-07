@@ -91,20 +91,6 @@ beforeAll(async () => {
         }
     });
 
-    const localRequest2 = await consumptionServices1.outgoingRequests.canCreate({
-        content: {
-            items: [
-                {
-                    "@type": "CreateAttributeRequestItem",
-                    mustBeAccepted: true,
-                    attribute: senderAttribute.value.content,
-                    sourceAttributeId: senderAttribute.value.id
-                }
-            ]
-        },
-        peer: recipientAddress
-    });
-
     const localRequest = await consumptionServices1.outgoingRequests.create({
         content: {
             items: [

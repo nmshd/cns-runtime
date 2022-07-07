@@ -1,5 +1,5 @@
 import { EventBus } from "@js-soft/ts-utils";
-import { AcceptReadAttributeRequestItemParametersJSON } from "@nmshd/consumption";
+import { AcceptReadAttributeRequestItemParametersWithNewAttributeJSON } from "@nmshd/consumption";
 import {
     GivenName,
     IdentityAttribute,
@@ -181,7 +181,7 @@ describe("ReadAttributeRequestItemDVO", () => {
 
         const acceptResult = await consumptionServices2.incomingRequests.accept({
             requestId: dvo.request.id,
-            items: [{ accept: true, attribute: resultItem.content } as AcceptReadAttributeRequestItemParametersJSON]
+            items: [{ accept: true, newAttributeValue: resultItem.content } as AcceptReadAttributeRequestItemParametersWithNewAttributeJSON]
         });
         expect(acceptResult.isSuccess).toBe(true);
     });
@@ -222,7 +222,7 @@ describe("ReadAttributeRequestItemDVO", () => {
         expect(response!.content.items).toHaveLength(1);
         const responseItem = response!.content.items[0] as ReadAttributeAcceptResponseItemJSON;
         expect(responseItem.result).toBe("Accepted");
-        expect(responseItem["@type"]).toBe("AcceptReadAttributeResponseItem");
+        expect(responseItem["@type"]).toBe("ReadAttributeAcceptResponseItem");
         expect(responseItem.attribute).toBeDefined();
         const recipientAddress = (await transportServices2.account.getIdentityInfo()).value.address;
         expect(responseItem.attribute.owner).toBe(recipientAddress);
@@ -283,7 +283,7 @@ describe("ReadAttributeRequestItemDVO", () => {
         expect(response!.content.items).toHaveLength(1);
         const responseItem = response!.content.items[0] as ReadAttributeAcceptResponseItemJSON;
         expect(responseItem.result).toBe("Accepted");
-        expect(responseItem["@type"]).toBe("AcceptReadAttributeResponseItem");
+        expect(responseItem["@type"]).toBe("ReadAttributeAcceptResponseItem");
         expect(responseItem.attributeId).toBeDefined();
 
         const attributeResult = await consumptionServices1.attributes.getValidAttributes({
