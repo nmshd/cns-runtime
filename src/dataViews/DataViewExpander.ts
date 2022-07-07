@@ -322,7 +322,7 @@ export class DataViewExpander {
         }
         return {
             name,
-            type: "RelationshipTemplate",
+            type: "RelationshipTemplateDVO",
             date: template.expiresAt,
             ...template,
             createdBy: await this.expandAddress(template.createdBy),
