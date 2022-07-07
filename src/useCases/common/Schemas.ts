@@ -715,19 +715,26 @@ export const GetAttributesRequest: any = {
                     "type": "string"
                 },
                 "shareInfo": {
-                    "type": "object",
-                    "properties": {
-                        "requestReference": {
-                            "type": "string"
+                    "anyOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "requestReference": {
+                                    "type": "string"
+                                },
+                                "peer": {
+                                    "type": "string"
+                                },
+                                "sourceAttribute": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
                         },
-                        "peer": {
-                            "type": "string"
-                        },
-                        "sourceAttribute": {
+                        {
                             "type": "string"
                         }
-                    },
-                    "additionalProperties": false
+                    ]
                 }
             },
             "additionalProperties": {}
@@ -1345,11 +1352,11 @@ export const CreateOutgoingRequestRequest: any = {
                                                 "$ref": "#/definitions/RequestItemGroupJSON"
                                             },
                                             {
-                                                "$ref": "#/definitions/RequestItemJSON"
+                                                "$ref": "#/definitions/RequestItemJSONDerivations"
                                             }
                                         ]
                                     },
-                                    "description": "The items of the Request. Can be either a single  {@link  RequestItemJSON RequestItem }  or a  {@link  RequestItemGroupJSON RequestItemGroup } , which itself can contain further  {@link  RequestItemJSON RequestItems } ."
+                                    "description": "The items of the Request. Can be either a single  {@link  RequestItemJSONDerivations RequestItem }  or a  {@link  RequestItemGroupJSON RequestItemGroup } , which itself can contain further  {@link  RequestItemJSONDerivations RequestItems } ."
                                 },
                                 {
                                     "type": "array",
@@ -1359,14 +1366,14 @@ export const CreateOutgoingRequestRequest: any = {
                                                 "$ref": "#/definitions/IRequestItemGroup"
                                             },
                                             {
-                                                "$ref": "#/definitions/IRequestItem"
+                                                "$ref": "#/definitions/IRequestItemDerivations"
                                             }
                                         ]
                                     },
-                                    "description": "The items of the Request. Can be either a single  {@link  RequestItem RequestItem }  or a  {@link  RequestItemGroup RequestItemGroup } , which itself can contain further  {@link  RequestItem RequestItems } ."
+                                    "description": "The items of the Request. Can be either a single  {@link  IRequestItemDerivations RequestItem }  or a  {@link  IRequestItemGroup RequestItemGroup } , which itself can contain further  {@link  IRequestItemDerivations RequestItems } ."
                                 }
                             ],
-                            "description": "The items of the Request. Can be either a single  {@link  RequestItemJSON RequestItem }  or a  {@link  RequestItemGroupJSON RequestItemGroup } , which itself can contain further  {@link  RequestItemJSON RequestItems } ."
+                            "description": "The items of the Request. Can be either a single  {@link  RequestItemJSONDerivations RequestItem }  or a  {@link  RequestItemGroupJSON RequestItemGroup } , which itself can contain further  {@link  RequestItemJSONDerivations RequestItems } ."
                         },
                         "metadata": {
                             "anyOf": [
@@ -1444,7 +1451,7 @@ export const CreateOutgoingRequestRequest: any = {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/RequestItemJSON"
+                        "$ref": "#/definitions/RequestItemJSONDerivations"
                     },
                     "description": "The items of this group."
                 }
@@ -1455,7 +1462,26 @@ export const CreateOutgoingRequestRequest: any = {
                 "mustBeAccepted"
             ],
             "additionalProperties": false,
-            "description": "A RequestItemGroup can be used to group one or more  {@link  RequestItemJSON RequestItems } . This is useful if you want to\n* make sure that the items in the group can only be accepted together\n\n  Example: when sending a `CreateAttributeRequestItem` **and** a `ShareAttributeRequestItem` in a single   Request where the latter one targets an attribute created by the first one, it it should be impossible to   reject the first item, while accepting the second one.\n* visually group items on the UI and give the a common title/description"
+            "description": "A RequestItemGroup can be used to group one or more RequestItems. This is useful if you want to\n* make sure that the items in the group can only be accepted together\n\n  Example: when sending a `CreateAttributeRequestItem` **and** a `ShareAttributeRequestItem` in a single   Request where the latter one targets an attribute created by the first one, it it should be impossible to   reject the first item, while accepting the second one.\n* visually group items on the UI and give the a common title/description"
+        },
+        "RequestItemJSONDerivations": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/RequestItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/CreateAttributeRequestItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/ProposeAttributeRequestItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/ReadAttributeRequestItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/ShareAttributeRequestItemJSON"
+                }
+            ]
         },
         "RequestItemJSON": {
             "type": "object",
@@ -1492,6 +1518,493 @@ export const CreateOutgoingRequestRequest: any = {
             ],
             "additionalProperties": false
         },
+        "CreateAttributeRequestItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroupJSON RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItemJSON RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "attribute": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IdentityAttributeJSON"
+                        },
+                        {
+                            "$ref": "#/definitions/RelationshipAttributeJSON"
+                        }
+                    ]
+                },
+                "sourceAttributeId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type",
+                "attribute",
+                "mustBeAccepted"
+            ],
+            "additionalProperties": false
+        },
+        "IdentityAttributeJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "value": {
+                    "$ref": "#/definitions/AbstractAttributeValueJSON"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "@type",
+                "owner",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "AbstractAttributeValueJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type"
+            ]
+        },
+        "RelationshipAttributeJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "value": {
+                    "$ref": "#/definitions/AbstractAttributeValueJSON"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "@type",
+                "confidentiality",
+                "key",
+                "owner",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "RelationshipAttributeConfidentiality": {
+            "type": "string",
+            "enum": [
+                "public",
+                "private",
+                "protected"
+            ]
+        },
+        "ProposeAttributeRequestItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroupJSON RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItemJSON RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "query": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IdentityAttributeQueryJSON"
+                        },
+                        {
+                            "$ref": "#/definitions/RelationshipAttributeQueryJSON"
+                        }
+                    ]
+                },
+                "attribute": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IdentityAttributeJSON"
+                        },
+                        {
+                            "$ref": "#/definitions/RelationshipAttributeJSON"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "@type",
+                "attribute",
+                "mustBeAccepted",
+                "query"
+            ],
+            "additionalProperties": false
+        },
+        "IdentityAttributeQueryJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "@type",
+                "valueType"
+            ]
+        },
+        "RelationshipAttributeQueryJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "thirdParty": {
+                    "type": "string"
+                },
+                "attributeCreationHints": {
+                    "$ref": "#/definitions/RelationshipAttributeCreationHintsJSON"
+                }
+            },
+            "required": [
+                "@type",
+                "attributeCreationHints",
+                "key",
+                "owner",
+                "valueType"
+            ],
+            "additionalProperties": false
+        },
+        "RelationshipAttributeCreationHintsJSON": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "valueHints": {
+                    "$ref": "#/definitions/ValueHintsJSON"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "title",
+                "confidentiality"
+            ],
+            "additionalProperties": false
+        },
+        "ValueHintsJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "editHelp": {
+                    "type": "string"
+                },
+                "min": {
+                    "type": "number"
+                },
+                "max": {
+                    "type": "number"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ValueHintsValueJSON"
+                    }
+                },
+                "defaultValue": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "@type"
+            ]
+        },
+        "ValueHintsValueJSON": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                },
+                "displayName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "key",
+                "displayName"
+            ],
+            "additionalProperties": false
+        },
+        "ReadAttributeRequestItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroupJSON RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItemJSON RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "query": {
+                    "$ref": "#/definitions/AbstractAttributeQueryJSON"
+                }
+            },
+            "required": [
+                "@type",
+                "mustBeAccepted",
+                "query"
+            ],
+            "additionalProperties": false
+        },
+        "AbstractAttributeQueryJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type",
+                "valueType"
+            ],
+            "additionalProperties": false
+        },
+        "ShareAttributeRequestItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroupJSON RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItemJSON RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "attributeId": {
+                    "type": "string"
+                },
+                "shareWith": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type",
+                "attributeId",
+                "mustBeAccepted",
+                "shareWith"
+            ],
+            "additionalProperties": false
+        },
         "IRequestItemGroup": {
             "type": "object",
             "properties": {
@@ -1514,7 +2027,7 @@ export const CreateOutgoingRequestRequest: any = {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/IRequestItem"
+                        "$ref": "#/definitions/IRequestItemDerivations"
                     },
                     "description": "The items of this group."
                 }
@@ -1524,7 +2037,26 @@ export const CreateOutgoingRequestRequest: any = {
                 "items"
             ],
             "additionalProperties": false,
-            "description": "A RequestItemGroup can be used to group one or more  {@link  RequestItem RequestItems } . This is useful if you want to\n* make sure that the items in the group can only be accepted together\n\n  Example: when sending a `CreateAttributeRequestItem` **and** a `ShareAttributeRequestItem` in a single   Request where the latter one targets an attribute created by the first one, it it should be impossible to   reject the first item, while accepting the second one.\n* visually group items on the UI and give the a common title/description"
+            "description": "A RequestItemGroup can be used to group one or more RequestItems. This is useful if you want to\n* make sure that the items in the group can only be accepted together\n\n  Example: when sending a `CreateAttributeRequestItem` **and** a `ShareAttributeRequestItem` in a single   Request where the latter one targets an attribute created by the first one, it it should be impossible to   reject the first item, while accepting the second one.\n* visually group items on the UI and give the a common title/description"
+        },
+        "IRequestItemDerivations": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/IRequestItem"
+                },
+                {
+                    "$ref": "#/definitions/ICreateAttributeRequestItem"
+                },
+                {
+                    "$ref": "#/definitions/IProposeAttributeRequestItem"
+                },
+                {
+                    "$ref": "#/definitions/IReadAttributeRequestItem"
+                },
+                {
+                    "$ref": "#/definitions/IShareAttributeRequestItem"
+                }
+            ]
         },
         "IRequestItem": {
             "type": "object",
@@ -1548,6 +2080,395 @@ export const CreateOutgoingRequestRequest: any = {
             },
             "required": [
                 "mustBeAccepted"
+            ],
+            "additionalProperties": false
+        },
+        "ICreateAttributeRequestItem": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroup RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItem RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "attribute": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IIdentityAttribute"
+                        },
+                        {
+                            "$ref": "#/definitions/IRelationshipAttribute"
+                        }
+                    ]
+                },
+                "sourceAttributeId": {
+                    "$ref": "#/definitions/ICoreId"
+                }
+            },
+            "required": [
+                "attribute",
+                "mustBeAccepted"
+            ],
+            "additionalProperties": false
+        },
+        "IIdentityAttribute": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "$ref": "#/definitions/ICoreAddress"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "value": {
+                    "$ref": "#/definitions/IAbstractAttributeValue"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "owner",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "ICoreAddress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "address"
+            ],
+            "additionalProperties": false
+        },
+        "IAbstractAttributeValue": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+        },
+        "IRelationshipAttribute": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "$ref": "#/definitions/ICoreAddress"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "value": {
+                    "$ref": "#/definitions/IAbstractAttributeValue"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "confidentiality",
+                "key",
+                "owner",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "ICoreId": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "additionalProperties": false
+        },
+        "IProposeAttributeRequestItem": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroup RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItem RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "query": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IIdentityAttributeQuery"
+                        },
+                        {
+                            "$ref": "#/definitions/IRelationshipAttributeQuery"
+                        }
+                    ]
+                },
+                "attribute": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IIdentityAttribute"
+                        },
+                        {
+                            "$ref": "#/definitions/IRelationshipAttribute"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "attribute",
+                "mustBeAccepted",
+                "query"
+            ],
+            "additionalProperties": false
+        },
+        "IIdentityAttributeQuery": {
+            "type": "object",
+            "properties": {
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "valueType"
+            ]
+        },
+        "IRelationshipAttributeQuery": {
+            "type": "object",
+            "properties": {
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "owner": {
+                    "$ref": "#/definitions/ICoreAddress"
+                },
+                "thirdParty": {
+                    "$ref": "#/definitions/ICoreAddress"
+                },
+                "attributeCreationHints": {
+                    "$ref": "#/definitions/IRelationshipAttributeCreationHints"
+                }
+            },
+            "required": [
+                "attributeCreationHints",
+                "key",
+                "owner",
+                "valueType"
+            ],
+            "additionalProperties": false
+        },
+        "IRelationshipAttributeCreationHints": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "valueHints": {
+                    "$ref": "#/definitions/IValueHints"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "title",
+                "confidentiality"
+            ],
+            "additionalProperties": false
+        },
+        "IValueHints": {
+            "type": "object",
+            "properties": {
+                "editHelp": {
+                    "type": "string"
+                },
+                "min": {
+                    "type": "number"
+                },
+                "max": {
+                    "type": "number"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/IValueHintsValue"
+                    }
+                },
+                "defaultValue": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
+        "IValueHintsValue": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                },
+                "displayName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "key",
+                "displayName"
+            ],
+            "additionalProperties": false
+        },
+        "IReadAttributeRequestItem": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroup RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItem RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "query": {
+                    "$ref": "#/definitions/IAbstractAttributeQuery"
+                }
+            },
+            "required": [
+                "mustBeAccepted",
+                "query"
+            ],
+            "additionalProperties": false
+        },
+        "IAbstractAttributeQuery": {
+            "type": "object",
+            "properties": {
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "$ref": "#/definitions/ICoreDate"
+                },
+                "validTo": {
+                    "$ref": "#/definitions/ICoreDate"
+                }
+            },
+            "required": [
+                "valueType"
+            ],
+            "additionalProperties": false
+        },
+        "IShareAttributeRequestItem": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroup RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItem RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "attributeId": {
+                    "$ref": "#/definitions/ICoreId"
+                },
+                "shareWith": {
+                    "$ref": "#/definitions/ICoreAddress"
+                }
+            },
+            "required": [
+                "attributeId",
+                "mustBeAccepted",
+                "shareWith"
             ],
             "additionalProperties": false
         }
@@ -1736,7 +2657,7 @@ export const CompleteOutgoingRequestRequest: any = {
                                 "$ref": "#/definitions/ResponseItemGroupJSON"
                             },
                             {
-                                "$ref": "#/definitions/ResponseItemJSON"
+                                "$ref": "#/definitions/ResponseItemJSONDerivations"
                             }
                         ]
                     }
@@ -1772,7 +2693,7 @@ export const CompleteOutgoingRequestRequest: any = {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ResponseItemJSON"
+                        "$ref": "#/definitions/ResponseItemJSONDerivations"
                     }
                 }
             },
@@ -1782,7 +2703,36 @@ export const CompleteOutgoingRequestRequest: any = {
             ],
             "additionalProperties": false
         },
-        "ResponseItemJSON": {
+        "ResponseItemJSONDerivations": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/AcceptResponseItemJSONDerivations"
+                },
+                {
+                    "$ref": "#/definitions/RejectResponseItemJSONDerivations"
+                },
+                {
+                    "$ref": "#/definitions/ErrorResponseItemJSONDerivations"
+                }
+            ]
+        },
+        "AcceptResponseItemJSONDerivations": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/AcceptResponseItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/CreateAttributeAcceptResponseItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/ProposeAttributeAcceptResponseItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/ReadAttributeAcceptResponseItemJSON"
+                }
+            ]
+        },
+        "AcceptResponseItemJSON": {
             "type": "object",
             "properties": {
                 "@type": {
@@ -1795,7 +2745,8 @@ export const CompleteOutgoingRequestRequest: any = {
                     "type": "string"
                 },
                 "result": {
-                    "$ref": "#/definitions/ResponseItemResult"
+                    "type": "string",
+                    "const": "Accepted"
                 }
             },
             "required": [
@@ -1804,13 +2755,280 @@ export const CompleteOutgoingRequestRequest: any = {
             ],
             "additionalProperties": false
         },
-        "ResponseItemResult": {
+        "CreateAttributeAcceptResponseItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string",
+                    "const": "Accepted"
+                },
+                "attributeId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type",
+                "attributeId",
+                "result"
+            ],
+            "additionalProperties": false
+        },
+        "ProposeAttributeAcceptResponseItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string",
+                    "const": "Accepted"
+                },
+                "attributeId": {
+                    "type": "string"
+                },
+                "attribute": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IdentityAttributeJSON"
+                        },
+                        {
+                            "$ref": "#/definitions/RelationshipAttributeJSON"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "@type",
+                "attribute",
+                "attributeId",
+                "result"
+            ],
+            "additionalProperties": false
+        },
+        "IdentityAttributeJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "value": {
+                    "$ref": "#/definitions/AbstractAttributeValueJSON"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "@type",
+                "owner",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "AbstractAttributeValueJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type"
+            ]
+        },
+        "RelationshipAttributeJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "value": {
+                    "$ref": "#/definitions/AbstractAttributeValueJSON"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "@type",
+                "confidentiality",
+                "key",
+                "owner",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "RelationshipAttributeConfidentiality": {
             "type": "string",
             "enum": [
-                "Accepted",
-                "Rejected",
-                "Error"
+                "public",
+                "private",
+                "protected"
             ]
+        },
+        "ReadAttributeAcceptResponseItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string",
+                    "const": "Accepted"
+                },
+                "attributeId": {
+                    "type": "string"
+                },
+                "attribute": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IdentityAttributeJSON"
+                        },
+                        {
+                            "$ref": "#/definitions/RelationshipAttributeJSON"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "@type",
+                "attribute",
+                "attributeId",
+                "result"
+            ],
+            "additionalProperties": false
+        },
+        "RejectResponseItemJSONDerivations": {
+            "$ref": "#/definitions/RejectResponseItemJSON"
+        },
+        "RejectResponseItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string",
+                    "const": "Rejected"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type",
+                "result"
+            ],
+            "additionalProperties": false
+        },
+        "ErrorResponseItemJSONDerivations": {
+            "$ref": "#/definitions/ErrorResponseItemJSON"
+        },
+        "ErrorResponseItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string",
+                    "const": "Error"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type",
+                "code",
+                "message",
+                "result"
+            ],
+            "additionalProperties": false
         }
     }
 }
@@ -2154,11 +3372,11 @@ export const ReceivedIncomingRequestRequest: any = {
                                 "$ref": "#/definitions/RequestItemGroupJSON"
                             },
                             {
-                                "$ref": "#/definitions/RequestItemJSON"
+                                "$ref": "#/definitions/RequestItemJSONDerivations"
                             }
                         ]
                     },
-                    "description": "The items of the Request. Can be either a single  {@link  RequestItemJSON RequestItem }  or a  {@link  RequestItemGroupJSON RequestItemGroup } , which itself can contain further  {@link  RequestItemJSON RequestItems } ."
+                    "description": "The items of the Request. Can be either a single  {@link  RequestItemJSONDerivations RequestItem }  or a  {@link  RequestItemGroupJSON RequestItemGroup } , which itself can contain further  {@link  RequestItemJSONDerivations RequestItems } ."
                 },
                 "metadata": {
                     "type": "object",
@@ -2202,7 +3420,7 @@ export const ReceivedIncomingRequestRequest: any = {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/RequestItemJSON"
+                        "$ref": "#/definitions/RequestItemJSONDerivations"
                     },
                     "description": "The items of this group."
                 }
@@ -2213,7 +3431,26 @@ export const ReceivedIncomingRequestRequest: any = {
                 "mustBeAccepted"
             ],
             "additionalProperties": false,
-            "description": "A RequestItemGroup can be used to group one or more  {@link  RequestItemJSON RequestItems } . This is useful if you want to\n* make sure that the items in the group can only be accepted together\n\n  Example: when sending a `CreateAttributeRequestItem` **and** a `ShareAttributeRequestItem` in a single   Request where the latter one targets an attribute created by the first one, it it should be impossible to   reject the first item, while accepting the second one.\n* visually group items on the UI and give the a common title/description"
+            "description": "A RequestItemGroup can be used to group one or more RequestItems. This is useful if you want to\n* make sure that the items in the group can only be accepted together\n\n  Example: when sending a `CreateAttributeRequestItem` **and** a `ShareAttributeRequestItem` in a single   Request where the latter one targets an attribute created by the first one, it it should be impossible to   reject the first item, while accepting the second one.\n* visually group items on the UI and give the a common title/description"
+        },
+        "RequestItemJSONDerivations": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/RequestItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/CreateAttributeRequestItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/ProposeAttributeRequestItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/ReadAttributeRequestItemJSON"
+                },
+                {
+                    "$ref": "#/definitions/ShareAttributeRequestItemJSON"
+                }
+            ]
         },
         "RequestItemJSON": {
             "type": "object",
@@ -2247,6 +3484,493 @@ export const ReceivedIncomingRequestRequest: any = {
             "required": [
                 "@type",
                 "mustBeAccepted"
+            ],
+            "additionalProperties": false
+        },
+        "CreateAttributeRequestItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroupJSON RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItemJSON RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "attribute": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IdentityAttributeJSON"
+                        },
+                        {
+                            "$ref": "#/definitions/RelationshipAttributeJSON"
+                        }
+                    ]
+                },
+                "sourceAttributeId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type",
+                "attribute",
+                "mustBeAccepted"
+            ],
+            "additionalProperties": false
+        },
+        "IdentityAttributeJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "value": {
+                    "$ref": "#/definitions/AbstractAttributeValueJSON"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "@type",
+                "owner",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "AbstractAttributeValueJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type"
+            ]
+        },
+        "RelationshipAttributeJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "value": {
+                    "$ref": "#/definitions/AbstractAttributeValueJSON"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "@type",
+                "confidentiality",
+                "key",
+                "owner",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "RelationshipAttributeConfidentiality": {
+            "type": "string",
+            "enum": [
+                "public",
+                "private",
+                "protected"
+            ]
+        },
+        "ProposeAttributeRequestItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroupJSON RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItemJSON RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "query": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IdentityAttributeQueryJSON"
+                        },
+                        {
+                            "$ref": "#/definitions/RelationshipAttributeQueryJSON"
+                        }
+                    ]
+                },
+                "attribute": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IdentityAttributeJSON"
+                        },
+                        {
+                            "$ref": "#/definitions/RelationshipAttributeJSON"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "@type",
+                "attribute",
+                "mustBeAccepted",
+                "query"
+            ],
+            "additionalProperties": false
+        },
+        "IdentityAttributeQueryJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "@type",
+                "valueType"
+            ]
+        },
+        "RelationshipAttributeQueryJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "thirdParty": {
+                    "type": "string"
+                },
+                "attributeCreationHints": {
+                    "$ref": "#/definitions/RelationshipAttributeCreationHintsJSON"
+                }
+            },
+            "required": [
+                "@type",
+                "attributeCreationHints",
+                "key",
+                "owner",
+                "valueType"
+            ],
+            "additionalProperties": false
+        },
+        "RelationshipAttributeCreationHintsJSON": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "valueHints": {
+                    "$ref": "#/definitions/ValueHintsJSON"
+                },
+                "isTechnical": {
+                    "type": "boolean"
+                },
+                "confidentiality": {
+                    "$ref": "#/definitions/RelationshipAttributeConfidentiality"
+                }
+            },
+            "required": [
+                "title",
+                "confidentiality"
+            ],
+            "additionalProperties": false
+        },
+        "ValueHintsJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "editHelp": {
+                    "type": "string"
+                },
+                "min": {
+                    "type": "number"
+                },
+                "max": {
+                    "type": "number"
+                },
+                "pattern": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ValueHintsValueJSON"
+                    }
+                },
+                "defaultValue": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "@type"
+            ]
+        },
+        "ValueHintsValueJSON": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                },
+                "displayName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "key",
+                "displayName"
+            ],
+            "additionalProperties": false
+        },
+        "ReadAttributeRequestItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroupJSON RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItemJSON RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "query": {
+                    "$ref": "#/definitions/AbstractAttributeQueryJSON"
+                }
+            },
+            "required": [
+                "@type",
+                "mustBeAccepted",
+                "query"
+            ],
+            "additionalProperties": false
+        },
+        "AbstractAttributeQueryJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "valueType": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type",
+                "valueType"
+            ],
+            "additionalProperties": false
+        },
+        "ShareAttributeRequestItemJSON": {
+            "type": "object",
+            "properties": {
+                "@type": {
+                    "type": "string"
+                },
+                "@context": {
+                    "type": "string"
+                },
+                "@version": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The human-readable title of this item."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The human-readable description of this item."
+                },
+                "metadata": {
+                    "type": "object",
+                    "description": "This property can be used to add some arbitrary metadata to this item. The content of this property will be copied into the response on the side of the recipient, so the sender can use it to identify the group content as they receive the response."
+                },
+                "mustBeAccepted": {
+                    "type": "boolean",
+                    "description": "If set to `true`, the recipient has to accept this group if he wants to accept the Request. If set to `false`, the recipient can decide whether he wants to accept it or not.\n\nCaution: this setting does not take effect in case it is inside of a\n {@link  RequestItemGroupJSON RequestItemGroup } , which is not accepted by the recipient, since a  {@link  RequestItemJSON RequestItem }  can only be accepted if the parent group is accepted as well."
+                },
+                "attributeId": {
+                    "type": "string"
+                },
+                "shareWith": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "@type",
+                "attributeId",
+                "mustBeAccepted",
+                "shareWith"
             ],
             "additionalProperties": false
         }
