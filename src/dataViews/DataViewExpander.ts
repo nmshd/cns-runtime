@@ -340,7 +340,7 @@ export class DataViewExpander {
         const id = request.id ? request.id : "";
         const itemDVOs = [];
         for (const requestItem of request.items) {
-            itemDVOs.push(await this.expandRequestItem(requestItem, localRequestDTO));
+            itemDVOs.push(await this.expandRequestGroupOrItem(requestItem, localRequestDTO));
         }
         return {
             id: id,
