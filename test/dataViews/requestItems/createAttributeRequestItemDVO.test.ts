@@ -1,7 +1,6 @@
 import { EventBus } from "@js-soft/ts-utils";
 import {
     CreateAttributeAcceptResponseItemJSON,
-    CreateAttributeRequestItem,
     GivenName,
     IdentityAttribute,
     ReadAttributeAcceptResponseItem,
@@ -81,18 +80,40 @@ beforeAll(async () => {
     const senderAddress = (await transportServices1.account.getIdentityInfo()).value.address;
     const recipientAddress = (await transportServices2.account.getIdentityInfo()).value.address;
 
+    const senderAttribute = await consumptionServices1.attributes.createAttribute({
+        content: {
+            "@type": "IdentityAttribute",
+            owner: senderAddress,
+            value: {
+                "@type": "GivenName",
+                value: "Theodor"
+            }
+        }
+    });
+
+    const localRequest2 = await consumptionServices1.outgoingRequests.canCreate({
+        content: {
+            items: [
+                {
+                    "@type": "CreateAttributeRequestItem",
+                    mustBeAccepted: true,
+                    attribute: senderAttribute.value.content,
+                    sourceAttributeId: senderAttribute.value.id
+                }
+            ]
+        },
+        peer: recipientAddress
+    });
+
     const localRequest = await consumptionServices1.outgoingRequests.create({
         content: {
             items: [
-                CreateAttributeRequestItem.from({
+                {
+                    "@type": "CreateAttributeRequestItem",
                     mustBeAccepted: true,
-                    attribute: IdentityAttribute.from({
-                        owner: CoreAddress.from(senderAddress),
-                        value: GivenName.fromAny({
-                            value: "Theodor"
-                        })
-                    })
-                })
+                    attribute: senderAttribute.value.content,
+                    sourceAttributeId: senderAttribute.value.id
+                }
             ]
         },
         peer: recipientAddress
