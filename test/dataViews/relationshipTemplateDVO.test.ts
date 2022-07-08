@@ -182,13 +182,13 @@ describe("RelationshipTemplateDVO", () => {
         expect(dvo.onNewRelationship!.type).toBe("RequestDVO");
         expect(dvo.onNewRelationship!.items).toHaveLength(2);
 
-        let item = dvo.onNewRelationship!.items![0] as RequestItemGroupDVO;
+        let item = dvo.onNewRelationship!.items[0] as RequestItemGroupDVO;
         expect(item.type).toBe("RequestItemGroupDVO");
         expect(item.items).toHaveLength(2);
         expect(item.items[0].type).toBe("CreateAttributeRequestItemDVO");
         expect(item.items[1].type).toBe("CreateAttributeRequestItemDVO");
 
-        item = dvo.onNewRelationship!.items![1] as RequestItemGroupDVO;
+        item = dvo.onNewRelationship!.items[1] as RequestItemGroupDVO;
         expect(item.type).toBe("RequestItemGroupDVO");
         expect(item.items).toHaveLength(2);
         expect(item.items[0].type).toBe("ProposeAttributeRequestItemDVO");
@@ -212,13 +212,13 @@ describe("RelationshipTemplateDVO", () => {
         expect(dvo.onNewRelationship!.type).toBe("LocalRequestDVO");
         expect(dvo.onNewRelationship!.items).toHaveLength(2);
 
-        let item = dvo.onNewRelationship!.items![0] as RequestItemGroupDVO;
+        let item = dvo.onNewRelationship!.items[0] as RequestItemGroupDVO;
         expect(item.type).toBe("RequestItemGroupDVO");
         expect(item.items).toHaveLength(2);
         expect(item.items[0].type).toBe("DecidableCreateAttributeRequestItemDVO");
         expect(item.items[1].type).toBe("DecidableCreateAttributeRequestItemDVO");
 
-        item = dvo.onNewRelationship!.items![1] as RequestItemGroupDVO;
+        item = dvo.onNewRelationship!.items[1] as RequestItemGroupDVO;
         expect(item.type).toBe("RequestItemGroupDVO");
         expect(item.items).toHaveLength(2);
         expect(item.items[0].type).toBe("DecidableProposeAttributeRequestItemDVO");
@@ -303,13 +303,13 @@ describe("RelationshipTemplateDVO", () => {
         expect(dvo.onNewRelationship!.type).toBe("LocalRequestDVO");
         expect(dvo.onNewRelationship!.items).toHaveLength(2);
 
-        let item = dvo.onNewRelationship!.items![0] as RequestItemGroupDVO;
+        let item = dvo.onNewRelationship!.items[0] as RequestItemGroupDVO;
         expect(item.type).toBe("RequestItemGroupDVO");
         expect(item.items).toHaveLength(2);
         expect(item.items[0].type).toBe("CreateAttributeRequestItemDVO");
         expect(item.items[1].type).toBe("CreateAttributeRequestItemDVO");
 
-        item = dvo.onNewRelationship!.items![1] as RequestItemGroupDVO;
+        item = dvo.onNewRelationship!.items[1] as RequestItemGroupDVO;
         expect(item.type).toBe("RequestItemGroupDVO");
         expect(item.items).toHaveLength(2);
         expect(item.items[0].type).toBe("ProposeAttributeRequestItemDVO");
