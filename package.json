@@ -56,7 +56,7 @@
         "@js-soft/ts-serval": "2.0.3",
         "@js-soft/ts-utils": "^1.1.2",
         "@nmshd/consumption": "2.0.0-alpha.28",
-        "@nmshd/content": "2.0.0-alpha.43",
+        "@nmshd/content": "2.0.0-alpha.44",
         "@nmshd/crypto": "2.0.1",
         "@nmshd/transport": "2.0.0-alpha.3",
         "ajv": "^8.11.0",
