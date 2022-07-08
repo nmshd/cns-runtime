@@ -12,7 +12,7 @@ export interface DraftAttributeDVO extends DataViewObject {
     isDraft: true;
     succeeds?: string;
     succeededBy?: string;
-    value: any;
+    value: unknown;
 }
 
 export interface AttributeQueryDVO extends DataViewObject {

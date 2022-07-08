@@ -17,5 +17,5 @@ export interface RelationshipTemplateDVO extends DataViewObject {
     onNewRelationship?: RequestDVO;
     onExistingRelationship?: RequestDVO;
 
-    content: any;
+    content: unknown;
 }

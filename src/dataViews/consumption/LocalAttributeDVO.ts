@@ -12,8 +12,8 @@ export interface LocalAttributeDVO extends DataViewObject {
     owner: IdentityDVO;
 
     key?: string;
-    tags?: string[];
-    value: any;
+    tags: string[];
+    value: unknown;
 
     renderHints: RenderHintsJSON;
     valueHints: ValueHintsJSON;

@@ -82,7 +82,7 @@ export interface MessageDVO extends DataViewObject {
     /**
      * The content of the message.
      */
-    content: any;
+    content: unknown;
 }
 
 export interface RecipientDVO extends Omit<IdentityDVO, "type"> {

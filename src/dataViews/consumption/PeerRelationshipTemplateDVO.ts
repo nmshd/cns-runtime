@@ -17,5 +17,5 @@ export interface PeerRelationshipTemplateDVO extends DataViewObject {
     onNewRelationship?: LocalRequestDVO;
     onExistingRelationship?: LocalRequestDVO;
 
-    content: any;
+    content: unknown;
 }
