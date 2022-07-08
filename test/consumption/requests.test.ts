@@ -210,9 +210,9 @@ describe("Requests", () => {
 
             const resultValue = result.value;
 
-            expect(resultValue.isSuccess).toBe(true);
+            expect(resultValue).toBeSuccessful();
             expect(resultValue.items).toHaveLength(1);
-            expect(resultValue.items[0].isSuccess).toBe(true);
+            expect(resultValue.items[0]).toBeSuccessful();
             expect(resultValue.items[0].items).toHaveLength(0);
         });
 
@@ -468,9 +468,9 @@ describe("Requests", () => {
 
             const resultValue = result.value;
 
-            expect(resultValue.isSuccess).toBe(true);
+            expect(resultValue).toBeSuccessful();
             expect(resultValue.items).toHaveLength(1);
-            expect(resultValue.items[0].isSuccess).toBe(true);
+            expect(resultValue.items[0]).toBeSuccessful();
             expect(resultValue.items[0].items).toHaveLength(0);
         });
 

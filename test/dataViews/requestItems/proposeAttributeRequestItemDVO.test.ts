@@ -236,7 +236,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
                 { accept: true, attribute: requestItemDVO.attribute.content } as AcceptProposeAttributeRequestItemParametersJSON
             ]
         });
-        expect(acceptResult.isSuccess).toBe(true);
+        expect(acceptResult).toBeSuccessful();
 
         const givenNameRepositoryResult2 = await consumptionServices2.attributes.getAttributes({
             query: { shareInfo: "!", content: { value: { "@type": "GivenName" } } }
@@ -308,7 +308,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         const givenNameShareResult = await consumptionServices2.attributes.getValidAttributes({
             query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.createdBy.id } }
         });
-        expect(givenNameShareResult.isSuccess).toBe(true);
+        expect(givenNameShareResult).toBeSuccessful();
         expect(givenNameShareResult.value).toHaveLength(1);
         expect((givenNameShareResult.value[0].content.value as any).value).toBe("Marlene");
         expect(responseItem.attributeId).toStrictEqual(givenNameShareResult.value[0].id);
@@ -321,7 +321,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         const surnameShareResult = await consumptionServices2.attributes.getValidAttributes({
             query: { content: { value: { "@type": "Surname" } }, shareInfo: { peer: dvo.createdBy.id } }
         });
-        expect(surnameShareResult.isSuccess).toBe(true);
+        expect(surnameShareResult).toBeSuccessful();
         expect(surnameShareResult.value).toHaveLength(1);
         expect(surnameShareResult.value[0].id).toBeDefined();
         expect((surnameShareResult.value[0].content.value as any).value).toBe("Weigl-Rostock");
@@ -393,7 +393,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         const givenNameResult = await consumptionServices1.attributes.getValidAttributes({
             query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.request.peer.id } }
         });
-        expect(givenNameResult.isSuccess).toBe(true);
+        expect(givenNameResult).toBeSuccessful();
         expect(givenNameResult.value[0].id).toBeDefined();
         expect((givenNameResult.value[0].content.value as any).value).toBe("Marlene");
 
@@ -402,7 +402,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         const surnameResult = await consumptionServices1.attributes.getValidAttributes({
             query: { content: { value: { "@type": "Surname" } }, shareInfo: { peer: dvo.request.peer.id } }
         });
-        expect(surnameResult.isSuccess).toBe(true);
+        expect(surnameResult).toBeSuccessful();
         expect(surnameResult.value[0].id).toBeDefined();
         expect((surnameResult.value[0].content.value as any).value).toBe("Weigl-Rostock");
 

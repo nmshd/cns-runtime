@@ -231,7 +231,7 @@ describe("RelationshipTemplateDVO", () => {
                 source: { reference: requestorTemplate.id }
             }
         });
-        expect(requestResult.isSuccess).toBe(true);
+        expect(requestResult).toBeSuccessful();
         expect(requestResult.value).toHaveLength(1);
 
         const dto = requestResult.value[0];
@@ -262,7 +262,7 @@ describe("RelationshipTemplateDVO", () => {
                 } as DecideRequestItemGroupParametersJSON
             ]
         });
-        expect(acceptResult.isSuccess).toBe(true);
+        expect(acceptResult).toBeSuccessful();
     });
 
     test("Test the accepted request for requestor", async () => {
@@ -271,7 +271,7 @@ describe("RelationshipTemplateDVO", () => {
                 source: { reference: requestorTemplate.id }
             }
         });
-        expect(requestResult.isSuccess).toBe(true);
+        expect(requestResult).toBeSuccessful();
         expect(requestResult.value).toHaveLength(1);
 
         const dto = requestResult.value[0];
@@ -322,7 +322,7 @@ describe("RelationshipTemplateDVO", () => {
                 shareInfo: { peer: templatorAddress }
             }
         });
-        expect(attributeResult.isSuccess).toBe(true);
+        expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value).toHaveLength(4);
     });
 
@@ -335,7 +335,7 @@ describe("RelationshipTemplateDVO", () => {
                 source: { reference: requestorTemplate.id }
             }
         });
-        expect(requestResult.isSuccess).toBe(true);
+        expect(requestResult).toBeSuccessful();
         expect(requestResult.value).toHaveLength(1);
 
         const dto = requestResult.value[0];
@@ -356,7 +356,7 @@ describe("RelationshipTemplateDVO", () => {
                 shareInfo: { peer: requestorAddress }
             }
         });
-        expect(attributeResult.isSuccess).toBe(true);
+        expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value).toHaveLength(4);
     });
 });

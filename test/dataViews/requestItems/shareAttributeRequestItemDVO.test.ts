@@ -169,7 +169,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         const givenNameResult = await consumptionServices1.attributes.getValidAttributes({
             query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: address2 } }
         });
-        expect(givenNameResult.isSuccess).toBe(true);
+        expect(givenNameResult).toBeSuccessful();
         expect(givenNameResult.value[0].id).toBeDefined();
         expect((givenNameResult.value[0].content.value as any).value).toBe("Marlene");
         shareAttributeId = givenNameResult.value[0].id;
@@ -178,7 +178,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         const givenNameResult = await consumptionServices2.attributes.getValidAttributes({
             query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: address1 } }
         });
-        expect(givenNameResult.isSuccess).toBe(true);
+        expect(givenNameResult).toBeSuccessful();
         expect(givenNameResult.value[0].id).toBeDefined();
         expect((givenNameResult.value[0].content.value as any).value).toBe("Marlene");
         expect(givenNameResult.value[0].id).toStrictEqual(shareAttributeId);
@@ -196,7 +196,7 @@ describe("ShareAttributeRequestItemDVO", () => {
             },
             peer: address2
         });
-        expect(localRequest.isSuccess).toBe(true);
+        expect(localRequest).toBeSuccessful();
 
         senderMessage = await sendMessage(transportServices1, address2, localRequest.value.content);
 
@@ -278,7 +278,7 @@ describe("ShareAttributeRequestItemDVO", () => {
             requestId: dvo.request.id,
             items: [{ accept: true } as AcceptShareAttributeRequestItemParametersJSON]
         });
-        expect(acceptResult.isSuccess).toBe(true);
+        expect(acceptResult).toBeSuccessful();
     });
 
     test("check the MessageDVO for identity 2 after acceptance", async () => {
@@ -414,7 +414,7 @@ describe("ShareAttributeRequestItemDVO", () => {
             requestId: dvo.request.id,
             items: [{ accept: true }]
         });
-        expect(acceptResult.isSuccess).toBe(true);
+        expect(acceptResult).toBeSuccessful();
     });
 
     test("check the MessageDVO for identity3 after acceptance", async () => {
@@ -458,7 +458,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         const attributeResult = await consumptionServices3.attributes.getValidAttributes({
             query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.createdBy.id } }
         });
-        expect(attributeResult.isSuccess).toBe(true);
+        expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value[0].id).toBeDefined();
         expect((attributeResult.value[0].content.value as any).value).toBe("Marlene");
 
@@ -516,7 +516,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         const attributeResult = await consumptionServices2.attributes.getValidAttributes({
             query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.request.peer.id } }
         });
-        expect(attributeResult.isSuccess).toBe(true);
+        expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value[0].id).toBeDefined();
         expect((attributeResult.value[0].content.value as any).value).toBe("Marlene");
 
