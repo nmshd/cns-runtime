@@ -1,4 +1,4 @@
-import { GivenName, IdentityAttribute, IdentityAttributeQueryJSON } from "@nmshd/content";
+import { GivenName, IAbstractStringJSON, IdentityAttribute, IdentityAttributeQueryJSON } from "@nmshd/content";
 import { CoreAddress } from "@nmshd/transport";
 import { ConsumptionServices, DataViewExpander, LocalAttributeDTO, RepositoryAttributeDVO, TransportServices } from "../../src";
 import { RuntimeServiceProvider } from "../lib";
@@ -74,7 +74,9 @@ describe("IdentityAttributeQueryExpanded", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.GivenName");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe("Hugo");
+        const givenName = dvo.value as IAbstractStringJSON;
+        expect(givenName["@type"]).toBe("GivenName");
+        expect(givenName.value).toBe("Hugo");
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -98,7 +100,9 @@ describe("IdentityAttributeQueryExpanded", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.GivenName");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe("Egon");
+        const value = dvo.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Egon");
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);

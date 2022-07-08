@@ -1,4 +1,4 @@
-import { BirthYear, CommunicationLanguage, IdentityAttribute, Nationality, Sex } from "@nmshd/content";
+import { BirthYear, CommunicationLanguage, IAbstractIntegerValue, IAbstractStringJSON, IdentityAttribute, Nationality, Sex } from "@nmshd/content";
 import { CoreAddress, CoreId } from "@nmshd/transport";
 import { ConsumptionServices, DataViewExpander, LocalAttributeDTO, RepositoryAttributeDVO, TransportServices } from "../../src";
 import { RuntimeServiceProvider } from "../lib";
@@ -92,7 +92,10 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.BirthYear");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe(2001);
+        const value = dvo.value as IAbstractIntegerValue;
+        expect(value["@type"]).toBe("BirthYear");
+        expect(value.value).toBe(2001);
+
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -137,7 +140,9 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.Sex");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe("male");
+        const value = dvo.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("Sex");
+        expect(value.value).toBe("male");
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -181,7 +186,9 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.Nationality");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe("DE");
+        const value = dvo.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("Nationality");
+        expect(value.value).toBe("DE");
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -224,7 +231,9 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.CommunicationLanguage");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe("de");
+        const value = dvo.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("CommunicationLanguage");
+        expect(value.value).toBe("de");
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
