@@ -6,6 +6,10 @@ import { AttributeQueryDVO, DraftAttributeDVO } from "./AttributeDVOs";
 export interface RequestItemGroupDVO {
     type: "RequestItemGroupDVO";
     items: RequestItemDVO[];
+    title?: string;
+    description?: string;
+    isDecidable: boolean;
+    mustBeAccepted: boolean;
 }
 
 export interface RequestItemDVO extends DataViewObject {
