@@ -1,18 +1,7 @@
 import { EventBus } from "@js-soft/ts-utils";
 import { AcceptShareAttributeRequestItemParametersJSON, LocalAttribute } from "@nmshd/consumption";
-import {
-    AcceptResponseItemJSON,
-    CreateAttributeAcceptResponseItemJSON,
-    CreateAttributeRequestItem,
-    GivenName,
-    IdentityAttribute,
-    ReadAttributeAcceptResponseItem,
-    ReadAttributeRequestItem,
-    ResponseItemResult,
-    ResponseResult,
-    ShareAttributeRequestItem
-} from "@nmshd/content";
-import { CoreAddress, CoreId } from "@nmshd/transport";
+import { AcceptResponseItemJSON, CreateAttributeAcceptResponseItemJSON, CreateAttributeRequestItem, ShareAttributeRequestItem } from "@nmshd/content";
+import { CoreId } from "@nmshd/transport";
 import { DecidableCreateAttributeRequestItemDVO, DecidableShareAttributeRequestItemDVO } from "src/dataViews/consumption/DecidableRequestItemDVOs";
 import {
     ConsumptionServices,
@@ -25,7 +14,7 @@ import {
     ShareAttributeRequestItemDVO,
     TransportServices
 } from "../../../src";
-import { establishRelationshipWithBodys, RuntimeServiceProvider, sendMessage, syncUntilHasMessages, waitForEvent } from "../../lib";
+import { establishRelationship, RuntimeServiceProvider, sendMessage, syncUntilHasMessages, waitForEvent } from "../../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -62,114 +51,9 @@ beforeAll(async () => {
     eventBus2 = runtimeServices[1].eventBus;
     eventBus3 = runtimeServices[2].eventBus;
 
-    await establishRelationshipWithBodys(
-        transportServices1,
-        transportServices2,
-        {
-            onNewRelationship: {
-                "@type": "Request",
-                items: [
-                    ReadAttributeRequestItem.from({
-                        mustBeAccepted: true,
-                        query: {
-                            valueType: "GivenName"
-                        }
-                    })
-                ]
-            }
-        },
-        {
-            response: {
-                "@type": "Response",
-                result: ResponseResult.Accepted,
-                requestId: await CoreId.generate(),
-                items: [
-                    ReadAttributeAcceptResponseItem.from({
-                        result: ResponseItemResult.Accepted,
-                        attributeId: await CoreId.generate(),
-                        attribute: IdentityAttribute.from({
-                            owner: CoreAddress.from((await transportServices1.account.getIdentityInfo()).value.address),
-                            value: GivenName.fromAny({
-                                value: "AGivenName"
-                            })
-                        })
-                    })
-                ]
-            }
-        }
-    );
-    await establishRelationshipWithBodys(
-        transportServices1,
-        transportServices3,
-        {
-            onNewRelationship: {
-                "@type": "Request",
-                items: [
-                    ReadAttributeRequestItem.from({
-                        mustBeAccepted: true,
-                        query: {
-                            valueType: "GivenName"
-                        }
-                    })
-                ]
-            }
-        },
-        {
-            response: {
-                "@type": "Response",
-                result: ResponseResult.Accepted,
-                requestId: await CoreId.generate(),
-                items: [
-                    ReadAttributeAcceptResponseItem.from({
-                        result: ResponseItemResult.Accepted,
-                        attributeId: await CoreId.generate(),
-                        attribute: IdentityAttribute.from({
-                            owner: CoreAddress.from((await transportServices1.account.getIdentityInfo()).value.address),
-                            value: GivenName.fromAny({
-                                value: "AGivenName"
-                            })
-                        })
-                    })
-                ]
-            }
-        }
-    );
-    await establishRelationshipWithBodys(
-        transportServices2,
-        transportServices3,
-        {
-            onNewRelationship: {
-                "@type": "Request",
-                items: [
-                    ReadAttributeRequestItem.from({
-                        mustBeAccepted: true,
-                        query: {
-                            valueType: "GivenName"
-                        }
-                    })
-                ]
-            }
-        },
-        {
-            response: {
-                "@type": "Response",
-                result: ResponseResult.Accepted,
-                requestId: await CoreId.generate(),
-                items: [
-                    ReadAttributeAcceptResponseItem.from({
-                        result: ResponseItemResult.Accepted,
-                        attributeId: await CoreId.generate(),
-                        attribute: IdentityAttribute.from({
-                            owner: CoreAddress.from((await transportServices1.account.getIdentityInfo()).value.address),
-                            value: GivenName.fromAny({
-                                value: "AGivenName"
-                            })
-                        })
-                    })
-                ]
-            }
-        }
-    );
+    await establishRelationship(transportServices1, transportServices2);
+    await establishRelationship(transportServices1, transportServices3);
+    await establishRelationship(transportServices2, transportServices3);
 
     address1 = (await transportServices1.account.getIdentityInfo()).value.address;
     address2 = (await transportServices2.account.getIdentityInfo()).value.address;

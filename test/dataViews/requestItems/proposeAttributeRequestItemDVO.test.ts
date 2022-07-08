@@ -1,29 +1,19 @@
 import { EventBus } from "@js-soft/ts-utils";
-import { AcceptProposeAttributeRequestItemParametersJSON } from "@nmshd/consumption";
-import {
-    GivenName,
-    IdentityAttribute,
-    IdentityAttributeQuery,
-    ProposeAttributeAcceptResponseItemJSON,
-    ProposeAttributeRequestItem,
-    ReadAttributeAcceptResponseItem,
-    ReadAttributeRequestItem,
-    ResponseItemResult,
-    ResponseResult,
-    Surname
-} from "@nmshd/content";
-import { CoreAddress, CoreId } from "@nmshd/transport";
+import { AcceptProposeAttributeRequestItemParametersJSON, LocalRequestStatus } from "@nmshd/consumption";
+import { GivenName, IdentityAttribute, IdentityAttributeQuery, ProposeAttributeAcceptResponseItemJSON, ProposeAttributeRequestItem, Surname } from "@nmshd/content";
+import { CoreAddress } from "@nmshd/transport";
 import { DecidableProposeAttributeRequestItemDVO } from "src/dataViews/consumption/DecidableRequestItemDVOs";
 import {
     ConsumptionServices,
     DataViewExpander,
+    IncomingRequestStatusChangedEvent,
     MessageDTO,
     OutgoingRequestStatusChangedEvent,
     ProposeAttributeRequestItemDVO,
     RequestMessageDVO,
     TransportServices
 } from "../../../src";
-import { establishRelationshipWithBodys, RuntimeServiceProvider, sendMessage, syncUntilHasMessages, waitForEvent } from "../../lib";
+import { establishRelationship, RuntimeServiceProvider, sendMessage, syncUntilHasMessages, waitForEvent } from "../../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -33,6 +23,7 @@ let expander2: DataViewExpander;
 let consumptionServices1: ConsumptionServices;
 let consumptionServices2: ConsumptionServices;
 let eventBus1: EventBus;
+let eventBus2: EventBus;
 let senderMessage: MessageDTO;
 let recipientMessage: MessageDTO;
 
@@ -45,42 +36,8 @@ beforeAll(async () => {
     consumptionServices1 = runtimeServices[0].consumption;
     consumptionServices2 = runtimeServices[1].consumption;
     eventBus1 = runtimeServices[0].eventBus;
-    await establishRelationshipWithBodys(
-        transportServices1,
-        transportServices2,
-        {
-            onNewRelationship: {
-                "@type": "Request",
-                items: [
-                    ReadAttributeRequestItem.from({
-                        mustBeAccepted: true,
-                        query: {
-                            valueType: "GivenName"
-                        }
-                    })
-                ]
-            }
-        },
-        {
-            response: {
-                "@type": "Response",
-                result: ResponseResult.Accepted,
-                requestId: await CoreId.generate(),
-                items: [
-                    ReadAttributeAcceptResponseItem.from({
-                        result: ResponseItemResult.Accepted,
-                        attributeId: await CoreId.generate(),
-                        attribute: IdentityAttribute.from({
-                            owner: CoreAddress.from((await transportServices1.account.getIdentityInfo()).value.address),
-                            value: GivenName.fromAny({
-                                value: "AGivenName"
-                            })
-                        })
-                    })
-                ]
-            }
-        }
-    );
+    eventBus2 = runtimeServices[1].eventBus;
+    await establishRelationship(transportServices1, transportServices2);
     // const senderAddress = (await transportServices1.account.getIdentityInfo()).value.address;
     const recipientAddress = (await transportServices2.account.getIdentityInfo()).value.address;
 
@@ -141,11 +98,21 @@ beforeAll(async () => {
     });
 
     senderMessage = await sendMessage(transportServices1, recipientAddress, localRequest.value.content);
+
+    const waitForIncomingRequestDecisionRequired = waitForEvent(
+        eventBus2,
+        IncomingRequestStatusChangedEvent,
+        2000,
+        (e) => e.data.newStatus === LocalRequestStatus.DecisionRequired
+    );
+
     const messages = await syncUntilHasMessages(transportServices2, 1);
     if (messages.length < 1) {
         throw new Error("Not enough messages synced");
     }
     recipientMessage = messages[0];
+
+    await waitForIncomingRequestDecisionRequired;
 }, 30000);
 
 afterAll(() => serviceProvider.stop());
