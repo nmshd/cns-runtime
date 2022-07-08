@@ -1,9 +1,9 @@
-import { RequestDVO } from "../content";
 import { DataViewObject } from "../DataViewObject";
-import { IdentityDVO } from "./IdentityDVO";
+import { IdentityDVO } from "../transport";
+import { LocalRequestDVO } from "./LocalRequestDVO";
 
-export interface RelationshipTemplateDVO extends DataViewObject {
-    type: "RelationshipTemplateDVO";
+export interface PeerRelationshipTemplateDVO extends DataViewObject {
+    type: "PeerRelationshipTemplateDVO";
     isOwn: boolean;
     createdBy: IdentityDVO;
     createdByDevice: string;
@@ -14,8 +14,8 @@ export interface RelationshipTemplateDVO extends DataViewObject {
     /**
      * Is optional, as there can be RelationshipTemplates without actual requests in it
      */
-    onNewRelationship?: RequestDVO;
-    onExistingRelationship?: RequestDVO;
+    onNewRelationship?: LocalRequestDVO;
+    onExistingRelationship?: LocalRequestDVO;
 
     content: any;
 }

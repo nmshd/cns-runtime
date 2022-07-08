@@ -60,6 +60,7 @@ import {
     DecidableReadAttributeRequestItemDVO,
     DecidableShareAttributeRequestItemDVO
 } from "./consumption/DecidableRequestItemDVOs";
+import { PeerRelationshipTemplateDVO } from "./consumption/PeerRelationshipTemplateDVO";
 import { DraftAttributeDVO, IdentityAttributeQueryDVO } from "./content/AttributeDVOs";
 import { MailDVO, RequestMessageDVO } from "./content/MailDVOs";
 import { RequestDVO } from "./content/RequestDVO";
@@ -306,24 +307,43 @@ export class DataViewExpander {
         return await Promise.all(messagePromises);
     }
 
-    public async expandRelationshipTemplateDTO(template: RelationshipTemplateDTO): Promise<RelationshipTemplateDVO> {
+    public async expandRelationshipTemplateDTO(template: RelationshipTemplateDTO): Promise<PeerRelationshipTemplateDVO | RelationshipTemplateDVO> {
         let onNewRelationship: RequestDVO | undefined;
         let onExistingRelationship: RequestDVO | undefined;
         let name = "i18n://dvo.template.name";
         if (template.content["@type"] === "RelationshipTemplateBody") {
             const templateBody = RelationshipTemplateBody.from(template.content).toJSON() as RelationshipTemplateBodyJSON;
+            if (templateBody.title) {
+                name = templateBody.title;
+            }
+            let localRequest;
+            if (!template.isOwn) {
+                const onNewRelationshipRequest = await this.consumption.incomingRequests.getRequests({
+                    query: {
+                        source: { reference: template.id }
+                    }
+                });
+                localRequest = onNewRelationshipRequest.value[0];
+
+                return {
+                    name,
+                    type: "PeerRelationshipTemplateDVO",
+                    date: template.createdAt,
+                    ...template,
+                    createdBy: await this.expandAddress(template.createdBy),
+                    onNewRelationship: await this.expandLocalRequestDTO(localRequest)
+                };
+            }
+
             onNewRelationship = await this.expandRequest(templateBody.onNewRelationship);
             if (templateBody.onExistingRelationship) {
                 onExistingRelationship = await this.expandRequest(templateBody.onExistingRelationship);
-            }
-            if (templateBody.title) {
-                name = templateBody.title;
             }
         }
         return {
             name,
             type: "RelationshipTemplateDVO",
-            date: template.expiresAt,
+            date: template.createdAt,
             ...template,
             createdBy: await this.expandAddress(template.createdBy),
             onNewRelationship,
@@ -331,7 +351,7 @@ export class DataViewExpander {
         };
     }
 
-    public async expandRelationshipTemplateDTOs(templates: RelationshipTemplateDTO[]): Promise<RelationshipTemplateDVO[]> {
+    public async expandRelationshipTemplateDTOs(templates: RelationshipTemplateDTO[]): Promise<(PeerRelationshipTemplateDVO | RelationshipTemplateDVO)[]> {
         const templatePromises = templates.map((template) => this.expandRelationshipTemplateDTO(template));
         return await Promise.all(templatePromises);
     }
@@ -504,6 +524,7 @@ export class DataViewExpander {
             ...request,
             id: request.id,
             content: requestDVO,
+            items: requestDVO.items,
             name: "i18n://dvo.localRequest.name",
             type: "LocalRequestDVO",
             date: request.createdAt,

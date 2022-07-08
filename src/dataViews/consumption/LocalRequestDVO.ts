@@ -1,6 +1,6 @@
 import { LocalRequestStatus } from "@nmshd/consumption";
 import { ResponseJSON } from "@nmshd/content";
-import { RequestDVO } from "../content";
+import { RequestDVO, RequestItemDVO, RequestItemGroupDVO } from "../content";
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "../transport";
 
@@ -16,6 +16,7 @@ export interface LocalRequestDVO extends DataViewObject {
     source?: LocalRequestSourceDVO;
     decider: IdentityDVO;
     isDecidable: boolean;
+    items: (RequestItemDVO | RequestItemGroupDVO)[];
 }
 
 export interface LocalRequestSourceDVO {

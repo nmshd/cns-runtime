@@ -1,5 +1,5 @@
 import { EventBus } from "@js-soft/ts-utils";
-import { AcceptProposeAttributeRequestItemParametersJSON, DecideRequestItemGroupParametersJSON } from "@nmshd/consumption";
+import { AcceptProposeAttributeRequestItemParametersJSON, DecideRequestItemGroupParametersJSON, LocalRequestStatus } from "@nmshd/consumption";
 import { GivenName, IdentityAttribute, IdentityAttributeQuery, ProposeAttributeRequestItem, Surname } from "@nmshd/content";
 import { CoreAddress } from "@nmshd/transport";
 import {
@@ -158,7 +158,7 @@ describe("RelationshipTemplateDVO", () => {
             }
         };
         templatorTemplate = await createTemplate(templatorTransport, templateBody);
-        const waitForIncomingRequest = waitForEvent(requestorEventBus, IncomingRequestStatusChangedEvent, 50000);
+        const waitForIncomingRequest = waitForEvent(requestorEventBus, IncomingRequestStatusChangedEvent, 2000, (e) => e.data.newStatus === LocalRequestStatus.DecisionRequired);
         const templateResult = await requestorTransport.relationshipTemplates.loadPeerRelationshipTemplate({ reference: templatorTemplate.truncatedReference });
         requestorTemplate = templateResult.value;
 
@@ -171,6 +171,28 @@ describe("RelationshipTemplateDVO", () => {
         expect(dvo).toBeDefined();
         expect(dvo.id).toBe(dto.id);
         expect(dvo.type).toBe("RelationshipTemplateDVO");
+
+        expect(dvo.date).toStrictEqual(dto.createdAt);
+        expect(dvo.expiresAt).toStrictEqual(dto.expiresAt);
+        expect(dvo.createdBy.id).toStrictEqual(dto.createdBy);
+        expect(dvo.name).toStrictEqual(dto.content.title ? dto.content.title : "i18n://dvo.template.name");
+        expect(dvo.isOwn).toBe(true);
+        expect(dvo.maxNumberOfAllocations).toBe(1);
+
+        expect(dvo.onNewRelationship!.type).toBe("RequestDVO");
+        expect(dvo.onNewRelationship!.items).toHaveLength(2);
+
+        let item = dvo.onNewRelationship!.items![0] as RequestItemGroupDVO;
+        expect(item.type).toBe("RequestItemGroupDVO");
+        expect(item.items).toHaveLength(2);
+        expect(item.items[0].type).toBe("CreateAttributeRequestItemDVO");
+        expect(item.items[1].type).toBe("CreateAttributeRequestItemDVO");
+
+        item = dvo.onNewRelationship!.items![1] as RequestItemGroupDVO;
+        expect(item.type).toBe("RequestItemGroupDVO");
+        expect(item.items).toHaveLength(2);
+        expect(item.items[0].type).toBe("ProposeAttributeRequestItemDVO");
+        expect(item.items[1].type).toBe("ProposeAttributeRequestItemDVO");
     });
 
     test("TemplateDVO for requestor", async () => {
@@ -178,7 +200,29 @@ describe("RelationshipTemplateDVO", () => {
         const dvo = await requestorExpander.expandRelationshipTemplateDTO(dto);
         expect(dvo).toBeDefined();
         expect(dvo.id).toBe(dto.id);
-        expect(dvo.type).toBe("RelationshipTemplateDVO");
+        expect(dvo.type).toBe("PeerRelationshipTemplateDVO");
+
+        expect(dvo.date).toStrictEqual(dto.createdAt);
+        expect(dvo.expiresAt).toStrictEqual(dto.expiresAt);
+        expect(dvo.createdBy.id).toStrictEqual(dto.createdBy);
+        expect(dvo.name).toStrictEqual(dto.content.title ? dto.content.title : "i18n://dvo.template.name");
+        expect(dvo.isOwn).toBe(false);
+        expect(dvo.maxNumberOfAllocations).toBe(1);
+
+        expect(dvo.onNewRelationship!.type).toBe("LocalRequestDVO");
+        expect(dvo.onNewRelationship!.items).toHaveLength(2);
+
+        let item = dvo.onNewRelationship!.items![0] as RequestItemGroupDVO;
+        expect(item.type).toBe("RequestItemGroupDVO");
+        expect(item.items).toHaveLength(2);
+        expect(item.items[0].type).toBe("DecidableCreateAttributeRequestItemDVO");
+        expect(item.items[1].type).toBe("DecidableCreateAttributeRequestItemDVO");
+
+        item = dvo.onNewRelationship!.items![1] as RequestItemGroupDVO;
+        expect(item.type).toBe("RequestItemGroupDVO");
+        expect(item.items).toHaveLength(2);
+        expect(item.items[0].type).toBe("DecidableProposeAttributeRequestItemDVO");
+        expect(item.items[1].type).toBe("DecidableProposeAttributeRequestItemDVO");
     });
 
     test("RequestDVO for requestor and accept", async () => {
@@ -221,7 +265,7 @@ describe("RelationshipTemplateDVO", () => {
         expect(acceptResult.isSuccess).toBe(true);
     });
 
-    test("Test the relationship for requestor", async () => {
+    test("Test the accepted request for requestor", async () => {
         const requestResult = await requestorConsumption.incomingRequests.getRequests({
             query: {
                 source: { reference: requestorTemplate.id }
@@ -242,6 +286,36 @@ describe("RelationshipTemplateDVO", () => {
         expect(dvo.isDecidable).toBe(false);
     });
 
+    test("Test the accepted template for requestor", async () => {
+        const dto = requestorTemplate;
+        const dvo = await requestorExpander.expandRelationshipTemplateDTO(dto);
+        expect(dvo).toBeDefined();
+        expect(dvo.id).toBe(dto.id);
+        expect(dvo.type).toBe("PeerRelationshipTemplateDVO");
+
+        expect(dvo.date).toStrictEqual(dto.createdAt);
+        expect(dvo.expiresAt).toStrictEqual(dto.expiresAt);
+        expect(dvo.createdBy.id).toStrictEqual(dto.createdBy);
+        expect(dvo.name).toStrictEqual(dto.content.title ? dto.content.title : "i18n://dvo.template.name");
+        expect(dvo.isOwn).toBe(false);
+        expect(dvo.maxNumberOfAllocations).toBe(1);
+
+        expect(dvo.onNewRelationship!.type).toBe("LocalRequestDVO");
+        expect(dvo.onNewRelationship!.items).toHaveLength(2);
+
+        let item = dvo.onNewRelationship!.items![0] as RequestItemGroupDVO;
+        expect(item.type).toBe("RequestItemGroupDVO");
+        expect(item.items).toHaveLength(2);
+        expect(item.items[0].type).toBe("CreateAttributeRequestItemDVO");
+        expect(item.items[1].type).toBe("CreateAttributeRequestItemDVO");
+
+        item = dvo.onNewRelationship!.items![1] as RequestItemGroupDVO;
+        expect(item.type).toBe("RequestItemGroupDVO");
+        expect(item.items).toHaveLength(2);
+        expect(item.items[0].type).toBe("ProposeAttributeRequestItemDVO");
+        expect(item.items[1].type).toBe("ProposeAttributeRequestItemDVO");
+    });
+
     test("test the attributes on requestor side", async () => {
         const attributeResult = await requestorConsumption.attributes.getAttributes({
             query: {
@@ -252,7 +326,7 @@ describe("RelationshipTemplateDVO", () => {
         expect(attributeResult.value).toHaveLength(4);
     });
 
-    test("Test the relationship for templator", async () => {
+    test("Test the request for templator", async () => {
         const waitForOutgoingRequest = waitForEvent(templatorEventBus, OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent, 50000);
         await syncUntilHasRelationships(templatorTransport);
         await waitForOutgoingRequest;
