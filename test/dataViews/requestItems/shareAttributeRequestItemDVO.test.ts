@@ -1,6 +1,6 @@
 import { EventBus } from "@js-soft/ts-utils";
 import { AcceptShareAttributeRequestItemParametersJSON, LocalAttribute } from "@nmshd/consumption";
-import { AcceptResponseItemJSON, CreateAttributeAcceptResponseItemJSON, CreateAttributeRequestItem, ShareAttributeRequestItem } from "@nmshd/content";
+import { AcceptResponseItemJSON, CreateAttributeAcceptResponseItemJSON, CreateAttributeRequestItem, IAbstractStringJSON, ShareAttributeRequestItem } from "@nmshd/content";
 import { CoreId } from "@nmshd/transport";
 import { DecidableCreateAttributeRequestItemDVO, DecidableShareAttributeRequestItemDVO } from "src/dataViews/consumption/DecidableRequestItemDVOs";
 import {
@@ -232,8 +232,9 @@ describe("ShareAttributeRequestItemDVO", () => {
         expect(requestItemDVO.mustBeAccepted).toBe(true);
         expect(requestItemDVO.attribute).toBeDefined();
         expect(requestItemDVO.attribute.type).toBe("PeerAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Marlene");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Marlene");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(false);
@@ -262,8 +263,9 @@ describe("ShareAttributeRequestItemDVO", () => {
 
         expect(requestItemDVO.attribute).toBeDefined();
         expect(requestItemDVO.attribute.type).toBe("SharedToPeerAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Marlene");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Marlene");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(false);
@@ -304,8 +306,9 @@ describe("ShareAttributeRequestItemDVO", () => {
 
         expect(requestItemDVO.attribute).toBeDefined();
         expect(requestItemDVO.attribute.type).toBe("SharedToPeerAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Marlene");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Marlene");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(false);
@@ -355,8 +358,9 @@ describe("ShareAttributeRequestItemDVO", () => {
 
         expect(requestItemDVO.attribute).toBeDefined();
         expect(requestItemDVO.attribute.type).toBe("PeerAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Marlene");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Marlene");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(false);
@@ -402,8 +406,9 @@ describe("ShareAttributeRequestItemDVO", () => {
         expect(requestItemDVO.type).toBe("DecidableCreateAttributeRequestItemDVO");
         expect(requestItemDVO.isDecidable).toBe(true);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Marlene");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Marlene");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -437,8 +442,9 @@ describe("ShareAttributeRequestItemDVO", () => {
         expect(requestItemDVO.type).toBe("CreateAttributeRequestItemDVO");
         expect(requestItemDVO.isDecidable).toBe(false);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Marlene");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Marlene");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -494,8 +500,9 @@ describe("ShareAttributeRequestItemDVO", () => {
         expect(requestItemDVO.type).toBe("CreateAttributeRequestItemDVO");
         expect(requestItemDVO.isDecidable).toBe(false);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Marlene");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Marlene");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);

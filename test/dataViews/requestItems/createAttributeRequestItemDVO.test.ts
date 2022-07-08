@@ -1,6 +1,6 @@
 import { EventBus } from "@js-soft/ts-utils";
 import { LocalRequestStatus } from "@nmshd/consumption";
-import { CreateAttributeAcceptResponseItemJSON } from "@nmshd/content";
+import { CreateAttributeAcceptResponseItemJSON, IAbstractStringJSON } from "@nmshd/content";
 import { DecidableCreateAttributeRequestItemDVO } from "src/dataViews/consumption/DecidableRequestItemDVOs";
 import {
     ConsumptionServices,
@@ -106,8 +106,9 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(requestItemDVO.type).toBe("CreateAttributeRequestItemDVO");
         expect(requestItemDVO.isDecidable).toBe(false);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Theodor");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Theodor");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -135,8 +136,9 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(requestItemDVO.type).toBe("DecidableCreateAttributeRequestItemDVO");
         expect(requestItemDVO.isDecidable).toBe(true);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Theodor");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Theodor");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -170,8 +172,9 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(requestItemDVO.type).toBe("CreateAttributeRequestItemDVO");
         expect(requestItemDVO.isDecidable).toBe(false);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Theodor");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Theodor");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -226,8 +229,9 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(requestItemDVO.type).toBe("CreateAttributeRequestItemDVO");
         expect(requestItemDVO.isDecidable).toBe(false);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
-        expect(requestItemDVO.attribute.value["@type"]).toBe("GivenName");
-        expect(requestItemDVO.attribute.value.value).toBe("Theodor");
+        const value = requestItemDVO.attribute.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Theodor");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
