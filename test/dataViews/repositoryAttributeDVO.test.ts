@@ -1,4 +1,16 @@
-import { BirthDay, BirthMonth, BirthYear, CommunicationLanguage, GivenName, IdentityAttribute, Nationality, Sex, Surname } from "@nmshd/content";
+import {
+    BirthDay,
+    BirthMonth,
+    BirthYear,
+    CommunicationLanguage,
+    GivenName,
+    IAbstractIntegerValue,
+    IAbstractStringJSON,
+    IdentityAttribute,
+    Nationality,
+    Sex,
+    Surname
+} from "@nmshd/content";
 import { CoreAddress } from "@nmshd/transport";
 import { ConsumptionServices, DataViewExpander, LocalAttributeDTO, RepositoryAttributeDVO, TransportServices } from "../../src";
 import { RuntimeServiceProvider } from "../lib";
@@ -108,7 +120,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the GivenName", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[0].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[0];
@@ -119,7 +131,9 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.GivenName");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe("Hugo");
+        const value = dvo.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("GivenName");
+        expect(value.value).toBe("Hugo");
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -138,7 +152,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the Surname", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[1].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[1];
@@ -149,7 +163,9 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.Surname");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe("Becker");
+        const value = dvo.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("Surname");
+        expect(value.value).toBe("Becker");
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -168,7 +184,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the BirthDay", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[2].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[2];
@@ -179,7 +195,9 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.BirthDay");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe(17);
+        const value = dvo.value as IAbstractIntegerValue;
+        expect(value["@type"]).toBe("BirthDay");
+        expect(value.value).toBe(17);
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -200,7 +218,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the BirthMonth", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[3].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[3];
@@ -211,7 +229,9 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.BirthMonth");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe(11);
+        const value = dvo.value as IAbstractIntegerValue;
+        expect(value["@type"]).toBe("BirthMonth");
+        expect(value.value).toBe(11);
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -232,7 +252,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the BirthYear", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[4].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[4];
@@ -243,7 +263,9 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.BirthYear");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe(2001);
+        const value = dvo.value as IAbstractIntegerValue;
+        expect(value["@type"]).toBe("BirthYear");
+        expect(value.value).toBe(2001);
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -264,7 +286,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the Sex", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[5].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[5];
@@ -275,7 +297,9 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.Sex");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe("male");
+        const value = dvo.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("Sex");
+        expect(value.value).toBe("male");
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -299,7 +323,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the Nationality", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[6].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[6];
@@ -310,7 +334,9 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.Nationality");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe("DE");
+        const value = dvo.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("Nationality");
+        expect(value.value).toBe("DE");
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
@@ -333,7 +359,7 @@ describe("RepositoryAttributeDVO", () => {
     test("check the CommunicationLanguage", async () => {
         // const dtos = (await consumptionServices1.attributes.getAttributes({ query: { content: { value: { "@type": "GivenName" } } } })).value;
         const dtos = [(await consumptionServices1.attributes.getAttribute({ id: attributes[7].id })).value];
-        const dvos = await expander1.expandLocalAttributes(dtos);
+        const dvos = await expander1.expandLocalAttributeDTOs(dtos);
         expect(dvos).toHaveLength(1);
         const dvo = dvos[0] as RepositoryAttributeDVO;
         const attribute = attributes[7];
@@ -344,7 +370,9 @@ describe("RepositoryAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.CommunicationLanguage");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        expect(dvo.value.value).toBe("de");
+        const value = dvo.value as IAbstractStringJSON;
+        expect(value["@type"]).toBe("CommunicationLanguage");
+        expect(value.value).toBe("de");
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);

@@ -78,6 +78,11 @@ export interface MessageDVO extends DataViewObject {
      * recipients, this is the first one of them.
      */
     peer: IdentityDVO;
+
+    /**
+     * The content of the message.
+     */
+    content: unknown;
 }
 
 export interface RecipientDVO extends Omit<IdentityDVO, "type"> {

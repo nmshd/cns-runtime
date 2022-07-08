@@ -1,25 +1,41 @@
 import { Serializable, SerializableBase } from "@js-soft/ts-serval";
 import { ConsumptionController } from "@nmshd/consumption";
 import {
+    CreateAttributeRequestItemJSON,
     IdentityAttribute,
     IdentityAttributeJSON,
-    IdentityAttributeQuery,
     IdentityAttributeQueryJSON,
     MailJSON,
+    ProposeAttributeRequestItemJSON,
+    ReadAttributeRequestItemJSON,
     RelationshipAttribute,
     RelationshipAttributeJSON,
+    RelationshipTemplateBody,
+    RelationshipTemplateBodyJSON,
     RenderHints,
     RenderHintsEditType,
     RenderHintsJSON,
     RenderHintsTechnicalType,
+    RequestItemGroupJSON,
+    RequestItemJSON,
     RequestJSON,
-    RequestMailJSON,
+    ShareAttributeRequestItemJSON,
     ValueHints,
     ValueHintsJSON
 } from "@nmshd/content";
 import { CoreAddress, CoreId, IdentityController, Realm, Relationship, RelationshipStatus } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { FileDVO, IdentityDVO } from "..";
+import {
+    CreateAttributeRequestItemDVO,
+    FileDVO,
+    IdentityDVO,
+    ProposeAttributeRequestItemDVO,
+    ReadAttributeRequestItemDVO,
+    RelationshipTemplateDVO,
+    RequestItemDVO,
+    RequestItemGroupDVO,
+    ShareAttributeRequestItemDVO
+} from "..";
 import { TransportServices } from "../extensibility";
 import { ConsumptionServices } from "../extensibility/ConsumptionServices";
 import {
@@ -33,20 +49,21 @@ import {
     RecipientDTO,
     RelationshipChangeDTO,
     RelationshipDTO,
-    RelationshipInfoDTO
+    RelationshipInfoDTO,
+    RelationshipTemplateDTO
 } from "../types";
-import { AttributeMapper, RuntimeErrors } from "../useCases";
+import { RuntimeErrors } from "../useCases";
+import { LocalRequestDVO, LocalResponseDVO, PeerAttributeDVO, ProcessedIdentityAttributeQueryDVO, RepositoryAttributeDVO, SharedToPeerAttributeDVO } from "./consumption";
 import {
-    DraftAttributeDVO,
-    IdentityAttributeQueryExpanded,
-    LocalRequestDVO,
-    LocalResponseDVO,
-    PeerAttributeDVO,
-    RepositoryAttributeDVO,
-    SharedToPeerAttributeDVO
-} from "./consumption";
-import { MailDVO, RequestMailDVO } from "./content/MailDVOs";
-import { RequestDVO } from "./content/RequestDVOs";
+    DecidableCreateAttributeRequestItemDVO,
+    DecidableProposeAttributeRequestItemDVO,
+    DecidableReadAttributeRequestItemDVO,
+    DecidableShareAttributeRequestItemDVO
+} from "./consumption/DecidableRequestItemDVOs";
+import { PeerRelationshipTemplateDVO } from "./consumption/PeerRelationshipTemplateDVO";
+import { DraftAttributeDVO, IdentityAttributeQueryDVO } from "./content/AttributeDVOs";
+import { MailDVO, RequestMessageDVO } from "./content/MailDVOs";
+import { RequestDVO } from "./content/RequestDVO";
 import { DataViewObject } from "./DataViewObject";
 import { DataViewTranslateable } from "./DataViewTranslateable";
 import { MessageDVO, MessageStatus, RecipientDVO } from "./transport/MessageDVO";
@@ -66,7 +83,7 @@ export class DataViewExpander {
             type = content["@type"];
         }
 
-        if (content instanceof Array) {
+        if (Array.isArray(content)) {
             if (content.length > 0) {
                 type = content[0]["@type"];
             } else return [];
@@ -77,67 +94,67 @@ export class DataViewExpander {
         }
         switch (type) {
             case "Message":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandMessageDTOs(content as MessageDTO[]);
                 }
 
                 return await this.expandMessageDTO(content as MessageDTO);
 
             case "Attribute":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandAttributes(content);
                 }
 
                 return await this.expandAttribute(content);
 
             case "Address":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandAddresses(content as string[]);
                 }
 
                 return await this.expandAddress(content as string);
 
             case "FileId":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandFileIds(content as string[]);
                 }
 
                 return await this.expandFileId(content as string);
 
             case "File":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandFileDTOs(content as FileDTO[]);
                 }
 
                 return await this.expandFileDTO(content as FileDTO);
 
             case "Recipient":
-                if (content instanceof Array) {
-                    return await this.expandRecipients(content as RecipientDTO[]);
+                if (Array.isArray(content)) {
+                    return await this.expandRecipientDTOs(content as RecipientDTO[]);
                 }
 
                 return await this.expandAddress(content as string);
 
             case "Relationship":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandRelationshipDTOs(content as RelationshipDTO[]);
                 }
 
                 return await this.expandRelationshipDTO(content as RelationshipDTO);
 
             case "LocalAttribute":
-                if (content instanceof Array) {
-                    return await this.expandLocalAttributes(content as LocalAttributeDTO[]);
+                if (Array.isArray(content)) {
+                    return await this.expandLocalAttributeDTOs(content as LocalAttributeDTO[]);
                 }
 
-                return await this.expandLocalAttribute(content as LocalAttributeDTO);
+                return await this.expandLocalAttributeDTO(content as LocalAttributeDTO);
             default:
                 throw RuntimeErrors.general.notImplemented();
         }
     }
 
-    public async expandMessageDTO(message: MessageDTO | MessageWithAttachmentsDTO): Promise<MessageDVO | MailDVO | RequestMailDVO> {
-        const recipientRelationships = await this.expandRecipients(message.recipients);
+    public async expandMessageDTO(message: MessageDTO | MessageWithAttachmentsDTO): Promise<MessageDVO | MailDVO | RequestMessageDVO> {
+        const recipientRelationships = await this.expandRecipientDTOs(message.recipients);
         const addressMap: Record<string, RecipientDVO> = {};
         recipientRelationships.forEach((value) => (addressMap[value.id] = value));
         const createdByRelationship = await this.expandAddress(message.createdBy);
@@ -184,7 +201,8 @@ export class DataViewExpander {
             status,
             statusText: `i18n://dvo.message.${status}`,
             image: "",
-            peer: peer
+            peer: peer,
+            content: message.content
         };
 
         if (message.content["@type"] === "Mail" || message.content["@type"] === "RequestMail") {
@@ -209,66 +227,329 @@ export class DataViewExpander {
                 ccCount: cc.length
             };
 
-            if (mailContent["@type"] === "RequestMail") {
-                const requestMailContent = message.content as RequestMailJSON;
+            return mailDVO;
+        }
 
-                const requestMailDVO: RequestMailDVO = {
-                    ...mailDVO,
-                    type: "RequestMailDVO",
-                    name: requestMailContent.subject ? requestMailContent.subject : DataViewTranslateable.consumption.mails.requestMailSubjectFallback,
-                    requests: [], // await this.expandUnknownRequests(requestMailContent.requests),
-                    requestCount: requestMailContent.requests.length
-                };
-
-                return requestMailDVO;
+        if (message.content["@type"] === "Request") {
+            let localRequest: LocalRequestDTO;
+            if (isOwn) {
+                const localRequestsResult = await this.consumption.outgoingRequests.getRequests({
+                    query: { source: { reference: message.id } }
+                });
+                if (localRequestsResult.value.length === 0) {
+                    throw new Error("No LocalRequest has been found for this message id.");
+                }
+                if (localRequestsResult.value.length > 1) {
+                    throw new Error("More than one LocalRequest has been found for this message id.");
+                }
+                localRequest = localRequestsResult.value[0];
+            } else {
+                const localRequestsResult = await this.consumption.incomingRequests.getRequests({
+                    query: { source: { reference: message.id } }
+                });
+                if (localRequestsResult.value.length === 0) {
+                    throw new Error("No LocalRequest has been found for this message id.");
+                }
+                if (localRequestsResult.value.length > 1) {
+                    throw new Error("More than one LocalRequest has been found for this message id.");
+                }
+                localRequest = localRequestsResult.value[0];
             }
 
-            return mailDVO;
+            const requestMessageDVO: RequestMessageDVO = {
+                ...messageDVO,
+                type: "RequestMessageDVO",
+                request: await this.expandLocalRequestDTO(localRequest)
+            };
+            return requestMessageDVO;
+        }
+
+        if (message.content["@type"] === "Response") {
+            let localRequest: LocalRequestDTO;
+            if (isOwn) {
+                const localRequestsResult = await this.consumption.incomingRequests.getRequests({
+                    query: { id: message.content.requestId }
+                });
+
+                if (localRequestsResult.value.length === 0) {
+                    throw new Error("No LocalRequest has been found for this message id.");
+                }
+                if (localRequestsResult.value.length > 1) {
+                    throw new Error("More than one LocalRequest has been found for this message id.");
+                }
+                localRequest = localRequestsResult.value[0];
+            } else {
+                const localRequestsResult = await this.consumption.outgoingRequests.getRequests({
+                    query: { id: message.content.requestId }
+                });
+                if (localRequestsResult.value.length === 0) {
+                    throw new Error("No LocalRequest has been found for this message id.");
+                }
+                if (localRequestsResult.value.length > 1) {
+                    throw new Error("More than one LocalRequest has been found for this message id.");
+                }
+                localRequest = localRequestsResult.value[0];
+            }
+
+            const requestMessageDVO: RequestMessageDVO = {
+                ...messageDVO,
+                type: "RequestMessageDVO",
+                request: await this.expandLocalRequestDTO(localRequest)
+            };
+            return requestMessageDVO;
         }
 
         return messageDVO;
     }
 
-    public async expandMessageDTOs(messages: MessageDTO[]): Promise<(MessageDVO | MailDVO | RequestMailDVO)[]> {
+    public async expandMessageDTOs(messages: MessageDTO[]): Promise<(MessageDVO | MailDVO | RequestMessageDVO)[]> {
         const messagePromises = messages.map((message) => this.expandMessageDTO(message));
         return await Promise.all(messagePromises);
     }
 
-    public expandRequest(request: RequestJSON): RequestDVO {
+    public async expandRelationshipTemplateDTO(template: RelationshipTemplateDTO): Promise<PeerRelationshipTemplateDVO | RelationshipTemplateDVO> {
+        let onNewRelationship: RequestDVO | undefined;
+        let onExistingRelationship: RequestDVO | undefined;
+        let name = "i18n://dvo.template.name";
+        if (template.content["@type"] === "RelationshipTemplateBody") {
+            const templateBody = RelationshipTemplateBody.from(template.content).toJSON() as RelationshipTemplateBodyJSON;
+            if (templateBody.title) {
+                name = templateBody.title;
+            }
+            let localRequest;
+            if (!template.isOwn) {
+                const onNewRelationshipRequest = await this.consumption.incomingRequests.getRequests({
+                    query: {
+                        source: { reference: template.id }
+                    }
+                });
+                localRequest = onNewRelationshipRequest.value[0];
+
+                return {
+                    name,
+                    type: "PeerRelationshipTemplateDVO",
+                    date: template.createdAt,
+                    ...template,
+                    createdBy: await this.expandAddress(template.createdBy),
+                    onNewRelationship: await this.expandLocalRequestDTO(localRequest)
+                };
+            }
+
+            onNewRelationship = await this.expandRequest(templateBody.onNewRelationship);
+            if (templateBody.onExistingRelationship) {
+                onExistingRelationship = await this.expandRequest(templateBody.onExistingRelationship);
+            }
+        }
+        return {
+            name,
+            type: "RelationshipTemplateDVO",
+            date: template.createdAt,
+            ...template,
+            createdBy: await this.expandAddress(template.createdBy),
+            onNewRelationship,
+            onExistingRelationship
+        };
+    }
+
+    public async expandRelationshipTemplateDTOs(templates: RelationshipTemplateDTO[]): Promise<(PeerRelationshipTemplateDVO | RelationshipTemplateDVO)[]> {
+        const templatePromises = templates.map((template) => this.expandRelationshipTemplateDTO(template));
+        return await Promise.all(templatePromises);
+    }
+
+    public async expandRequest(request: RequestJSON, localRequestDTO?: LocalRequestDTO): Promise<RequestDVO> {
         const id = request.id ? request.id : "";
+        const itemDVOs = [];
+        for (const requestItem of request.items) {
+            itemDVOs.push(await this.expandRequestGroupOrItem(requestItem, localRequestDTO));
+        }
         return {
             id: id,
             name: `${request["@type"]} ${id}`,
             type: "RequestDVO",
             date: request.expiresAt,
-
-            ...request
+            ...request,
+            items: itemDVOs
         };
     }
 
-    public async expandLocalRequest(request: LocalRequestDTO): Promise<LocalRequestDVO> {
+    /*
+    public async expandRequests(requests: RequestJSON[]): Promise<RequestDVO[]> {
+        const requestPromises = requests.map((request) => this.expandRequest(request));
+        return await Promise.all(requestPromises);
+    }
+    */
+
+    public async expandRequestItem(requestItem: RequestItemJSON, localRequestDTO?: LocalRequestDTO): Promise<RequestItemDVO> {
+        let isDecidable = false;
+        if (localRequestDTO && !localRequestDTO.isOwn && (localRequestDTO.status === "DecisionRequired" || localRequestDTO.status === "ManualDecisionRequired")) {
+            isDecidable = true;
+        }
+        switch (requestItem["@type"]) {
+            case "ReadAttributeRequestItem":
+                const readAttributeRequestItem = requestItem as ReadAttributeRequestItemJSON;
+                if (isDecidable) {
+                    return {
+                        ...readAttributeRequestItem,
+                        type: "DecidableReadAttributeRequestItemDVO",
+                        id: "",
+                        name: requestItem.title ? requestItem.title : "i18n://dvo.requestItem.ReadAttributeRequestItem.name",
+                        query: await this.processIdentityAttributeQuery(readAttributeRequestItem.query),
+                        isDecidable
+                    } as DecidableReadAttributeRequestItemDVO;
+                }
+                return {
+                    ...readAttributeRequestItem,
+                    type: "ReadAttributeRequestItemDVO",
+                    id: "",
+                    name: requestItem.title ? requestItem.title : "i18n://dvo.requestItem.ReadAttributeRequestItem.name",
+                    query: this.expandIdentityAttributeQuery(readAttributeRequestItem.query),
+                    isDecidable
+                } as ReadAttributeRequestItemDVO;
+
+            case "CreateAttributeRequestItem":
+                const createAttributeRequestItem = requestItem as CreateAttributeRequestItemJSON;
+                if (isDecidable) {
+                    return {
+                        ...createAttributeRequestItem,
+                        type: "DecidableCreateAttributeRequestItemDVO",
+                        id: "",
+                        name: requestItem.title ? requestItem.title : "i18n://dvo.requestItem.CreateAttributeRequestItem.name",
+                        attribute: await this.expandAttribute(createAttributeRequestItem.attribute),
+                        isDecidable
+                    } as DecidableCreateAttributeRequestItemDVO;
+                }
+                return {
+                    ...createAttributeRequestItem,
+                    type: "CreateAttributeRequestItemDVO",
+                    id: "",
+                    name: requestItem.title ? requestItem.title : "i18n://dvo.requestItem.CreateAttributeRequestItem.name",
+                    attribute: await this.expandAttribute(createAttributeRequestItem.attribute),
+                    isDecidable
+                } as CreateAttributeRequestItemDVO;
+
+            case "ProposeAttributeRequestItem":
+                const proposeAttributeRequestItem = requestItem as ProposeAttributeRequestItemJSON;
+                if (isDecidable) {
+                    return {
+                        ...proposeAttributeRequestItem,
+                        type: "DecidableProposeAttributeRequestItemDVO",
+                        id: "",
+                        name: requestItem.title ? requestItem.title : "i18n://dvo.requestItem.ProposeAttributeRequestItem.name",
+                        attribute: await this.expandAttribute(proposeAttributeRequestItem.attribute),
+                        query: await this.processIdentityAttributeQuery(proposeAttributeRequestItem.query),
+                        isDecidable
+                    } as DecidableProposeAttributeRequestItemDVO;
+                }
+                return {
+                    ...proposeAttributeRequestItem,
+                    type: "ProposeAttributeRequestItemDVO",
+                    id: "",
+                    name: requestItem.title ? requestItem.title : "i18n://dvo.requestItem.ProposeAttributeRequestItem.name",
+                    attribute: await this.expandAttribute(proposeAttributeRequestItem.attribute),
+                    query: this.expandIdentityAttributeQuery(proposeAttributeRequestItem.query),
+                    isDecidable
+                } as ProposeAttributeRequestItemDVO;
+
+            case "ShareAttributeRequestItem":
+                const shareAttributeRequestItem = requestItem as ShareAttributeRequestItemJSON;
+                const attributeResult = await this.consumption.attributes.getAttribute({ id: shareAttributeRequestItem.attributeId });
+                const attribute = attributeResult.value;
+                const attributeDVO = await this.expandLocalAttributeDTO(attribute);
+                const shareWith = await this.expandAddress(shareAttributeRequestItem.shareWith);
+                if (isDecidable) {
+                    return {
+                        ...shareAttributeRequestItem,
+                        type: "DecidableShareAttributeRequestItemDVO",
+                        id: "",
+                        name: requestItem.title ? requestItem.title : "i18n://dvo.requestItem.ProposeAttributeRequestItem.name",
+                        attribute: attributeDVO,
+                        shareWith,
+                        isDecidable
+                    } as DecidableShareAttributeRequestItemDVO;
+                }
+                return {
+                    ...shareAttributeRequestItem,
+                    type: "ShareAttributeRequestItemDVO",
+                    id: "",
+                    name: requestItem.title ? requestItem.title : "i18n://dvo.requestItem.ProposeAttributeRequestItem.name",
+                    attribute: attributeDVO,
+                    shareWith,
+                    isDecidable
+                } as ShareAttributeRequestItemDVO;
+
+            default:
+                return {
+                    ...requestItem,
+                    type: "RequestItemDVO",
+                    id: "",
+                    name: requestItem.title ? requestItem.title : "i18n://dvo.requestItem.name",
+                    isDecidable
+                };
+        }
+    }
+
+    public async expandRequestGroupOrItem(
+        requestGroupOrItem: RequestItemGroupJSON | RequestItemJSON,
+        localRequestDTO?: LocalRequestDTO
+    ): Promise<RequestItemGroupDVO | RequestItemDVO> {
+        if (requestGroupOrItem["@type"] === "RequestItemGroup") {
+            let isDecidable = false;
+            if (localRequestDTO && !localRequestDTO.isOwn && (localRequestDTO.status === "DecisionRequired" || localRequestDTO.status === "ManualDecisionRequired")) {
+                isDecidable = true;
+            }
+
+            const group = requestGroupOrItem as RequestItemGroupJSON;
+            const itemDVOs = [];
+            for (const requestItem of group.items) {
+                itemDVOs.push(await this.expandRequestItem(requestItem, localRequestDTO));
+            }
+            return {
+                type: "RequestItemGroupDVO",
+                items: itemDVOs,
+                isDecidable,
+                title: requestGroupOrItem.title,
+                description: requestGroupOrItem.description,
+                mustBeAccepted: requestGroupOrItem.mustBeAccepted
+            };
+        }
+        return await this.expandRequestItem(requestGroupOrItem, localRequestDTO);
+    }
+
+    public async expandLocalRequestDTO(request: LocalRequestDTO): Promise<LocalRequestDVO> {
+        const requestDVO = await this.expandRequest(request.content, request);
+        const peerDVO = await this.expandAddress(request.peer);
+        let isDecidable = false;
+        if (!request.isOwn && (request.status === "DecisionRequired" || request.status === "ManualDecisionRequired")) {
+            isDecidable = true;
+        }
         return {
             ...request,
             id: request.id,
-            name: "i18n://dvo.request.name.response",
+            content: requestDVO,
+            items: requestDVO.items,
+            name: "i18n://dvo.localRequest.name",
             type: "LocalRequestDVO",
             date: request.createdAt,
-            peer: await this.expandAddress(request.peer),
-            response: request.response ? this.expandLocalResponse(request.response) : undefined
+            createdBy: request.isOwn ? this.expandSelf() : peerDVO,
+            decider: request.isOwn ? peerDVO : this.expandSelf(),
+            peer: peerDVO,
+            response: request.response ? this.expandLocalResponseDTO(request.response) : undefined,
+            statusText: `i18n://dvo.localRequest.status.${request.status}`,
+            isDecidable
         };
     }
 
-    public expandLocalResponse(response: LocalResponseDTO): LocalResponseDVO {
+    public expandLocalResponseDTO(response: LocalResponseDTO): LocalResponseDVO {
         return {
             ...response,
             id: "",
-            name: "i18n://dvo.request.name.response",
+            name: "i18n://dvo.localResponse.name",
             type: "LocalResponseDVO",
             date: response.createdAt
         };
     }
 
-    public async expandLocalAttribute(attribute: LocalAttributeDTO): Promise<RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO> {
+    public async expandLocalAttributeDTO(attribute: LocalAttributeDTO): Promise<RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO> {
         const valueType = attribute.content.value["@type"];
         const localAttribute = await this.consumptionController.attributes.getLocalAttribute(CoreId.from(attribute.id));
         if (!localAttribute) {
@@ -304,8 +585,10 @@ export class DataViewExpander {
                     createdAt: attribute.createdAt,
                     isOwn: true,
                     peer: peer,
+                    isDraft: false,
                     requestReference: localAttribute.shareInfo.requestReference.toString(),
-                    sourceAttribute: localAttribute.shareInfo.sourceAttribute.toString()
+                    sourceAttribute: localAttribute.shareInfo.sourceAttribute.toString(),
+                    tags: []
                 };
             }
 
@@ -325,12 +608,14 @@ export class DataViewExpander {
                 createdAt: attribute.createdAt,
                 isOwn: false,
                 peer: peer,
-                requestReference: localAttribute.shareInfo.requestReference.toString()
+                isDraft: false,
+                requestReference: localAttribute.shareInfo.requestReference.toString(),
+                tags: []
             };
         }
 
         const sharedToPeerAttributes = await this.consumption.attributes.getAttributes({ query: { shareInfo: { sourceAttribute: attribute.id } } });
-        const sharedToPeerDVOs = await this.expandLocalAttributes(sharedToPeerAttributes.value);
+        const sharedToPeerDVOs = await this.expandLocalAttributeDTOs(sharedToPeerAttributes.value);
 
         // Own Source Attribute
         return {
@@ -347,20 +632,18 @@ export class DataViewExpander {
             isValid: true,
             createdAt: attribute.createdAt,
             isOwn: true,
-            sharedWith: sharedToPeerDVOs as SharedToPeerAttributeDVO[]
+            isDraft: false,
+            sharedWith: sharedToPeerDVOs as SharedToPeerAttributeDVO[],
+            tags: []
         };
     }
 
-    public async expandLocalAttributes(attributes: LocalAttributeDTO[]): Promise<(RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO)[]> {
-        const attributesPromise = attributes.map((attribute) => this.expandLocalAttribute(attribute));
+    public async expandLocalAttributeDTOs(attributes: LocalAttributeDTO[]): Promise<(RepositoryAttributeDVO | SharedToPeerAttributeDVO | PeerAttributeDVO)[]> {
+        const attributesPromise = attributes.map((attribute) => this.expandLocalAttributeDTO(attribute));
         return await Promise.all(attributesPromise);
     }
 
-    public async expandIdentityAttributeQuery(query: IdentityAttributeQueryJSON): Promise<IdentityAttributeQueryExpanded> {
-        const queryInstance = IdentityAttributeQuery.from(query);
-        const matchedAttributes = await this.consumptionController.attributes.executeIdentityAttributeQuery({ query: queryInstance });
-        const matchedAttributeDTOs = AttributeMapper.toAttributeDTOList(matchedAttributes);
-        const matchedAttributeDVOs = await this.expandLocalAttributes(matchedAttributeDTOs);
+    public expandIdentityAttributeQuery(query: IdentityAttributeQueryJSON): IdentityAttributeQueryDVO {
         const valueType = query.valueType;
         const name = `i18n://dvo.attribute.name.${valueType}`;
         const description = `i18n://dvo.attribute.description.${valueType}`;
@@ -386,15 +669,60 @@ export class DataViewExpander {
         }
 
         return {
-            type: "IdentityAttributeQueryExpanded",
+            type: "IdentityAttributeQueryDVO",
+            id: "",
             name,
             description,
             valueType,
             validFrom: query.validFrom,
             validTo: query.validTo,
-            results: matchedAttributeDVOs,
             renderHints,
-            valueHints
+            valueHints,
+            isProcessed: false
+        };
+    }
+
+    public async processIdentityAttributeQuery(query: IdentityAttributeQueryJSON): Promise<ProcessedIdentityAttributeQueryDVO> {
+        const matchedAttributeDTOs = await this.consumption.attributes.executeIdentityAttributeQuery({
+            query
+        });
+        const matchedAttributeDVOs = await this.expandLocalAttributeDTOs(matchedAttributeDTOs.value);
+        const valueType = query.valueType;
+        const name = `i18n://dvo.attribute.name.${valueType}`;
+        const description = `i18n://dvo.attribute.description.${valueType}`;
+
+        const valueTypeClass = SerializableBase.getModule(valueType, 1);
+        if (!valueTypeClass) {
+            throw new Error(`No class implementation found for ${valueType}`);
+        }
+        let renderHints: RenderHintsJSON = {
+            "@type": "RenderHints",
+            editType: RenderHintsEditType.InputLike,
+            technicalType: RenderHintsTechnicalType.String
+        };
+        let valueHints: ValueHintsJSON = {
+            "@type": "ValueHints",
+            max: 200
+        };
+        if (valueTypeClass.renderHints && valueTypeClass.renderHints instanceof RenderHints) {
+            renderHints = valueTypeClass.renderHints.toJSON();
+        }
+        if (valueTypeClass.valueHints && valueTypeClass.valueHints instanceof ValueHints) {
+            valueHints = valueTypeClass.valueHints.toJSON();
+        }
+
+        return {
+            type: "ProcessedIdentityAttributeQueryDVO",
+            id: "",
+            name,
+            description,
+            valueType,
+            validFrom: query.validFrom,
+            validTo: query.validTo,
+            results: matchedAttributeDVOs as (RepositoryAttributeDVO | SharedToPeerAttributeDVO)[],
+            renderHints,
+            valueHints,
+            isProcessed: true
         };
     }
 
@@ -420,7 +748,9 @@ export class DataViewExpander {
             owner: owner,
             renderHints,
             valueHints,
-            value: attribute.value
+            value: attribute.value,
+            isDraft: true,
+            isOwn: owner.isSelf
         };
     }
 
@@ -479,7 +809,7 @@ export class DataViewExpander {
         return await Promise.all(relationshipPromises);
     }
 
-    public async expandRecipient(recipient: RecipientDTO): Promise<RecipientDVO> {
+    public async expandRecipientDTO(recipient: RecipientDTO): Promise<RecipientDVO> {
         const identity = await this.expandAddress(recipient.address);
         return {
             ...identity,
@@ -489,12 +819,12 @@ export class DataViewExpander {
         };
     }
 
-    public async expandRecipients(recipients: RecipientDTO[]): Promise<RecipientDVO[]> {
-        const relationshipPromises = recipients.map((recipient) => this.expandRecipient(recipient));
+    public async expandRecipientDTOs(recipients: RecipientDTO[]): Promise<RecipientDVO[]> {
+        const relationshipPromises = recipients.map((recipient) => this.expandRecipientDTO(recipient));
         return await Promise.all(relationshipPromises);
     }
 
-    public expandRelationshipChange(relationship: RelationshipDTO, change: RelationshipChangeDTO): Promise<RelationshipChangeDVO> {
+    public expandRelationshipChangeDTO(relationship: RelationshipDTO, change: RelationshipChangeDTO): Promise<RelationshipChangeDVO> {
         const date = change.response ? change.response.createdAt : change.request.createdAt;
         let isOwn = false;
         if (this.identityController.isMe(CoreAddress.from(change.request.createdBy))) {
@@ -531,8 +861,8 @@ export class DataViewExpander {
         });
     }
 
-    public async expandRelationshipChanges(relationship: RelationshipDTO): Promise<RelationshipChangeDVO[]> {
-        const changePromises = relationship.changes.map((change) => this.expandRelationshipChange(relationship, change));
+    public async expandRelationshipChangeDTOs(relationship: RelationshipDTO): Promise<RelationshipChangeDVO[]> {
+        const changePromises = relationship.changes.map((change) => this.expandRelationshipChangeDTO(relationship, change));
         return await Promise.all(changePromises);
     }
 
@@ -561,7 +891,7 @@ export class DataViewExpander {
             statusText = DataViewTranslateable.transport.relationshipActive;
         }
 
-        const changes = await this.expandRelationshipChanges(relationship);
+        const changes = await this.expandRelationshipChangeDTOs(relationship);
 
         return {
             id: relationship.id,
@@ -652,7 +982,7 @@ export class DataViewExpander {
         };
     }
 
-    public async expandIdentity(identity: IdentityDTO): Promise<IdentityDVO> {
+    public async expandIdentityDTO(identity: IdentityDTO): Promise<IdentityDVO> {
         return await this.expandIdentityForAddress(identity.address);
     }
 

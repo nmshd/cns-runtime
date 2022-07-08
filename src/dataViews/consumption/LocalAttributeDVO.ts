@@ -1,35 +1,44 @@
 import { IdentityAttributeJSON, RelationshipAttributeCreationHintsJSON, RelationshipAttributeJSON, RenderHintsJSON, ValueHintsJSON } from "@nmshd/content";
+import { AttributeQueryDVO } from "../content/AttributeDVOs";
 import { DataViewObject } from "../DataViewObject";
 import { IdentityDVO } from "../transport";
 
+/**
+ * The DataViewObject representation of a LocalAttribute
+ * @abstract
+ */
 export interface LocalAttributeDVO extends DataViewObject {
     content: IdentityAttributeJSON | RelationshipAttributeJSON;
     owner: IdentityDVO;
+
+    key?: string;
+    tags: string[];
+    value: unknown;
+
     renderHints: RenderHintsJSON;
     valueHints: ValueHintsJSON;
+
+    isDraft: false;
     isOwn: boolean;
     isValid: boolean;
+
     createdAt: string;
     succeeds?: string;
     succeededBy?: string;
-    value: any;
 }
 
-export interface DraftAttributeDVO extends DataViewObject {
-    type: "DraftAttributeDVO";
-    content: IdentityAttributeJSON | RelationshipAttributeJSON;
-    owner: IdentityDVO;
-    renderHints: RenderHintsJSON;
-    valueHints: ValueHintsJSON;
-    succeeds?: string;
-    succeededBy?: string;
-    value: any;
-}
+/**
+ * Original own LocalAttribute DataViewObject
+ */
 export interface RepositoryAttributeDVO extends LocalAttributeDVO {
     type: "RepositoryAttributeDVO";
     sharedWith: SharedToPeerAttributeDVO[];
     isOwn: true;
 }
+
+/**
+ * LocalAttribute DataViewObject which is shared to a peer
+ */
 export interface SharedToPeerAttributeDVO extends LocalAttributeDVO {
     type: "SharedToPeerAttributeDVO";
     peer: IdentityDVO;
@@ -37,29 +46,45 @@ export interface SharedToPeerAttributeDVO extends LocalAttributeDVO {
     sourceAttribute: string;
     isOwn: true;
 }
+
+/**
+ * LocalAttribute DataViewObject which was received from a peer
+ */
 export interface PeerAttributeDVO extends LocalAttributeDVO {
     type: "PeerAttributeDVO";
     peer: IdentityDVO;
     requestReference: string;
     isOwn: false;
 }
-export interface AttributeQueryExpanded {
-    type: "IdentityAttributeQueryExpanded" | "RelationshipAttributeQueryExpanded";
-    name: string;
-    description?: string;
-    valueType: string;
-    validFrom?: string;
-    validTo?: string;
-    renderHints: RenderHintsJSON;
-    valueHints: ValueHintsJSON;
-    results: LocalAttributeDVO[];
+
+/**
+ * The DataViewObject representation of a processed AttributeQuery.
+ * A processed AttributeQuery contains the potential LocalAttributes
+ * which fit to this query within the `results` property.
+ * @abstract
+ */
+export interface ProcessedAttributeQueryDVO extends AttributeQueryDVO {
+    results: (RepositoryAttributeDVO | SharedToPeerAttributeDVO)[];
+    isProcessed: true;
 }
-export interface IdentityAttributeQueryExpanded extends AttributeQueryExpanded {
-    type: "IdentityAttributeQueryExpanded";
+
+/**
+ * The DataViewObject representation of a processed IdentityAttributeQuery.
+ * A processed AttributeQuery contains the potential LocalAttributes
+ * which fit to this query within the `results` property.
+ */
+export interface ProcessedIdentityAttributeQueryDVO extends ProcessedAttributeQueryDVO {
+    type: "ProcessedIdentityAttributeQueryDVO";
     tags?: string[];
 }
-export interface RelationshipAttributeQueryExpanded extends AttributeQueryExpanded {
-    type: "RelationshipAttributeQueryExpanded";
+
+/**
+ * The DataViewObject representation of a processed RelationshipAttributeQuery.
+ * A processed AttributeQuery contains the potential LocalAttributes
+ * which fit to this query within the `results` property.
+ */
+export interface ProcessedRelationshipAttributeQueryDVO extends ProcessedAttributeQueryDVO {
+    type: "ProcessedRelationshipAttributeQueryDVO";
     key: string;
     owner: IdentityDVO;
     thirdParty?: IdentityDVO;

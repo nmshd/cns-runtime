@@ -38,7 +38,8 @@ export class RequestModule extends RuntimeModule {
                 break;
             case "Response":
                 const receivedResponse = event.data.content as ResponseJSON;
-                await services.consumptionServices.outgoingRequests.complete({ receivedResponse, messageId: event.data.id });
+                const result = await services.consumptionServices.outgoingRequests.complete({ receivedResponse, messageId: event.data.id });
+                if (result.isError) this.logger.error(`Could not complete outgoing request for message id ${event.data.id} due to ${result.error}`);
                 break;
         }
     }

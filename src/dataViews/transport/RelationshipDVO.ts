@@ -40,7 +40,7 @@ export interface RelationshipChangeRequestDVO extends DataViewObject {
     createdBy: string;
     createdByDevice: string;
     createdAt: string;
-    content?: any;
+    content?: unknown;
 }
 
 export interface RelationshipChangeResponseDVO extends DataViewObject {
@@ -48,5 +48,5 @@ export interface RelationshipChangeResponseDVO extends DataViewObject {
     createdBy: string;
     createdByDevice: string;
     createdAt: string;
-    content?: any;
+    content?: unknown;
 }
