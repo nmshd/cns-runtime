@@ -461,6 +461,12 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
                         "number",
                         "boolean"
                     ]
+                },
+                "propertyHints": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/IValueHints"
+                    }
                 }
             },
             "additionalProperties": false
@@ -597,6 +603,12 @@ export const ExecuteRelationshipAttributeQueryRequest: any = {
                         "number",
                         "boolean"
                     ]
+                },
+                "propertyHints": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/ValueHintsJSON"
+                    }
                 }
             },
             "additionalProperties": false,
@@ -1868,6 +1880,12 @@ export const CreateOutgoingRequestRequest: any = {
                         "number",
                         "boolean"
                     ]
+                },
+                "propertyHints": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/ValueHintsJSON"
+                    }
                 }
             },
             "additionalProperties": false,
@@ -2368,6 +2386,12 @@ export const CreateOutgoingRequestRequest: any = {
                         "number",
                         "boolean"
                     ]
+                },
+                "propertyHints": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/IValueHints"
+                    }
                 }
             },
             "additionalProperties": false
@@ -3837,6 +3861,12 @@ export const ReceivedIncomingRequestRequest: any = {
                         "number",
                         "boolean"
                     ]
+                },
+                "propertyHints": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/ValueHintsJSON"
+                    }
                 }
             },
             "additionalProperties": false,
