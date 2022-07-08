@@ -83,7 +83,7 @@ export class DataViewExpander {
             type = content["@type"];
         }
 
-        if (content instanceof Array) {
+        if (Array.isArray(content)) {
             if (content.length > 0) {
                 type = content[0]["@type"];
             } else return [];
@@ -94,56 +94,56 @@ export class DataViewExpander {
         }
         switch (type) {
             case "Message":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandMessageDTOs(content as MessageDTO[]);
                 }
 
                 return await this.expandMessageDTO(content as MessageDTO);
 
             case "Attribute":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandAttributes(content);
                 }
 
                 return await this.expandAttribute(content);
 
             case "Address":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandAddresses(content as string[]);
                 }
 
                 return await this.expandAddress(content as string);
 
             case "FileId":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandFileIds(content as string[]);
                 }
 
                 return await this.expandFileId(content as string);
 
             case "File":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandFileDTOs(content as FileDTO[]);
                 }
 
                 return await this.expandFileDTO(content as FileDTO);
 
             case "Recipient":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandRecipientDTOs(content as RecipientDTO[]);
                 }
 
                 return await this.expandAddress(content as string);
 
             case "Relationship":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandRelationshipDTOs(content as RelationshipDTO[]);
                 }
 
                 return await this.expandRelationshipDTO(content as RelationshipDTO);
 
             case "LocalAttribute":
-                if (content instanceof Array) {
+                if (Array.isArray(content)) {
                     return await this.expandLocalAttributeDTOs(content as LocalAttributeDTO[]);
                 }
 
@@ -504,10 +504,12 @@ export class DataViewExpander {
                 itemDVOs.push(await this.expandRequestItem(requestItem, localRequestDTO));
             }
             return {
-                ...requestGroupOrItem,
                 type: "RequestItemGroupDVO",
                 items: itemDVOs,
-                isDecidable
+                isDecidable,
+                title: requestGroupOrItem.title,
+                description: requestGroupOrItem.description,
+                mustBeAccepted: requestGroupOrItem.mustBeAccepted
             };
         }
         return await this.expandRequestItem(requestGroupOrItem, localRequestDTO);
@@ -585,7 +587,8 @@ export class DataViewExpander {
                     peer: peer,
                     isDraft: false,
                     requestReference: localAttribute.shareInfo.requestReference.toString(),
-                    sourceAttribute: localAttribute.shareInfo.sourceAttribute.toString()
+                    sourceAttribute: localAttribute.shareInfo.sourceAttribute.toString(),
+                    tags: []
                 };
             }
 
@@ -606,7 +609,8 @@ export class DataViewExpander {
                 isOwn: false,
                 peer: peer,
                 isDraft: false,
-                requestReference: localAttribute.shareInfo.requestReference.toString()
+                requestReference: localAttribute.shareInfo.requestReference.toString(),
+                tags: []
             };
         }
 
@@ -629,7 +633,8 @@ export class DataViewExpander {
             createdAt: attribute.createdAt,
             isOwn: true,
             isDraft: false,
-            sharedWith: sharedToPeerDVOs as SharedToPeerAttributeDVO[]
+            sharedWith: sharedToPeerDVOs as SharedToPeerAttributeDVO[],
+            tags: []
         };
     }
 
