@@ -14,15 +14,11 @@ export interface GetRelationshipsRequest {
 export class GetRelationshipsUseCase extends UseCase<GetRelationshipsRequest, RelationshipDTO[]> {
     private static readonly queryTranslator = new QueryTranslator({
         whitelist: {
-            [nameof<RelationshipDTO>((r) => r.lastMessageReceivedAt)]: true,
-            [nameof<RelationshipDTO>((r) => r.lastMessageSentAt)]: true,
             [nameof<RelationshipDTO>((r) => r.peer)]: true,
             [nameof<RelationshipDTO>((r) => r.status)]: true,
             [`${nameof<RelationshipDTO>((r) => r.template)}.${nameof<RelationshipTemplateDTO>((t) => t.id)}`]: true
         },
         alias: {
-            [nameof<RelationshipDTO>((r) => r.lastMessageReceivedAt)]: `${nameof<Relationship>((r) => r.cache)}.${nameof<CachedRelationship>((r) => r.lastMessageReceivedAt)}`,
-            [nameof<RelationshipDTO>((r) => r.lastMessageSentAt)]: `${nameof<Relationship>((r) => r.cache)}.${nameof<CachedRelationship>((r) => r.lastMessageSentAt)}`,
             [`${nameof<RelationshipDTO>((r) => r.template)}.${nameof<RelationshipTemplateDTO>((r) => r.id)}`]: `${nameof<Relationship>(
                 (r) => r.cache
             )}.${nameof<CachedRelationship>((r) => r.template)}.${nameof<RelationshipTemplate>((r) => r.id)}`,

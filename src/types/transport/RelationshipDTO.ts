@@ -18,6 +18,4 @@ export interface RelationshipDTO {
     peer: string;
     peerIdentity: IdentityDTO;
     changes: RelationshipChangeDTO[];
-    lastMessageSentAt?: string;
-    lastMessageReceivedAt?: string;
 }

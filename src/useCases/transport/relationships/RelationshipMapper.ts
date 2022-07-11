@@ -19,9 +19,7 @@ export class RelationshipMapper {
                 publicKey: relationship.peer.publicKey.toString(),
                 realm: relationship.peer.realm
             },
-            changes: relationship.cache.changes.map((c) => this.toRelationshipChangeDTO(c)),
-            lastMessageSentAt: relationship.cache.lastMessageSentAt?.toString(),
-            lastMessageReceivedAt: relationship.cache.lastMessageReceivedAt?.toString()
+            changes: relationship.cache.changes.map((c) => this.toRelationshipChangeDTO(c))
         };
     }
 
