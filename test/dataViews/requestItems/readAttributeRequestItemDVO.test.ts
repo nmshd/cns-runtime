@@ -149,7 +149,7 @@ describe("ReadAttributeRequestItemDVO", () => {
 
         const acceptResult = await consumptionServices2.incomingRequests.accept({
             requestId: dvo.request.id,
-            items: [{ accept: true, newAttributeValue: resultItem.content } as AcceptReadAttributeRequestItemParametersWithNewAttributeJSON]
+            items: [{ accept: true, newAttribute: resultItem.content } as AcceptReadAttributeRequestItemParametersWithNewAttributeJSON]
         });
         expect(acceptResult).toBeSuccessful();
     });
