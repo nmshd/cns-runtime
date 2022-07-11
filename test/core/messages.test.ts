@@ -123,7 +123,6 @@ describe("Message query", () => {
         const message = await exchangeMessage(transportServices1, transportServices2);
         const conditions = new QueryParamConditions(message, transportServices2)
             .addDateSet("createdAt")
-            .addDateSet("lastMessageSentAt")
             .addStringSet("createdBy")
             .addStringSet("recipients.address", message.recipients[0].address)
             .addDateSet("recipients.receivedAt")

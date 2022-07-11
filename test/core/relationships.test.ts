@@ -103,8 +103,6 @@ describe("Relationships query", () => {
     test("query own relationship", async () => {
         const relationship = await getRelationship(transportServices1);
         const conditions = new QueryParamConditions(relationship, transportServices1)
-            // .addDateSet("lastMessageReceivedAt")
-            // .addDateSet("lastMessageSentAt")
             // .addStringSet("peer")
             // .addStringSet("status")
             .addStringSet("template.id");
