@@ -1,5 +1,5 @@
 import { CoreBuffer } from "@nmshd/crypto";
-import { File, Message, MessageEnvelopeRecipient } from "@nmshd/transport";
+import { CoreId, File, Message, MessageEnvelopeRecipient } from "@nmshd/transport";
 import { MessageDTO, MessageWithAttachmentsDTO, RecipientDTO } from "../../../types";
 import { RuntimeErrors } from "../../common";
 import { FileMapper } from "../files/FileMapper";
@@ -28,9 +28,8 @@ export class MessageMapper {
             content: message.cache.content.toJSON(),
             createdBy: message.cache.createdBy.toString(),
             createdByDevice: message.cache.createdByDevice.toString(),
-            recipients: message.cache.recipients.map((r) => this.toRecipient(r)),
+            recipients: message.cache.recipients.map((r, i) => this.toRecipient(r, message.relationshipIds[i])),
             createdAt: message.cache.createdAt.toString(),
-            relationshipIds: message.relationshipIds.map((r) => r.toString()),
             attachments: attachments.map((f) => FileMapper.toFileDTO(f))
         };
     }
@@ -45,8 +44,7 @@ export class MessageMapper {
             content: message.cache.content.toJSON(),
             createdBy: message.cache.createdBy.toString(),
             createdByDevice: message.cache.createdByDevice.toString(),
-            recipients: message.cache.recipients.map((r) => this.toRecipient(r)),
-            relationshipIds: message.relationshipIds.map((r) => r.toString()),
+            recipients: message.cache.recipients.map((r, i) => this.toRecipient(r, message.relationshipIds[i])),
             createdAt: message.cache.createdAt.toString(),
             attachments: message.cache.attachments.map((a) => a.toString())
         };
@@ -56,11 +54,12 @@ export class MessageMapper {
         return messages.map((message) => this.toMessageDTO(message));
     }
 
-    private static toRecipient(recipient: MessageEnvelopeRecipient): RecipientDTO {
+    private static toRecipient(recipient: MessageEnvelopeRecipient, relationshipId: CoreId): RecipientDTO {
         return {
             address: recipient.address.toString(),
             receivedAt: recipient.receivedAt?.toString(),
-            receivedByDevice: recipient.receivedByDevice?.toString()
+            receivedByDevice: recipient.receivedByDevice?.toString(),
+            relationshipId: relationshipId.toString()
         };
     }
 }

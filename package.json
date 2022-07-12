@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/runtime",
-    "version": "2.0.0-alpha.30",
+    "version": "2.0.0-alpha.31",
     "description": "The Enmeshed client runtime.",
     "homepage": "https://enmeshed.eu",
     "license": "MIT",
@@ -51,7 +51,7 @@
         "testTimeout": 60000
     },
     "dependencies": {
-        "@js-soft/docdb-querytranslator": "1.0.1",
+        "@js-soft/docdb-querytranslator": "1.1.0",
         "@js-soft/logging-abstractions": "1.0.0",
         "@js-soft/ts-serval": "2.0.3",
         "@js-soft/ts-utils": "^1.1.2",
@@ -73,7 +73,7 @@
     "devDependencies": {
         "@alex_neo/jest-expect-message": "^1.0.5",
         "@js-soft/docdb-access-loki": "1.0.3",
-        "@js-soft/docdb-access-mongo": "1.0.6",
+        "@js-soft/docdb-access-mongo": "1.1.1",
         "@js-soft/eslint-config-ts": "^1.5.2",
         "@js-soft/license-check": "1.0.4",
         "@js-soft/node-logger": "1.0.1",

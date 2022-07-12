@@ -28,7 +28,7 @@ export class GetMessagesUseCase extends UseCase<GetMessagesRequest, MessageDTO[]
             [`${nameof<MessageDTO>((m) => m.content)}.body`]: true,
             [`${nameof<MessageDTO>((m) => m.content)}.subject`]: true,
             [nameof<MessageDTO>((m) => m.attachments)]: true,
-            [nameof<MessageDTO>((m) => m.relationshipIds)]: true,
+            [`${nameof<MessageDTO>((m) => m.recipients)}.${nameof<RecipientDTO>((r) => r.relationshipId)}`]: true,
             participant: true
         },
 
@@ -46,9 +46,9 @@ export class GetMessagesUseCase extends UseCase<GetMessagesRequest, MessageDTO[]
         },
 
         custom: {
-            relationshipIds: (query: any, input: any) => {
-                query["relationshipIds"] = {
-                    $contains: input
+            [`${nameof<MessageDTO>((m) => m.recipients)}.${nameof<RecipientDTO>((r) => r.relationshipId)}`]: (query: any, input: any) => {
+                query[nameof<Message>((m) => m.relationshipIds)] = {
+                    $containsAny: Array.isArray(input) ? input : [input]
                 };
             },
             participant: (query: any, input: any) => {
@@ -65,8 +65,8 @@ export class GetMessagesUseCase extends UseCase<GetMessagesRequest, MessageDTO[]
                         const parsed: { field: string; value: any } = GetMessagesUseCase.queryTranslator.parseString(value, true);
 
                         switch (parsed.field) {
-                            case "$in":
-                            case "$nin":
+                            case "$containsAny":
+                            case "$containsNone":
                                 participantQuery[parsed.field] = participantQuery[parsed.field] || [];
                                 participantQuery[parsed.field].push(parsed.value);
                                 break;

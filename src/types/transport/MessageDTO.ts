@@ -6,7 +6,6 @@ export interface MessageDTO {
     createdBy: string;
     createdByDevice: string;
     recipients: RecipientDTO[];
-    relationshipIds: string[];
     createdAt: string;
     attachments: string[];
 }
