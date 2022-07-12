@@ -14,7 +14,4 @@ export interface FileDVO extends DataViewObject {
     title: string;
     secretKey: string;
     description?: string;
-    deletedAt?: string;
-    deletedBy?: IdentityDVO;
-    deletedByDevice?: string;
 }

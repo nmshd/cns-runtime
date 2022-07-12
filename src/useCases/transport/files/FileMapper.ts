@@ -34,9 +34,6 @@ export class FileMapper {
             title: file.cache.title ?? "",
             secretKey: file.secretKey.toBase64(),
             description: file.cache.description,
-            deletedAt: file.cache.deletedAt?.toString(),
-            deletedBy: file.cache.deletedBy?.toString(),
-            deletedByDevice: file.cache.deletedByDevice?.toString(),
             truncatedReference: file.truncate()
         };
     }
