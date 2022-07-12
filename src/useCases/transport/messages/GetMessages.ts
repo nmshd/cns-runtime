@@ -65,8 +65,8 @@ export class GetMessagesUseCase extends UseCase<GetMessagesRequest, MessageDTO[]
                         const parsed: { field: string; value: any } = GetMessagesUseCase.queryTranslator.parseString(value, true);
 
                         switch (parsed.field) {
-                            case "$in":
-                            case "$nin":
+                            case "$containsAny":
+                            case "$containsNone":
                                 participantQuery[parsed.field] = participantQuery[parsed.field] || [];
                                 participantQuery[parsed.field].push(parsed.value);
                                 break;
