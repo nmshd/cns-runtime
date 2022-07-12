@@ -8,6 +8,5 @@ export interface MessageWithAttachmentsDTO {
     createdByDevice: string;
     recipients: RecipientDTO[];
     createdAt: string;
-    relationshipIds: string[];
     attachments: FileDTO[];
 }

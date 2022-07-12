@@ -132,7 +132,7 @@ describe("Message query", () => {
             .addStringSet("content.body")
             .addStringSet("createdByDevice")
             .addStringArraySet("attachments")
-            .addStringArraySet("relationshipIds")
+            .addStringArraySet("recipients.relationship")
             .addSingleCondition({
                 key: "participant",
                 value: [message.createdBy, "id111111111111111111111111111111111"],
@@ -140,5 +140,39 @@ describe("Message query", () => {
             });
 
         await conditions.executeTests((c, q) => c.messages.getMessages({ query: q }));
+    });
+
+    test("query messages by relationship ids", async () => {
+        const additionalRuntimeServices = await serviceProvider.launch(2);
+        const recipient1 = additionalRuntimeServices[0].transport;
+        const recipient2 = additionalRuntimeServices[1].transport;
+
+        await establishRelationship(transportServices1, recipient1);
+        await establishRelationship(transportServices1, recipient2);
+
+        const addressRecipient1 = (await recipient1.account.getIdentityInfo()).value.address;
+        const addressRecipient2 = (await recipient2.account.getIdentityInfo()).value.address;
+
+        const relationshipToRecipient1 = await transportServices1.relationships.getRelationshipByAddress({ address: addressRecipient1 });
+        const relationshipToRecipient2 = await transportServices1.relationships.getRelationshipByAddress({ address: addressRecipient2 });
+
+        await transportServices1.messages.sendMessage({
+            content: {},
+            recipients: [addressRecipient1]
+        });
+        await transportServices1.messages.sendMessage({
+            content: {},
+            recipients: [addressRecipient2]
+        });
+
+        const messagesToRecipient1 = await transportServices1.messages.getMessages({ query: { "recipients.relationshipId": relationshipToRecipient1.value.id } }); // eslint-disable-line @typescript-eslint/naming-convention
+        const messagesToRecipient2 = await transportServices1.messages.getMessages({ query: { "recipients.relationshipId": relationshipToRecipient2.value.id } }); // eslint-disable-line @typescript-eslint/naming-convention
+        const messagesToRecipient1Or2 = await transportServices1.messages.getMessages({
+            query: { "recipients.relationshipId": [relationshipToRecipient1.value.id, relationshipToRecipient2.value.id] } // eslint-disable-line @typescript-eslint/naming-convention
+        });
+
+        expect(messagesToRecipient1.value).toHaveLength(1);
+        expect(messagesToRecipient2.value).toHaveLength(1);
+        expect(messagesToRecipient1Or2.value).toHaveLength(2);
     });
 });
