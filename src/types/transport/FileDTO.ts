@@ -11,8 +11,5 @@ export interface FileDTO {
     title: string;
     secretKey: string;
     description?: string;
-    deletedAt?: string;
-    deletedBy?: string;
-    deletedByDevice?: string;
     truncatedReference: string;
 }

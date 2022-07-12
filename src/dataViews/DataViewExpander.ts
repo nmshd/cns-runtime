@@ -1015,8 +1015,7 @@ export class DataViewExpander {
             image: "",
             filename: file.filename,
             filesize: file.filesize,
-            createdBy: await this.expandAddress(file.createdBy),
-            deletedBy: file.deletedBy ? await this.expandAddress(file.deletedBy) : undefined
+            createdBy: await this.expandAddress(file.createdBy)
         };
     }
 
