@@ -1,4 +1,4 @@
-import { Event } from "../Event";
+import { Event } from "@js-soft/ts-utils";
 
 export class RuntimeInitializedEvent extends Event {
     public static readonly namespace = "runtime.initialized";
