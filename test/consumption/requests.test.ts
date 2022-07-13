@@ -13,8 +13,7 @@ import {
     RelationshipTemplateDTO,
     TransportServices
 } from "../../src";
-import { IncomingRequestReceivedEvent } from "../../src/events/consumption/IncomingRequestReceivedEvent";
-import { IncomingRequestStatusChangedEvent } from "../../src/events/consumption/IncomingRequestStatusChangedEvent";
+import { IncomingRequestReceivedEvent, IncomingRequestStatusChangedEvent } from "../../src/events";
 import { establishRelationship, RuntimeServiceProvider, syncUntilHasMessages, syncUntilHasRelationships } from "../lib";
 
 describe("Requests", () => {

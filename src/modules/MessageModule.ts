@@ -29,14 +29,6 @@ export class MessageModule extends RuntimeModule<MessageModuleConfiguration> {
                 this.logger.trace(`Published MailReceivedEvent for ${message.id}`);
                 break;
 
-            case "RequestMail":
-                const requestMail = RequestMail.from(message.content);
-                event = new RequestMailReceivedEvent(messageReceivedEvent.eventTargetAddress, requestMail, message);
-                this.runtime.eventBus.publish(event);
-                this.logger.trace(`Published RequestMailReceivedEvent for ${message.id}`);
-
-                break;
-
             default:
                 // Unknown type
                 return;

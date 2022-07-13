@@ -3,7 +3,7 @@ import { IncomingRequestsController } from "@nmshd/consumption";
 import { RequestJSON } from "@nmshd/content";
 import { CoreId, Message, MessageController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { IncomingRequestReceivedEvent } from "../../../events/consumption/IncomingRequestReceivedEvent";
+import { IncomingRequestReceivedEvent } from "../../../events";
 import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
