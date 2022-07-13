@@ -1,9 +1,6 @@
-import { Mail, RequestMail } from "@nmshd/content";
-import { MessageReceivedEvent } from "../events";
-import { MailReceivedEvent } from "../events/consumption/MailReceivedEvent";
-import { RelationshipEvent } from "../events/consumption/RelationshipEvent";
-import { RequestMailReceivedEvent } from "../events/consumption/RequestMailReceivedEvent";
-import { Event } from "../events/Event";
+import { Event } from "@js-soft/ts-utils";
+import { Mail } from "@nmshd/content";
+import { MailReceivedEvent, MessageReceivedEvent, RelationshipEvent } from "../events";
 import { ModuleConfiguration, RuntimeModule } from "../extensibility/modules/RuntimeModule";
 
 export interface MessageModuleConfiguration extends ModuleConfiguration {}
