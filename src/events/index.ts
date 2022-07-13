@@ -9,7 +9,6 @@ export * from "./consumption/OutgoingRequestFromRelationshipCreationChangeCreate
 export * from "./consumption/OutgoingRequestStatusChangedEvent";
 export * from "./consumption/SharedAttributeCopyCreatedEvent";
 export * from "./DataEvent";
-export * from "./Event";
 export * from "./runtime/ModulesInitializedEvent";
 export * from "./runtime/ModulesLoadedEvent";
 export * from "./runtime/ModulesStartedEvent";
