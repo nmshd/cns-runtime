@@ -372,12 +372,10 @@ export class DataViewExpander {
         };
     }
 
-    /*
     public async expandRequests(requests: RequestJSON[]): Promise<RequestDVO[]> {
         const requestPromises = requests.map((request) => this.expandRequest(request));
         return await Promise.all(requestPromises);
     }
-    */
 
     public async expandRequestItem(requestItem: RequestItemJSON, localRequestDTO?: LocalRequestDTO): Promise<RequestItemDVO> {
         let isDecidable = false;
@@ -537,6 +535,11 @@ export class DataViewExpander {
             statusText: `i18n://dvo.localRequest.status.${request.status}`,
             isDecidable
         };
+    }
+
+    public async expandLocalRequestDTOs(localRequests: LocalRequestDTO[]): Promise<LocalRequestDVO[]> {
+        const localRequestPromises = localRequests.map((localRequest) => this.expandLocalRequestDTO(localRequest));
+        return await Promise.all(localRequestPromises);
     }
 
     public expandLocalResponseDTO(response: LocalResponseDTO): LocalResponseDVO {
