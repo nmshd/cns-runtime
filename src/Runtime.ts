@@ -92,7 +92,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
     public abstract getServices(address: string | ICoreAddress): RuntimeServices;
 
-    private readonly _eventBus: EventBus;
+    private readonly _eventBus: EventEmitter2EventBus;
     public get eventBus(): EventBus {
         return this._eventBus;
     }
@@ -356,7 +356,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         await this.stopModules();
         await this.stopInfrastructure();
 
-        if (this.eventBus instanceof EventEmitter2EventBus) await this.eventBus.close();
+        await this._eventBus.close();
 
         this.logger.info("Closing AccountController...");
         await this._accountController?.close();
