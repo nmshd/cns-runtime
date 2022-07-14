@@ -300,7 +300,7 @@ export async function waitForEvent<TEvent>(
             resolve(event);
         });
     });
-    if (!timeout) return await eventPromise.finally(() => eventBus.unsubscribe(subscriptionTarget, subscriptionId));
+    if (!timeout) return await eventPromise.finally(() => eventBus.unsubscribe(subscriptionId));
 
     let timeoutId: NodeJS.Timeout;
     const timeoutPromise = new Promise<TEvent>((_resolve, reject) => {
@@ -311,7 +311,7 @@ export async function waitForEvent<TEvent>(
     });
 
     return await Promise.race([eventPromise, timeoutPromise]).finally(() => {
-        eventBus.unsubscribe(subscriptionTarget, subscriptionId);
+        eventBus.unsubscribe(subscriptionId);
         clearTimeout(timeoutId);
     });
 }
