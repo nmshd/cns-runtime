@@ -1,4 +1,4 @@
-import { EventBus, sleep } from "@js-soft/ts-utils";
+import { EventBus } from "@js-soft/ts-utils";
 import { LocalRequestStatus } from "@nmshd/consumption";
 import { ConsumptionServices, IncomingRequestStatusChangedEvent } from "../../src";
 import { establishRelationship, exchangeMessage, RuntimeServiceProvider, waitForEvent } from "../lib";
@@ -19,11 +19,7 @@ beforeAll(async () => {
     await establishRelationship(sTransportServices, rTransportServices);
     messageId = (await exchangeMessage(sTransportServices, rTransportServices)).id;
 }, 30000);
-afterAll(async () => {
-    // TODO: JSSNMSHDD-3058 (graceful shutdown)
-    await sleep(1000);
-    await runtimeServiceProvider.stop();
-});
+afterAll(async () => await runtimeServiceProvider.stop());
 
 describe("DeciderModule", () => {
     test("moves incoming Requests into status 'ManualDecisionRequired' after they reach status 'Open'", async () => {
