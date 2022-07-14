@@ -356,7 +356,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         await this.stopModules();
         await this.stopInfrastructure();
 
-        await this._eventBus.close();
+        await this.eventBus.close();
 
         this.logger.info("Closing AccountController...");
         await this._accountController?.close();
