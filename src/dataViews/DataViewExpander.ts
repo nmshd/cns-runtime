@@ -591,7 +591,8 @@ export class DataViewExpander {
                     isDraft: false,
                     requestReference: localAttribute.shareInfo.requestReference.toString(),
                     sourceAttribute: localAttribute.shareInfo.sourceAttribute.toString(),
-                    tags: []
+                    tags: [],
+                    valueType
                 };
             }
 
@@ -613,7 +614,8 @@ export class DataViewExpander {
                 peer: peer,
                 isDraft: false,
                 requestReference: localAttribute.shareInfo.requestReference.toString(),
-                tags: []
+                tags: [],
+                valueType
             };
         }
 
@@ -637,7 +639,8 @@ export class DataViewExpander {
             isOwn: true,
             isDraft: false,
             sharedWith: sharedToPeerDVOs as SharedToPeerAttributeDVO[],
-            tags: []
+            tags: [],
+            valueType
         };
     }
 
@@ -753,7 +756,8 @@ export class DataViewExpander {
             valueHints,
             value: attribute.value,
             isDraft: true,
-            isOwn: owner.isSelf
+            isOwn: owner.isSelf,
+            valueType: attribute.value["@type"]
         };
     }
 

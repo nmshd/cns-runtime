@@ -8,6 +8,7 @@ export interface DraftAttributeDVO extends DataViewObject {
     owner: IdentityDVO;
     renderHints: RenderHintsJSON;
     valueHints: ValueHintsJSON;
+    valueType: string;
     isOwn: boolean;
     isDraft: true;
     succeeds?: string;
