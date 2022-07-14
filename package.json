@@ -54,7 +54,7 @@
         "@js-soft/docdb-querytranslator": "1.1.0",
         "@js-soft/logging-abstractions": "1.0.0",
         "@js-soft/ts-serval": "2.0.3",
-        "@js-soft/ts-utils": "^2.0.0",
+        "@js-soft/ts-utils": "^2.0.1",
         "@nmshd/consumption": "2.0.0-alpha.29",
         "@nmshd/content": "2.0.0-alpha.44",
         "@nmshd/crypto": "2.0.1",

@@ -92,7 +92,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
     public abstract getServices(address: string | ICoreAddress): RuntimeServices;
 
-    private readonly _eventBus: EventEmitter2EventBus;
+    private readonly _eventBus: EventBus;
     public get eventBus(): EventBus {
         return this._eventBus;
     }
