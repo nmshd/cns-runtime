@@ -7,8 +7,15 @@ import { TokenDTO } from "../../../types";
 import { OwnerRestriction, RuntimeValidator, UseCase } from "../../common";
 import { TokenMapper } from "./TokenMapper";
 
+export interface GetTokensQuery {
+    createdAt?: string | string[];
+    createdBy?: string | string[];
+    createdByDevice?: string | string[];
+    expiresAt?: string | string[];
+}
+
 export interface GetTokensRequest {
-    query?: any;
+    query?: GetTokensQuery;
     ownerRestriction?: OwnerRestriction;
 }
 

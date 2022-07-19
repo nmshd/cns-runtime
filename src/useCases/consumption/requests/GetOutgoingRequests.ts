@@ -14,37 +14,20 @@ export interface GetOutgoingRequestsRequest {
 }
 
 export interface GetOutgoingRequestsRequestQuery {
-    id?: string;
-    peer?: string;
-    createdAt?: string;
-    status?: string;
-    content?: {
-        expiresAt?: string;
-        items?: {
-            "@type"?: string;
-        };
-    };
-    source?: {
-        type?: string;
-        reference?: string;
-    };
-    response?: {
-        createdAt?: string;
-        source?: {
-            type?: string;
-            reference?: string;
-        };
-        content?: {
-            result?: string;
-            items?: {
-                "@type"?: string;
-                items?: {
-                    "@type"?: string;
-                };
-            };
-        };
-    };
-    [key: string]: unknown;
+    id?: string | string[];
+    peer?: string | string[];
+    createdAt?: string | string[];
+    status?: string | string[];
+    "content.expiresAt"?: string | string[];
+    "content.items.@type"?: string | string[];
+    "source.type"?: string | string[];
+    "source.reference"?: string | string[];
+    "response.createdAt"?: string | string[];
+    "response.source.type"?: string | string[];
+    "response.source.reference"?: string | string[];
+    "response.content.result"?: string | string[];
+    "response.content.items.@type"?: string | string[];
+    "response.content.items.items.@type"?: string | string[];
 }
 
 export class GetOutgoingRequestsUseCase extends UseCase<GetOutgoingRequestsRequest, LocalRequestDTO[]> {

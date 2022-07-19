@@ -46,7 +46,7 @@ export class CompleteIncomingRequestUseCase extends UseCase<CompleteIncomingRequ
             }
             responseSourceObject = message;
         } else if (request.responseSourceId.startsWith("RCH")) {
-            const relationships = await this.relationshipController.getRelationships({ "cache.changes.id": request.responseSourceId }); // eslint-disable-line @typescript-eslint/naming-convention
+            const relationships = await this.relationshipController.getRelationships({ "cache.changes.id": request.responseSourceId });
 
             if (relationships.length === 0) {
                 return Result.fail(RuntimeErrors.general.recordNotFound(RelationshipChange));

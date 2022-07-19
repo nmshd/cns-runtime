@@ -7,6 +7,19 @@ import { MessageDTO, RecipientDTO } from "../../../types";
 import { RuntimeValidator, UseCase } from "../../common";
 import { MessageMapper } from "./MessageMapper";
 
+export interface GetMessagesQuery {
+    createdBy?: string | string[];
+    createdByDevice?: string | string[];
+    createdAt?: string | string[];
+    "content.@type"?: string | string[];
+    "content.body"?: string | string[];
+    "content.subject"?: string | string[];
+    attachments?: string | string[];
+    "recipients.address"?: string | string[];
+    "recipients.relationshipId"?: string | string[];
+    participant?: string | string[];
+}
+
 export interface GetMessagesRequest {
     query?: any;
 }
@@ -23,11 +36,11 @@ export class GetMessagesUseCase extends UseCase<GetMessagesRequest, MessageDTO[]
             [nameof<MessageDTO>((m) => m.createdBy)]: true,
             [nameof<MessageDTO>((m) => m.createdByDevice)]: true,
             [nameof<MessageDTO>((m) => m.createdAt)]: true,
-            [`${nameof<MessageDTO>((m) => m.recipients)}.${nameof<RecipientDTO>((r) => r.address)}`]: true,
             [`${nameof<MessageDTO>((m) => m.content)}.@type`]: true,
             [`${nameof<MessageDTO>((m) => m.content)}.body`]: true,
             [`${nameof<MessageDTO>((m) => m.content)}.subject`]: true,
             [nameof<MessageDTO>((m) => m.attachments)]: true,
+            [`${nameof<MessageDTO>((m) => m.recipients)}.${nameof<RecipientDTO>((r) => r.address)}`]: true,
             [`${nameof<MessageDTO>((m) => m.recipients)}.${nameof<RecipientDTO>((r) => r.relationshipId)}`]: true,
             participant: true
         },
