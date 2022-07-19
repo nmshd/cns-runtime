@@ -228,7 +228,7 @@ describe("RelationshipTemplateDVO", () => {
     test("RequestDVO for requestor and accept", async () => {
         const requestResult = await requestorConsumption.incomingRequests.getRequests({
             query: {
-                source: { reference: requestorTemplate.id }
+                "source.reference": requestorTemplate.id
             }
         });
         expect(requestResult).toBeSuccessful();
@@ -268,7 +268,7 @@ describe("RelationshipTemplateDVO", () => {
     test("Test the accepted request for requestor", async () => {
         const requestResult = await requestorConsumption.incomingRequests.getRequests({
             query: {
-                source: { reference: requestorTemplate.id }
+                "source.reference": requestorTemplate.id
             }
         });
         expect(requestResult).toBeSuccessful();
@@ -319,7 +319,7 @@ describe("RelationshipTemplateDVO", () => {
     test("test the attributes on requestor side", async () => {
         const attributeResult = await requestorConsumption.attributes.getAttributes({
             query: {
-                shareInfo: { peer: templatorAddress }
+                "shareInfo.peer": templatorAddress
             }
         });
         expect(attributeResult).toBeSuccessful();
@@ -332,7 +332,7 @@ describe("RelationshipTemplateDVO", () => {
         await waitForOutgoingRequest;
         const requestResult = await templatorConsumption.outgoingRequests.getRequests({
             query: {
-                source: { reference: requestorTemplate.id }
+                "source.reference": requestorTemplate.id
             }
         });
         expect(requestResult).toBeSuccessful();
@@ -353,7 +353,7 @@ describe("RelationshipTemplateDVO", () => {
     test("check the attributes on templator side", async () => {
         const attributeResult = await templatorConsumption.attributes.getAttributes({
             query: {
-                shareInfo: { peer: requestorAddress }
+                "shareInfo.peer": requestorAddress
             }
         });
         expect(attributeResult).toBeSuccessful();

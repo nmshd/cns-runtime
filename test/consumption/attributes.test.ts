@@ -273,7 +273,7 @@ describe("Attributes", () => {
         const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
         const queryRequest: GetAttributesRequest = {
             query: {
-                content: { value: { "@type": "EMailAddress" } }
+                "content.value.@type": "EMailAddress"
             }
         };
         const receivedAttributes = await consumptionServices.attributes.getAttributes(queryRequest);

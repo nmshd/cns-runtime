@@ -7,8 +7,18 @@ import { SettingDTO } from "../../../types";
 import { RuntimeValidator, UseCase } from "../../common";
 import { SettingMapper } from "./SettingMapper";
 
+export interface GetSettingsQuery {
+    key?: string | string[];
+    scope?: string | string[];
+    reference?: string | string[];
+    createdAt?: string | string[];
+    deletedAt?: string | string[];
+    succeedsItem?: string | string[];
+    succeedsAt?: string | string[];
+}
+
 export interface GetSettingsRequest {
-    query?: any;
+    query?: GetSettingsQuery;
 }
 
 export class GetSettingsUseCase extends UseCase<GetSettingsRequest, SettingDTO[]> {

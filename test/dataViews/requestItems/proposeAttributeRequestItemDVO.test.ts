@@ -236,7 +236,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect((resultItem2.content.value as any).value).toBe("Weigl");
 
         const givenNameRepositoryResult = await consumptionServices2.attributes.getAttributes({
-            query: { shareInfo: "!", content: { value: { "@type": "GivenName" } } }
+            query: { shareInfo: "!", "content.value.@type": "GivenName" }
         });
         expect(givenNameRepositoryResult.value).toHaveLength(1);
 
@@ -250,7 +250,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(acceptResult).toBeSuccessful();
 
         const givenNameRepositoryResult2 = await consumptionServices2.attributes.getAttributes({
-            query: { shareInfo: "!", content: { value: { "@type": "GivenName" } } }
+            query: { shareInfo: "!", "content.value.@type": "GivenName" }
         });
         expect(givenNameRepositoryResult2.value).toHaveLength(1);
     });
@@ -310,11 +310,14 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect((responseItem.attribute.value as any).value).toBe("Marlene");
 
         const givenNameRepositoryResult = await consumptionServices2.attributes.getAttributes({
-            query: { shareInfo: "!", content: { value: { "@type": "GivenName" } } }
+            query: {
+                shareInfo: "!",
+                "content.value.@type": "GivenName"
+            }
         });
         expect(givenNameRepositoryResult.value).toHaveLength(1);
 
-        const surnameRepositoryResult = await consumptionServices2.attributes.getAttributes({ query: { shareInfo: "!", content: { value: { "@type": "Surname" } } } });
+        const surnameRepositoryResult = await consumptionServices2.attributes.getAttributes({ query: { shareInfo: "!", "content.value.@type": "Surname" } });
         expect(surnameRepositoryResult.value).toHaveLength(2);
 
         const givenNameShareResult = await consumptionServices2.attributes.getValidAttributes({

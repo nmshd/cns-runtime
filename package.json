@@ -1,6 +1,6 @@
 {
     "name": "@nmshd/runtime",
-    "version": "2.0.0-alpha.34",
+    "version": "2.0.0-alpha.35",
     "description": "The Enmeshed client runtime.",
     "homepage": "https://enmeshed.eu",
     "license": "MIT",
@@ -74,7 +74,7 @@
         "@alex_neo/jest-expect-message": "^1.0.5",
         "@js-soft/docdb-access-loki": "1.0.3",
         "@js-soft/docdb-access-mongo": "1.1.1",
-        "@js-soft/eslint-config-ts": "^1.5.2",
+        "@js-soft/eslint-config-ts": "^1.6.0",
         "@js-soft/license-check": "1.0.4",
         "@js-soft/node-logger": "1.0.1",
         "@types/jest": "^28.1.5",
