@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { OwnerRestriction, RelationshipTemplateDTO, TransportServices } from "../../src";
+import { GetRelationshipTemplatesQuery, OwnerRestriction, RelationshipTemplateDTO, TransportServices } from "../../src";
 import { createTemplate, exchangeTemplate, QueryParamConditions, RuntimeServiceProvider } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
@@ -145,7 +145,7 @@ describe("Serialization Errors", () => {
 describe("RelationshipTemplates query", () => {
     test("query all relationshipTemplates", async () => {
         const template = await createTemplate(transportServices1);
-        const conditions = new QueryParamConditions<any>(template, transportServices1)
+        const conditions = new QueryParamConditions<GetRelationshipTemplatesQuery>(template, transportServices1)
             .addBooleanSet("isOwn")
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
@@ -159,7 +159,7 @@ describe("RelationshipTemplates query", () => {
 
     test("query own relationshipTemplates", async () => {
         const template = await createTemplate(transportServices1);
-        const conditions = new QueryParamConditions<any>(template, transportServices1)
+        const conditions = new QueryParamConditions<GetRelationshipTemplatesQuery>(template, transportServices1)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
@@ -171,7 +171,7 @@ describe("RelationshipTemplates query", () => {
 
     test("query peerRelationshipTemplates", async () => {
         const template = await exchangeTemplate(transportServices1, transportServices2);
-        const conditions = new QueryParamConditions<any>(template, transportServices2)
+        const conditions = new QueryParamConditions<GetRelationshipTemplatesQuery>(template, transportServices2)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
