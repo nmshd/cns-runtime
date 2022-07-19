@@ -103,8 +103,8 @@ describe("Relationships query", () => {
     test("query own relationship", async () => {
         const relationship = await getRelationship(transportServices1);
         const conditions = new QueryParamConditions<GetRelationshipsQuery>(relationship, transportServices1)
-            // .addStringSet("peer")
-            // .addStringSet("status")
+            .addStringSet("peer")
+            .addStringSet("status")
             .addStringSet("template.id");
         await conditions.executeTests((c, q) => c.relationships.getRelationships({ query: q }));
     });
