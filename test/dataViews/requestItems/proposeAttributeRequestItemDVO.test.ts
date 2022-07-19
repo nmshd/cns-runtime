@@ -148,7 +148,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(requestItemDVO.query).toBeDefined();
         expect(requestItemDVO.query.type).toBe("IdentityAttributeQueryDVO");
         expect((requestItemDVO.query as any).results).toBeUndefined();
-        // expect(requestItemDVO.query.renderHints.dataType).toBe("String");
+        expect(requestItemDVO.query.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.query.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.query.valueHints.max).toBe(200);
         expect(requestItemDVO.mustBeAccepted).toBe(true);
@@ -196,7 +196,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(requestItemDVO.query).toBeDefined();
         expect(requestItemDVO.query.type).toBe("ProcessedIdentityAttributeQueryDVO");
         expect(requestItemDVO.query.results).toHaveLength(1);
-        // expect(requestItemDVO.query.renderHints.dataType).toBe("String");
+        expect(requestItemDVO.query.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.query.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.query.valueHints.max).toBe(200);
         expect(requestItemDVO.mustBeAccepted).toBe(true);
@@ -224,7 +224,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(requestItemDVO.query).toBeDefined();
         expect(requestItemDVO.query.type).toBe("ProcessedIdentityAttributeQueryDVO");
         expect(requestItemDVO.query.results).toHaveLength(1);
-        // expect(requestItemDVO.query.renderHints.dataType).toBe("String");
+        expect(requestItemDVO.query.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.query.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.query.valueHints.max).toBe(200);
         expect(requestItemDVO.mustBeAccepted).toBe(true);
@@ -277,7 +277,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(requestItemDVO.query).toBeDefined();
         expect(requestItemDVO.query.type).toBe("IdentityAttributeQueryDVO");
         expect((requestItemDVO.query as any).results).toBeUndefined();
-        // expect(requestItemDVO.query.renderHints.dataType).toBe("String");
+        expect(requestItemDVO.query.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.query.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.query.valueHints.max).toBe(200);
         expect(requestItemDVO.mustBeAccepted).toBe(true);
@@ -371,7 +371,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(requestItemDVO.query).toBeDefined();
         expect(requestItemDVO.query.type).toBe("IdentityAttributeQueryDVO");
         expect((requestItemDVO.query as any).results).toBeUndefined();
-        // expect(requestItemDVO.query.renderHints.dataType).toBe("String");
+        expect(requestItemDVO.query.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.query.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.query.valueHints.max).toBe(200);
         expect(requestItemDVO.mustBeAccepted).toBe(true);

@@ -118,32 +118,6 @@ beforeAll(async () => {
         throw acceptResult.error;
     }
 
-    // TODO: BLOCK START - Remove this block once we transfer sourceAttributeIds with CreateAttributeRequestItems
-
-    /*
-    const attributesFacade = consumptionServices2.attributes as any;
-    const attributesUsecase = attributesFacade.createAttributeUseCase;
-    const attributesController = attributesUsecase.attributeController;
-
-    async function fixSourceAttributeOfLocalAttribute(localAttributeId: string, sourceAttribute: string): Promise<void> {
-        const current = await attributesController.attributes.findOne({
-            id: localAttributeId
-        });
-        if (!current) {
-            throw new Error("Local Attribute not found");
-        }
-        const updatedLocalAttribute = LocalAttribute.from(current);
-        if (!updatedLocalAttribute.shareInfo) {
-            throw new Error("Only shared attributes can be fixed.");
-        }
-        updatedLocalAttribute.shareInfo.sourceAttribute = CoreId.from(sourceAttribute);
-
-        await attributesController.attributes.update(current, updatedLocalAttribute);
-    }
-    */
-
-    // TODO: BLOCK STOP - Remove this block once we transfer sourceAttributeIds with CreateAttributeRequestItems
-
     const waitForOutgoingRequestCreatedAndCompleted = waitForEvent(eventBus2, OutgoingRequestStatusChangedEvent, 50000);
     const senderMessages = await syncUntilHasMessages(transportServices2, 1);
 
@@ -152,17 +126,6 @@ beforeAll(async () => {
     }
 
     await waitForOutgoingRequestCreatedAndCompleted;
-
-    /*
-    const sharedGivenNameResult = await consumptionServices2.attributes.getAttributes({
-        query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: address1 } }
-    });
-    await fixSourceAttributeOfLocalAttribute(sharedGivenNameResult.value[0].id, givenNameId);
-    const sharedSurnameResult = await consumptionServices2.attributes.getAttributes({
-        query: { content: { value: { "@type": "Surname" } }, shareInfo: { peer: address1 } }
-    });
-    await fixSourceAttributeOfLocalAttribute(sharedSurnameResult.value[0].id, surnameId);
-    */
 }, 30000);
 
 afterAll(() => serviceProvider.stop());
@@ -249,6 +212,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Marlene");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(false);
@@ -280,6 +244,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Marlene");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(false);
@@ -423,6 +388,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Marlene");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -459,6 +425,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Marlene");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -528,6 +495,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Marlene");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);

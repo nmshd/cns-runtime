@@ -139,6 +139,7 @@ describe("CreateAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Theodor");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -175,6 +176,7 @@ describe("CreateAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Theodor");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -232,6 +234,7 @@ describe("CreateAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Theodor");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
