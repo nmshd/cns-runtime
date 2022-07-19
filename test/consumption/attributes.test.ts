@@ -15,10 +15,12 @@ import { RuntimeServiceProvider } from "../lib/RuntimeServiceProvider";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
 let consumptionServices: ConsumptionServices;
+let ownAddress: string;
 
 beforeAll(async () => {
     const runtimeServices = await runtimeServiceProvider.launch(1);
     consumptionServices = runtimeServices[0].consumption;
+    ownAddress = (await runtimeServices[0].transport.account.getIdentityInfo()).value.address;
 }, 30000);
 afterAll(async () => await runtimeServiceProvider.stop());
 
@@ -31,7 +33,7 @@ describe("Attributes", () => {
                     "@type": "Surname",
                     value: "ASurname"
                 },
-                owner: "address"
+                owner: ownAddress
             }
         };
 
@@ -42,7 +44,7 @@ describe("Attributes", () => {
                     "@type": "GivenName",
                     value: "AGivenName"
                 },
-                owner: "address"
+                owner: ownAddress
             }
         };
         await consumptionServices.attributes.createAttribute(surnameParams);
@@ -79,7 +81,7 @@ describe("Attributes", () => {
                     country: "DE"
                 },
                 validTo: CoreDate.utc().toString(),
-                owner: "address"
+                owner: ownAddress
             }
         };
 
@@ -92,7 +94,7 @@ describe("Attributes", () => {
                     month: 2,
                     year: 2022
                 },
-                owner: "address"
+                owner: ownAddress
             }
         };
 
@@ -134,7 +136,7 @@ describe("Attributes", () => {
                     "@type": "DisplayName",
                     value: "ADisplayName"
                 },
-                owner: "address"
+                owner: ownAddress
             }
         };
 
@@ -149,7 +151,7 @@ describe("Attributes", () => {
                     "@type": "DisplayName",
                     value: "ANewDisplayName"
                 },
-                owner: "address",
+                owner: ownAddress,
                 validFrom: successorDate.toString()
             },
             succeeds: attributeId
@@ -166,13 +168,13 @@ describe("Attributes", () => {
         const allAttributesJSON = allAttributes.value.map((v) => v.id);
         expect(allAttributesJSON).toContain(succeededAttribute.value.id);
 
-        const currentAttributes = await consumptionServices.attributes.getValidAttributes({});
+        const currentAttributes = await consumptionServices.attributes.getAttributes({ onlyValid: true });
         const currentAttributesJSON = currentAttributes.value.map((v) => v.id);
         expect(currentAttributesJSON).not.toContain(succeededAttribute.value.id);
         expect(currentAttributesJSON).toContain(succeessorAttribute.value.id);
     });
 
-    test("should allow to create a share copy", async function () {
+    test("should allow to create a shared copy", async function () {
         const nationalityParams: CreateAttributeRequest = {
             content: {
                 "@type": "IdentityAttribute",
@@ -180,7 +182,7 @@ describe("Attributes", () => {
                     "@type": "Nationality",
                     value: "DE"
                 },
-                owner: "address"
+                owner: ownAddress
             }
         };
         const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
@@ -200,6 +202,28 @@ describe("Attributes", () => {
         expect(sharedNationalityAttribute.shareInfo?.peer).toBe(peer);
     });
 
+    test("should return only shared copy on sharedToPeer request", async function () {
+        const nationalityParams: CreateAttributeRequest = {
+            content: {
+                "@type": "IdentityAttribute",
+                value: {
+                    "@type": "Nationality",
+                    value: "DE"
+                },
+                owner: ownAddress
+            }
+        };
+        const peer = "A35characterLongAddress".padStart(35, "1");
+
+        const sharedToPeerAttributeResult = await consumptionServices.attributes.getSharedToPeerAttributes({ peer: peer });
+        expect(sharedToPeerAttributeResult).toBeSuccessful();
+        expect(sharedToPeerAttributeResult.value).toHaveLength(1);
+
+        const sharedNationalityAttribute = sharedToPeerAttributeResult.value[0];
+        expect(sharedNationalityAttribute.content).toMatchObject(nationalityParams.content);
+        expect(sharedNationalityAttribute.shareInfo?.peer).toBe(peer);
+    });
+
     test("should allow to update an attribute", async () => {
         const addressParams: CreateAttributeRequest = {
             content: {
@@ -214,7 +238,7 @@ describe("Attributes", () => {
                     country: "DE"
                 },
                 validTo: CoreDate.utc().toString(),
-                owner: "address"
+                owner: ownAddress
             }
         };
 
@@ -233,7 +257,7 @@ describe("Attributes", () => {
                     country: "DE"
                 },
                 validTo: CoreDate.utc().toString(),
-                owner: "address"
+                owner: ownAddress
             }
         };
         const newAddress = await consumptionServices.attributes.updateAttribute(updateParams);
@@ -250,7 +274,7 @@ describe("Attributes", () => {
                     "@type": "Nationality",
                     value: "DE"
                 },
-                owner: "address"
+                owner: ownAddress
             }
         };
         const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
@@ -267,7 +291,7 @@ describe("Attributes", () => {
                     "@type": "EMailAddress",
                     value: "a.mailaddress@provider.com"
                 },
-                owner: "address"
+                owner: ownAddress
             }
         };
         const nationalityAttribute = await consumptionServices.attributes.createAttribute(nationalityParams);
@@ -290,7 +314,7 @@ describe("Attributes", () => {
                     "@type": "Phone",
                     value: "012345678910"
                 },
-                owner: "address"
+                owner: ownAddress
             }
         };
         const identityAttribute = await consumptionServices.attributes.createAttribute(identityAttributeRequest);
@@ -303,7 +327,7 @@ describe("Attributes", () => {
                 },
                 key: "phone",
                 confidentiality: "protected" as RelationshipAttributeConfidentiality,
-                owner: "address"
+                owner: ownAddress
             }
         };
         const relationshipAttribute = await consumptionServices.attributes.createAttribute(relationshipAttributeRequest);
@@ -327,7 +351,7 @@ describe("Attributes", () => {
                     "@type": "Website",
                     value: "AWebsiteAddress"
                 },
-                owner: "address"
+                owner: ownAddress
             }
         };
         const identityAttribute = await consumptionServices.attributes.createAttribute(identityAttributeRequest);
@@ -340,14 +364,14 @@ describe("Attributes", () => {
                 },
                 key: "website",
                 confidentiality: RelationshipAttributeConfidentiality.Protected,
-                owner: "address"
+                owner: ownAddress
             }
         };
         const relationshipAttribute = await consumptionServices.attributes.createAttribute(relationshipAttributeRequest);
         const relationshipAttributeQuery: RelationshipAttributeQueryJSON = {
             "@type": "RelationshipAttributeQuery",
             key: "website",
-            owner: "address",
+            owner: ownAddress,
             valueType: "Website",
             attributeCreationHints: { title: "AnAttributeHint", confidentiality: RelationshipAttributeConfidentiality.Protected }
         };

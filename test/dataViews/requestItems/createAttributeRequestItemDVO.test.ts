@@ -191,7 +191,7 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(responseItem.result).toBe("Accepted");
         expect(responseItem["@type"]).toBe("CreateAttributeAcceptResponseItem");
 
-        const attributeResult = await consumptionServices2.attributes.getValidAttributes({
+        const attributeResult = await consumptionServices2.attributes.getAttributes({
             query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.createdBy.id } }
         });
         expect(attributeResult).toBeSuccessful();
@@ -249,7 +249,7 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(responseItem["@type"]).toBe("CreateAttributeAcceptResponseItem");
         expect(responseItem.attributeId).toBeDefined();
 
-        const attributeResult = await consumptionServices1.attributes.getValidAttributes({
+        const attributeResult = await consumptionServices1.attributes.getAttributes({
             query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.request.peer.id } }
         });
         expect(attributeResult).toBeSuccessful();
@@ -257,5 +257,17 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect((attributeResult.value[0].content.value as any).value).toBe("Theodor");
 
         expect(responseItem.attributeId).toStrictEqual(attributeResult.value[0].id);
+    });
+
+    test("check the attributes for the sender", async () => {
+        const dvo = (await expander1.expandMessageDTO(senderMessage)) as RequestMessageDVO;
+        const attributeResult = await consumptionServices1.attributes.getSharedToPeerAttributes({
+            peer: dvo.request.peer.id
+        });
+
+        expect(attributeResult).toBeSuccessful();
+        expect(attributeResult.value).toHaveLength(1);
+        expect(attributeResult.value[0].id).toBeDefined();
+        expect((attributeResult.value[0].content.value as any).value).toBe("Theodor");
     });
 });

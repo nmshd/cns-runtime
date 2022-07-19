@@ -317,7 +317,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         const surnameRepositoryResult = await consumptionServices2.attributes.getAttributes({ query: { shareInfo: "!", content: { value: { "@type": "Surname" } } } });
         expect(surnameRepositoryResult.value).toHaveLength(2);
 
-        const givenNameShareResult = await consumptionServices2.attributes.getValidAttributes({
+        const givenNameShareResult = await consumptionServices2.attributes.getAttributes({
             query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.createdBy.id } }
         });
         expect(givenNameShareResult).toBeSuccessful();
@@ -330,7 +330,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(responseItem2["@type"]).toBe("ProposeAttributeAcceptResponseItem");
         expect(responseItem2.attribute).toBeDefined();
 
-        const surnameShareResult = await consumptionServices2.attributes.getValidAttributes({
+        const surnameShareResult = await consumptionServices2.attributes.getAttributes({
             query: { content: { value: { "@type": "Surname" } }, shareInfo: { peer: dvo.createdBy.id } }
         });
         expect(surnameShareResult).toBeSuccessful();
@@ -403,7 +403,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(responseItem2["@type"]).toBe("ProposeAttributeAcceptResponseItem");
         expect(responseItem2.attributeId).toBeDefined();
 
-        const givenNameResult = await consumptionServices1.attributes.getValidAttributes({
+        const givenNameResult = await consumptionServices1.attributes.getAttributes({
             query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.request.peer.id } }
         });
         expect(givenNameResult).toBeSuccessful();
@@ -412,7 +412,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
 
         expect(responseItem.attributeId).toStrictEqual(givenNameResult.value[0].id);
 
-        const surnameResult = await consumptionServices1.attributes.getValidAttributes({
+        const surnameResult = await consumptionServices1.attributes.getAttributes({
             query: { content: { value: { "@type": "Surname" } }, shareInfo: { peer: dvo.request.peer.id } }
         });
         expect(surnameResult).toBeSuccessful();
