@@ -1,6 +1,6 @@
 import fs from "fs";
 import { DateTime } from "luxon";
-import { FileDTO, OwnerRestriction, TransportServices } from "../../src";
+import { FileDTO, GetFilesQuery, OwnerRestriction, TransportServices } from "../../src";
 import { createToken, exchangeFile, makeUploadRequest, QueryParamConditions, RuntimeServiceProvider, uploadFile } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
@@ -132,7 +132,7 @@ describe("Upload big files", () => {
 describe("Files query", () => {
     test("files can be queried by their attributes", async () => {
         const file = await uploadFile(transportServices1);
-        const conditions = new QueryParamConditions(file, transportServices1)
+        const conditions = new QueryParamConditions<GetFilesQuery>(file, transportServices1)
             .addDateSet("createdAt")
             .addDateSet("createdBy")
             .addDateSet("createdByDevice")
@@ -149,7 +149,7 @@ describe("Files query", () => {
 
     test("own files can be queried by their attributes", async () => {
         const file = await uploadFile(transportServices1);
-        const conditions = new QueryParamConditions(file, transportServices1)
+        const conditions = new QueryParamConditions<GetFilesQuery>(file, transportServices1)
             .addDateSet("createdAt")
             .addDateSet("createdBy")
             .addDateSet("createdByDevice")
@@ -165,7 +165,7 @@ describe("Files query", () => {
 
     test("peer files can be queried by their attributes", async () => {
         const file = await exchangeFile(transportServices1, transportServices2);
-        const conditions = new QueryParamConditions(file, transportServices2)
+        const conditions = new QueryParamConditions<GetFilesQuery>(file, transportServices2)
             .addDateSet("createdAt")
             .addDateSet("createdBy")
             .addDateSet("createdByDevice")
