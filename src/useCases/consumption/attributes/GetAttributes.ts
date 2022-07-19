@@ -12,6 +12,9 @@ import { AttributeMapper } from "./AttributeMapper";
 
 export interface GetAttributesRequest {
     query?: GetAttributesRequestQuery;
+    onlyIdentityAttributes?: boolean;
+    onlyValid?: boolean;
+    valueTypes?: string[];
 }
 
 export interface GetAttributesRequestQuery {
@@ -42,7 +45,7 @@ export interface GetAttributesRequestQuery {
 }
 
 export class GetAttributesUseCase extends UseCase<GetAttributesRequest, LocalAttributeDTO[]> {
-    private static readonly queryTranslator = new QueryTranslator({
+    public static readonly queryTranslator = new QueryTranslator({
         whitelist: {
             [nameof<LocalAttributeDTO>((x) => x.createdAt)]: true,
             [nameof<LocalAttributeDTO>((x) => x.succeeds)]: true,
@@ -155,9 +158,19 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, LocalAtt
     }
 
     protected async executeInternal(request: GetAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
-        const flattenedQuery = flattenObject(request.query);
+        const query: GetAttributesRequestQuery = { ...request.query };
+        if (!query.content) query.content = {};
+        if (request.onlyIdentityAttributes) {
+            query.content["@type"] = "IdentityAttribute";
+        }
+        const flattenedQuery = flattenObject(query);
         const dbQuery = GetAttributesUseCase.queryTranslator.parse(flattenedQuery);
-        const attributes = await this.attributeController.getLocalAttributes(dbQuery);
+        let attributes;
+        if (request.onlyValid) {
+            attributes = await this.attributeController.getValidLocalAttributes(dbQuery);
+        } else {
+            attributes = await this.attributeController.getLocalAttributes(dbQuery);
+        }
         return Result.ok(AttributeMapper.toAttributeDTOList(attributes));
     }
 }
