@@ -54,13 +54,17 @@ export class GetMessagesUseCase extends UseCase<GetMessagesRequest, MessageDTO[]
             )}.${nameof<MessageEnvelopeRecipient>((r) => r.address)}`,
             [`${nameof<MessageDTO>((m) => m.content)}.@type`]: `${nameof<Message>((m) => m.cache)}.${nameof<CachedMessage>((m) => m.content)}.@type`,
             [`${nameof<MessageDTO>((m) => m.content)}.body`]: `${nameof<Message>((m) => m.cache)}.${nameof<CachedMessage>((m) => m.content)}.body`,
-            [`${nameof<MessageDTO>((m) => m.content)}.subject`]: `${nameof<Message>((m) => m.cache)}.${nameof<CachedMessage>((m) => m.content)}.subject`,
-            [nameof<MessageDTO>((m) => m.attachments)]: `${nameof<Message>((m) => m.cache)}.${nameof<CachedMessage>((m) => m.attachments)}`
+            [`${nameof<MessageDTO>((m) => m.content)}.subject`]: `${nameof<Message>((m) => m.cache)}.${nameof<CachedMessage>((m) => m.content)}.subject`
         },
 
         custom: {
             [`${nameof<MessageDTO>((m) => m.recipients)}.${nameof<RecipientDTO>((r) => r.relationshipId)}`]: (query: any, input: any) => {
                 query[nameof<Message>((m) => m.relationshipIds)] = {
+                    $containsAny: Array.isArray(input) ? input : [input]
+                };
+            },
+            [nameof<MessageDTO>((m) => m.attachments)]: (query: any, input: any) => {
+                query[`${nameof<Message>((m) => m.cache)}.${nameof<CachedMessage>((m) => m.attachments)}`] = {
                     $containsAny: Array.isArray(input) ? input : [input]
                 };
             },
