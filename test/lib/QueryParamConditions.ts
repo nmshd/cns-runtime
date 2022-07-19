@@ -13,14 +13,14 @@ type PartialRecord<K extends keyof any, T> = {
     [P in K]?: T;
 };
 
-export class QueryParamConditions<TQuery extends PartialRecord<keyof TQuery, string | string[] | undefined>, TServices = TransportServices> {
+export class QueryParamConditions<TQuery extends PartialRecord<keyof TQuery, string | string[]>, TServices = TransportServices> {
     private readonly _conditions: ICondition<TQuery>[];
 
     public constructor(private readonly object: any, private readonly services: TServices) {
         this._conditions = [];
     }
 
-    public addDateSet(key: string & keyof TQuery & keyof TQuery, positiveValue?: string): this {
+    public addDateSet(key: string & keyof TQuery, positiveValue?: string): this {
         if (!positiveValue) {
             positiveValue = this.getValueByKey(key);
         }
