@@ -7,8 +7,14 @@ import { DraftDTO } from "../../../types";
 import { RuntimeValidator, UseCase } from "../../common";
 import { DraftMapper } from "./DraftMapper";
 
+export interface GetDraftsQuery {
+    type?: string | string[];
+    createdAt?: string | string[];
+    lastModifiedAt?: string | string[];
+}
+
 export interface GetDraftsRequest {
-    query?: any;
+    query?: GetDraftsQuery;
 }
 
 export class GetDraftsUseCase extends UseCase<GetDraftsRequest, DraftDTO[]> {

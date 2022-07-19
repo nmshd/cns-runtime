@@ -1,4 +1,4 @@
-import { ConsumptionServices } from "../../src";
+import { ConsumptionServices, GetDraftsQuery } from "../../src";
 import { QueryParamConditions, RuntimeServiceProvider } from "../lib";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
@@ -73,7 +73,10 @@ describe("Drafts query", () => {
 
         const draft = result.value;
 
-        const conditions = new QueryParamConditions<ConsumptionServices>(draft, consumptionServices).addStringSet("type").addDateSet("createdAt").addDateSet("lastModifiedAt");
+        const conditions = new QueryParamConditions<GetDraftsQuery, ConsumptionServices>(draft, consumptionServices)
+            .addStringSet("type")
+            .addDateSet("createdAt")
+            .addDateSet("lastModifiedAt");
 
         await conditions.executeTests((c, q) => c.drafts.getDrafts({ query: q }));
     });

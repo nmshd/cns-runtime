@@ -7,6 +7,16 @@ import { RelationshipTemplateDTO } from "../../../types";
 import { OwnerRestriction, RuntimeValidator, UseCase } from "../../common";
 import { RelationshipTemplateMapper } from "./RelationshipTemplateMapper";
 
+export interface GetRelationshipTemplatesQuery {
+    isOwn?: string | string[];
+    createdAt?: string | string[];
+    expiresAt?: string | string[];
+    createdBy?: string | string[];
+    createdByDevice?: string | string[];
+    maxNumberOfAllocations?: string | string[];
+    maxNumberOfRelationships?: string | string[];
+}
+
 export interface GetRelationshipTemplatesRequest {
     query?: any;
     ownerRestriction?: OwnerRestriction;

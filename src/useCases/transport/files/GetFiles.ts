@@ -7,8 +7,21 @@ import { FileDTO } from "../../../types";
 import { OwnerRestriction, RuntimeValidator, UseCase } from "../../common";
 import { FileMapper } from "./FileMapper";
 
+export interface GetFilesQuery {
+    createdAt?: string | string[];
+    createdBy?: string | string[];
+    createdByDevice?: string | string[];
+    description?: string | string[];
+    expiresAt?: string | string[];
+    filename?: string | string[];
+    filesize?: string | string[];
+    mimetype?: string | string[];
+    title?: string | string[];
+    isOwn?: string | string[];
+}
+
 export interface GetFilesRequest {
-    query?: any;
+    query?: GetFilesQuery;
     ownerRestriction?: OwnerRestriction;
 }
 

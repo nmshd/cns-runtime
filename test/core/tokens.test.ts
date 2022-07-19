@@ -1,4 +1,4 @@
-import { OwnerRestriction, TransportServices } from "../../src";
+import { GetTokensQuery, OwnerRestriction, TransportServices } from "../../src";
 import { exchangeToken, QueryParamConditions, RuntimeServiceProvider, uploadOwnToken } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
@@ -29,13 +29,13 @@ describe("Tokens errors", () => {
 describe("Tokens query", () => {
     test("query own tokens", async () => {
         const token = await uploadOwnToken(transportServices1);
-        const conditions = new QueryParamConditions(token, transportServices1).addDateSet("expiresAt").addDateSet("createdAt").addStringSet("createdByDevice");
+        const conditions = new QueryParamConditions<GetTokensQuery>(token, transportServices1).addDateSet("expiresAt").addDateSet("createdAt").addStringSet("createdByDevice");
         await conditions.executeTests((c, q) => c.tokens.getTokens({ query: q, ownerRestriction: OwnerRestriction.Own }));
     });
 
     test("query peer tokens", async () => {
         const token = await exchangeToken(transportServices1, transportServices2);
-        const conditions = new QueryParamConditions(token, transportServices2).addDateSet("expiresAt").addDateSet("createdAt").addStringSet("createdBy");
+        const conditions = new QueryParamConditions<GetTokensQuery>(token, transportServices2).addDateSet("expiresAt").addDateSet("createdAt").addStringSet("createdBy");
         await conditions.executeTests((c, q) => c.tokens.getTokens({ query: q, ownerRestriction: OwnerRestriction.Peer }));
     });
 });

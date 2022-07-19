@@ -234,7 +234,7 @@ export class DataViewExpander {
             let localRequest: LocalRequestDTO;
             if (isOwn) {
                 const localRequestsResult = await this.consumption.outgoingRequests.getRequests({
-                    query: { source: { reference: message.id } }
+                    query: { "source.reference": message.id }
                 });
                 if (localRequestsResult.value.length === 0) {
                     throw new Error("No LocalRequest has been found for this message id.");
@@ -245,7 +245,7 @@ export class DataViewExpander {
                 localRequest = localRequestsResult.value[0];
             } else {
                 const localRequestsResult = await this.consumption.incomingRequests.getRequests({
-                    query: { source: { reference: message.id } }
+                    query: { "source.reference": message.id }
                 });
                 if (localRequestsResult.value.length === 0) {
                     throw new Error("No LocalRequest has been found for this message id.");
@@ -320,7 +320,7 @@ export class DataViewExpander {
             if (!template.isOwn) {
                 const onNewRelationshipRequest = await this.consumption.incomingRequests.getRequests({
                     query: {
-                        source: { reference: template.id }
+                        "source.reference": template.id
                     }
                 });
                 localRequest = onNewRelationshipRequest.value[0];
@@ -614,7 +614,7 @@ export class DataViewExpander {
             };
         }
 
-        const sharedToPeerAttributes = await this.consumption.attributes.getAttributes({ query: { shareInfo: { sourceAttribute: attribute.id } } });
+        const sharedToPeerAttributes = await this.consumption.attributes.getAttributes({ query: { "shareInfo.sourceAttribute": attribute.id } });
         const sharedToPeerDVOs = await this.expandLocalAttributeDTOs(sharedToPeerAttributes.value);
 
         // Own Source Attribute

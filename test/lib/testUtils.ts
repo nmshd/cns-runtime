@@ -159,7 +159,7 @@ export async function exchangeToken(transportServicesCreator: TransportServices,
     return response.value;
 }
 
-export async function sendMessage(transportServices: TransportServices, recipient: string, content?: any): Promise<MessageDTO> {
+export async function sendMessage(transportServices: TransportServices, recipient: string, content?: any, attachments?: string[]): Promise<MessageDTO> {
     const response = await transportServices.messages.sendMessage({
         recipients: [recipient],
         content: content ?? {
@@ -168,7 +168,8 @@ export async function sendMessage(transportServices: TransportServices, recipien
             body: "This is the mail body",
             cc: [],
             to: [recipient]
-        }
+        },
+        attachments
     });
     expect(response).toBeSuccessful();
 
@@ -178,6 +179,19 @@ export async function sendMessage(transportServices: TransportServices, recipien
 export async function exchangeMessage(transportServicesCreator: TransportServices, transportServicesRecipient: TransportServices): Promise<MessageDTO> {
     const recipientAddress = (await getRelationship(transportServicesCreator)).peer;
     const messageId = (await sendMessage(transportServicesCreator, recipientAddress)).id;
+    const messages = await syncUntilHasMessages(transportServicesRecipient);
+    expect(messages).toHaveLength(1);
+
+    const message = messages[0];
+    expect(message.id).toStrictEqual(messageId);
+
+    return message;
+}
+
+export async function exchangeMessageWithAttachment(transportServicesCreator: TransportServices, transportServicesRecipient: TransportServices): Promise<MessageDTO> {
+    const file = await uploadFile(transportServicesCreator);
+    const recipientAddress = (await getRelationship(transportServicesCreator)).peer;
+    const messageId = (await sendMessage(transportServicesCreator, recipientAddress, undefined, [file.id])).id;
     const messages = await syncUntilHasMessages(transportServicesRecipient);
     expect(messages).toHaveLength(1);
 
@@ -300,7 +314,7 @@ export async function waitForEvent<TEvent>(
             resolve(event);
         });
     });
-    if (!timeout) return await eventPromise.finally(() => eventBus.unsubscribe(subscriptionTarget, subscriptionId));
+    if (!timeout) return await eventPromise.finally(() => eventBus.unsubscribe(subscriptionId));
 
     let timeoutId: NodeJS.Timeout;
     const timeoutPromise = new Promise<TEvent>((_resolve, reject) => {
@@ -311,7 +325,7 @@ export async function waitForEvent<TEvent>(
     });
 
     return await Promise.race([eventPromise, timeoutPromise]).finally(() => {
-        eventBus.unsubscribe(subscriptionTarget, subscriptionId);
+        eventBus.unsubscribe(subscriptionId);
         clearTimeout(timeoutId);
     });
 }

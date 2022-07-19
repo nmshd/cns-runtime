@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
-import { OwnerRestriction, RelationshipTemplateDTO, TransportServices } from "../../src";
-import { createTemplate, exchangeTemplate, QueryParamConditions, RuntimeServiceProvider } from "../lib";
+import { GetRelationshipTemplatesQuery, OwnerRestriction, RelationshipTemplateDTO, TransportServices } from "../../src";
+import { QueryParamConditions, RuntimeServiceProvider } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -144,40 +144,56 @@ describe("Serialization Errors", () => {
 
 describe("RelationshipTemplates query", () => {
     test("query all relationshipTemplates", async () => {
-        const template = await createTemplate(transportServices1);
-        const conditions = new QueryParamConditions(template, transportServices1)
+        const template = (
+            await transportServices1.relationshipTemplates.createOwnRelationshipTemplate({
+                maxNumberOfAllocations: 1,
+                expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
+                content: {}
+            })
+        ).value;
+        const conditions = new QueryParamConditions<GetRelationshipTemplatesQuery>(template, transportServices1)
             .addBooleanSet("isOwn")
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
-            .addNumberSet("maxNumberOfAllocations")
-            .addNumberSet("maxNumberOfRelationships");
+            .addNumberSet("maxNumberOfAllocations");
 
         await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates({ query: q }));
     });
 
     test("query own relationshipTemplates", async () => {
-        const template = await createTemplate(transportServices1);
-        const conditions = new QueryParamConditions(template, transportServices1)
+        const template = (
+            await transportServices1.relationshipTemplates.createOwnRelationshipTemplate({
+                maxNumberOfAllocations: 1,
+                expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
+                content: {}
+            })
+        ).value;
+        const conditions = new QueryParamConditions<GetRelationshipTemplatesQuery>(template, transportServices1)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
-            .addNumberSet("maxNumberOfAllocations")
-            .addNumberSet("maxNumberOfRelationships");
+            .addNumberSet("maxNumberOfAllocations");
         await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates({ query: q, ownerRestriction: OwnerRestriction.Own }));
     });
 
     test("query peerRelationshipTemplates", async () => {
-        const template = await exchangeTemplate(transportServices1, transportServices2);
-        const conditions = new QueryParamConditions(template, transportServices2)
+        const createdTemplate = (
+            await transportServices1.relationshipTemplates.createOwnRelationshipTemplate({
+                maxNumberOfAllocations: 1,
+                expiresAt: DateTime.utc().plus({ minutes: 10 }).toString(),
+                content: {}
+            })
+        ).value;
+        const peerTemplate = (await transportServices2.relationshipTemplates.loadPeerRelationshipTemplate({ reference: createdTemplate.truncatedReference })).value;
+        const conditions = new QueryParamConditions<GetRelationshipTemplatesQuery>(peerTemplate, transportServices2)
             .addDateSet("createdAt")
             .addDateSet("expiresAt")
             .addStringSet("createdBy")
             .addStringSet("createdByDevice")
-            .addNumberSet("maxNumberOfAllocations")
-            .addNumberSet("maxNumberOfRelationships");
+            .addNumberSet("maxNumberOfAllocations");
 
         await conditions.executeTests((c, q) => c.relationshipTemplates.getRelationshipTemplates({ query: q, ownerRestriction: OwnerRestriction.Peer }));
     });
