@@ -1,7 +1,7 @@
 import { QueryTranslator } from "@js-soft/docdb-querytranslator";
 import { Result } from "@js-soft/ts-utils";
 import { LocalAttribute, LocalAttributesController, LocalAttributeShareInfoJSON } from "@nmshd/consumption";
-import { AbstractAttributeJSON, IdentityAttribute, IdentityAttributeJSON, RelationshipAttributeConfidentiality, RelationshipAttributeJSON } from "@nmshd/content";
+import { AbstractAttributeJSON, IdentityAttribute, IdentityAttributeJSON, RelationshipAttributeJSON } from "@nmshd/content";
 import { DateTime } from "luxon";
 import { nameof } from "ts-simple-nameof";
 import { Inject } from "typescript-ioc";
@@ -19,29 +19,21 @@ export interface GetAttributesRequest {
 
 export interface GetAttributesRequestQuery {
     createdAt?: string;
-    content?: {
-        "@type"?: string;
-        tags?: string[];
-        owner?: string;
-        validFrom?: string;
-        validTo?: string;
-        key?: string;
-        isTechnical?: boolean;
-        confidentiality?: RelationshipAttributeConfidentiality;
-        value?: {
-            "@type"?: string;
-        };
-    };
-    succeeds?: string;
-    succeededBy?: string;
-    shareInfo?:
-        | {
-              requestReference?: string;
-              peer?: string;
-              sourceAttribute?: string;
-          }
-        | string;
-    [key: string]: unknown;
+    "content.@type"?: string | string[];
+    "content.tags"?: string | string[];
+    "content.owner"?: string | string[];
+    "content.validFrom"?: string | string[];
+    "content.validTo"?: string | string[];
+    "content.key"?: string | string[];
+    "content.isTechnical"?: string | string[];
+    "content.confidentiality"?: string | string[];
+    "content.value.@type"?: string | string[];
+    succeeds?: string | string[];
+    succeededBy?: string | string[];
+    shareInfo?: string | string[];
+    "shareInfo.requestReference"?: string | string[];
+    "shareInfo.peer"?: string | string[];
+    "shareInfo.sourceAttribute"?: string | string[];
 }
 
 export class GetAttributesUseCase extends UseCase<GetAttributesRequest, LocalAttributeDTO[]> {
@@ -66,7 +58,7 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, LocalAtt
             [`${nameof<LocalAttributeDTO>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.isTechnical)}`]: true,
             [`${nameof<LocalAttributeDTO>((x) => x.content)}.${nameof<RelationshipAttributeJSON>((x) => x.confidentiality)}`]: true,
 
-            // content.shareInfo
+            // shareInfo
             [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}`]: true,
             [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}.${nameof<LocalAttributeShareInfoJSON>((x) => x.peer)}`]: true,
             [`${nameof<LocalAttributeDTO>((x) => x.shareInfo)}.${nameof<LocalAttributeShareInfoJSON>((x) => x.requestReference)}`]: true,
@@ -159,9 +151,8 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, LocalAtt
 
     protected async executeInternal(request: GetAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
         const query: GetAttributesRequestQuery = { ...request.query };
-        if (!query.content) query.content = {};
         if (request.onlyIdentityAttributes) {
-            query.content["@type"] = "IdentityAttribute";
+            query["content.@type"] = "IdentityAttribute";
         }
         const flattenedQuery = flattenObject(query);
         const dbQuery = GetAttributesUseCase.queryTranslator.parse(flattenedQuery);

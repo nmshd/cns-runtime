@@ -7,8 +7,14 @@ import { RelationshipDTO, RelationshipTemplateDTO } from "../../../types";
 import { RuntimeValidator, UseCase } from "../../common";
 import { RelationshipMapper } from "./RelationshipMapper";
 
+export interface GetRelationshipsQuery {
+    peer?: string | string[];
+    type?: string | string[];
+    "template.id"?: string | string[];
+}
+
 export interface GetRelationshipsRequest {
-    query?: any;
+    query?: GetRelationshipsQuery;
 }
 
 export class GetRelationshipsUseCase extends UseCase<GetRelationshipsRequest, RelationshipDTO[]> {
@@ -22,7 +28,6 @@ export class GetRelationshipsUseCase extends UseCase<GetRelationshipsRequest, Re
             [`${nameof<RelationshipDTO>((r) => r.template)}.${nameof<RelationshipTemplateDTO>((r) => r.id)}`]: `${nameof<Relationship>(
                 (r) => r.cache
             )}.${nameof<CachedRelationship>((r) => r.template)}.${nameof<RelationshipTemplate>((r) => r.id)}`,
-            [nameof<RelationshipDTO>((r) => r.peer)]: nameof<Relationship>((r) => r.peer),
             [nameof<RelationshipDTO>((r) => r.status)]: nameof<Relationship>((r) => r.status),
             [nameof<RelationshipDTO>((r) => r.peer)]: `${nameof<Relationship>((r) => r.peer)}.${nameof<Identity>((r) => r.address)}`
         }

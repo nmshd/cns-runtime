@@ -91,10 +91,12 @@ export class TestRuntime extends Runtime {
     }
 
     public async stop(): Promise<void> {
-        try {
-            await super.stop();
-        } catch (e) {
-            this.logger.error(e);
+        if (this.isInitialized) {
+            try {
+                await super.stop();
+            } catch (e) {
+                this.logger.error(e);
+            }
         }
 
         await this.dbConnection?.close();

@@ -1,6 +1,6 @@
 import { ConsumptionIds } from "@nmshd/consumption";
 import { CoreDate, TransportIds } from "@nmshd/transport";
-import { ConsumptionServices } from "../../src";
+import { ConsumptionServices, GetSettingsQuery } from "../../src";
 import { QueryParamConditions, RuntimeServiceProvider } from "../lib";
 
 const runtimeServiceProvider = new RuntimeServiceProvider();
@@ -90,12 +90,11 @@ describe("Settings query", () => {
 
         const setting = result.value;
 
-        const conditions = new QueryParamConditions<ConsumptionServices>(setting, consumptionServices)
+        const conditions = new QueryParamConditions<GetSettingsQuery, ConsumptionServices>(setting, consumptionServices)
             .addStringSet("key")
             .addStringSet("scope")
             .addStringSet("reference")
             .addDateSet("createdAt")
-            .addDateSet("deletedAt")
             .addStringSet("succeedsItem")
             .addDateSet("succeedsAt");
 

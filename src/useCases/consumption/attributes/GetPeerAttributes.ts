@@ -1,6 +1,5 @@
 import { Result } from "@js-soft/ts-utils";
 import { LocalAttributesController } from "@nmshd/consumption";
-import { RelationshipAttributeConfidentiality } from "@nmshd/content";
 import { Inject } from "typescript-ioc";
 import { LocalAttributeDTO } from "../../../types";
 import { UseCase } from "../../common";
@@ -17,22 +16,16 @@ export interface GetPeerAttributesRequest {
 
 export interface GetPeerAttributesRequestQuery {
     createdAt?: string;
-    content?: {
-        "@type"?: string;
-        tags?: string[];
-        validFrom?: string;
-        validTo?: string;
-        key?: string;
-        isTechnical?: boolean;
-        confidentiality?: RelationshipAttributeConfidentiality;
-        value?: {
-            "@type"?: string;
-        };
-    };
-    shareInfo?: {
-        requestReference?: string;
-    };
-    [key: string]: unknown;
+    "content.@type"?: string | string[];
+    "content.tags"?: string | string[];
+    "content.validFrom"?: string | string[];
+    "content.validTo"?: string | string[];
+    "content.key"?: string | string[];
+    "content.isTechnical"?: string | string[];
+    "content.confidentiality"?: string | string[];
+    "content.value.@type"?: string | string[];
+    shareInfo?: string | string[];
+    "shareInfo.requestReference"?: string | string[];
 }
 
 export class GetPeerAttributesUseCase extends UseCase<GetPeerAttributesRequest, LocalAttributeDTO[]> {
@@ -42,10 +35,9 @@ export class GetPeerAttributesUseCase extends UseCase<GetPeerAttributesRequest, 
 
     protected async executeInternal(request: GetPeerAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
         const query: GetAttributesRequestQuery = { ...request.query };
-        if (!query.content) query.content = {};
-        query.content.owner = request.peer;
+        query["content.owner"] = request.peer;
         if (request.onlyIdentityAttributes) {
-            query.content["@type"] = "IdentityAttribute";
+            query["content.@type"] = "IdentityAttribute";
         }
 
         const flattenedQuery = flattenObject(query);

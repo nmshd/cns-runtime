@@ -37,7 +37,7 @@ export class CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCa
             return Result.fail(RuntimeErrors.general.recordNotFound(RelationshipTemplate));
         }
 
-        const relationships = await this.relationshipController.getRelationships({ "cache.changes.id": request.relationshipChangeId }); // eslint-disable-line @typescript-eslint/naming-convention
+        const relationships = await this.relationshipController.getRelationships({ "cache.changes.id": request.relationshipChangeId });
         if (relationships.length === 0) {
             return Result.fail(RuntimeErrors.general.recordNotFound(RelationshipChange));
         }

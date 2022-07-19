@@ -7,8 +7,17 @@ import { SettingDTO } from "../../../types";
 import { RuntimeValidator, UseCase } from "../../common";
 import { SettingMapper } from "./SettingMapper";
 
+export interface GetSettingsQuery {
+    key?: string | string[];
+    scope?: string | string[];
+    reference?: string | string[];
+    createdAt?: string | string[];
+    succeedsItem?: string | string[];
+    succeedsAt?: string | string[];
+}
+
 export interface GetSettingsRequest {
-    query?: any;
+    query?: GetSettingsQuery;
 }
 
 export class GetSettingsUseCase extends UseCase<GetSettingsRequest, SettingDTO[]> {
@@ -18,7 +27,6 @@ export class GetSettingsUseCase extends UseCase<GetSettingsRequest, SettingDTO[]
             [nameof<SettingDTO>((c) => c.scope)]: true,
             [nameof<SettingDTO>((c) => c.reference)]: true,
             [nameof<SettingDTO>((c) => c.createdAt)]: true,
-            [nameof<SettingDTO>((c) => c.deletedAt)]: true,
             [nameof<SettingDTO>((c) => c.succeedsItem)]: true,
             [nameof<SettingDTO>((c) => c.succeedsAt)]: true
         }

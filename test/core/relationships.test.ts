@@ -1,4 +1,4 @@
-import { ConsumptionServices, TransportServices } from "../../src";
+import { ConsumptionServices, GetRelationshipsQuery, TransportServices } from "../../src";
 import { createTemplate, getRelationship, QueryParamConditions, RuntimeServiceProvider, syncUntilHasRelationships } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
@@ -102,7 +102,7 @@ describe("Create Relationship", () => {
 describe("Relationships query", () => {
     test("query own relationship", async () => {
         const relationship = await getRelationship(transportServices1);
-        const conditions = new QueryParamConditions(relationship, transportServices1)
+        const conditions = new QueryParamConditions<GetRelationshipsQuery>(relationship, transportServices1)
             // .addStringSet("peer")
             // .addStringSet("status")
             .addStringSet("template.id");

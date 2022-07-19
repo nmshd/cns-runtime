@@ -1,5 +1,5 @@
-import { TransportServices } from "../../src";
-import { establishRelationship, exchangeMessage, getRelationship, QueryParamConditions, RuntimeServiceProvider, syncUntilHasMessages, uploadFile } from "../lib";
+import { GetMessagesQuery, TransportServices } from "../../src";
+import { establishRelationship, exchangeMessageWithAttachment, getRelationship, QueryParamConditions, RuntimeServiceProvider, syncUntilHasMessages, uploadFile } from "../lib";
 
 const serviceProvider = new RuntimeServiceProvider();
 let transportServices1: TransportServices;
@@ -120,19 +120,17 @@ describe("Message errors", () => {
 
 describe("Message query", () => {
     test("query messages", async () => {
-        const message = await exchangeMessage(transportServices1, transportServices2);
-        const conditions = new QueryParamConditions(message, transportServices2)
+        const message = await exchangeMessageWithAttachment(transportServices1, transportServices2);
+        const conditions = new QueryParamConditions<GetMessagesQuery>(message, transportServices2)
             .addDateSet("createdAt")
             .addStringSet("createdBy")
             .addStringSet("recipients.address", message.recipients[0].address)
-            .addDateSet("recipients.receivedAt")
-            .addStringSet("recipients.receivedByDevice")
             .addStringSet("content.@type")
             .addStringSet("content.subject")
             .addStringSet("content.body")
             .addStringSet("createdByDevice")
             .addStringArraySet("attachments")
-            .addStringArraySet("recipients.relationship")
+            .addStringSet("recipients.relationshipId")
             .addSingleCondition({
                 key: "participant",
                 value: [message.createdBy, "id111111111111111111111111111111111"],
@@ -165,10 +163,10 @@ describe("Message query", () => {
             recipients: [addressRecipient2]
         });
 
-        const messagesToRecipient1 = await transportServices1.messages.getMessages({ query: { "recipients.relationshipId": relationshipToRecipient1.value.id } }); // eslint-disable-line @typescript-eslint/naming-convention
-        const messagesToRecipient2 = await transportServices1.messages.getMessages({ query: { "recipients.relationshipId": relationshipToRecipient2.value.id } }); // eslint-disable-line @typescript-eslint/naming-convention
+        const messagesToRecipient1 = await transportServices1.messages.getMessages({ query: { "recipients.relationshipId": relationshipToRecipient1.value.id } });
+        const messagesToRecipient2 = await transportServices1.messages.getMessages({ query: { "recipients.relationshipId": relationshipToRecipient2.value.id } });
         const messagesToRecipient1Or2 = await transportServices1.messages.getMessages({
-            query: { "recipients.relationshipId": [relationshipToRecipient1.value.id, relationshipToRecipient2.value.id] } // eslint-disable-line @typescript-eslint/naming-convention
+            query: { "recipients.relationshipId": [relationshipToRecipient1.value.id, relationshipToRecipient2.value.id] }
         });
 
         expect(messagesToRecipient1.value).toHaveLength(1);
