@@ -39,7 +39,9 @@ export class RequestModule extends RuntimeModule {
             case "Response":
                 const receivedResponse = event.data.content as ResponseJSON;
                 const result = await services.consumptionServices.outgoingRequests.complete({ receivedResponse, messageId: event.data.id });
-                if (result.isError) this.logger.error(`Could not complete outgoing request for message id ${event.data.id} due to ${result.error}`);
+                if (result.isError) {
+                    this.logger.error(`Could not complete outgoing request for message id ${event.data.id} due to ${result.error}. Root error:`, result.error);
+                }
                 break;
         }
     }
@@ -53,7 +55,7 @@ export class RequestModule extends RuntimeModule {
 
         const requestResult = await services.consumptionServices.outgoingRequests.sent({ requestId: request.id!, messageId: message.id });
         if (requestResult.isError) {
-            this.logger.error(`Could not mark request '${request.id}' as sent using message '${message.id}'.`);
+            this.logger.error(`Could not mark request '${request.id}' as sent using message '${message.id}'. Root error:`, requestResult.error);
             return;
         }
     }
@@ -61,13 +63,13 @@ export class RequestModule extends RuntimeModule {
     private async createIncomingRequest(services: RuntimeServices, request: RequestJSON, requestSourceId: string) {
         const receivedRequestResult = await services.consumptionServices.incomingRequests.received({ receivedRequest: request, requestSourceId });
         if (receivedRequestResult.isError) {
-            this.logger.error(`Could not receive request ${request.id}`, receivedRequestResult.error);
+            this.logger.error(`Could not receive request ${request.id}. Root error:`, receivedRequestResult.error);
             return;
         }
 
         const checkPrerequitesResult = await services.consumptionServices.incomingRequests.checkPrerequisites({ requestId: receivedRequestResult.value.id });
         if (checkPrerequitesResult.isError) {
-            this.logger.error(`Could not check prerequisites for request ${request.id}`, checkPrerequitesResult.error);
+            this.logger.error(`Could not check prerequisites for request ${request.id}. Root error:`, checkPrerequitesResult.error);
             return;
         }
     }
@@ -99,7 +101,7 @@ export class RequestModule extends RuntimeModule {
         const services = this.runtime.getServices(event.eventTargetAddress);
         const templateResult = await services.transportServices.relationshipTemplates.getRelationshipTemplate({ id: templateId });
         if (templateResult.isError) {
-            this.logger.error(`Could not find template with id '${templateId}'.`);
+            this.logger.error(`Could not find template with id '${templateId}'. Root error:`, templateResult.error);
             // TODO: error state
             return;
         }
@@ -113,7 +115,7 @@ export class RequestModule extends RuntimeModule {
 
         const createRelationshipResult = await services.transportServices.relationships.createRelationship({ templateId, content: creationChangeBody });
         if (createRelationshipResult.isError) {
-            this.logger.error(`Could not create relationship for templateId '${templateId}'.`);
+            this.logger.error(`Could not create relationship for templateId '${templateId}'. Root error:`, createRelationshipResult.error);
             // TODO: error state
             return;
         }
@@ -124,7 +126,7 @@ export class RequestModule extends RuntimeModule {
             responseSourceId: createRelationshipResult.value.changes[0].id
         });
         if (completeRequestResult.isError) {
-            this.logger.error(`Could not complete the request '${requestId}'.`);
+            this.logger.error(`Could not complete the request '${requestId}'. Root error:`, completeRequestResult.error);
             return;
         }
     }
@@ -140,7 +142,7 @@ export class RequestModule extends RuntimeModule {
             content: request.response!.content
         });
         if (sendMessageResult.isError) {
-            this.logger.error(`Could not send message to answer the request '${requestId}'.`);
+            this.logger.error(`Could not send message to answer the request '${requestId}'.`, sendMessageResult.error);
             // TODO: error state
             return;
         }
@@ -150,7 +152,7 @@ export class RequestModule extends RuntimeModule {
             responseSourceId: sendMessageResult.value.id
         });
         if (completeRequestResult.isError) {
-            this.logger.error(`Could not complete the request '${requestId}'.`);
+            this.logger.error(`Could not complete the request '${requestId}'. Root error:`, completeRequestResult.error);
             return;
         }
     }
@@ -175,7 +177,7 @@ export class RequestModule extends RuntimeModule {
 
         const result = await services.consumptionServices.outgoingRequests.createAndCompleteFromRelationshipCreationChange({ templateId, relationshipChangeId });
         if (result.isError) {
-            this.logger.error(`Could not create and complete request for templateId '${templateId}' and changeId '${relationshipChangeId}'.`, result.error);
+            this.logger.error(`Could not create and complete request for templateId '${templateId}' and changeId '${relationshipChangeId}'. Root error:`, result.error);
             return;
         }
     }
