@@ -321,7 +321,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(surnameRepositoryResult.value).toHaveLength(2);
 
         const givenNameShareResult = await consumptionServices2.attributes.getAttributes({
-            query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.createdBy.id } }
+            query: { "content.value.@type": "GivenName", "shareInfo.peer": dvo.createdBy.id }
         });
         expect(givenNameShareResult).toBeSuccessful();
         expect(givenNameShareResult.value).toHaveLength(1);
@@ -334,7 +334,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(responseItem2.attribute).toBeDefined();
 
         const surnameShareResult = await consumptionServices2.attributes.getAttributes({
-            query: { content: { value: { "@type": "Surname" } }, shareInfo: { peer: dvo.createdBy.id } }
+            query: { "content.value.@type": "Surname", "shareInfo.peer": dvo.createdBy.id }
         });
         expect(surnameShareResult).toBeSuccessful();
         expect(surnameShareResult.value).toHaveLength(1);
@@ -407,7 +407,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(responseItem2.attributeId).toBeDefined();
 
         const givenNameResult = await consumptionServices1.attributes.getAttributes({
-            query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.request.peer.id } }
+            query: { "content.value.@type": "GivenName", "shareInfo.peer": dvo.request.peer.id }
         });
         expect(givenNameResult).toBeSuccessful();
         expect(givenNameResult.value[0].id).toBeDefined();
@@ -416,7 +416,7 @@ describe("ProposeAttributeRequestItemDVO", () => {
         expect(responseItem.attributeId).toStrictEqual(givenNameResult.value[0].id);
 
         const surnameResult = await consumptionServices1.attributes.getAttributes({
-            query: { content: { value: { "@type": "Surname" } }, shareInfo: { peer: dvo.request.peer.id } }
+            query: { "content.value.@type": "Surname", "shareInfo.peer": dvo.request.peer.id }
         });
         expect(surnameResult).toBeSuccessful();
         expect(surnameResult.value[0].id).toBeDefined();

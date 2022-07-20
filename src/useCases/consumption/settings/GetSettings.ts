@@ -12,7 +12,6 @@ export interface GetSettingsQuery {
     scope?: string | string[];
     reference?: string | string[];
     createdAt?: string | string[];
-    deletedAt?: string | string[];
     succeedsItem?: string | string[];
     succeedsAt?: string | string[];
 }
@@ -28,7 +27,6 @@ export class GetSettingsUseCase extends UseCase<GetSettingsRequest, SettingDTO[]
             [nameof<SettingDTO>((c) => c.scope)]: true,
             [nameof<SettingDTO>((c) => c.reference)]: true,
             [nameof<SettingDTO>((c) => c.createdAt)]: true,
-            [nameof<SettingDTO>((c) => c.deletedAt)]: true,
             [nameof<SettingDTO>((c) => c.succeedsItem)]: true,
             [nameof<SettingDTO>((c) => c.succeedsAt)]: true
         }

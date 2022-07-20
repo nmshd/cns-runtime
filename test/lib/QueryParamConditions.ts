@@ -150,7 +150,7 @@ export class QueryParamConditions<TQuery extends PartialRecord<keyof TQuery, str
         }
 
         if (!value) {
-            console.warn(`No positiveValue for the given set provided (key: '${key}').`); // eslint-disable-line no-console
+            throw new Error(`No positiveValue for the given set provided (key: '${key}').`);
         }
 
         return value;

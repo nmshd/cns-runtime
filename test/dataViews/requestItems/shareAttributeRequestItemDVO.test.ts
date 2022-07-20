@@ -133,7 +133,7 @@ afterAll(() => serviceProvider.stop());
 describe("ShareAttributeRequestItemDVO", () => {
     test("check the prerequisites for identity 1 (share sender)", async () => {
         const givenNameResult = await consumptionServices1.attributes.getAttributes({
-            query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: address2 } }
+            query: { "content.value.@type": "GivenName", "shareInfo.peer": address2 }
         });
         expect(givenNameResult).toBeSuccessful();
         expect(givenNameResult.value).toHaveLength(1);
@@ -143,7 +143,7 @@ describe("ShareAttributeRequestItemDVO", () => {
 
         const givenNameResult2 = await consumptionServices1.attributes.getPeerAttributes({
             peer: address2,
-            query: { content: { value: { "@type": "GivenName" } } }
+            query: { "content.value.@type": "GivenName" }
         });
         expect(givenNameResult2).toBeSuccessful();
         expect(givenNameResult2.value).toHaveLength(1);
@@ -153,7 +153,7 @@ describe("ShareAttributeRequestItemDVO", () => {
     });
     test("check the prerequisites for identity 2 (attribute owner)", async () => {
         const givenNameResult = await consumptionServices2.attributes.getAttributes({
-            query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: address1 } }
+            query: { "content.value.@type": "GivenName", "shareInfo.peer": address1 }
         });
         expect(givenNameResult).toBeSuccessful();
         expect(givenNameResult.value[0].id).toBeDefined();
@@ -443,7 +443,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         expect(responseItem["@type"]).toBe("CreateAttributeAcceptResponseItem");
 
         const attributeResult = await consumptionServices3.attributes.getAttributes({
-            query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.createdBy.id } }
+            query: { "content.value.@type": "GivenName", "shareInfo.peer": dvo.createdBy.id }
         });
         expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value[0].id).toBeDefined();
@@ -453,7 +453,7 @@ describe("ShareAttributeRequestItemDVO", () => {
 
         const attributeResult2 = await consumptionServices3.attributes.getPeerAttributes({
             peer: dvo.createdBy.id,
-            query: { content: { value: { "@type": "GivenName" } } }
+            query: { "content.value.@type": "GivenName" }
         });
         expect(attributeResult2).toBeSuccessful();
         expect(attributeResult2.value).toHaveLength(1);
@@ -514,7 +514,7 @@ describe("ShareAttributeRequestItemDVO", () => {
         expect(responseItem.attributeId).toBeDefined();
 
         const attributeResult = await consumptionServices2.attributes.getAttributes({
-            query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.request.peer.id } }
+            query: { "content.value.@type": "GivenName", "shareInfo.peer": dvo.request.peer.id }
         });
         expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value).toHaveLength(1);
@@ -525,7 +525,7 @@ describe("ShareAttributeRequestItemDVO", () => {
 
         const attributeResult2 = await consumptionServices2.attributes.getSharedToPeerAttributes({
             peer: address3,
-            query: { content: { value: { "@type": "GivenName" } } }
+            query: { "content.value.@type": "GivenName" }
         });
         expect(attributeResult2).toBeSuccessful();
         expect(attributeResult2.value).toHaveLength(1);

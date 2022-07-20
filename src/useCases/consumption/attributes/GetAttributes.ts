@@ -151,9 +151,8 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, LocalAtt
 
     protected async executeInternal(request: GetAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
         const query: GetAttributesRequestQuery = { ...request.query };
-        if (!query.content) query.content = {};
         if (request.onlyIdentityAttributes) {
-            query.content["@type"] = "IdentityAttribute";
+            query["content.@type"] = "IdentityAttribute";
         }
         const flattenedQuery = flattenObject(query);
         const dbQuery = GetAttributesUseCase.queryTranslator.parse(flattenedQuery);
