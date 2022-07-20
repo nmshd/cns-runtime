@@ -109,7 +109,7 @@ describe("ReadAttributeRequestItemDVO", () => {
         expect(requestItemDVO.query).toBeDefined();
         expect(requestItemDVO.query.type).toBe("IdentityAttributeQueryDVO");
         expect((requestItemDVO.query as any).results).toBeUndefined();
-        // expect(requestItemDVO.query.renderHints.dataType).toBe("String");
+        expect(requestItemDVO.query.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.query.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.query.valueHints.max).toBe(200);
         expect(requestItemDVO.mustBeAccepted).toBe(true);
@@ -137,7 +137,7 @@ describe("ReadAttributeRequestItemDVO", () => {
         expect(requestItemDVO.query).toBeDefined();
         expect(requestItemDVO.query.type).toBe("ProcessedIdentityAttributeQueryDVO");
         expect(requestItemDVO.query.results).toHaveLength(1);
-        // expect(requestItemDVO.query.renderHints.dataType).toBe("String");
+        expect(requestItemDVO.query.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.query.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.query.valueHints.max).toBe(200);
         expect(requestItemDVO.mustBeAccepted).toBe(true);
@@ -176,7 +176,7 @@ describe("ReadAttributeRequestItemDVO", () => {
         expect(requestItemDVO.query).toBeDefined();
         expect(requestItemDVO.query.type).toBe("IdentityAttributeQueryDVO");
         expect((requestItemDVO.query as any).results).toBeUndefined();
-        // expect(requestItemDVO.query.renderHints.dataType).toBe("String");
+        expect(requestItemDVO.query.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.query.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.query.valueHints.max).toBe(200);
         expect(requestItemDVO.mustBeAccepted).toBe(true);
@@ -198,8 +198,8 @@ describe("ReadAttributeRequestItemDVO", () => {
         expect(responseItem.attribute.value["@type"]).toBe("GivenName");
         expect((responseItem.attribute.value as any).value).toBe("Theodor");
 
-        const attributeResult = await consumptionServices2.attributes.getValidAttributes({
-            query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.createdBy.id } }
+        const attributeResult = await consumptionServices2.attributes.getAttributes({
+            query: { "content.value.@type": "GivenName", "shareInfo.peer": dvo.createdBy.id }
         });
         expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value[0].id).toBeDefined();
@@ -238,7 +238,7 @@ describe("ReadAttributeRequestItemDVO", () => {
         expect(requestItemDVO.query).toBeDefined();
         expect(requestItemDVO.query.type).toBe("IdentityAttributeQueryDVO");
         expect((requestItemDVO.query as any).results).toBeUndefined();
-        // expect(requestItemDVO.query.renderHints.dataType).toBe("String");
+        expect(requestItemDVO.query.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.query.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.query.valueHints.max).toBe(200);
         expect(requestItemDVO.mustBeAccepted).toBe(true);
@@ -254,8 +254,8 @@ describe("ReadAttributeRequestItemDVO", () => {
         expect(responseItem["@type"]).toBe("ReadAttributeAcceptResponseItem");
         expect(responseItem.attributeId).toBeDefined();
 
-        const attributeResult = await consumptionServices1.attributes.getValidAttributes({
-            query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.request.peer.id } }
+        const attributeResult = await consumptionServices1.attributes.getAttributes({
+            query: { "content.value.@type": "GivenName", "shareInfo.peer": dvo.request.peer.id }
         });
         expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value[0].id).toBeDefined();

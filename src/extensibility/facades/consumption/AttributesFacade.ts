@@ -16,8 +16,10 @@ import {
     GetAttributesRequest,
     GetAttributesUseCase,
     GetAttributeUseCase,
-    GetValidAttributesRequest,
-    GetValidAttributesUseCase,
+    GetPeerAttributesRequest,
+    GetPeerAttributesUseCase,
+    GetSharedToPeerAttributesRequest,
+    GetSharedToPeerAttributesUseCase,
     SucceedAttributeRequest,
     SucceedAttributeUseCase,
     UpdateAttributeRequest,
@@ -29,7 +31,8 @@ export class AttributesFacade {
         @Inject private readonly createAttributeUseCase: CreateAttributeUseCase,
         @Inject private readonly createSharedAttributeCopyUseCase: CreateSharedAttributeCopyUseCase,
         @Inject private readonly deleteAttributeUseCase: DeleteAttributeUseCase,
-        @Inject private readonly getValidAttributesUseCase: GetValidAttributesUseCase,
+        @Inject private readonly getPeerAttributesUseCase: GetPeerAttributesUseCase,
+        @Inject private readonly getSharedToPeerAttributesUseCase: GetSharedToPeerAttributesUseCase,
         @Inject private readonly getAttributeUseCase: GetAttributeUseCase,
         @Inject private readonly getAttributesUseCase: GetAttributesUseCase,
         @Inject private readonly succeedAttributeUseCase: SucceedAttributeUseCase,
@@ -50,8 +53,12 @@ export class AttributesFacade {
         return await this.deleteAttributeUseCase.execute(request);
     }
 
-    public async getValidAttributes(request: GetValidAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
-        return await this.getValidAttributesUseCase.execute(request);
+    public async getPeerAttributes(request: GetPeerAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
+        return await this.getPeerAttributesUseCase.execute(request);
+    }
+
+    public async getSharedToPeerAttributes(request: GetSharedToPeerAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
+        return await this.getSharedToPeerAttributesUseCase.execute(request);
     }
 
     public async getAttribute(request: GetAttributeRequest): Promise<Result<LocalAttributeDTO>> {

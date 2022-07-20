@@ -95,7 +95,6 @@ describe("Settings query", () => {
             .addStringSet("scope")
             .addStringSet("reference")
             .addDateSet("createdAt")
-            .addDateSet("deletedAt")
             .addStringSet("succeedsItem")
             .addDateSet("succeedsAt");
 

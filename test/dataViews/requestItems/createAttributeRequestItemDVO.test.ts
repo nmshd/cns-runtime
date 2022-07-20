@@ -139,6 +139,7 @@ describe("CreateAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Theodor");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -175,6 +176,7 @@ describe("CreateAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Theodor");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -191,8 +193,8 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(responseItem.result).toBe("Accepted");
         expect(responseItem["@type"]).toBe("CreateAttributeAcceptResponseItem");
 
-        const attributeResult = await consumptionServices2.attributes.getValidAttributes({
-            query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.createdBy.id } }
+        const attributeResult = await consumptionServices2.attributes.getAttributes({
+            query: { "content.value.@type": "GivenName", "shareInfo.peer": dvo.createdBy.id }
         });
         expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value[0].id).toBeDefined();
@@ -232,6 +234,7 @@ describe("CreateAttributeRequestItemDVO", () => {
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
         expect(value["@type"]).toBe("GivenName");
         expect(value.value).toBe("Theodor");
+        expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -249,13 +252,25 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(responseItem["@type"]).toBe("CreateAttributeAcceptResponseItem");
         expect(responseItem.attributeId).toBeDefined();
 
-        const attributeResult = await consumptionServices1.attributes.getValidAttributes({
-            query: { content: { value: { "@type": "GivenName" } }, shareInfo: { peer: dvo.request.peer.id } }
+        const attributeResult = await consumptionServices1.attributes.getAttributes({
+            query: { "content.value.@type": "GivenName", "shareInfo.peer": dvo.request.peer.id }
         });
         expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value[0].id).toBeDefined();
         expect((attributeResult.value[0].content.value as any).value).toBe("Theodor");
 
         expect(responseItem.attributeId).toStrictEqual(attributeResult.value[0].id);
+    });
+
+    test("check the attributes for the sender", async () => {
+        const dvo = (await expander1.expandMessageDTO(senderMessage)) as RequestMessageDVO;
+        const attributeResult = await consumptionServices1.attributes.getSharedToPeerAttributes({
+            peer: dvo.request.peer.id
+        });
+
+        expect(attributeResult).toBeSuccessful();
+        expect(attributeResult.value).toHaveLength(1);
+        expect(attributeResult.value[0].id).toBeDefined();
+        expect((attributeResult.value[0].content.value as any).value).toBe("Theodor");
     });
 });
