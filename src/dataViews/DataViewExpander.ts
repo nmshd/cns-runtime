@@ -49,11 +49,19 @@ import {
     RecipientDTO,
     RelationshipChangeDTO,
     RelationshipDTO,
-    RelationshipInfoDTO,
     RelationshipTemplateDTO
 } from "../types";
 import { RuntimeErrors } from "../useCases";
-import { LocalRequestDVO, LocalResponseDVO, PeerAttributeDVO, ProcessedIdentityAttributeQueryDVO, RepositoryAttributeDVO, SharedToPeerAttributeDVO } from "./consumption";
+import {
+    LocalAttributeDVO,
+    LocalRequestDVO,
+    LocalResponseDVO,
+    PeerAttributeDVO,
+    ProcessedIdentityAttributeQueryDVO,
+    RelationshipSettingDVO,
+    RepositoryAttributeDVO,
+    SharedToPeerAttributeDVO
+} from "./consumption";
 import {
     DecidableCreateAttributeRequestItemDVO,
     DecidableProposeAttributeRequestItemDVO,
@@ -555,7 +563,7 @@ export class DataViewExpander {
         if (!localAttribute) {
             throw new Error("Attribute not found");
         }
-        const owner = await this.expandAddress(attribute.content.owner);
+        const owner = attribute.content.owner;
 
         let name = `i18n://dvo.attribute.name.${valueType}`;
         let description = `i18n://dvo.attribute.description.${valueType}`;
@@ -567,7 +575,7 @@ export class DataViewExpander {
         const valueHints = localAttribute.content.value.valueHints.toJSON();
 
         if (localAttribute.shareInfo) {
-            const peer = await this.expandAddress(localAttribute.shareInfo.peer.toString());
+            const peer = localAttribute.shareInfo.peer.toString();
             if (localAttribute.shareInfo.sourceAttribute) {
                 // Own Shared Attribute
                 return {
@@ -866,12 +874,42 @@ export class DataViewExpander {
         return await Promise.all(changePromises);
     }
 
-    protected async createRelationshipDVO(relationship: RelationshipDTO, relationshipInfo?: RelationshipInfoDTO): Promise<RelationshipDVO> {
-        // TODO: re-enable when we can query relationship info
-        // if (!relationshipInfo) {
-        //     const relationshipInfoResult = await this.consumption.relationshipInfo.getRelationshipInfoByRelationship({ relationshipId: relationship.id });
-        //     relationshipInfo = relationshipInfoResult.value;
-        // }
+    protected async createRelationshipDVO(relationship: RelationshipDTO): Promise<RelationshipDVO> {
+        let relationshipSetting: RelationshipSettingDVO;
+        const settingResult = await this.consumption.settings.getSettings({ query: { reference: relationship.id } });
+        if (settingResult.value.length > 0) {
+            relationshipSetting = settingResult.value[0].value;
+        } else {
+            relationshipSetting = {
+                isPinned: false
+            };
+        }
+
+        const nameRelevantAttributeTypes = ["DisplayName", "GivenName", "MiddleName", "Surname", "Sex"];
+        const stringByType: Record<string, undefined | string> = {};
+        const relationshipAttributesResult = await this.consumption.attributes.getPeerAttributes({ onlyValid: true, peer: relationship.id });
+        const expandedAttributes = await this.expandLocalAttributeDTOs(relationshipAttributesResult.value);
+        const attributesByType: Record<string, undefined | LocalAttributeDVO | LocalAttributeDVO[]> = {};
+        for (const attribute of expandedAttributes) {
+            const valueType = attribute.content.value["@type"];
+            if (attributesByType[valueType]) {
+                if (Array.isArray(attributesByType[valueType])) {
+                    (attributesByType[valueType] as LocalAttributeDVO[]).push(attribute);
+                } else {
+                    attributesByType[valueType] = [attributesByType[valueType] as LocalAttributeDVO, attribute];
+                }
+            } else {
+                attributesByType[valueType] = attribute;
+            }
+
+            if (nameRelevantAttributeTypes.includes(valueType)) {
+                if (stringByType[valueType]) {
+                    stringByType[valueType] += ` ${attribute.content.value}`;
+                } else {
+                    stringByType[valueType] = `${attribute.content.value}`;
+                }
+            }
+        }
 
         let direction = RelationshipDirection.Incoming;
         if (this.identityController.isMe(CoreAddress.from(relationship.changes[0].request.createdBy))) {
@@ -893,54 +931,46 @@ export class DataViewExpander {
 
         const changes = await this.expandRelationshipChangeDTOs(relationship);
 
+        let name;
+        if (stringByType["DisplayName"]) {
+            name = stringByType["DisplayName"];
+        } else if (stringByType["GivenName"] && stringByType["Surname"]) {
+            name = `${stringByType["GivenName"]} ${stringByType["Surname"]}`;
+        } else if (stringByType["Sex"] && stringByType["Surname"]) {
+            name = `i18n://attributes.values.Sex.${stringByType["Sex"]} ${stringByType["Surname"]}`;
+        } else {
+            name = relationship.peer.substring(3, 9);
+        }
+
         return {
             id: relationship.id,
-            name: relationshipInfo?.userTitle ?? relationshipInfo?.title ?? "",
-            description: relationshipInfo?.userDescription ?? relationshipInfo?.description ?? "",
+            name: relationshipSetting.userTitle ?? name,
+            description: relationshipSetting.userDescription ?? statusText,
             date: relationship.changes[0].request.createdAt,
             image: "",
             type: "RelationshipDVO",
             status: relationship.status,
             statusText: statusText,
             direction: direction,
-            isPinned: relationshipInfo?.isPinned ?? false,
-            theme: {
-                image: relationshipInfo?.theme?.image,
-                headerImage: relationshipInfo?.theme?.imageBar,
-                backgroundColor: relationshipInfo?.theme?.backgroundColor,
-                foregroundColor: relationshipInfo?.theme?.foregroundColor
-            },
+            isPinned: relationshipSetting.isPinned,
+            attributeMap: attributesByType,
+            attributes: expandedAttributes,
+            nameMap: stringByType,
             changes: changes,
             changeCount: changes.length
         };
     }
 
     public async expandRelationshipDTO(relationship: RelationshipDTO): Promise<IdentityDVO> {
-        // TODO: re-enable when we can query relationship info
-        // const relationshipInfoResult = await this.consumption.relationshipInfo.getRelationshipInfoByRelationship({ relationshipId: relationship.id });
-        // const relationshipInfo = relationshipInfoResult.value;
-
-        // const name = relationshipInfo.userTitle ? relationshipInfo.userTitle : relationshipInfo.title;
-        // let description = relationshipInfo.userDescription ? relationshipInfo.userDescription : relationshipInfo.description;
-        const name = relationship.peer.substring(3, 9);
-
-        const initials = (name.match(/\b\w/g) ?? []).join("");
-
         const relationshipDVO = await this.createRelationshipDVO(relationship);
-        const description = relationshipDVO.statusText;
-        // TODO: re-enable when we can query relationship info
-        /*
-        if (!description) {
-            description = relationshipDVO.statusText;
-        }
-        */
+        const initials = (relationshipDVO.name.match(/\b\w/g) ?? []).join("");
 
         return {
             type: "IdentityDVO",
             id: relationship.peer,
-            name: name,
+            name: relationshipDVO.name,
             date: relationshipDVO.date,
-            description: description,
+            description: relationshipDVO.description,
             publicKey: relationship.peerIdentity.publicKey,
             realm: relationship.peerIdentity.realm,
             initials,
