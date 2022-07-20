@@ -81,10 +81,7 @@ describe("IdentityAttributeQueryExpanded", () => {
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
         expect(dvo.sharedWith).toStrictEqual([]);
-        expect(dvo.owner.type).toBe("IdentityDVO");
-        expect(dvo.owner.id).toStrictEqual(attribute.content.owner);
-        expect(dvo.owner.name).toBe("i18n://dvo.identity.self.name");
-        expect(dvo.owner.isSelf).toBe(true);
+        expect(dvo.owner).toStrictEqual(attribute.content.owner);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("String");
         expect(dvo.renderHints.editType).toBe("InputLike");
@@ -107,10 +104,7 @@ describe("IdentityAttributeQueryExpanded", () => {
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
         expect(dvo.sharedWith).toStrictEqual([]);
-        expect(dvo.owner.type).toBe("IdentityDVO");
-        expect(dvo.owner.id).toStrictEqual(attribute.content.owner);
-        expect(dvo.owner.name).toBe("i18n://dvo.identity.self.name");
-        expect(dvo.owner.isSelf).toBe(true);
+        expect(dvo.owner).toStrictEqual(attribute.content.owner);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("String");
         expect(dvo.renderHints.editType).toBe("InputLike");

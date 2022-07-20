@@ -1,4 +1,5 @@
 import { RelationshipChangeStatus, RelationshipChangeType } from "@nmshd/transport";
+import { LocalAttributeDVO } from "../consumption";
 import { DataViewObject } from "../DataViewObject";
 
 export enum RelationshipDirection {
@@ -12,9 +13,12 @@ export interface RelationshipDVO extends DataViewObject {
     direction: string;
     statusText: string;
     isPinned: boolean;
-    theme: RelationshipTheme;
+    theme?: RelationshipTheme;
     changes: RelationshipChangeDVO[];
     changeCount: number;
+    attributes: LocalAttributeDVO[];
+    attributeMap: Record<string, undefined | LocalAttributeDVO | LocalAttributeDVO[]>;
+    nameMap: Record<string, undefined | string>;
 }
 
 export interface RelationshipTheme {
