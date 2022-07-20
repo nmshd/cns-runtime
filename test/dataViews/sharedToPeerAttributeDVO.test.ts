@@ -1,4 +1,4 @@
-import { BirthYear, CommunicationLanguage, IAbstractIntegerValue, IAbstractStringJSON, IdentityAttribute, Nationality, Sex } from "@nmshd/content";
+import { BirthYear, CommunicationLanguage, IAbstractIntegerJSON, IAbstractStringJSON, IdentityAttribute, Nationality, Sex } from "@nmshd/content";
 import { CoreAddress, CoreId } from "@nmshd/transport";
 import { ConsumptionServices, DataViewExpander, LocalAttributeDTO, RepositoryAttributeDVO, TransportServices } from "../../src";
 import { RuntimeServiceProvider } from "../lib";
@@ -92,7 +92,7 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(dvo.description).toBe("i18n://dvo.attribute.description.BirthYear");
         expect(dvo.date).toStrictEqual(attribute.createdAt);
         expect(dvo.content).toStrictEqual(attribute.content);
-        const value = dvo.value as IAbstractIntegerValue;
+        const value = dvo.value as IAbstractIntegerJSON;
         expect(value["@type"]).toBe("BirthYear");
         expect(value.value).toBe(2001);
 

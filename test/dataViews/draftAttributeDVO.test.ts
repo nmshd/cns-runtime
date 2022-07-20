@@ -4,7 +4,7 @@ import {
     BirthYear,
     CommunicationLanguage,
     GivenName,
-    IAbstractIntegerValue,
+    IAbstractIntegerJSON,
     IAbstractStringJSON,
     IdentityAttribute,
     IdentityAttributeJSON,
@@ -114,7 +114,7 @@ describe("DraftAttributeDVO", () => {
         expect(dvo.name).toBe("i18n://dvo.attribute.name.BirthDay");
         expect(dvo.description).toBe("i18n://dvo.attribute.description.BirthDay");
         expect(dvo.content).toStrictEqual(attribute);
-        const value = dvo.value as IAbstractIntegerValue;
+        const value = dvo.value as IAbstractIntegerJSON;
         expect(value["@type"]).toBe("BirthDay");
         expect(value.value).toBe(17);
         expect(dvo.owner.type).toBe("IdentityDVO");
@@ -141,7 +141,7 @@ describe("DraftAttributeDVO", () => {
         expect(dvo.name).toBe("i18n://dvo.attribute.name.BirthMonth");
         expect(dvo.description).toBe("i18n://dvo.attribute.description.BirthMonth");
         expect(dvo.content).toStrictEqual(attribute);
-        const value = dvo.value as IAbstractIntegerValue;
+        const value = dvo.value as IAbstractIntegerJSON;
         expect(value["@type"]).toBe("BirthMonth");
         expect(value.value).toBe(11);
         expect(dvo.owner.type).toBe("IdentityDVO");
@@ -168,7 +168,7 @@ describe("DraftAttributeDVO", () => {
         expect(dvo.name).toBe("i18n://dvo.attribute.name.BirthYear");
         expect(dvo.description).toBe("i18n://dvo.attribute.description.BirthYear");
         expect(dvo.content).toStrictEqual(attribute);
-        const value = dvo.value as IAbstractIntegerValue;
+        const value = dvo.value as IAbstractIntegerJSON;
         expect(value["@type"]).toBe("BirthYear");
         expect(value.value).toBe(2001);
         expect(dvo.owner.type).toBe("IdentityDVO");
