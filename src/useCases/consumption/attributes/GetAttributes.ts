@@ -12,9 +12,7 @@ import { AttributeMapper } from "./AttributeMapper";
 
 export interface GetAttributesRequest {
     query?: GetAttributesRequestQuery;
-    onlyIdentityAttributes?: boolean;
     onlyValid?: boolean;
-    valueTypes?: string[];
 }
 
 export interface GetAttributesRequestQuery {
@@ -150,10 +148,7 @@ export class GetAttributesUseCase extends UseCase<GetAttributesRequest, LocalAtt
     }
 
     protected async executeInternal(request: GetAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
-        const query: GetAttributesRequestQuery = { ...request.query };
-        if (request.onlyIdentityAttributes) {
-            query["content.@type"] = "IdentityAttribute";
-        }
+        const query = request.query ?? {};
         const flattenedQuery = flattenObject(query);
         const dbQuery = GetAttributesUseCase.queryTranslator.parse(flattenedQuery);
         let attributes;

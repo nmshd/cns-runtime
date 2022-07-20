@@ -9,7 +9,6 @@ import { GetAttributesRequestQuery, GetAttributesUseCase } from "./GetAttributes
 
 export interface GetPeerAttributesRequest {
     peer: string;
-    onlyIdentityAttributes?: boolean;
     onlyValid?: boolean;
     query?: GetPeerAttributesRequestQuery;
 }
@@ -34,11 +33,8 @@ export class GetPeerAttributesUseCase extends UseCase<GetPeerAttributesRequest, 
     }
 
     protected async executeInternal(request: GetPeerAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
-        const query: GetAttributesRequestQuery = { ...request.query };
+        const query: GetAttributesRequestQuery = request.query ?? {};
         query["content.owner"] = request.peer;
-        if (request.onlyIdentityAttributes) {
-            query["content.@type"] = "IdentityAttribute";
-        }
 
         const flattenedQuery = flattenObject(query);
         const dbQuery = GetAttributesUseCase.queryTranslator.parse(flattenedQuery);

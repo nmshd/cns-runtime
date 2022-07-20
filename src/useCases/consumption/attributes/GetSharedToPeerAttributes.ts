@@ -10,7 +10,6 @@ import { GetAttributesRequestQuery, GetAttributesUseCase } from "./GetAttributes
 
 export interface GetSharedToPeerAttributesRequest {
     peer: string;
-    onlyIdentityAttributes?: boolean;
     onlyValid?: boolean;
     query?: GetSharedToPeerAttributesRequestQuery;
 }
@@ -36,11 +35,8 @@ export class GetSharedToPeerAttributesUseCase extends UseCase<GetSharedToPeerAtt
     }
 
     protected async executeInternal(request: GetSharedToPeerAttributesRequest): Promise<Result<LocalAttributeDTO[]>> {
-        const query: GetAttributesRequestQuery = { ...request.query };
+        const query: GetAttributesRequestQuery = request.query ?? {};
         query["content.owner"] = this.identityController.address.toString();
-        if (request.onlyIdentityAttributes) {
-            query["content.@type"] = "IdentityAttribute";
-        }
 
         query["shareInfo.peer"] = request.peer;
 
