@@ -887,7 +887,7 @@ export class DataViewExpander {
 
         const nameRelevantAttributeTypes = ["DisplayName", "GivenName", "MiddleName", "Surname", "Sex"];
         const stringByType: Record<string, undefined | string> = {};
-        const relationshipAttributesResult = await this.consumption.attributes.getPeerAttributes({ onlyValid: true, peer: relationship.id });
+        const relationshipAttributesResult = await this.consumption.attributes.getPeerAttributes({ onlyValid: true, peer: relationship.peer });
         const expandedAttributes = await this.expandLocalAttributeDTOs(relationshipAttributesResult.value);
         const attributesByType: Record<string, undefined | LocalAttributeDVO | LocalAttributeDVO[]> = {};
         for (const attribute of expandedAttributes) {
@@ -904,9 +904,9 @@ export class DataViewExpander {
 
             if (nameRelevantAttributeTypes.includes(valueType)) {
                 if (stringByType[valueType]) {
-                    stringByType[valueType] += ` ${attribute.content.value}`;
+                    stringByType[valueType] += ` ${attribute.content.value.value}`;
                 } else {
-                    stringByType[valueType] = `${attribute.content.value}`;
+                    stringByType[valueType] = `${attribute.content.value.value}`;
                 }
             }
         }
@@ -954,7 +954,7 @@ export class DataViewExpander {
             direction: direction,
             isPinned: relationshipSetting.isPinned,
             attributeMap: attributesByType,
-            attributes: expandedAttributes,
+            items: expandedAttributes,
             nameMap: stringByType,
             changes: changes,
             changeCount: changes.length
@@ -976,7 +976,8 @@ export class DataViewExpander {
             initials,
             isSelf: false,
             hasRelationship: true,
-            relationship: relationshipDVO
+            relationship: relationshipDVO,
+            items: relationshipDVO.items
         };
     }
 

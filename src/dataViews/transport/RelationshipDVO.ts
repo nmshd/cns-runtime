@@ -16,7 +16,7 @@ export interface RelationshipDVO extends DataViewObject {
     theme?: RelationshipTheme;
     changes: RelationshipChangeDVO[];
     changeCount: number;
-    attributes: LocalAttributeDVO[];
+    items: LocalAttributeDVO[];
     attributeMap: Record<string, undefined | LocalAttributeDVO | LocalAttributeDVO[]>;
     nameMap: Record<string, undefined | string>;
 }
