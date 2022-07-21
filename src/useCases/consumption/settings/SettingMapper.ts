@@ -10,7 +10,6 @@ export class SettingMapper {
             reference: setting.reference?.toString(),
             value: setting.value.toJSON(),
             createdAt: setting.createdAt.toISOString(),
-            deletedAt: setting.deletedAt?.toISOString(),
             succeedsItem: setting.succeedsItem?.toString(),
             succeedsAt: setting.succeedsAt?.toString()
         };
