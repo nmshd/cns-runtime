@@ -874,7 +874,7 @@ export class DataViewExpander {
         return await Promise.all(changePromises);
     }
 
-    protected async createRelationshipDVO(relationship: RelationshipDTO): Promise<RelationshipDVO> {
+    private async createRelationshipDVO(relationship: RelationshipDTO): Promise<RelationshipDVO> {
         let relationshipSetting: RelationshipSettingDVO;
         const settingResult = await this.consumption.settings.getSettings({ query: { reference: relationship.id } });
         if (settingResult.value.length > 0) {
@@ -889,17 +889,14 @@ export class DataViewExpander {
         const stringByType: Record<string, undefined | string> = {};
         const relationshipAttributesResult = await this.consumption.attributes.getPeerAttributes({ onlyValid: true, peer: relationship.peer });
         const expandedAttributes = await this.expandLocalAttributeDTOs(relationshipAttributesResult.value);
-        const attributesByType: Record<string, undefined | LocalAttributeDVO | LocalAttributeDVO[]> = {};
+        const attributesByType: Record<string, undefined | LocalAttributeDVO[]> = {};
         for (const attribute of expandedAttributes) {
             const valueType = attribute.content.value["@type"];
-            if (attributesByType[valueType]) {
-                if (Array.isArray(attributesByType[valueType])) {
-                    (attributesByType[valueType] as LocalAttributeDVO[]).push(attribute);
-                } else {
-                    attributesByType[valueType] = [attributesByType[valueType] as LocalAttributeDVO, attribute];
-                }
+            const item = attributesByType[valueType];
+            if (item) {
+                item.push(attribute);
             } else {
-                attributesByType[valueType] = attribute;
+                attributesByType[valueType] = [attribute];
             }
 
             if (nameRelevantAttributeTypes.includes(valueType)) {
@@ -937,7 +934,7 @@ export class DataViewExpander {
         } else if (stringByType["GivenName"] && stringByType["Surname"]) {
             name = `${stringByType["GivenName"]} ${stringByType["Surname"]}`;
         } else if (stringByType["Sex"] && stringByType["Surname"]) {
-            name = `i18n://attributes.values.Sex.${stringByType["Sex"]} ${stringByType["Surname"]}`;
+            name = `i18n://dvo.identity.Salutation.${stringByType["Sex"]} ${stringByType["Surname"]}`;
         } else {
             name = relationship.peer.substring(3, 9);
         }
