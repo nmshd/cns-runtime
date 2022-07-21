@@ -1,8 +1,7 @@
-import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
+import { ApplicationError, Result } from "@js-soft/ts-utils";
 import { DecideRequestParametersJSON, IncomingRequestsController, LocalRequest } from "@nmshd/consumption";
 import { CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { IncomingRequestStatusChangedEvent } from "../../../events";
 import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -10,7 +9,7 @@ import { RequestMapper } from "./RequestMapper";
 export interface AcceptIncomingRequestRequest extends DecideRequestParametersJSON {}
 
 export class AcceptIncomingRequestUseCase extends UseCase<AcceptIncomingRequestRequest, LocalRequestDTO> {
-    public constructor(@Inject private readonly incomingRequestsController: IncomingRequestsController, @Inject private readonly eventBus: EventBus) {
+    public constructor(@Inject private readonly incomingRequestsController: IncomingRequestsController) {
         super();
     }
 
@@ -21,20 +20,8 @@ export class AcceptIncomingRequestUseCase extends UseCase<AcceptIncomingRequestR
             return Result.fail(RuntimeErrors.general.recordNotFound(LocalRequest));
         }
 
-        const oldStatus = localRequest.status;
-
         localRequest = await this.incomingRequestsController.accept(request);
 
-        const dto = RequestMapper.toLocalRequestDTO(localRequest);
-
-        this.eventBus.publish(
-            new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
-                request: dto,
-                oldStatus,
-                newStatus: dto.status
-            })
-        );
-
-        return Result.ok(dto);
+        return Result.ok(RequestMapper.toLocalRequestDTO(localRequest));
     }
 }

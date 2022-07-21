@@ -1,9 +1,8 @@
-import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
-import { ICompleteOugoingRequestParameters, LocalRequestStatus, OutgoingRequestsController } from "@nmshd/consumption";
+import { ApplicationError, Result } from "@js-soft/ts-utils";
+import { ICompleteOugoingRequestParameters, OutgoingRequestsController } from "@nmshd/consumption";
 import { Response, ResponseJSON } from "@nmshd/content";
 import { CoreId, Message, MessageController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { OutgoingRequestStatusChangedEvent } from "../../../events";
 import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -27,8 +26,7 @@ export class CompleteOutgoingRequestUseCase extends UseCase<CompleteOutgoingRequ
     public constructor(
         @Inject validator: Validator,
         @Inject private readonly outgoingRequestsController: OutgoingRequestsController,
-        @Inject private readonly messageController: MessageController,
-        @Inject private readonly eventBus: EventBus
+        @Inject private readonly messageController: MessageController
     ) {
         super(validator);
     }
@@ -48,16 +46,6 @@ export class CompleteOutgoingRequestUseCase extends UseCase<CompleteOutgoingRequ
 
         const localRequest = await this.outgoingRequestsController.complete(params);
 
-        const dto = RequestMapper.toLocalRequestDTO(localRequest);
-
-        this.eventBus.publish(
-            new OutgoingRequestStatusChangedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, {
-                oldStatus: LocalRequestStatus.Open,
-                newStatus: dto.status,
-                request: dto
-            })
-        );
-
-        return Result.ok(dto);
+        return Result.ok(RequestMapper.toLocalRequestDTO(localRequest));
     }
 }

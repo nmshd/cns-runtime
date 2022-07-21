@@ -1,9 +1,8 @@
-import { EventBus, Result } from "@js-soft/ts-utils";
+import { Result } from "@js-soft/ts-utils";
 import { CryptoSecretKey } from "@nmshd/crypto";
 import { AccountController, CoreId, RelationshipTemplateController, Token, TokenContentRelationshipTemplate, TokenController } from "@nmshd/transport";
 import { ValidationFailure, ValidationResult } from "fluent-ts-validator";
 import { Inject } from "typescript-ioc";
-import { PeerRelationshipTemplateLoadedEvent } from "../../../events";
 import { RelationshipTemplateDTO } from "../../../types";
 import { Base64ForIdPrefix, JsonSchema, RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RelationshipTemplateMapper } from "./RelationshipTemplateMapper";
@@ -74,7 +73,6 @@ export class LoadPeerRelationshipTemplateUseCase extends UseCase<LoadPeerRelatio
         @Inject private readonly templateController: RelationshipTemplateController,
         @Inject private readonly tokenController: TokenController,
         @Inject private readonly accountController: AccountController,
-        @Inject private readonly eventBus: EventBus,
         @Inject validator: Validator
     ) {
         super(validator);
@@ -93,11 +91,6 @@ export class LoadPeerRelationshipTemplateUseCase extends UseCase<LoadPeerRelatio
         }
 
         await this.accountController.syncDatawallet();
-
-        if (createdTemplateResult.isSuccess) {
-            const event = new PeerRelationshipTemplateLoadedEvent(this.accountController.identity.address.address, createdTemplateResult.value);
-            this.eventBus.publish(event);
-        }
 
         return createdTemplateResult;
     }

@@ -1,8 +1,7 @@
-import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
+import { ApplicationError, Result } from "@js-soft/ts-utils";
 import { ICreateOutgoingRequestFromRelationshipCreationChangeParameters, OutgoingRequestsController } from "@nmshd/consumption";
 import { CoreId, RelationshipChange, RelationshipsController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent } from "../../../events";
 import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -25,8 +24,7 @@ export class CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCa
     public constructor(
         @Inject private readonly outgoingRequestsController: OutgoingRequestsController,
         @Inject private readonly relationshipController: RelationshipsController,
-        @Inject private readonly relationshipTemplateController: RelationshipTemplateController,
-        @Inject private readonly eventBus: EventBus
+        @Inject private readonly relationshipTemplateController: RelationshipTemplateController
     ) {
         super();
     }
@@ -50,12 +48,6 @@ export class CreateAndCompleteOutgoingRequestFromRelationshipCreationChangeUseCa
 
         const localRequest = await this.outgoingRequestsController.createFromRelationshipCreationChange(params);
 
-        const dto = RequestMapper.toLocalRequestDTO(localRequest);
-
-        this.eventBus.publish(
-            new OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, dto)
-        );
-
-        return Result.ok(dto);
+        return Result.ok(RequestMapper.toLocalRequestDTO(localRequest));
     }
 }

@@ -1,6 +1,7 @@
 import { LokiJsConnection } from "@js-soft/docdb-access-loki";
 import { MongoDbConnection } from "@js-soft/docdb-access-mongo";
 import { NodeLoggerFactory } from "@js-soft/node-logger";
+import { EventEmitter2EventBus } from "@js-soft/ts-utils";
 import { ConsumptionController } from "@nmshd/consumption";
 import { AccountController, Transport } from "@nmshd/transport";
 import { DatabaseSchemaUpgrader } from "../../src/DatabaseSchemaUpgrader";
@@ -39,7 +40,7 @@ beforeAll(async () => {
         }
     });
 
-    const transport = new Transport(databaseConnection, RuntimeServiceProvider.defaultConfig.transportLibrary, loggerFactory);
+    const transport = new Transport(databaseConnection, RuntimeServiceProvider.defaultConfig.transportLibrary, new EventEmitter2EventBus(), loggerFactory);
 
     const randomAccountName = Math.random().toString(36).substring(7);
     const db = await transport.createDatabase(`acc-${randomAccountName}`);

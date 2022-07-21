@@ -5,7 +5,6 @@ export interface SettingDTO {
     reference?: string;
     value: any;
     createdAt: string;
-    deletedAt?: string;
     succeedsItem?: string;
     succeedsAt?: string;
 }

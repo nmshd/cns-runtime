@@ -1,8 +1,7 @@
-import { EventBus, Result } from "@js-soft/ts-utils";
+import { Result } from "@js-soft/ts-utils";
 import { CreateLocalAttributeParams, LocalAttributesController } from "@nmshd/consumption";
-import { AccountController, IdentityController } from "@nmshd/transport";
+import { AccountController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { AttributeCreatedEvent } from "../../../events";
 import { LocalAttributeDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { AttributeMapper } from "./AttributeMapper";
@@ -22,10 +21,6 @@ export class CreateAttributeUseCase extends UseCase<CreateAttributeRequest, Loca
     public constructor(
         @Inject private readonly attributeController: LocalAttributesController,
         @Inject private readonly accountController: AccountController,
-
-        @Inject private readonly identityController: IdentityController,
-        @Inject private readonly eventBus: EventBus,
-
         @Inject validator: Validator
     ) {
         super(validator);
@@ -38,8 +33,6 @@ export class CreateAttributeUseCase extends UseCase<CreateAttributeRequest, Loca
         const createdAttribute = await this.attributeController.createLocalAttribute(params);
         await this.accountController.syncDatawallet();
 
-        const attributeDTO = AttributeMapper.toAttributeDTO(createdAttribute);
-        this.eventBus.publish(new AttributeCreatedEvent(this.identityController.identity.address.toString(), attributeDTO));
-        return Result.ok(attributeDTO);
+        return Result.ok(AttributeMapper.toAttributeDTO(createdAttribute));
     }
 }

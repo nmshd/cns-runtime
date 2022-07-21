@@ -1,9 +1,8 @@
-import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
+import { ApplicationError, Result } from "@js-soft/ts-utils";
 import { ICreateOutgoingRequestParameters, OutgoingRequestsController } from "@nmshd/consumption";
 import { IRequest, RequestJSON } from "@nmshd/content";
 import { CoreAddress } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { OutgoingRequestCreatedEvent } from "../../../events";
 import { LocalRequestDTO } from "../../../types";
 import { UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -17,7 +16,7 @@ export interface CreateOutgoingRequestRequest {
 }
 
 export class CreateOutgoingRequestUseCase extends UseCase<CreateOutgoingRequestRequest, LocalRequestDTO> {
-    public constructor(@Inject private readonly outgoingRequestsController: OutgoingRequestsController, @Inject private readonly eventBus: EventBus) {
+    public constructor(@Inject private readonly outgoingRequestsController: OutgoingRequestsController) {
         super();
     }
 
@@ -30,10 +29,6 @@ export class CreateOutgoingRequestUseCase extends UseCase<CreateOutgoingRequestR
 
         const localRequest = await this.outgoingRequestsController.create(params);
 
-        const dto = RequestMapper.toLocalRequestDTO(localRequest);
-
-        this.eventBus.publish(new OutgoingRequestCreatedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, dto));
-
-        return Result.ok(dto);
+        return Result.ok(RequestMapper.toLocalRequestDTO(localRequest));
     }
 }

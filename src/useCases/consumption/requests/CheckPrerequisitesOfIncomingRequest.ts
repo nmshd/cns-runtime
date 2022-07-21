@@ -1,8 +1,7 @@
-import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
-import { IncomingRequestsController, LocalRequestStatus } from "@nmshd/consumption";
+import { ApplicationError, Result } from "@js-soft/ts-utils";
+import { IncomingRequestsController } from "@nmshd/consumption";
 import { CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { IncomingRequestStatusChangedEvent } from "../../../events";
 import { LocalRequestDTO } from "../../../types";
 import { SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -21,7 +20,7 @@ class Validator extends SchemaValidator<CheckPrerequisitesOfIncomingRequestReque
 }
 
 export class CheckPrerequisitesOfIncomingRequestUseCase extends UseCase<CheckPrerequisitesOfIncomingRequestRequest, LocalRequestDTO> {
-    public constructor(@Inject validator: Validator, @Inject private readonly incomingRequestsController: IncomingRequestsController, @Inject private readonly eventBus: EventBus) {
+    public constructor(@Inject validator: Validator, @Inject private readonly incomingRequestsController: IncomingRequestsController) {
         super(validator);
     }
 
@@ -30,18 +29,6 @@ export class CheckPrerequisitesOfIncomingRequestUseCase extends UseCase<CheckPre
             requestId: CoreId.from(request.requestId)
         });
 
-        const dto = RequestMapper.toLocalRequestDTO(localRequest);
-
-        if (localRequest.status === LocalRequestStatus.DecisionRequired) {
-            this.eventBus.publish(
-                new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
-                    request: dto,
-                    oldStatus: LocalRequestStatus.Open,
-                    newStatus: dto.status
-                })
-            );
-        }
-
-        return Result.ok(dto);
+        return Result.ok(RequestMapper.toLocalRequestDTO(localRequest));
     }
 }

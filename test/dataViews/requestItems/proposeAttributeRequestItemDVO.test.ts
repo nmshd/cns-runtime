@@ -81,7 +81,7 @@ beforeAll(async () => {
                         valueType: "GivenName"
                     }),
                     attribute: IdentityAttribute.from({
-                        owner: CoreAddress.from(recipientAddress),
+                        owner: CoreAddress.from(""),
                         value: GivenName.fromAny({
                             value: "Theodor"
                         })
@@ -94,7 +94,7 @@ beforeAll(async () => {
                         valueType: "Surname"
                     }),
                     attribute: IdentityAttribute.from({
-                        owner: CoreAddress.from(recipientAddress),
+                        owner: CoreAddress.from(""),
                         value: Surname.fromAny({
                             value: "Weigl-Rostock"
                         })

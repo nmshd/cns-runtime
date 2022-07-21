@@ -134,7 +134,7 @@ describe("RelationshipTemplateDVO", () => {
                                     valueType: "GivenName"
                                 }),
                                 attribute: IdentityAttribute.from({
-                                    owner: CoreAddress.from(templatorAddress),
+                                    owner: CoreAddress.from(""),
                                     value: GivenName.fromAny({
                                         value: "Theo"
                                     })
@@ -146,7 +146,7 @@ describe("RelationshipTemplateDVO", () => {
                                     valueType: "Surname"
                                 }),
                                 attribute: IdentityAttribute.from({
-                                    owner: CoreAddress.from(templatorAddress),
+                                    owner: CoreAddress.from(""),
                                     value: Surname.fromAny({
                                         value: "Templator"
                                     })

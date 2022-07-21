@@ -437,6 +437,10 @@ export class DataViewExpander {
 
             case "ProposeAttributeRequestItem":
                 const proposeAttributeRequestItem = requestItem as ProposeAttributeRequestItemJSON;
+                if (localRequestDTO) {
+                    proposeAttributeRequestItem.attribute.owner = localRequestDTO.isOwn ? localRequestDTO.peer : this.identityController.address.toString();
+                }
+
                 if (isDecidable) {
                     return {
                         ...proposeAttributeRequestItem,
