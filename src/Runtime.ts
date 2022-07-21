@@ -39,7 +39,6 @@ export interface RuntimeServices {
 export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
     protected logger: ILogger;
     protected loggerFactory: ILoggerFactory;
-    protected runtimeConfig: TConfig;
     protected transport: Transport;
 
     private _anonymousServices: AnonymousServices;
@@ -85,19 +84,15 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
     public abstract getServices(address: string | ICoreAddress): RuntimeServices;
 
-    private readonly _internalEventBus: EventBus;
-    private readonly _externalEventBus: EventBus;
+    private readonly _eventBus: EventBus;
     public get eventBus(): EventBus {
-        return this._externalEventBus;
+        return this._eventBus;
     }
 
-    private readonly _eventProxy: EventProxy;
+    private _eventProxy: EventProxy;
 
-    public constructor(config: TConfig) {
-        this.runtimeConfig = config;
-        this._internalEventBus = new EventEmitter2EventBus();
-        this._externalEventBus = new EventEmitter2EventBus();
-        this._eventProxy = new EventProxy(this._internalEventBus, this._externalEventBus);
+    public constructor(protected runtimeConfig: TConfig) {
+        this._eventBus = new EventEmitter2EventBus();
     }
 
     private _isInitialized = false;
@@ -124,7 +119,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         await this.initInfrastructure();
         await this.initModules();
 
-        this._eventProxy.init();
+        this._eventProxy = new EventProxy(this._eventBus, this.transport.eventBus).start();
 
         this._isInitialized = true;
         this.eventBus.publish(new RuntimeInitializedEvent());
@@ -157,7 +152,7 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         const databaseConnection = await this.createDatabaseConnection();
 
-        this.transport = new Transport(databaseConnection, this.runtimeConfig.transportLibrary, this._internalEventBus, this.loggerFactory);
+        this.transport = new Transport(databaseConnection, this.runtimeConfig.transportLibrary, new EventEmitter2EventBus(), this.loggerFactory);
 
         this.logger.debug("Initializing Transport Library...");
         await this.transport.init();
@@ -353,9 +348,9 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         await this.stopModules();
         await this.stopInfrastructure();
 
-        await this._internalEventBus.close();
-        this._eventProxy.close();
-        await this._externalEventBus.close();
+        await this.transport.eventBus.close();
+        this._eventProxy.stop();
+        await this._eventBus.close();
 
         this.logger.info("Closing AccountController...");
         await this._accountController?.close();
