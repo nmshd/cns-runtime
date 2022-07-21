@@ -20,15 +20,7 @@ import {
 import { Container, Scope } from "typescript-ioc";
 import { DatabaseSchemaUpgrader } from "./DatabaseSchemaUpgrader";
 import { DataViewExpander } from "./dataViews";
-import {
-    ModulesInitializedEvent,
-    ModulesLoadedEvent,
-    ModulesStartedEvent,
-    RuntimeInitializedEvent,
-    RuntimeInitializingEvent,
-    TransportLibraryInitializedEvent,
-    TransportLibraryInitializingEvent
-} from "./events";
+import { ModulesInitializedEvent, ModulesLoadedEvent, ModulesStartedEvent, RuntimeInitializedEvent, RuntimeInitializingEvent } from "./events";
 import { AnonymousServices, ConsumptionServices, ModuleConfiguration, RuntimeModule, RuntimeModuleRegistry, TransportServices } from "./extensibility";
 import { DeciderModule, MessageModule, RequestModule } from "./modules";
 import { RuntimeConfig } from "./RuntimeConfig";
@@ -153,7 +145,6 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
     }
 
     private async initTransportLibrary() {
-        this.eventBus.publish(new TransportLibraryInitializingEvent());
         this.logger.debug("Initializing Database connection... ");
 
         const databaseConnection = await this.createDatabaseConnection();
@@ -165,8 +156,6 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         this.logger.debug("Finished initialization of Transport Library.");
 
         this._anonymousServices = Container.get<AnonymousServices>(AnonymousServices);
-
-        this.eventBus.publish(new TransportLibraryInitializedEvent());
     }
 
     private async initDIContainer() {
