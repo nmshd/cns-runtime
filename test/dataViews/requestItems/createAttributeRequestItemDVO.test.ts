@@ -45,8 +45,8 @@ beforeAll(async () => {
             "@type": "IdentityAttribute",
             owner: senderAddress,
             value: {
-                "@type": "GivenName",
-                value: "Theodor"
+                "@type": "DisplayName",
+                value: "Dr. Theodor Munchkin von Reichenhardt"
             }
         }
     });
@@ -107,8 +107,8 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(requestItemDVO.isDecidable).toBe(false);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
-        expect(value["@type"]).toBe("GivenName");
-        expect(value.value).toBe("Theodor");
+        expect(value["@type"]).toBe("DisplayName");
+        expect(value.value).toBe("Dr. Theodor Munchkin von Reichenhardt");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
         expect(requestItemDVO.attribute.isDraft).toBe(true);
@@ -137,8 +137,8 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(requestItemDVO.isDecidable).toBe(true);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
-        expect(value["@type"]).toBe("GivenName");
-        expect(value.value).toBe("Theodor");
+        expect(value["@type"]).toBe("DisplayName");
+        expect(value.value).toBe("Dr. Theodor Munchkin von Reichenhardt");
         expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
@@ -174,8 +174,8 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(requestItemDVO.isDecidable).toBe(false);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
-        expect(value["@type"]).toBe("GivenName");
-        expect(value.value).toBe("Theodor");
+        expect(value["@type"]).toBe("DisplayName");
+        expect(value.value).toBe("Dr. Theodor Munchkin von Reichenhardt");
         expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
@@ -194,13 +194,19 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(responseItem["@type"]).toBe("CreateAttributeAcceptResponseItem");
 
         const attributeResult = await consumptionServices2.attributes.getAttributes({
-            query: { "content.value.@type": "GivenName", "shareInfo.peer": dvo.createdBy.id }
+            query: { "content.value.@type": "DisplayName", "shareInfo.peer": dvo.createdBy.id }
         });
         expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value[0].id).toBeDefined();
-        expect((attributeResult.value[0].content.value as any).value).toBe("Theodor");
+        expect((attributeResult.value[0].content.value as any).value).toBe("Dr. Theodor Munchkin von Reichenhardt");
 
         expect(responseItem.attributeId).toStrictEqual(attributeResult.value[0].id);
+    });
+
+    test("check the sender's dvo for the recipient", async () => {
+        const dvo = await expander2.expandAddress(senderMessage.createdBy);
+        expect(dvo.name).toBe("Dr. Theodor Munchkin von Reichenhardt");
+        expect(dvo.items).toHaveLength(1);
     });
 
     test("check the MessageDVO for the sender after acceptance", async () => {
@@ -232,8 +238,8 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(requestItemDVO.isDecidable).toBe(false);
         expect(requestItemDVO.attribute.type).toBe("DraftAttributeDVO");
         const value = requestItemDVO.attribute.value as IAbstractStringJSON;
-        expect(value["@type"]).toBe("GivenName");
-        expect(value.value).toBe("Theodor");
+        expect(value["@type"]).toBe("DisplayName");
+        expect(value.value).toBe("Dr. Theodor Munchkin von Reichenhardt");
         expect(requestItemDVO.attribute.renderHints.technicalType).toBe("String");
         expect(requestItemDVO.attribute.renderHints.editType).toBe("InputLike");
         expect(requestItemDVO.attribute.valueHints.max).toBe(200);
@@ -253,11 +259,11 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(responseItem.attributeId).toBeDefined();
 
         const attributeResult = await consumptionServices1.attributes.getAttributes({
-            query: { "content.value.@type": "GivenName", "shareInfo.peer": dvo.request.peer.id }
+            query: { "content.value.@type": "DisplayName", "shareInfo.peer": dvo.request.peer.id }
         });
         expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value[0].id).toBeDefined();
-        expect((attributeResult.value[0].content.value as any).value).toBe("Theodor");
+        expect((attributeResult.value[0].content.value as any).value).toBe("Dr. Theodor Munchkin von Reichenhardt");
 
         expect(responseItem.attributeId).toStrictEqual(attributeResult.value[0].id);
     });
@@ -271,6 +277,13 @@ describe("CreateAttributeRequestItemDVO", () => {
         expect(attributeResult).toBeSuccessful();
         expect(attributeResult.value).toHaveLength(1);
         expect(attributeResult.value[0].id).toBeDefined();
-        expect((attributeResult.value[0].content.value as any).value).toBe("Theodor");
+        expect((attributeResult.value[0].content.value as any).value).toBe("Dr. Theodor Munchkin von Reichenhardt");
+    });
+
+    test("check the recipient's dvo for the sender", async () => {
+        const dvo = await expander1.expandAddress(senderMessage.recipients[0].address);
+
+        expect(dvo.name).toStrictEqual(senderMessage.recipients[0].address.substring(3, 9));
+        expect(dvo.items).toHaveLength(0);
     });
 });

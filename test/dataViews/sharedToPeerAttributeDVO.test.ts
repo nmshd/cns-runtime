@@ -99,10 +99,7 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
-        expect(dvo.owner.type).toBe("IdentityDVO");
-        expect(dvo.owner.id).toStrictEqual(attribute.content.owner);
-        expect(dvo.owner.name).toBe("i18n://dvo.identity.self.name");
-        expect(dvo.owner.isSelf).toBe(true);
+        expect(dvo.owner).toStrictEqual(attribute.content.owner);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("Integer");
         expect(dvo.renderHints.editType).toBe("SelectLike");
@@ -117,11 +114,7 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(shared.id).toBe(sharedAttribute.id);
         expect(shared.date).toBe(sharedAttribute.createdAt);
         expect(shared.createdAt).toBe(sharedAttribute.createdAt);
-        expect(shared.peer.id).toBe(sharedAttribute.shareInfo!.peer);
-        expect(shared.peer.name).toBe(sharedAttribute.shareInfo!.peer.substring(3, 9));
-        expect(shared.peer.description).toBe("i18n://dvo.identity.unknown.description");
-        expect(shared.peer.isSelf).toBe(false);
-        expect(shared.peer.hasRelationship).toBe(false);
+        expect(shared.peer).toBe(sharedAttribute.shareInfo!.peer);
         expect(shared.requestReference).toBe(sharedAttribute.shareInfo!.requestReference);
         expect(shared.sourceAttribute).toBe(sharedAttribute.shareInfo!.sourceAttribute);
     });
@@ -146,10 +139,7 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
-        expect(dvo.owner.type).toBe("IdentityDVO");
-        expect(dvo.owner.id).toStrictEqual(attribute.content.owner);
-        expect(dvo.owner.name).toBe("i18n://dvo.identity.self.name");
-        expect(dvo.owner.isSelf).toBe(true);
+        expect(dvo.owner).toStrictEqual(attribute.content.owner);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("String");
         expect(dvo.renderHints.editType).toBe("ButtonLike");
@@ -167,7 +157,7 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(shared.id).toBe(sharedAttribute.id);
         expect(shared.date).toBe(sharedAttribute.createdAt);
         expect(shared.createdAt).toBe(sharedAttribute.createdAt);
-        expect(shared.peer.id).toBe(sharedAttribute.shareInfo!.peer);
+        expect(shared.peer).toBe(sharedAttribute.shareInfo!.peer);
         expect(shared.requestReference).toBe(sharedAttribute.shareInfo!.requestReference);
         expect(shared.sourceAttribute).toBe(sharedAttribute.shareInfo!.sourceAttribute);
     });
@@ -192,10 +182,7 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
-        expect(dvo.owner.type).toBe("IdentityDVO");
-        expect(dvo.owner.id).toStrictEqual(attribute.content.owner);
-        expect(dvo.owner.name).toBe("i18n://dvo.identity.self.name");
-        expect(dvo.owner.isSelf).toBe(true);
+        expect(dvo.owner).toStrictEqual(attribute.content.owner);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("String");
         expect(dvo.renderHints.editType).toBe("SelectLike");
@@ -212,7 +199,7 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(shared.id).toBe(sharedAttribute.id);
         expect(shared.date).toBe(sharedAttribute.createdAt);
         expect(shared.createdAt).toBe(sharedAttribute.createdAt);
-        expect(shared.peer.id).toBe(sharedAttribute.shareInfo!.peer);
+        expect(shared.peer).toBe(sharedAttribute.shareInfo!.peer);
         expect(shared.requestReference).toBe(sharedAttribute.shareInfo!.requestReference);
         expect(shared.sourceAttribute).toBe(sharedAttribute.shareInfo!.sourceAttribute);
     });
@@ -237,10 +224,7 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(dvo.createdAt).toStrictEqual(attribute.createdAt);
         expect(dvo.isOwn).toBe(true);
         expect(dvo.isValid).toBe(true);
-        expect(dvo.owner.type).toBe("IdentityDVO");
-        expect(dvo.owner.id).toStrictEqual(attribute.content.owner);
-        expect(dvo.owner.name).toBe("i18n://dvo.identity.self.name");
-        expect(dvo.owner.isSelf).toBe(true);
+        expect(dvo.owner).toStrictEqual(attribute.content.owner);
         expect(dvo.renderHints["@type"]).toBe("RenderHints");
         expect(dvo.renderHints.technicalType).toBe("String");
         expect(dvo.renderHints.editType).toBe("SelectLike");
@@ -257,7 +241,7 @@ describe("SharedToPeerAttributeDVO", () => {
         expect(shared.id).toBe(sharedAttribute.id);
         expect(shared.date).toBe(sharedAttribute.createdAt);
         expect(shared.createdAt).toBe(sharedAttribute.createdAt);
-        expect(shared.peer.id).toBe(sharedAttribute.shareInfo!.peer);
+        expect(shared.peer).toBe(sharedAttribute.shareInfo!.peer);
         expect(shared.requestReference).toBe(sharedAttribute.shareInfo!.requestReference);
         expect(shared.sourceAttribute).toBe(sharedAttribute.shareInfo!.sourceAttribute);
     });

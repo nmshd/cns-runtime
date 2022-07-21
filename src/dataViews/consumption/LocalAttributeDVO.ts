@@ -9,7 +9,7 @@ import { IdentityDVO } from "../transport";
  */
 export interface LocalAttributeDVO extends DataViewObject {
     content: IdentityAttributeJSON | RelationshipAttributeJSON;
-    owner: IdentityDVO;
+    owner: string; // Careful: We cannot expand the owner to an IdentityDVO, as the IdentityDVO possibly contains the LocalAttributesDVO of the Relationship (endless recursion)
 
     key?: string;
     tags: string[];
@@ -41,7 +41,7 @@ export interface RepositoryAttributeDVO extends LocalAttributeDVO {
  */
 export interface SharedToPeerAttributeDVO extends LocalAttributeDVO {
     type: "SharedToPeerAttributeDVO";
-    peer: IdentityDVO;
+    peer: string; // Careful: We cannot expand the peer to an IdentityDVO, as the IdentityDVO possibly contains the LocalAttributesDVO of the Relationship (endless recursion)
     requestReference: string;
     sourceAttribute: string;
     isOwn: true;
@@ -52,7 +52,7 @@ export interface SharedToPeerAttributeDVO extends LocalAttributeDVO {
  */
 export interface PeerAttributeDVO extends LocalAttributeDVO {
     type: "PeerAttributeDVO";
-    peer: IdentityDVO;
+    peer: string; // Careful: We cannot expand the peer to an IdentityDVO, as the IdentityDVO possibly contains the LocalAttributesDVO of the Relationship (endless recursion)
     requestReference: string;
     isOwn: false;
 }
