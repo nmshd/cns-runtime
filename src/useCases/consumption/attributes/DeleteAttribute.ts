@@ -1,10 +1,8 @@
-import { EventBus, Result } from "@js-soft/ts-utils";
+import { Result } from "@js-soft/ts-utils";
 import { LocalAttribute, LocalAttributesController } from "@nmshd/consumption";
-import { AccountController, CoreId, IdentityController } from "@nmshd/transport";
+import { AccountController, CoreId } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { AttributeDeletedEvent } from "../../../events";
 import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
-import { AttributeMapper } from "./AttributeMapper";
 
 export interface DeleteAttributeRequest {
     /**
@@ -22,10 +20,6 @@ export class DeleteAttributeUseCase extends UseCase<DeleteAttributeRequest, void
     public constructor(
         @Inject private readonly attributeController: LocalAttributesController,
         @Inject private readonly accountController: AccountController,
-
-        @Inject private readonly identityController: IdentityController,
-        @Inject private readonly eventBus: EventBus,
-
         @Inject validator: Validator
     ) {
         super(validator);
@@ -39,8 +33,6 @@ export class DeleteAttributeUseCase extends UseCase<DeleteAttributeRequest, void
 
         await this.attributeController.deleteAttribute(attribute);
         await this.accountController.syncDatawallet();
-
-        this.eventBus.publish(new AttributeDeletedEvent(this.identityController.identity.address.toString(), AttributeMapper.toAttributeDTO(attribute)));
 
         return Result.ok(undefined);
     }

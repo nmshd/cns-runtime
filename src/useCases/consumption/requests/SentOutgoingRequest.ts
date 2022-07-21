@@ -1,8 +1,7 @@
-import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
-import { ISentOutgoingRequestParameters, LocalRequestStatus, OutgoingRequestsController } from "@nmshd/consumption";
+import { ApplicationError, Result } from "@js-soft/ts-utils";
+import { ISentOutgoingRequestParameters, OutgoingRequestsController } from "@nmshd/consumption";
 import { CoreId, Message, MessageController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { OutgoingRequestStatusChangedEvent } from "../../../events";
 import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -20,11 +19,7 @@ export interface SentOutgoingRequestRequest {
 }
 
 export class SentOutgoingRequestUseCase extends UseCase<SentOutgoingRequestRequest, LocalRequestDTO> {
-    public constructor(
-        @Inject private readonly outgoingRequestsController: OutgoingRequestsController,
-        @Inject private readonly messageController: MessageController,
-        @Inject private readonly eventBus: EventBus
-    ) {
+    public constructor(@Inject private readonly outgoingRequestsController: OutgoingRequestsController, @Inject private readonly messageController: MessageController) {
         super();
     }
 
@@ -42,16 +37,6 @@ export class SentOutgoingRequestUseCase extends UseCase<SentOutgoingRequestReque
 
         const localRequest = await this.outgoingRequestsController.sent(params);
 
-        const dto = RequestMapper.toLocalRequestDTO(localRequest);
-
-        this.eventBus.publish(
-            new OutgoingRequestStatusChangedEvent(this.outgoingRequestsController.parent.accountController.identity.address.address, {
-                request: dto,
-                oldStatus: LocalRequestStatus.Draft,
-                newStatus: dto.status
-            })
-        );
-
-        return Result.ok(dto);
+        return Result.ok(RequestMapper.toLocalRequestDTO(localRequest));
     }
 }

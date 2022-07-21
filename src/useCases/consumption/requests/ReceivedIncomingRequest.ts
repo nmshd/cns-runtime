@@ -1,9 +1,8 @@
-import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
+import { ApplicationError, Result } from "@js-soft/ts-utils";
 import { IncomingRequestsController } from "@nmshd/consumption";
 import { RequestJSON } from "@nmshd/content";
 import { CoreId, Message, MessageController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { IncomingRequestReceivedEvent } from "../../../events";
 import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -22,8 +21,7 @@ export class ReceivedIncomingRequestUseCase extends UseCase<ReceivedIncomingRequ
     public constructor(
         @Inject private readonly incomingRequestsController: IncomingRequestsController,
         @Inject private readonly messageController: MessageController,
-        @Inject private readonly relationshipTemplateController: RelationshipTemplateController,
-        @Inject private readonly eventBus: EventBus
+        @Inject private readonly relationshipTemplateController: RelationshipTemplateController
     ) {
         super();
     }
@@ -51,10 +49,6 @@ export class ReceivedIncomingRequestUseCase extends UseCase<ReceivedIncomingRequ
             requestSourceObject
         });
 
-        const dto = RequestMapper.toLocalRequestDTO(localRequest);
-
-        this.eventBus.publish(new IncomingRequestReceivedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, dto));
-
-        return Result.ok(dto);
+        return Result.ok(RequestMapper.toLocalRequestDTO(localRequest));
     }
 }

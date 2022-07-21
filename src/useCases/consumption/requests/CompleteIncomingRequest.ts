@@ -1,8 +1,7 @@
-import { ApplicationError, EventBus, Result } from "@js-soft/ts-utils";
-import { IncomingRequestsController, LocalRequestStatus } from "@nmshd/consumption";
+import { ApplicationError, Result } from "@js-soft/ts-utils";
+import { IncomingRequestsController } from "@nmshd/consumption";
 import { CoreId, IMessage, IRelationshipChange, Message, MessageController, RelationshipChange, RelationshipsController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { IncomingRequestStatusChangedEvent } from "../../../events";
 import { LocalRequestDTO } from "../../../types";
 import { RuntimeErrors, SchemaRepository, SchemaValidator, UseCase } from "../../common";
 import { RequestMapper } from "./RequestMapper";
@@ -29,7 +28,6 @@ export class CompleteIncomingRequestUseCase extends UseCase<CompleteIncomingRequ
     public constructor(
         @Inject validator: Validator,
         @Inject private readonly incomingRequestsController: IncomingRequestsController,
-        @Inject private readonly eventBus: EventBus,
         @Inject private readonly messageController: MessageController,
         @Inject private readonly relationshipController: RelationshipsController
     ) {
@@ -61,16 +59,6 @@ export class CompleteIncomingRequestUseCase extends UseCase<CompleteIncomingRequ
             responseSourceObject
         });
 
-        const dto = RequestMapper.toLocalRequestDTO(localRequest);
-
-        this.eventBus.publish(
-            new IncomingRequestStatusChangedEvent(this.incomingRequestsController.parent.accountController.identity.address.address, {
-                request: dto,
-                oldStatus: LocalRequestStatus.Decided,
-                newStatus: dto.status
-            })
-        );
-
-        return Result.ok(dto);
+        return Result.ok(RequestMapper.toLocalRequestDTO(localRequest));
     }
 }

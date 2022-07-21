@@ -1,7 +1,6 @@
-import { EventBus, Result } from "@js-soft/ts-utils";
-import { AccountController, BackboneIds, CoreId, IdentityController, Relationship, RelationshipChange, RelationshipsController } from "@nmshd/transport";
+import { Result } from "@js-soft/ts-utils";
+import { AccountController, BackboneIds, CoreId, Relationship, RelationshipChange, RelationshipsController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { RelationshipChangedEvent } from "../../../events";
 import { RelationshipDTO } from "../../../types";
 import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { RelationshipMapper } from "./RelationshipMapper";
@@ -26,8 +25,6 @@ export class RevokeRelationshipChangeUseCase extends UseCase<RevokeRelationshipC
     public constructor(
         @Inject private readonly relationshipsController: RelationshipsController,
         @Inject private readonly accountController: AccountController,
-        @Inject private readonly eventBus: EventBus,
-        @Inject private readonly identityController: IdentityController,
         @Inject validator: RevokeRelationshipChangeRequestValidator
     ) {
         super(validator);
@@ -49,11 +46,9 @@ export class RevokeRelationshipChangeUseCase extends UseCase<RevokeRelationshipC
         }
 
         const updatedRelationship = await this.relationshipsController.revokeChange(change, request.content);
-        const relationshipDTO = RelationshipMapper.toRelationshipDTO(updatedRelationship);
 
-        this.eventBus.publish(new RelationshipChangedEvent(this.identityController.identity.address.toString(), relationshipDTO));
         await this.accountController.syncDatawallet();
 
-        return Result.ok(relationshipDTO);
+        return Result.ok(RelationshipMapper.toRelationshipDTO(updatedRelationship));
     }
 }

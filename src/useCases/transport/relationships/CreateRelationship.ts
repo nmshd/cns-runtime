@@ -1,7 +1,6 @@
-import { EventBus, Result } from "@js-soft/ts-utils";
-import { AccountController, BackboneIds, CoreId, IdentityController, RelationshipsController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
+import { Result } from "@js-soft/ts-utils";
+import { AccountController, BackboneIds, CoreId, RelationshipsController, RelationshipTemplate, RelationshipTemplateController } from "@nmshd/transport";
 import { Inject } from "typescript-ioc";
-import { RelationshipChangedEvent } from "../../../events";
 import { RelationshipDTO } from "../../../types";
 import { IdValidator, RuntimeErrors, RuntimeValidator, UseCase } from "../../common";
 import { RelationshipMapper } from "./RelationshipMapper";
@@ -25,9 +24,6 @@ export class CreateRelationshipUseCase extends UseCase<CreateRelationshipRequest
         @Inject private readonly relationshipsController: RelationshipsController,
         @Inject private readonly relationshipTemplateController: RelationshipTemplateController,
         @Inject private readonly accountController: AccountController,
-
-        @Inject private readonly identityController: IdentityController,
-        @Inject private readonly eventBus: EventBus,
         @Inject validator: CreateRelationshipRequestValidator
     ) {
         super(validator);
@@ -43,11 +39,9 @@ export class CreateRelationshipUseCase extends UseCase<CreateRelationshipRequest
             template: template,
             content: request.content
         });
-        const relationshipDTO = RelationshipMapper.toRelationshipDTO(relationship);
 
-        this.eventBus.publish(new RelationshipChangedEvent(this.identityController.identity.address.toString(), relationshipDTO));
         await this.accountController.syncDatawallet();
 
-        return Result.ok(relationshipDTO);
+        return Result.ok(RelationshipMapper.toRelationshipDTO(relationship));
     }
 }
