@@ -37,7 +37,11 @@ export interface RuntimeServices {
 }
 
 export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
-    protected logger: ILogger;
+    private _logger: ILogger;
+    protected get logger(): ILogger {
+        return this._logger;
+    }
+
     protected loggerFactory: ILoggerFactory;
     protected transport: Transport;
 
@@ -104,10 +108,10 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
         }
 
         this.loggerFactory = await this.createLoggerFactory();
+        this._logger = this.loggerFactory.getLogger(this.constructor.name);
 
-        const eventBusLogger = this.loggerFactory.getLogger("runtime.eventbus");
         this._eventBus = new EventEmitter2EventBus((error, namespace) => {
-            eventBusLogger.error(`An error was thrown in the event bus while processing an event with the namespace '${namespace}'. Root error: ${error}`);
+            this.logger.error(`An error was thrown in an event handler of the runtime event bus (namespace: '${namespace}'). Root error: ${error}`);
         });
 
         this.eventBus.publish(new RuntimeInitializingEvent());
@@ -155,12 +159,11 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         const databaseConnection = await this.createDatabaseConnection();
 
-        const transportEventbusLogger = this.loggerFactory.getLogger("transport.eventbus");
         this.transport = new Transport(
             databaseConnection,
             this.runtimeConfig.transportLibrary,
             new EventEmitter2EventBus((error, namespace) => {
-                transportEventbusLogger.error(`An error was thrown in the event bus while processing an event with the namespace '${namespace}'. Root error: ${error}`);
+                this.logger.error(`An error was thrown in an event handler of the transport event bus (namespace: '${namespace}'). Root error: ${error}`);
             }),
             this.loggerFactory
         );

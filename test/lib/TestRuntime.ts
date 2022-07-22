@@ -26,7 +26,7 @@ export class TestRuntime extends Runtime {
     }
 
     protected createLoggerFactory(): ILoggerFactory {
-        const loggerFactory = new NodeLoggerFactory({
+        return new NodeLoggerFactory({
             appenders: {
                 consoleAppender: {
                     type: "stdout",
@@ -46,9 +46,6 @@ export class TestRuntime extends Runtime {
                 }
             }
         });
-        this.logger = loggerFactory.getLogger(Runtime);
-
-        return loggerFactory;
     }
 
     protected async createDatabaseConnection(): Promise<IDatabaseConnection> {
