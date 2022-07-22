@@ -60,16 +60,17 @@ export class RequestModule extends RuntimeModule {
     private async handleMessageReceivedEvent(event: MessageReceivedEvent) {
         const services = this.runtime.getServices(event.eventTargetAddress);
 
-        const messageContentType = event.data.content["@type"];
+        const message = event.data;
+        const messageContentType = message.content["@type"];
         switch (messageContentType) {
             case "Request":
-                await this.createIncomingRequest(services, event.data.content as RequestJSON, event.data.id);
+                await this.createIncomingRequest(services, message.content as RequestJSON, message.id);
                 break;
             case "Response":
-                const receivedResponse = event.data.content as ResponseJSON;
-                const result = await services.consumptionServices.outgoingRequests.complete({ receivedResponse, messageId: event.data.id });
+                const receivedResponse = message.content as ResponseJSON;
+                const result = await services.consumptionServices.outgoingRequests.complete({ receivedResponse, messageId: message.id });
                 if (result.isError) {
-                    this.logger.error(`Could not complete outgoing request for message id ${event.data.id} due to ${result.error}. Root error:`, result.error);
+                    this.logger.error(`Could not complete outgoing request for message id ${message.id} due to ${result.error}. Root error:`, result.error);
                 }
                 break;
         }
@@ -106,7 +107,8 @@ export class RequestModule extends RuntimeModule {
     private async handleIncomingRequestStatusChanged(event: IncomingRequestStatusChangedEvent) {
         if (event.data.newStatus !== LocalRequestStatus.Decided) return;
 
-        switch (event.data.request.source!.type) {
+        const request = event.data.request;
+        switch (request.source!.type) {
             case "RelationshipTemplate":
                 await this.handleIncomingRequestDecidedForRelationship(event);
                 break;
@@ -114,14 +116,15 @@ export class RequestModule extends RuntimeModule {
                 await this.handleIncomingRequestDecidedForMessage(event);
                 break;
             default:
-                throw new Error(`Cannot handle source.type '${event.data.request.source!.type}'.`);
+                throw new Error(`Cannot handle source.type '${request.source!.type}'.`);
         }
     }
 
     private async handleIncomingRequestDecidedForRelationship(event: IncomingRequestStatusChangedEvent) {
-        const templateId = event.data.request.source!.reference;
+        const request = event.data.request;
+        const templateId = request.source!.reference;
 
-        if (event.data.request.response!.content.result !== "Accepted") {
+        if (request.response!.content.result !== "Accepted") {
             // TODO: correctly handle rejection (=> delete / new status)
             // ignore rejection for now
             return;
@@ -138,7 +141,7 @@ export class RequestModule extends RuntimeModule {
         const template = templateResult.value;
         const creationChangeBody = RelationshipCreationChangeRequestBody.from({
             "@type": "RelationshipCreationChangeRequestBody",
-            response: event.data.request.response!.content,
+            response: request.response!.content,
             templateContentMetadata: template.content.metadata
         });
 
@@ -149,7 +152,7 @@ export class RequestModule extends RuntimeModule {
             return;
         }
 
-        const requestId = event.data.request.id;
+        const requestId = request.id;
         const completeRequestResult = await services.consumptionServices.incomingRequests.complete({
             requestId,
             responseSourceId: createRelationshipResult.value.changes[0].id
@@ -188,11 +191,10 @@ export class RequestModule extends RuntimeModule {
 
     private async handleRelationshipChangedEvent(event: RelationshipChangedEvent) {
         // only trigger for new relationships that were created from an own template
-        if (event.data.status !== RelationshipStatus.Pending || !event.data.template.isOwn) return;
+        const createdRelationship = event.data;
+        if (createdRelationship.status !== RelationshipStatus.Pending || !createdRelationship.template.isOwn) return;
 
         const services = this.runtime.getServices(event.eventTargetAddress);
-
-        const createdRelationship = event.data;
 
         const template = createdRelationship.template;
         const templateId = template.id;

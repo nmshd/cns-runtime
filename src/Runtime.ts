@@ -37,7 +37,11 @@ export interface RuntimeServices {
 }
 
 export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
-    protected logger: ILogger;
+    private _logger: ILogger;
+    protected get logger(): ILogger {
+        return this._logger;
+    }
+
     protected loggerFactory: ILoggerFactory;
     protected transport: Transport;
 
@@ -84,16 +88,14 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
     public abstract getServices(address: string | ICoreAddress): RuntimeServices;
 
-    private readonly _eventBus: EventBus;
+    private _eventBus: EventBus;
     public get eventBus(): EventBus {
         return this._eventBus;
     }
 
     private _eventProxy: EventProxy;
 
-    public constructor(protected runtimeConfig: TConfig) {
-        this._eventBus = new EventEmitter2EventBus();
-    }
+    public constructor(protected runtimeConfig: TConfig) {}
 
     private _isInitialized = false;
     public get isInitialized(): boolean {
@@ -105,9 +107,14 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
             throw RuntimeErrors.general.alreadyInitialized();
         }
 
-        this.eventBus.publish(new RuntimeInitializingEvent());
-
         this.loggerFactory = await this.createLoggerFactory();
+        this._logger = this.loggerFactory.getLogger(this.constructor.name);
+
+        this._eventBus = new EventEmitter2EventBus((error, namespace) => {
+            this.logger.error(`An error was thrown in an event handler of the runtime event bus (namespace: '${namespace}'). Root error: ${error}`);
+        });
+
+        this.eventBus.publish(new RuntimeInitializingEvent());
 
         await this.initDIContainer();
 
@@ -152,7 +159,14 @@ export abstract class Runtime<TConfig extends RuntimeConfig = RuntimeConfig> {
 
         const databaseConnection = await this.createDatabaseConnection();
 
-        this.transport = new Transport(databaseConnection, this.runtimeConfig.transportLibrary, new EventEmitter2EventBus(), this.loggerFactory);
+        this.transport = new Transport(
+            databaseConnection,
+            this.runtimeConfig.transportLibrary,
+            new EventEmitter2EventBus((error, namespace) => {
+                this.logger.error(`An error was thrown in an event handler of the transport event bus (namespace: '${namespace}'). Root error: ${error}`);
+            }),
+            this.loggerFactory
+        );
 
         this.logger.debug("Initializing Transport Library...");
         await this.transport.init();
