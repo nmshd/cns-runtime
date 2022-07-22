@@ -19,13 +19,42 @@ export class RequestModule extends RuntimeModule {
     }
 
     private async handlePeerRelationshipTemplateLoaded(event: PeerRelationshipTemplateLoadedEvent) {
-        if (event.data.content["@type"] !== "RelationshipTemplateBody") return;
+        const template = event.data;
+        if (template.content["@type"] !== "RelationshipTemplateBody") return;
 
-        const body = event.data.content as RelationshipTemplateBodyJSON;
+        const body = template.content as RelationshipTemplateBodyJSON;
         const request = body.onNewRelationship;
 
         const services = this.runtime.getServices(event.eventTargetAddress);
-        await this.createIncomingRequest(services, request, event.data.id);
+
+        const requestResult = await services.consumptionServices.incomingRequests.getRequests({ query: { "source.reference": template.id } });
+        if (requestResult.isError) {
+            this.logger.error(`Could not get requests for template '${template.id}'. Root error:`, requestResult.error);
+            return;
+        }
+
+        if (requestResult.value.some((r) => r.status !== LocalRequestStatus.Completed)) {
+            // TODO: JSSNMSHDD-3111 (inform caller of `loadPeerRelationshipTemplate` about the Request)
+            this.logger.warn(`There is already an open Request for the RelationshipTemplate '${template.id}'. Skipping creation of a new request.`);
+            return;
+        }
+
+        const getRelationshipsResult = await services.transportServices.relationships.getRelationships({ query: { peer: template.createdBy } });
+
+        if (getRelationshipsResult.isError) {
+            this.logger.error(`Could not get relationships for template '${template.id}'. Root error:`, getRelationshipsResult.error);
+            return;
+        }
+
+        if (getRelationshipsResult.isSuccess && getRelationshipsResult.value.some((r) => r.status === RelationshipStatus.Pending || r.status === RelationshipStatus.Active)) {
+            // TODO: use body.onExistingRelationship if exists
+
+            // TODO: JSSNMSHDD-3111 (inform caller of `loadPeerRelationshipTemplate` about the Relationship if body.onExistingRelationship not exists)
+            this.logger.warn(`There is already an open or pending Relationship for the RelationshipTemplate '${template.id}'. Skipping creation of a new request.`);
+            return;
+        }
+
+        await this.createIncomingRequest(services, request, template.id);
     }
 
     private async handleMessageReceivedEvent(event: MessageReceivedEvent) {

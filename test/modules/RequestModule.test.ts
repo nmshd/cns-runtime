@@ -9,6 +9,7 @@ import {
     OutgoingRequestFromRelationshipCreationChangeCreatedAndCompletedEvent,
     OutgoingRequestStatusChangedEvent,
     RelationshipStatus,
+    RelationshipTemplateDTO,
     TransportServices
 } from "../../src";
 import { establishRelationship, exchangeTemplate, RuntimeServiceProvider, sendMessage, syncUntilHasMessages, syncUntilHasRelationships, waitForEvent } from "../lib";
@@ -38,6 +39,7 @@ describe("RequestModule", () => {
     describe("Relationships", () => {
         const metadata = { aMetadataKey: "aMetadataValue" };
         let requestId: string;
+        let template: RelationshipTemplateDTO;
 
         test("creates a request for a loaded peer relationship template and checks its prerequisites", async () => {
             const waitForIncomingRequestReceived = waitForEvent(rEventBus, IncomingRequestReceivedEvent, 4000);
@@ -54,7 +56,7 @@ describe("RequestModule", () => {
                 metadata
             };
 
-            await exchangeTemplate(sTransportServices, rTransportServices, templateBody);
+            template = await exchangeTemplate(sTransportServices, rTransportServices, templateBody);
 
             const waitedForIncomingRequestReceived = await waitForIncomingRequestReceived;
             expect(waitedForIncomingRequestReceived.data.status).toBe(LocalRequestStatus.Open);
@@ -67,6 +69,14 @@ describe("RequestModule", () => {
             expect(requestsResult.value).toHaveLength(1);
 
             requestId = requestsResult.value[0].id;
+        });
+
+        test("a second Request from the same Template if an open Request exists", async () => {
+            const waitForIncomingRequestReceived = waitForEvent(rEventBus, IncomingRequestReceivedEvent, 4000);
+
+            await rTransportServices.relationshipTemplates.loadPeerRelationshipTemplate({ reference: template.truncatedReference });
+
+            await expect(waitForIncomingRequestReceived).rejects.toStrictEqual(new Error("timeout exceeded for waiting for event IncomingRequestReceivedEvent"));
         });
 
         test("creates the relationship when the request is accepted", async () => {
@@ -118,6 +128,14 @@ describe("RequestModule", () => {
 
             const requestsResult = await sConsumptionServices.outgoingRequests.getRequest({ id: response.requestId });
             expect(requestsResult).toBeSuccessful();
+        });
+
+        test("a second Request is not created from the Template if an open Relationship exists", async () => {
+            const waitForIncomingRequestReceived = waitForEvent(rEventBus, IncomingRequestReceivedEvent, 4000);
+
+            await rTransportServices.relationshipTemplates.loadPeerRelationshipTemplate({ reference: template.truncatedReference });
+
+            await expect(waitForIncomingRequestReceived).rejects.toStrictEqual(new Error("timeout exceeded for waiting for event IncomingRequestReceivedEvent"));
         });
     });
 
