@@ -35,7 +35,9 @@ export class RequestModule extends RuntimeModule {
 
         const getRelationshipsResult = await services.transportServices.relationships.getRelationships({ query: { peer: event.data.createdBy } });
         if (getRelationshipsResult.isSuccess && getRelationshipsResult.value.some((r) => r.status === RelationshipStatus.Pending || r.status === RelationshipStatus.Active)) {
-            // TODO: JSSNMSHDD-3111 (use body.onExistingRelationship if exists or inform caller of `loadPeerRelationshipTemplate` about the Relationship)
+            // TODO: use body.onExistingRelationship if exists
+
+            // TODO: JSSNMSHDD-3111 (inform caller of `loadPeerRelationshipTemplate` about the Relationship if body.onExistingRelationship not exists)
             this.logger.warn(`There is already an open or pending Relationship for the RelationshipTemplate '${event.data.id}'. Skipping creation of a new request.`);
             return;
         }
